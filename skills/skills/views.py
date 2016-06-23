@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt  
 def dispatch(request):
   print request.session.items()
-  fp = open('templates/carousel.html')  
+  fp = open('templates/search.html')  
   t = Template(fp.read())  
   fp.close()  
   html = t.render(Context({"id":1}))  
