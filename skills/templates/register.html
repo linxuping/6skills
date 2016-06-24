@@ -20,8 +20,10 @@
       <script src="../../assets/js/ie8-responsive-file-warning.js"></script>
     <![endif]-->
     <script src="/static/js/ie-emulation-modes-warning.js"></script>
-    <style>body { padding-top:50px; } h1 { color: black; } #content{ width:100%; min-height:600px; background:white url(footer.png); padding-top:20px; color:black; } .register{ padding: 20px; font-weight:700; border:black solid 1px; -moz-border-radius: 10px; /* Gecko browsers */ -webkit-border-radius: 10px; /* Webkit browsers */ border-radius:10px; /* W3C syntax */ }</style>
-    <script language="javascript">function Check() // 验证表单数据有效性
+    <style>body { padding-top:50px; } h1 { color: black; } #content{ width:100%; min-height:600px; background:white url(footer.png); padding-top:20px; color:black; } .register{ padding: 20px; font-weight:700; border:black solid 1px; -moz-border-radius: 10px; /* Gecko browsers */ -webkit-border-radius: 10px; /* Webkit browsers */ border-radius:10px; /* W3C syntax */ }
+</style>
+    <script language="javascript">
+    function Check() // 验证表单数据有效性
       {
         if (document.send.username.value == "") {
           window.alert('请输入用户名!');
@@ -74,12 +76,38 @@
           return false;
         }
         return true;
-      }</script>
+      }
+
+function submit_userinfo(){
+$.ajax({
+    url: '/ajax?name=test',
+    data:{  
+        selRollBack : selRollBack,  
+        selOperatorsCode : selOperatorsCode,  
+        pass2 : pass2  
+    },  
+    dataType : 'json',
+    cache: false,
+    success: function(data) {
+        alert('Load was performed.'+data.ajax_resp);
+        self.location='/register_business';
+    },
+    error : function() {  
+        // view("异常！");  
+         alert("异常！");  
+    }  
+});
+
+
+
+
+</script>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]--></head>
+    <![endif]-->
+</head>
   
   <body>
     <nav class="navbar navbar-fixed-top navbar-inverse">
