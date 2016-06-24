@@ -15,5 +15,6 @@ urlpatterns = patterns('',
     url(r'^search/', views.search),
     url(r'^login/', views.login),
     url(r'^register/', views.register),
+    url(r'^register_business/', views.register_business),
 )
 

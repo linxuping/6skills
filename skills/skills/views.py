@@ -76,6 +76,16 @@ def register(request):
   html = t.render(Context({"id":1}))  
   return HttpResponse(html) 
 
+@csrf_exempt  
+def register_business(request):
+  print request.session.items()
+  fp = open('templates/register_business.html')  
+  t = Template(fp.read())  
+  fp.close()  
+  html = t.render(Context({"id":1}))  
+  return HttpResponse(html) 
+
+
 
 
 
