@@ -38,7 +38,7 @@ def dispatch(request):
 @csrf_exempt  
 def login(request):
   print request.session.items()
-  fp = open('templates/carousel.html')  
+  fp = open('templates/signin.html')  
   t = Template(fp.read())  
   fp.close()  
   html = t.render(Context({"id":1}))  
