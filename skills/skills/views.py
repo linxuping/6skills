@@ -32,6 +32,15 @@ def dispatch(request):
     #method check and return obj.
     pass
   print request.session.items()
+  fp = open('templates/carousel.html')  
+  t = Template(fp.read())  
+  fp.close()  
+  html = t.render(Context({"id":1}))  
+  return HttpResponse(html) 
+
+
+@csrf_exempt  
+def search(request):
   fp = open('templates/search.html')  
   t = Template(fp.read())  
   fp.close()  
