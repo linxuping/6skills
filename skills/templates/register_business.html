@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)http://v3.bootcss.com/examples/offcanvas/ -->
+<html lang="zh-CN">
+  
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="http://v3.bootcss.com/favicon.ico">
+    <title>Off Canvas Template for Bootstrap</title>
+    <!-- Bootstrap core CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/static/css/offcanvas_main.css" rel="stylesheet">
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/ie8-responsive-file-warning.js"></script>
+    <![endif]-->
+    <script src="/static/js/ie-emulation-modes-warning.js"></script>
+<style>body { padding-top:50px; } h1 { color: black; } #content{ width:100%; min-height:600px; background:white url(footer.png); padding-top:20px; color:black; } .register{ padding: 20px; font-weight:700; border:black solid 1px; -moz-border-radius: 10px; /* Gecko browsers */ -webkit-border-radius: 10px; /* Webkit browsers */ border-radius:10px; /* W3C syntax */ }
+</style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]--></head>
+  
+  <body>
+    <nav class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="http://v3.bootcss.com/examples/offcanvas/#">6skills</a></div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li class="active">
+              <a href="http://v3.bootcss.com/examples/offcanvas/#">Home</a></li>
+            <li>
+              <a href="http://v3.bootcss.com/examples/offcanvas/#about">About</a></li>
+            <li>
+              <a href="http://v3.bootcss.com/examples/offcanvas/#contact">Contact</a></li>
+          </ul>
+        </div>
+        <!-- /.nav-collapse --></div>
+      <!-- /.container --></nav>
+    <!-- /.navbar -->
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 blog-main">
+<div id="content">
+      <div class="container">
+        <form action="insert.php" method="post" class="form-horizontal" onsubmit="return Check()" name="send">
+          <div class="row">
+            <h1 class="col-md-6 col-md-offset-1 col-xs-10 col-xs-offset-1 page_title ">提交合作信息</h1></div>
+          <div class="col-md-6 col-md-offset-1 col-xs-10 col-xs-offset-1 register">
+            <div class="form-group">
+              <label for="username" class="col-sm-3 control-label">用户名：</label>
+              <div class="col-sm-8">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="username" placeholder="请输入用户名">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-user"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password" class="col-sm-3 control-label">密码：</label>
+              <div class="col-sm-8">
+                <div class="input-group">
+                  <input type="password" class="form-control" name="password" placeholder="请输入密码（六位以上）">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-lock"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="chkpwd" class="col-sm-3 control-label">确认密码：</label>
+              <div class="col-sm-8">
+                <div class="input-group">
+                  <input type="password" class="form-control" name="chkpwd" placeholder="请确认密码">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-exclamation-sign"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="form-group">
+            <label for="email" class="col-sm-3 control-label">邮箱：</label>
+            <div class="col-sm-8">
+            <div class="input-group">
+            <input type="text" class="form-control" name="email" placeholder="请输入有效邮箱">
+            <div class="input-group-addon">
+            <span class="glyphicon glyphicon-envelope"></span></div></div>
+            </div>
+            </div>
+            -->
+            <div class="form-group">
+              <label for="phone" class="col-sm-3 control-label">phone：</label>
+              <div class="col-sm-8">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="phone" placeholder="请输入有效num">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="authcode" class="col-sm-3 control-label">验证码：</label>
+              <div class="col-sm-5">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="authcode" placeholder="请输入验证码">
+                  <div class="input-group-addon">
+                    <span class="glyphicon glyphicon-ok"></span>
+                  </div>
+                </div>
+              </div>
+              <label for="authcode_img" class="control-label col-sm-1" style="padding-top: 0px;">
+                <a class="btn btn-default" href="javascript:void(0)" onclick="document.getElementById('captcha_img').src='authcode.php?r'+Math.random()" title="换一个">
+                  <img id="captcha_img" src="authcode.php?r=&lt;?php echo rand();?&gt;" alt="验证码"></a>
+              </label>
+            </div>
+            <div class="row">
+              <div class="col-md-3 col-md-offset-3 col-xs-12">
+                <button type="reset" class="btn btn-default btn-block">
+                  <b>&nbsp;&nbsp;清空&nbsp;&nbsp;</b>
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </div>
+              <div class="col-md-3 col-xs-12">
+                <button type="submit" class="btn btn-info btn-block">
+                  <b>&nbsp;&nbsp;提交&nbsp;&nbsp;</b>
+                  <span class="glyphicon glyphicon-arrow-right"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+        <br/>
+        <!-- 注册表单结束 --></div>
+
+    </div>		
+        </div>
+        <!-- /.blog-main -->
+        <div class="col-sm-3">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>合作流程</h4>
+            <p>第1步：<em>商家提交公司信息</em></p>
+            <p>第1步：<em>商家提交公司信息</em></p>
+            <p>第1步：<em>商家提交公司信息</em></p>
+            <hr/>
+            <h4>合作须知</h4>
+            <p>1、什么是六艺开放平台？
+ 
+依托于优质的用户资源，与高质量的供应商合作，为消费者提供全方位的、优质的、便捷的亲子活动服务。
+ 
+2、六艺开放平台覆盖哪些服务品类？
+ 
+六艺开放平台致力于满足用户对亲子活动的需求场景，目前优先覆盖以下品类：本地亲子活动、亲子出游、兴趣培养、早教等。
+ 
+3、对服务商有什么要求？需要哪些资质？
+ 
+六艺开放平台仅选择服务体验优质的供应商进行合作，对于服务体验不达标的供应商将不予入驻。
+ 
+重点考核服务商的以下服务体验：
+ 
+－至少覆盖1个城市，可服务一定量级的用户
+－服务礼仪、服务流程有统一的标准规范
+－服务所需的工具、耗材均为正品
+－服务质量在行业内领先
+－售后服务体系完善等
+服务商资质需符合国家规定，合作前需提供以下证件（所有证件需在有效期内）：
+ 
+－企业营业执照副本复印件
+－税务登记证复印件
+－组织机构代码证复印件
+－银行开户许可证复印件
+－法人代表人身份证正反面复印件
+－行业所需其他特殊资质
+5、与六艺合作需要收费吗？
+ 
+六艺暂不向服务商收取任何佣金和手续费。
+ 
+6、与六艺合作需要保证金吗？
+ 
+六艺暂不向服务商收取保证金。
+ 
+7、提交信息后多长时间会给予回复？
+ 
+收到您提交的合作信息后，会在1个工作日内进行审核。如果符合合作要求，我们在3个工作日内联系您洽谈合作；如果您的服务项目不符合合作要求，则暂时对您的项目没有合作意向，请您谅解，同时也会短信和邮件通知您，建议您提交信息时相关联系方式尽量保证齐全。</p>
+          </div>
+<!--
+          <div class="sidebar-module">
+            <h4>Archives</h4>
+            <ol class="list-unstyled">
+              <li>
+                <a href="#">March 2014</a></li>
+              <li>
+                <a href="#">February 2014</a></li>
+              <li>
+                <a href="#">January 2014</a></li>
+              <li>
+                <a href="#">December 2013</a></li>
+              <li>
+                <a href="#">November 2013</a></li>
+              <li>
+                <a href="#">October 2013</a></li>
+              <li>
+                <a href="#">September 2013</a></li>
+              <li>
+                <a href="#">August 2013</a></li>
+              <li>
+                <a href="#">July 2013</a></li>
+              <li>
+                <a href="#">June 2013</a></li>
+              <li>
+                <a href="#">May 2013</a></li>
+              <li>
+                <a href="#">April 2013</a></li>
+            </ol>
+          </div>
+-->
+          <div class="sidebar-module">
+            <h4>Elsewhere</h4>
+            <ol class="list-unstyled">
+              <li>
+                <a href="#">GitHub</a></li>
+              <li>
+                <a href="#">Twitter</a></li>
+              <li>
+                <a href="#">Facebook</a></li>
+            </ol>
+          </div>
+        </div>
+        <!-- /.blog-sidebar --></div>
+      <!--/row-->
+      <hr>
+      <footer>
+        <p>© Company 2014</p>
+      </footer>
+    </div>
+    <!--/.container-->
+    <!-- Bootstrap core JavaScript==================================================- ->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/static/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/static/js/offcanvas.js"></script>
+  </body>
+
+</html>
