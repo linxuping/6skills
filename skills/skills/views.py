@@ -51,15 +51,15 @@ def search(request):
 @csrf_exempt  
 def login(request):
   print request.POST
-  if request.POST.get("username",None) == None:
+  if request.POST.get("log_username",None) == None:
     print request.session.items()
     fp = open('templates/signin.html')  
     t = Template(fp.read())  
     fp.close()  
     html = t.render(Context({"id":1}))  
     return HttpResponse(html) 
-  username = request.POST["username"]
-  password = request.POST["password"]
+  username = request.POST["log_username"]
+  password = request.POST["log_password"]
   user = auth.authenticate(username=username, password=password)  
   if user is not None and user.is_active:
     return HttpResponseRedirect('/index') 
@@ -76,14 +76,45 @@ def register(request):
   html = t.render(Context({"id":1}))  
   return HttpResponse(html) 
 
+
+
+from myapp.models import Document
+from myapp.forms import DocumentForm
+from django.core.urlresolvers import reverse
+
 @csrf_exempt  
 def register_business(request):
-  print request.session.items()
-  fp = open('templates/register_business.html')  
-  t = Template(fp.read())  
-  fp.close()  
-  html = t.render(Context({"id":1}))  
-  return HttpResponse(html) 
+    print request.session.items()
+    # Handle file upload
+    print "--1--"
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        print "--2--",form.__dict__
+        if form.is_valid():
+            print "--3--"
+            newdoc = Document(docfile = request.FILES['docfile'])
+            newdoc.save()
+
+            # Redirect to the document list after POST
+            return HttpResponseRedirect(reverse('skills.views.register_business'))
+    else:
+        print "--4--"
+        form = DocumentForm() # A empty, unbound form
+
+    # Load documents for the list page
+    documents = Document.objects.all()
+
+    # Render list page with the documents and the form
+    #return render_to_response(
+    #    'templates/register_business.html',
+    #    {'documents': documents, 'form': form},
+    #    context_instance=RequestContext(request)
+    #)
+    fp = open('templates/register_business.html')  
+    t = Template(fp.read())  
+    fp.close()  
+    html = t.render(Context({'documents': documents, 'form': form}))  
+    return HttpResponse(html) 
 
 
 
