@@ -7,7 +7,13 @@ from django.contrib.auth.models import User
 from django.contrib import auth
 
 class TempMgr_base:  
-  #data
+  #status & data
+  class _status:
+    pass
+  st = _status
+  class _data:
+    pass
+  da = _data
   #methods
   pass
 class TempMgr_register(TempMgr_base):  
@@ -66,6 +72,19 @@ def login(request):
     return HttpResponseRedirect('/register_business') 
   else:
     return HttpResponseRedirect('/login') 
+
+
+
+@csrf_exempt  
+def manage(request):
+  print request.session.items()
+  fp = open('templates/manage.html')  
+  t = Template(fp.read())  
+  fp.close()  
+  html = t.render(Context({"id":1}))  
+  return HttpResponse(html) 
+
+
 
 
 @csrf_exempt  
