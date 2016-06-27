@@ -96,7 +96,7 @@ $.ajax({
         // view("异常！");  
          alert("异常！");  
     }  
-});
+})};
 
 
 
@@ -135,7 +135,8 @@ $.ajax({
     <!-- /.navbar -->
     <div id="content">
       <div class="container">
-        <form action="insert.php" method="post" class="form-horizontal" onsubmit="return Check()" name="send">
+        <form action="/register/normal" method="post" enctype="multipart/form-data" class="form-horizontal">
+          <input type="hidden" name="actype_normal"/>
           <div class="row">
             <h1 class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 page_title ">注册</h1></div>
           <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 register">
@@ -183,6 +184,20 @@ $.ajax({
             </div>
             -->
             <div class="form-group">
+              <label for="headportrait" class="col-sm-3 control-label">tou pic：</label>
+              <div class="col-sm-8">
+                <div class="input-group">
+                {% csrf_token %}
+                <p>{{ form.non_field_errors }}</p>
+                <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
+                <p>
+                    {{ form.docfile.errors }}
+                    {{ form.docfile }}
+                </p>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
               <label for="phone" class="col-sm-3 control-label">phone：</label>
               <div class="col-sm-8">
                 <div class="input-group">
@@ -205,7 +220,7 @@ $.ajax({
               </div>
               <label for="authcode_img" class="control-label col-sm-1" style="padding-top: 0px;">
                 <a class="btn btn-default" href="javascript:void(0)" onclick="document.getElementById('captcha_img').src='authcode.php?r'+Math.random()" title="换一个">
-                  <img id="captcha_img" src="authcode.php?r=&lt;?php echo rand();?&gt;" alt="验证码"></a>
+                  <img id="captcha_img" src="" alt="验证码"></a>
               </label>
             </div>
             <div class="row">

@@ -14,7 +14,10 @@ urlpatterns = patterns('',
     url(r'^index/', views.dispatch),
     url(r'^search/', views.search),
     url(r'^login/', views.login),
-    url(r'^register/', views.register),
-    url(r'^register_business/', views.register_business,name='list'),
+    #url(r'^register/', views.register),
+    #url(r'^register_business/', views.register_business,name='list'),
+    #url(r'^register/(?P<retype>\w+)', views.register_business,name='list'),
+    url(r'^register/normal/', views.register_business),
+    url(r'^register/business/', views.register_business,name='list'),
 )
 

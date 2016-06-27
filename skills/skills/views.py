@@ -62,7 +62,8 @@ def login(request):
   password = request.POST["log_password"]
   user = auth.authenticate(username=username, password=password)  
   if user is not None and user.is_active:
-    return HttpResponseRedirect('/index') 
+    auth.login(request,user) 
+    return HttpResponseRedirect('/register_business') 
   else:
     return HttpResponseRedirect('/login') 
 
@@ -84,7 +85,10 @@ from django.core.urlresolvers import reverse
 
 @csrf_exempt  
 def register_business(request):
-    print request.session.items()
+    print "sessions: ",request.session.items()
+    print "reqs: ",request.user,type(request.user),str(request.user)
+    print "args POST: ",request.POST
+    print "args GET: ",request.GET
     # Handle file upload
     print "--1--"
     if request.method == 'POST':
@@ -92,28 +96,31 @@ def register_business(request):
         print "--2--",form.__dict__
         if form.is_valid():
             print "--3--"
-            newdoc = Document(docfile = request.FILES['docfile'])
+            #how to changed the file name ??????????????????
+            #_file = "%s_%s"%(str(request.user),str(request.FILES['docfile']))
+            #if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
+            _file = request.FILES['docfile']
+            print "----------->",_file
+            #rm media/documents/2016/06/26/_file ??????????????????
+            newdoc = Document(docfile = _file)
+            print "new doc: ",newdoc.__dict__
             newdoc.save()
 
             # Redirect to the document list after POST
-            return HttpResponseRedirect(reverse('skills.views.register_business'))
+            #return HttpResponseRedirect(reverse('skills.views.register.business'))
+            return HttpResponseRedirect('/register/business') 
     else:
         print "--4--"
         form = DocumentForm() # A empty, unbound form
 
     # Load documents for the list page
-    documents = Document.objects.all()
-
-    # Render list page with the documents and the form
-    #return render_to_response(
-    #    'templates/register_business.html',
-    #    {'documents': documents, 'form': form},
-    #    context_instance=RequestContext(request)
-    #)
+    #documents = Document.objects.all()
     fp = open('templates/register_business.html')  
+    if request.POST.has_key("actype_normal"):
+        fp = open('templates/register.html')  
     t = Template(fp.read())  
     fp.close()  
-    html = t.render(Context({'documents': documents, 'form': form}))  
+    html = t.render(Context({'form': form}))  
     return HttpResponse(html) 
 
 
