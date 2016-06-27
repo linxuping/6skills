@@ -77,8 +77,20 @@ def login(request):
 
 @csrf_exempt  
 def manage(request):
+  print ">> manage."
   print request.session.items()
   fp = open('templates/manage.html')  
+  t = Template(fp.read())  
+  fp.close()  
+  html = t.render(Context({"id":1}))  
+  return HttpResponse(html) 
+
+
+@csrf_exempt  
+def manage_update(request):
+  print ">> manage_update."
+  print request.session.items()
+  fp = open('templates/manage_update.html')  
   t = Template(fp.read())  
   fp.close()  
   html = t.render(Context({"id":1}))  
