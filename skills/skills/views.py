@@ -5,6 +5,30 @@ from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib import auth
+import traceback
+import time
+import sys
+import modules as mo
+
+
+import MySQLdb
+g_conn,g_cur = None,None
+def init_db():
+		ret = None
+		for i in range(3):
+				try:
+						g_conn=MySQLdb.connect(host='localhost',user='root',passwd='666666',db='skills',port=3306)
+						g_cur=g_conn.cursor()
+						return True,None
+				except:
+						ret = str(sys.exc_info()) + "; " + str(traceback.format_exc())
+						time.sleep(1)
+		return False,ret
+		#cur.execute('select * from user')
+		#cur.close()
+		#g_conn.close()
+
+
 
 class TempMgr_base:  
   #status & data
@@ -84,6 +108,20 @@ def manage(request):
   fp.close()  
   html = t.render(Context({"id":1}))  
   return HttpResponse(html) 
+
+
+
+@csrf_exempt  
+def activity_op(request, optype):
+  print ">> activity_op.",optype
+  print request.session.items()
+  fp = open('templates/manage.html')  
+  t = Template(fp.read())  
+  fp.close()  
+  html = t.render(Context({"id":1}))  
+  return HttpResponse(html) 
+
+
 
 
 @csrf_exempt  
