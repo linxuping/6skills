@@ -3,6 +3,7 @@ g_conn,g_cur = None,None
 
 
 def init_db():
+		global g_conn,g_cur
 		ret = None
 		for i in range(3):
 				try:
@@ -16,7 +17,8 @@ def init_db():
 
 
 def test_db_insert():		#cur.execute('select * from user')
-		count=g_cur.execute('select * from 6s_activity')
+		global g_cur
+		count=g_cur.execute('select * from 6s_acttype')
 		print "test_db_insert: ",count
 print init_db()
 test_db_insert()
