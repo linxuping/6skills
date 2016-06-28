@@ -15,6 +15,13 @@ Date: 2016-06-20 16:12:12
 
 -- SET FOREIGN_KEY_CHECKS=0;
 -- 6s
+drop database skills;
+CREATE DATABASE IF NOT EXISTS skills DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+use skills;
+
+DROP TABLE IF EXISTS `6s_activity`;
+DROP TABLE IF EXISTS `6s_acttype`;
+DROP TABLE IF EXISTS `6s_position`;
 
 -- ----------------------------
 -- Table structure for 6s_position
@@ -53,31 +60,32 @@ CREATE TABLE `6s_acttype` (
   PRIMARY KEY (`id`) 
 );
 -- CONSTRAINT `fk_actid` FOREIGN KEY (pid) REFERENCES 6s_acttype(id)
-insert into 6s_acttype(id,pid,name) values (100,-1,"本地活动"),(200,-1,"亲子出游"),(300,-1,"兴趣培养"),(400,-1,"早教"),(101,100,"户外活动"),(102,100,"创意手工"),(103,100,"绘本故事会"),(104,100,"博物馆")
+insert into 6s_acttype(id,pid,name) values (100,-1,"本地活动"),(200,-1,"亲子出游"),(300,-1,"兴趣培养"),(400,-1,"早教"),(101,100,"户外活动"),(102,100,"创意手工"),(103,100,"绘本故事会"),(104,100,"博物馆"); -- and so on ....
 
 DROP TABLE IF EXISTS `6s_activity`;
 CREATE TABLE `6s_activity` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '',
   `price` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
-  `pos_id` int(11) NOT NULL COMMENT '',
+  `price_adult` int(11) NOT NULL DEFAULT -1 COMMENT 'adult价格',
   `title` varchar(255) COMMENT '标题',
+  `preinfo` varchar(255) COMMENT 'youhui xinxi',
   `content` varchar(255) COMMENT '正文',
   `time_from` timestamp NULL DEFAULT NULL COMMENT '活动时间-开始，NULL 长期',
   `time_to` timestamp NULL DEFAULT NULL COMMENT '活动时间-结束',
-  `place` varchar(255) COMMENT '地点',
+  `position_id` int(11) NOT NULL COMMENT '地点',
+  `position_details` varchar(255) COMMENT '地点 details',
   `age` smallint(4) NOT NULL DEFAULT -1 COMMENT '年龄',
-  `people_quantities` int(11) NOT NULL DEFAULT -1 COMMENT '参与人数',
+  `quantities` int(11) NOT NULL DEFAULT -1 COMMENT '参与人数',
   -- `acttype` enum('教育','体验') COMMENT '参与人数',
   `act_id` int(11) NOT NULL COMMENT '',
-  `img1` varchar(255) COMMENT '图片1',
-  `img2` varchar(255) COMMENT '图片2',
-  `img3` varchar(255) COMMENT '图片3',
+  `imgs` varchar(255) COMMENT '图片 spirit by empty space',
   `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_posid` FOREIGN KEY (pos_id) REFERENCES 6s_position(id) ON UPDATE CASCADE,
+  CONSTRAINT `fk_posid` FOREIGN KEY (position_id) REFERENCES 6s_position(id) ON UPDATE CASCADE,
   CONSTRAINT `fk_actid` FOREIGN KEY (act_id) REFERENCES 6s_acttype(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age,quantities,act_id,imgs) values (100,-1,"title","youhui xinxi","content","2016-06-01","2016-06-03",101010800,"position details",16,4,104,"a.jpg b.jpg c.png");
 
 	
 DROP TABLE IF EXISTS `6s_user`;
