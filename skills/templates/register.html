@@ -20,7 +20,7 @@
       <script src="../../assets/js/ie8-responsive-file-warning.js"></script>
     <![endif]-->
     <script src="/static/js/ie-emulation-modes-warning.js"></script>
-    <style>body { padding-top:50px; } h1 { color: black; } #content{ width:100%; min-height:600px; background:white url(footer.png); padding-top:20px; color:black; } .register{ padding: 20px; font-weight:700; border:black solid 1px; -moz-border-radius: 10px; /* Gecko browsers */ -webkit-border-radius: 10px; /* Webkit browsers */ border-radius:10px; /* W3C syntax */ }
+    <style>body { padding-top:50px; } h1 { color: black; } #content{ width:100%; min-height:600px; background:white; padding-top:20px; color:black; } .register{ padding: 20px; font-weight:700; border:black solid 1px; -moz-border-radius: 10px; /* Gecko browsers */ -webkit-border-radius: 10px; /* Webkit browsers */ border-radius:10px; /* W3C syntax */ }
 </style>
     <script language="javascript">
     function Check() // 验证表单数据有效性
@@ -135,7 +135,7 @@ $.ajax({
     <!-- /.navbar -->
     <div id="content">
       <div class="container">
-        <form action="/register/normal" method="post" enctype="multipart/form-data" class="form-horizontal">
+        <form action="/register/normal" method="post" enctype="multipart/form-data">
           <input type="hidden" name="actype_normal"/>
           <div class="row">
             <h1 class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 page_title ">注册</h1></div>
@@ -184,7 +184,7 @@ $.ajax({
             </div>
             -->
             <div class="form-group">
-              <label for="headportrait" class="col-sm-3 control-label">tou pic：</label>
+              <label for="headportrait" class="col-sm-3 control-label">头像：</label>
               <div class="col-sm-8">
                 <div class="input-group">
                 {% csrf_token %}
@@ -198,10 +198,10 @@ $.ajax({
               </div>
             </div>
             <div class="form-group">
-              <label for="phone" class="col-sm-3 control-label">phone：</label>
+              <label for="phone" class="col-sm-3 control-label">电话：</label>
               <div class="col-sm-8">
                 <div class="input-group">
-                  <input type="text" class="form-control" name="phone" placeholder="请输入有效num">
+                  <input type="text" class="form-control" name="phone" placeholder="请输入有效电话">
                   <div class="input-group-addon">
                     <span class="glyphicon glyphicon-envelope"></span>
                   </div>

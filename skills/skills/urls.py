@@ -17,10 +17,10 @@ urlpatterns = patterns('',
     url(r'^manage$', views.manage),
     url(r'^manage/update/', views.manage_update),
     url(r'^activity/(?P<optype>\w+)', views.activity_op),
-    #url(r'^register/', views.register),
+    url(r'^register/', views.register),
     #url(r'^register_business/', views.register_business,name='list'),
     #url(r'^register/(?P<retype>\w+)', views.register_business,name='list'),
-    url(r'^register/normal/', views.register_business),
+    #url(r'^register/normal/', views.register_business),
     url(r'^register/business/', views.register_business,name='list'),
 )
 

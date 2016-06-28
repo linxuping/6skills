@@ -91,16 +91,21 @@ insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_t
 DROP TABLE IF EXISTS `6s_user`;
 CREATE TABLE `6s_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `refid` int(11) unsigned NOT NULL,
   `username` varchar(127) NOT NULL COMMENT '用户名',
-  `password` varchar(127) NOT NULL COMMENT '密码',
+  -- `password` varchar(127) NOT NULL COMMENT '密码',
   `phone` varchar(24) NOT NULL COMMENT '联系方式',
-  `role` enum('管理员','商户') COMMENT '角色',
+  `role` enum('admin','business','normal') COMMENT '角色',
+  `img` varchar(255) COMMENT '图片',
   `up_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '频度',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
   `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+delete from auth_user where username='test';
+insert into auth_user(username,password) values ("test","test");
+insert into 6s_user(refid,username,phone,role,img) values (1,"test","12345",'普通',"/tmp/test.png");
 
 
 

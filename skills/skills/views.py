@@ -9,6 +9,7 @@ import traceback
 import time
 import sys
 import modules as mo
+import dbmgr
 
 
 
@@ -108,13 +109,59 @@ def manage_update(request):
 
 
 @csrf_exempt  
-def register(request):
-  print request.session.items()
-  fp = open('templates/register.html')  
-  t = Template(fp.read())  
-  fp.close()  
-  html = t.render(Context({"id":1}))  
-  return HttpResponse(html) 
+def register(req):
+		print "reqs: ",req.user
+		print "args POST: ",req.POST
+		print "args GET: ",req.GET
+	# Handle file upload
+		print "--1--"
+		if req.method == 'POST':
+				form = DocumentForm(req.POST, req.FILES)
+				print "--2--",form.__dict__
+				if form.is_valid():
+						print "--3--"
+						#how to changed the file name ??????????????????
+						#_file = "%s_%s"%(str(request.user),str(request.FILES['docfile']))
+						#if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
+						_file = req.FILES['docfile']
+						print "----------->",_file
+						#rm media/documents/2016/06/26/_file ??????????????????
+						newdoc = Document(docfile = _file)
+						print "new doc: ",newdoc.__dict__
+						newdoc.save()
+
+						username = req.POST['username']
+						password = req.POST['password']
+						phone = req.POST['phone']
+						img = _file
+						#auth_user -- check user existed or not .
+						user = User.objects.create_user(username,"skills@me.com",password)
+						user.save()
+						#6s_user
+						try:
+								_sql = "insert into 6s_user(refid,username,phone,role,img) values(%d,'%s','%s','%s','%s');"%(user.id,username,phone,u'normal',img)
+								print _sql
+								count,rets=dbmgr.db_exec(_sql)
+								if count != 1:
+										#delete 6s_user
+										user.delete()
+						except:
+								user.delete()
+
+			# Redirect to the document list after POST
+			#return HttpResponseRedirect(reverse('skills.views.register.business'))
+						return HttpResponseRedirect('/register/business') 
+		else:
+				print "--4--"
+				form = DocumentForm() # A empty, unbound form
+
+	# Load documents for the list page
+	#documents = Document.objects.all()
+		fp = open('templates/register.html')  
+		t = Template(fp.read())  
+		fp.close()  
+		html = t.render(Context({'form': form}))  
+		return HttpResponse(html) 
 
 
 
@@ -124,8 +171,7 @@ from django.core.urlresolvers import reverse
 
 @csrf_exempt  
 def register_business(request):
-    print "sessions: ",request.session.items()
-    print "reqs: ",request.user,type(request.user),str(request.user)
+    print "reqs: ",request.user
     print "args POST: ",request.POST
     print "args GET: ",request.GET
     # Handle file upload
@@ -155,8 +201,6 @@ def register_business(request):
     # Load documents for the list page
     #documents = Document.objects.all()
     fp = open('templates/register_business.html')  
-    if request.POST.has_key("actype_normal"):
-        fp = open('templates/register.html')  
     t = Template(fp.read())  
     fp.close()  
     html = t.render(Context({'form': form}))  

@@ -1,8 +1,12 @@
 import MySQLdb
+import copy
+import time
+import sys 
+import traceback 
 g_conn,g_cur = None,None
+#lock
 
-
-def init_db():
+def db_init():
 		global g_conn,g_cur
 		ret = None
 		for i in range(3):
@@ -16,7 +20,20 @@ def init_db():
 		return False,ret
 
 
-def test_db_select():		#cur.execute('select * from user')
+def db_exec(_sql):
+		count,rets = -1,None
+		for i in range(3):
+				try:
+						count=g_cur.execute(_sql) 
+						rets = g_cur.fetchall()
+				except:
+						#log.
+						print "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc())
+						time.sleep(1)
+						db_init()
+		return count,rets
+
+def db_select_test():		#cur.execute('select * from user')
 		global g_cur
 		count=g_cur.execute('select * from 6s_acttype')
 		print "test_db_insert: ",count
@@ -25,8 +42,11 @@ def test_db_select():		#cur.execute('select * from user')
 			print ret
 
 
-print init_db()
-test_db_select()
+print db_init()
+print db_exec("select * from 6s_user where username='test';")
+print db_exec("delete from 6s_user where username='test';")
+print db_exec("insert into 6s_user(username) values('test');")
+#db_select_test()
 		#cur.close()
 		#g_conn.close()
 
