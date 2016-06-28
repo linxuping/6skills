@@ -16,12 +16,17 @@ def init_db():
 		return False,ret
 
 
-def test_db_insert():		#cur.execute('select * from user')
+def test_db_select():		#cur.execute('select * from user')
 		global g_cur
 		count=g_cur.execute('select * from 6s_acttype')
 		print "test_db_insert: ",count
+		rets = g_cur.fetchall()
+		for ret in rets:
+			print ret
+
+
 print init_db()
-test_db_insert()
+test_db_select()
 		#cur.close()
 		#g_conn.close()
 
