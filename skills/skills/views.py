@@ -254,6 +254,15 @@ def activity_op(request, optype):
   return HttpResponse(html) 
 '''
 
+@csrf_exempt  
+def register_business_end(request):
+  print 'templates/register_business_end.html...'  
+  fp = open('templates/register_business_end.html')  
+  t = Template(fp.read())  
+  fp.close()  
+  html = t.render(Context({"id":1}))  
+  return HttpResponse(html) 
+
 
 
 
