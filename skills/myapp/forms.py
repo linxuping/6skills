@@ -6,3 +6,5 @@ class DocumentForm(forms.Form):
         label='Select a file',
         help_text='max. 42 megabytes'
     )
+    #https://docs.djangoproject.com/en/1.9/ref/forms/fields/
+
