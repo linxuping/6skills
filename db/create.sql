@@ -81,8 +81,8 @@ CREATE TABLE `6s_activity` (
   `imgs` varchar(255) COMMENT '图片 spirit by empty space',
   `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_posid` FOREIGN KEY (position_id) REFERENCES 6s_position(id) ON UPDATE CASCADE,
-  CONSTRAINT `fk_actid` FOREIGN KEY (act_id) REFERENCES 6s_acttype(id) ON UPDATE CASCADE
+  CONSTRAINT `fk_6s_activity_posid` FOREIGN KEY (position_id) REFERENCES 6s_position(id) ON UPDATE CASCADE,
+  CONSTRAINT `fk_6s_activity_actid` FOREIGN KEY (act_id) REFERENCES 6s_acttype(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age,quantities,act_id,imgs) values (100,-1,"title","youhui xinxi","content","2016-06-01","2016-06-03",101010800,"position details",16,4,104,"a.jpg b.jpg c.png");
@@ -108,8 +108,30 @@ insert into auth_user(username,password) values ("test","test");
 insert into 6s_user(refid,username,phone,role,img) values (1,"test","12345",'普通',"/tmp/test.png");
 
 
+DROP TABLE IF EXISTS `6s_user_business`;
+CREATE TABLE `6s_user_business` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `refid` int(11) unsigned NOT NULL,
+  `company` varchar(127) NOT NULL COMMENT '公司',
+  `service_item` varchar(127) NOT NULL COMMENT '服务项目',-- local,travel,interest,tech
+  `img_business_licence` varchar(255) COMMENT '营业执照',
+  `phone_customservice` varchar(24) NOT NULL COMMENT '公司客服',
+  `shop_name` varchar(24) NOT NULL COMMENT '门店名称',
+  `city` varchar(24) NOT NULL COMMENT '城市',
+  `region` varchar(24) NOT NULL COMMENT '区域',
+  `address` varchar(24) NOT NULL COMMENT '信息地址',
+  `name` varchar(24) NOT NULL COMMENT '姓名',
+  `phone` varchar(24) NOT NULL COMMENT '电话',
+  `email` varchar(24) NOT NULL COMMENT '邮箱',
+  `QQ` varchar(24) NOT NULL COMMENT 'QQ',
+  `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
+  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
+  CONSTRAINT `fk_6s_user_business_uid` FOREIGN KEY (refid) REFERENCES 6s_user(id) ON UPDATE CASCADE,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+insert into 6s_user(username) values ("test");
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1,"comp","tech","blimg.png","121","shopname","city","region","addr","name","phone","email","QQ");
 
 
 	   
