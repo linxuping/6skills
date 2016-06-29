@@ -61,13 +61,17 @@ WSGI_APPLICATION = 'skills.wsgi.application'
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 '''
+DB_HOST = 'localhost'
+DB_NAME = ''
+DB_USERNAME = ''
+DB_PASSWORD = ''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'skills',
-        'USER':'root',
-        'PASSWORD':'666666',
-        'HOST':'',
+        'NAME': DB_NAME,
+        'USER':DB_USERNAME,
+        'PASSWORD':DB_PASSWORD,
+        'HOST':DB_HOST,
         'PORT':'',
     }
 }

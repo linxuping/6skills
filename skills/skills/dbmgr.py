@@ -3,6 +3,7 @@ import copy
 import time
 import sys 
 import traceback 
+import skills.settings as settings
 g_conn,g_cur = None,None
 #lock
 
@@ -11,7 +12,9 @@ def db_init():
 		ret = None
 		for i in range(3):
 				try:
-						g_conn=MySQLdb.connect(host='localhost',user='root',passwd='666666',db='skills',port=3306)
+						#g_conn=MySQLdb.connect(host='localhost',user='',passwd='',db='sixskillsdb',port=3306)
+						print settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,DB_NAME
+						g_conn=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=DB_NAME,port=3306)
 						g_cur=g_conn.cursor()
 						return True,None
 				except:
