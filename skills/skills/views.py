@@ -21,6 +21,9 @@ class TempMgr_base:
   class _data:
     pass
   da = _data
+  class _errinfo:
+    error = ""
+  einfo = _errinfo
   #methods
   pass
 class TempMgr_register(TempMgr_base):  
@@ -82,16 +85,6 @@ def login(request):
 
 
 
-@csrf_exempt  
-def manage(request):
-  print ">> manage."
-  print request.session.items()
-  fp = open('templates/manage.html')  
-  t = Template(fp.read())  
-  fp.close()  
-  html = t.render(Context({"id":1}))  
-  return HttpResponse(html) 
-
 
 
 
@@ -113,7 +106,7 @@ def register(req):
 		print "reqs: ",req.user
 		print "args POST: ",req.POST
 		print "args GET: ",req.GET
-	# Handle file upload
+		#Handle file upload
 		print "--1--"
 		if req.method == 'POST':
 				form = DocumentForm(req.POST, req.FILES)
@@ -126,7 +119,9 @@ def register(req):
 						_file = req.FILES['docfile']
 						print "----------->",_file
 						#rm media/documents/2016/06/26/_file ??????????????????
-						newdoc = Document(docfile = _file)
+						newdoc = Document(docfile=_file)
+						newdoc.docfile.field.upload_to = "documents/%Y/%m/%d"+"/%s"%str(req.user)
+						#newdoc.init_docfile(str(req.user))
 						print "new doc: ",newdoc.__dict__
 						newdoc.save()
 
@@ -170,21 +165,21 @@ from myapp.forms import DocumentForm
 from django.core.urlresolvers import reverse
 
 @csrf_exempt  
-def register_business(request):
-    print "reqs: ",request.user
-    print "args POST: ",request.POST
-    print "args GET: ",request.GET
+def register_business(req):
+    print "reqs: ",req.user
+    print "args POST: ",req.POST
+    print "args GET: ",req.GET
     # Handle file upload
     print "--1--"
-    if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
+    if req.method == 'POST':
+        form = DocumentForm(req.POST, req.FILES)
         print "--2--",form.__dict__
         if form.is_valid():
             print "--3--"
             #how to changed the file name ??????????????????
-            #_file = "%s_%s"%(str(request.user),str(request.FILES['docfile']))
+            #_file = "%s_%s"%(str(req.user),str(req.FILES['docfile']))
             #if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
-            _file = request.FILES['docfile']
+            _file = req.FILES['docfile']
             print "----------->",_file
             #rm media/documents/2016/06/26/_file ??????????????????
             newdoc = Document(docfile = _file)
@@ -265,6 +260,34 @@ def register_business_end(request):
 
 
 
+
+#manage.
+class TempMgr_manage(TempMgr_base):
+		class _tab:
+				activity_published = ""
+				activity_nopublish = ""
+				user_manage = ""
+				user_analyze = ""
+				history_analyze = ""
+				account_setting = ""
+				def init(self):
+						self.activity_published,self.activity_nopublish,self.user_manage,self.user_analyze,self.history_analyze,self.account_setting="","","","","",""
+		tab = _tab()
+		pass
+
+@csrf_exempt  
+def manage(request, tab="activity_published"):
+	print ">> manage."
+	obj = TempMgr_manage
+	obj.tab.init()
+	#obj.tab.activity_published = "active" 
+	print ">>>  ",obj.tab,tab,"active"
+	setattr(obj.tab,tab,"active")
+	fp = open('templates/manage.html')  
+	t = Template(fp.read())  
+	fp.close()  
+	html = t.render(Context({"obj":obj}))  
+	return HttpResponse(html) 
 
 
 
