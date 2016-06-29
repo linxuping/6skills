@@ -15,8 +15,8 @@ Date: 2016-06-20 16:12:12
 
 -- SET FOREIGN_KEY_CHECKS=0;
 -- 6s
-drop database sixskillsdb;
-CREATE DATABASE IF NOT EXISTS sixskillsdb DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+-- drop database sixskillsdb;
+-- CREATE DATABASE IF NOT EXISTS sixskillsdb DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 use sixskillsdb;
 
 DROP TABLE IF EXISTS `6s_activity`;
