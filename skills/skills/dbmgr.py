@@ -12,9 +12,9 @@ def db_init():
 		ret = None
 		for i in range(3):
 				try:
-						#g_conn=MySQLdb.connect(host='localhost',user='',passwd='',db='sixskillsdb',port=3306)
-						print settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,DB_NAME
-						g_conn=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=DB_NAME,port=3306)
+						#g_conn=MySQLdb.connect(host='',user='',passwd='',db='',port=)
+						print "%s_%s_%s_%s"%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME)
+						g_conn=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=settings.DB_NAME,port=settings.DB_PORT)
 						g_cur=g_conn.cursor()
 						return True,None
 				except:
@@ -24,6 +24,7 @@ def db_init():
 
 
 def db_exec(_sql):
+		global g_conn,g_cur
 		count,rets = -1,None
 		for i in range(3):
 				try:
@@ -33,7 +34,7 @@ def db_exec(_sql):
 						#log.
 						print "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc())
 						time.sleep(1)
-						db_init()
+						print db_init()
 		return count,rets
 
 def db_select_test():		#cur.execute('select * from user')
@@ -45,10 +46,10 @@ def db_select_test():		#cur.execute('select * from user')
 			print ret
 
 
-print db_init()
-print db_exec("select * from 6s_user where username='test';")
-print db_exec("delete from 6s_user where username='test';")
-print db_exec("insert into 6s_user(username) values('test');")
+#print db_init()
+#print db_exec("select * from 6s_user where username='test';")
+#print db_exec("delete from 6s_user where username='test';")
+#print db_exec("insert into 6s_user(username) values('test');")
 #db_select_test()
 		#cur.close()
 		#g_conn.close()
