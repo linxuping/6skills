@@ -88,18 +88,6 @@ def login(request):
 
 
 
-@csrf_exempt  
-def manage_update(request):
-  print ">> manage_update."
-  print request.session.items()
-  fp = open('templates/manage_update.html')  
-  t = Template(fp.read())  
-  fp.close()  
-  html = t.render(Context({"id":1}))  
-  return HttpResponse(html) 
-
-
-
 
 @csrf_exempt  
 def register(req):
@@ -308,13 +296,13 @@ def manage(req, tab="activity_published"):#, action=None
 		_limit = g_page_items_limit
 		_offset = 0
 
-	_sql = "select title,time_from,time_to,quantities from 6s_activity limit %d offset %d;"%(_limit,_offset)
+	_sql = "select title,time_from,time_to,quantities,id from 6s_activity where status=1 limit %d offset %d;"%(_limit,_offset)
 	print _sql
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		obj.actlist = []
 		for i in range(count):
-			obj.actlist.append( {'title':rets[i][0],'time_from':rets[i][1],'time_to':rets[i][2],'quantities':rets[i][3]} )
+			obj.actlist.append( {'title':rets[i][0],'time_from':rets[i][1],'time_to':rets[i][2],'quantities':rets[i][3],'id':rets[i][4]} )
 	else:
 		_offset = _offset-_limit
 		if _offset <= 0:
@@ -326,6 +314,39 @@ def manage(req, tab="activity_published"):#, action=None
 	fp.close()  
 	html = t.render(Context({"obj":obj}))  
 	return HttpResponse(html) 
+
+
+@csrf_exempt  
+def manage_update(req, optype):
+	print ">> manage_update.",optype
+	print "get.",req.GET
+	print "post.",req.POST
+
+	if optype == "update":
+		if req.GET.get("type",None)=="activity" and req.GET.has_key("id"):
+			_id = req.GET["id"] 
+			_sql = "select * from 6s_user where status=1 and id=(select id from auth_user where username='%s');"%(str(req.user))
+			count,rets=dbmgr.db_exec(_sql)
+			print _sql,count,rets
+			if count == 1:
+				_sql = "update 6s_activity set status=0 where status=1 and id=%s and user_id=(select id from auth_user where username='%s');"%(_id,str(req.user))
+				count,rets=dbmgr.db_exec(_sql)
+				if count == 1:
+					print "jump to business page...... "
+			else:
+				pass #error log.
+	elif optype == "delete":
+		if req.GET.get("type",None)=="activity" and req.GET.has_key("id"):
+			_id = req.GET["id"] 
+			_sql = "select * from 6s_user where status=1 and id=(select id from auth_user where username='%s');"%(str(req.user))
+			pass
+
+	fp = open('templates/manage_update.html')  
+	t = Template(fp.read())  
+	fp.close()  
+	html = t.render(Context({"id":1}))  
+	return HttpResponse(html) 
+
 
 
 

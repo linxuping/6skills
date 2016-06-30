@@ -120,7 +120,8 @@
                   <td>{{act.time_from}}</td>
                   <td>{{act.time_to}}</td>
                   <td>{{act.quantities}}</td>
-                  <td><button class="btn">下线</button>&nbsp<button class="btn">删除</button></td>
+                  <td><button class="btn" onclick="window.location.href='/manage/update?type=activity&id={{act.id}}';">下线</button>&nbsp
+                      <button class="btn" onclick="window.location.href='/manage/delete?type=activity&id={{act.id}}';">删除</button></td>
                 </tr>
 {% endfor %}
               </tbody>
