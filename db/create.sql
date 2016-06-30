@@ -76,6 +76,7 @@ CREATE TABLE `6s_activity` (
   `position_details` varchar(255) COMMENT '地点 details',
   `age` smallint(4) NOT NULL DEFAULT -1 COMMENT '年龄',
   `quantities` int(11) NOT NULL DEFAULT -1 COMMENT '参与人数',
+  `mark` float(5,2) NOT NULL DEFAULT 0 COMMENT '评分',
   -- `acttype` enum('教育','体验') COMMENT '参与人数',
   `act_id` int(11) NOT NULL COMMENT '',
   `imgs` varchar(255) COMMENT '图片 spirit by empty space',
@@ -85,7 +86,13 @@ CREATE TABLE `6s_activity` (
   CONSTRAINT `fk_6s_activity_actid` FOREIGN KEY (act_id) REFERENCES 6s_acttype(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age,quantities,act_id,imgs) values (100,-1,"title","youhui xinxi","content","2016-06-01","2016-06-03",101010800,"position details",16,4,104,"a.jpg b.jpg c.png");
+insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age,quantities,act_id,imgs) values (100,-1,"acttitle","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010800,"position details",16,4,104,"a.jpg b.jpg c.png");
+insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age,quantities,act_id,imgs) values (103,-1,"acttitle2","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010800,"position details2",19,6,104,"a2.jpg b2.jpg");
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id) values ("atitle3","2016-06-03","2016-06-30",6,101010800,104);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id) values ("atitle4","2016-06-04","2016-06-30",6,101010800,104);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id) values ("atitle5","2016-06-05","2016-06-30",6,101010800,104);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id) values ("atitle6","2016-06-06","2016-06-30",6,101010800,104);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id) values ("atitle7","2016-06-07","2016-06-30",6,101010800,104);
 
 	
 DROP TABLE IF EXISTS `6s_user`;

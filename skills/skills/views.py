@@ -275,19 +275,60 @@ class TempMgr_manage(TempMgr_base):
 		tab = _tab()
 		pass
 
+class dbobj:
+		pass
+
+g_page_items_limit = 3
 @csrf_exempt  
-def manage(request, tab="activity_published"):
-	print ">> manage."
+def manage(req, tab="activity_published"):#, action=None
+	attrs = req.POST
+	print ">> manage.",attrs
+
 	obj = TempMgr_manage
 	obj.tab.init()
 	#obj.tab.activity_published = "active" 
 	print ">>>  ",obj.tab,tab,"active"
 	setattr(obj.tab,tab,"active")
+
+	_limit = g_page_items_limit
+	_offset = 0
+	if attrs.has_key("table_limit") and attrs.has_key("table_offset"):
+		#check int or not.
+		_limit = int(attrs["table_limit"])
+		_offset = int(attrs["table_offset"])
+		if _limit>=0 and _offset>=0:
+			action = attrs.get("table_action", None)
+			if action == "priv":
+				_offset = _offset-_limit
+				if _offset <= 0:
+					_offest = 0
+			elif action == "next":
+				_offset = _offset+_limit
+	if _limit<=0 or _offset<=0:
+		_limit = g_page_items_limit
+		_offset = 0
+
+	_sql = "select title,time_from,time_to,quantities from 6s_activity limit %d offset %d;"%(_limit,_offset)
+	print _sql
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		obj.actlist = []
+		for i in range(count):
+			obj.actlist.append( {'title':rets[i][0],'time_from':rets[i][1],'time_to':rets[i][2],'quantities':rets[i][3]} )
+	else:
+		_offset = _offset-_limit
+		if _offset <= 0:
+			_offset = 0
+	obj.tableattrs = { "limit":_limit,"offset":_offset}
+
 	fp = open('templates/manage.html')  
 	t = Template(fp.read())  
 	fp.close()  
 	html = t.render(Context({"obj":obj}))  
 	return HttpResponse(html) 
+
+
+
 
 
 
