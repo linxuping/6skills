@@ -223,8 +223,8 @@ def activity_op(request, optype):
   #documents = Document.objects.all()
   print "--5--"
   fp = open('templates/activity_add.html')  
-  if request.POST.has_key("actype_normal"):
-      fp = open('templates/register.html')  
+  #if request.POST.has_key("actype_normal"):
+  #    fp = open('templates/register.html')  
   t = Template(fp.read())  
   fp.close()  
   html = t.render(Context({'form': form}))  
