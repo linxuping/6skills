@@ -26,6 +26,16 @@
       <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]--></head>
+<script type="text/javascript">
+function activity_add_submit()
+{
+  if (acttime_from.value > acttime_to.value){
+    alert("请输入正确的活动时间范围 !");
+    return;
+  }
+  activity_add_form.submit();
+}
+</script>
   
   <body>
     <nav class="navbar navbar-fixed-top navbar-inverse">
@@ -57,7 +67,7 @@
           <div id="content">
             <div class="container">
               <!--<h1 class="col-md-6 col-md-offset-2 col-xs-10 col-xs-offset-2 page_title ">***</h1>-->
-              <form action="/activity/add" method="post" enctype="multipart/form-data">
+              <form id="activity_add_form" action="/activity/add" method="post" enctype="multipart/form-data">
                 <!--<div class="col-md-6 col-md-offset-1 col-xs-10 col-xs-offset-1">-->
                 <div class="col-md-offset-1 col-xs-10 col-xs-offset-1">
                   <div class="table-responsive">
@@ -87,7 +97,7 @@
                           <td>
                             <div class="col-sm-8">
                               <div class="input-group">
-                                <input type="password" class="form-control" name="pre_info" placeholder="限制为120个字符">
+                                <input type="input" class="form-control" name="pre_info" placeholder="限制为120个字符">
                                 <div class="input-group-addon">
                                   <span class="glyphicon glyphicon-lock"></span>
                                 </div>
@@ -97,18 +107,18 @@
                         </tr>
                         <tr>
                           <td>
-                            <label for="accontent" class=" ">正文</label></td>
+                            <label for="actcontent" class=" ">正文</label></td>
                           <td>
                             <div class="col-sm-8">
                               <div class="input-group">
-                                <textarea rows="5" cols="100%" class="form-control"></textarea>
+                                <textarea rows="5" cols="100%" class="form-control" name="actcontent"></textarea>
                               </div>
                             </div>
                           </td>
                         </tr>
                         <tr>
                           <td>
-                            <label for="accontent" class=" ">图片</label></td>
+                            <label for="activityimgs" class=" ">图片</label></td>
                           <td>
                             <div class="col-sm-8">
                               <div class="input-group">
@@ -124,8 +134,8 @@
                           <td>
                             <div class="col-sm-8">
                               <div>
-                                从<input type="date" name="acttime_from">
-                                到<input type="date" name="acttime_to">
+                                从<input type="date" name="acttime_from" id="acttime_from">
+                                到<input type="date" name="acttime_to" id="acttime_to">
                               </div>
                             </div>
                           </td>
@@ -157,8 +167,8 @@
                           <td>
                             <div class="col-sm-8">
                               <div class="input-group">
-                                儿童<input type="input" name="price_child" placeholder="" style="width:30%">
-                                成人<input type="input" name="price_adult" placeholder="" style="width:30%">
+                                儿童<input type="input" name="price_child" placeholder="" style="width:10%">
+                                成人<input type="input" name="price_adult" placeholder="" style="width:10%">
                               </div>
                             </div>
                           </td>
@@ -169,8 +179,8 @@
                           <td>
                             <div class="col-sm-8">
                               <div class="input-group">
-                                <label><input name="Fruit" type="radio" value="" />不限&nbsp&nbsp </label>
-                                <label><input name="Fruit" type="radio" value="" />其他&nbsp </label>
+                                <label><input name="Fruit" type="radio" value="unlimit" checked/>不限&nbsp&nbsp </label>
+                                <label><input name="Fruit" type="radio" value="others" />其他&nbsp </label>
                                 <input type="input" name="quan_limit" style="width:30%">
                               </div>
                             </div>
@@ -182,11 +192,11 @@
                           <td>
                             <div class="col-sm-8">
                               <div class="input-group">
-                                <label><input name="age" type="radio" value="" />不限&nbsp </label>
-                                <label><input name="age" type="radio" value="" />0-3岁&nbsp </label>
-                                <label><input name="age" type="radio" value="" />3-6岁&nbsp </label>
-                                <label><input name="age" type="radio" value="" />6-12岁&nbsp </label>
-                                <label><input name="age" type="radio" value="" />其他&nbsp </label>
+                                <label><input name="age" type="radio" value="none" checked/>不限&nbsp </label>
+                                <label><input name="age" type="radio" value="0-3" />0-3岁&nbsp </label>
+                                <label><input name="age" type="radio" value="3-6" />3-6岁&nbsp </label>
+                                <label><input name="age" type="radio" value="6-12" />6-12岁&nbsp </label>
+                                <label><input name="age" type="radio" value="others" />其他&nbsp </label>
                                 <input type="input" name="quan_limit" style="width:30%">
                               </div>
                             </div>
@@ -229,7 +239,7 @@
                       </button>
                     </div>-->
                     <div class="col-md-3 col-md-offset-3 col-xs-12">
-                      <button type="submit" class="btn btn-info btn-block">
+                      <button type="button" class="btn btn-info btn-block" onclick="activity_add_submit();">
                         <b>&nbsp;&nbsp;提交&nbsp;&nbsp;</b>
                         <span class="glyphicon glyphicon-arrow-right"></span>
                       </button>

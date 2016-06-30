@@ -194,7 +194,9 @@ def register_business(req):
 @csrf_exempt  
 def activity_op(request, optype):
   print ">>>>>>>>>>> activity_op.",optype
-  print request.session.items()
+  print "args POST: ",request.POST
+  print "args GET: ",request.GET
+
   if optype == "add":
     if request.method == 'POST':
         print "files: ",request.FILES
