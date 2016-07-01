@@ -36,18 +36,18 @@ class TempMgr_login(TempMgr_base):
 
 
 @csrf_exempt  
-def dispatch(request):
-  if request.is_ajax():
+def dispatch(req):
+  if req.is_ajax():
     #method check and return json.
-    print request.GET  #pass args using "url: '/ajax?name=test',"
+    print req.GET  #pass args using "url: '/ajax?name=test',"
     my_response = {'ajax_resp':'Hello, webapp World!'}
     datos = json.dumps(my_response)
     return HttpResponse(datos, mimetype='application/json')
   else:
-    print request.POST
+    print req.POST
     #method check and return obj.
     pass
-  print request.session.items()
+  print req.session.items()
   fp = open('templates/carousel.html')  
   t = Template(fp.read())  
   fp.close()  
@@ -56,7 +56,7 @@ def dispatch(request):
 
 
 @csrf_exempt  
-def search(request):
+def search(req):
   fp = open('templates/search.html')  
   t = Template(fp.read())  
   fp.close()  
@@ -65,20 +65,20 @@ def search(request):
 
 
 @csrf_exempt  
-def login(request):
-  print request.POST
-  if request.POST.get("log_username",None) == None:
-    print request.session.items()
+def login(req):
+  print req.POST
+  if req.POST.get("log_username",None) == None:
+    print req.session.items()
     fp = open('templates/signin.html')  
     t = Template(fp.read())  
     fp.close()  
     html = t.render(Context({"id":1}))  
     return HttpResponse(html) 
-  username = request.POST["log_username"]
-  password = request.POST["log_password"]
+  username = req.POST["log_username"]
+  password = req.POST["log_password"]
   user = auth.authenticate(username=username, password=password)  
   if user is not None and user.is_active:
-    auth.login(request,user) 
+    auth.login(req,user) 
     return HttpResponseRedirect('/register_business') 
   else:
     return HttpResponseRedirect('/login') 
@@ -102,7 +102,7 @@ def register(req):
 				if form.is_valid():
 						print "--3--"
 						#how to changed the file name ??????????????????
-						#_file = "%s_%s"%(str(request.user),str(request.FILES['docfile']))
+						#_file = "%s_%s"%(str(req.user),str(req.FILES['docfile']))
 						#if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
 						_file = req.FILES['docfile']
 						print "----------->",_file
@@ -192,37 +192,36 @@ def register_business(req):
 
 
 @csrf_exempt  
-def activity_op(request, optype):
-  print ">>>>>>>>>>> activity_op.",optype
-  print "args POST: ",request.POST
-  print "args GET: ",request.GET
+def activity_add(req, type=None):
+	print ">>>>>>>>>>> activity_op."
+	print "args POST: ",req.POST
+	print "args GET: ",req.GET
 
-  if optype == "add":
-    if request.method == 'POST':
-        print "files: ",request.FILES
-        form = DocumentForm(request.POST, request.FILES)
-        print "--2--",form.__dict__
-        if form.is_valid():
-            print "--3--"
-            #how to changed the file name ??????????????????
-            #_file = "%s_%s"%(str(request.user),str(request.FILES['docfile']))
-            #if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
-            for _file in request.FILES.getlist('docfile'):
-              print "----------->",_file
-              #rm media/documents/2016/06/26/_file ??????????????????
-              newdoc = Document(docfile = _file)
-              print "new doc: ",newdoc.__dict__
-              newdoc.save()
+	if req.method == 'POST':
+		print "files: ",req.FILES
+		form = DocumentForm(req.POST, req.FILES)
+		print "--2--",form.__dict__
+		if form.is_valid():
+			print "--3--"
+			#how to changed the file name ??????????????????
+			#_file = "%s_%s"%(str(req.user),str(req.FILES['docfile']))
+			#if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
+			for _file in req.FILES.getlist('docfile'):
+				print "----------->",_file
+				#rm media/documents/2016/06/26/_file ??????????????????
+				newdoc = Document(docfile = _file)
+				print "new doc: ",newdoc.__dict__
+				newdoc.save()
 
-            # Redirect to the document list after POST
-            #return HttpResponseRedirect(reverse('skills.views.register.business'))
-            return HttpResponseRedirect('/index') 
-    else:
-        print "--4--"
-        form = DocumentForm() # A empty, unbound form
+			# Redirect to the document list after POST
+			#return HttpResponseRedirect(reverse('skills.views.register.business'))
+			return HttpResponseRedirect('/index') 
+	else:
+		print "--4--"
+		form = DocumentForm() # A empty, unbound form
 
-  # Load documents for the list page
-  #documents = Document.objects.all()
+	# Load documents for the list page
+	#documents = Document.objects.all()
 	obj = TempMgr_manage
 	obj.tab.init()
 
@@ -243,25 +242,30 @@ def activity_op(request, optype):
 			#print "region: ",rets[i][0]
 			obj.regions.append( {'name':rets[i][0]} )
 
-  print "--5--"
-  #obj.einfo.error = "return by server.";
-  fp = open('templates/activity_add.html')  
-  #if request.POST.has_key("actype_normal"):
-  #    fp = open('templates/register.html')  
-  t = Template(fp.read())  
-  fp.close()  
-  html = t.render(Context({'form': form, "obj":obj}))  
-  return HttpResponse(html) 
-'''
-  fp = open('templates/manage_update.html')  
-  t = Template(fp.read())  
-  fp.close()  
-  html = t.render(Context({"id":1}))  
-  return HttpResponse(html) 
-'''
+	if type=="modify" and req.GET.has_key("id"):
+		obj.act = {}
+		#_sql = "select name from 6s_activity where id='%s' and user_id=(select id from 6s_user where username='***');"
+		_sql = "select title,preinfo,content,DATE_FORMAT(time_from,'%%Y-%%m-%%d'),DATE_FORMAT(time_to,'%%Y-%%m-%%d') from 6s_activity where id='%s';"%req.GET["id"]
+		print _sql
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 1:
+			print "6s_activity: ",rets[0],rets[0][3]
+			obj.act = { "title":rets[0][0],"preinfo":rets[0][1],"content":rets[0][2],"time_from":rets[0][3],"time_to":rets[0][4], }	
+		print "[ERROR]try to modify activity. ",count
+
+	print "--5--"
+	#obj.einfo.error = "return by server.";
+	fp = open('templates/activity_add.html')  
+	t = Template(fp.read())  
+	fp.close()  
+	html = t.render(Context({'form': form, "obj":obj}))  
+	return HttpResponse(html) 
+
+
+
 
 @csrf_exempt  
-def register_business_end(request):
+def register_business_end(req):
   print 'templates/register_business_end.html...'  
   fp = open('templates/register_business_end.html')  
   t = Template(fp.read())  
@@ -340,13 +344,15 @@ def manage(req, tab="activity_published"):#, action=None
 
 
 @csrf_exempt  
-def manage_update(req, optype):
+def activity_op(req, optype):
 	print ">> manage_update.",optype
 	print "get.",req.GET
 	print "post.",req.POST
 
 	if optype == "update":
-		if req.GET.get("type",None)=="activity" and req.GET.has_key("id"):
+		if req.GET.get("type",None)=="modify" and req.GET.has_key("id"):
+			return activity_add(req, "modify")
+		if req.GET.get("type",None)=="offline" and req.GET.has_key("id"):
 			_id = req.GET["id"] 
 			_sql = "select * from 6s_user where status=1 and id=(select id from auth_user where username='%s');"%(str(req.user))
 			count,rets=dbmgr.db_exec(_sql)
@@ -359,10 +365,12 @@ def manage_update(req, optype):
 			else:
 				pass #error log.
 	elif optype == "delete":
-		if req.GET.get("type",None)=="activity" and req.GET.has_key("id"):
+		if req.GET.has_key("id"):
 			_id = req.GET["id"] 
 			_sql = "select * from 6s_user where status=1 and id=(select id from auth_user where username='%s');"%(str(req.user))
 			pass
+	elif optype == "add":
+			return activity_add(req)
 
 	fp = open('templates/manage_update.html')  
 	t = Template(fp.read())  

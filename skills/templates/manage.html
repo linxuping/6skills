@@ -125,8 +125,10 @@
                   <td>{{act.time_from}}</td>
                   <td>{{act.time_to}}</td>
                   <td>{{act.quantities}}</td>
-                  <td><button class="btn" onclick="window.location.href='/manage/update?type=activity&id={{act.id}}';">下线</button>&nbsp
-                      <button class="btn" onclick="window.location.href='/manage/delete?type=activity&id={{act.id}}';">删除</button></td>
+                  <td><button class="btn" onclick="window.location.href='/activity/update?type=modify&id={{act.id}}';">编辑</button>&nbsp
+                      <button class="btn" onclick="window.location.href='/activity/update?type=offline&id={{act.id}}';">下线</button>&nbsp
+                      <button class="btn" onclick="window.location.href='/activity/delete?id={{act.id}}';">删除</button>
+                      </td>
                 </tr>
   {% endfor %}
               </tbody>
@@ -211,8 +213,8 @@
                   <td>{{act.price}}</td>
                   <td>{{act.acttype}}</td>
                   <td>{{act.position}}</td>
-                  <td><button class="btn" onclick="window.location.href='/manage/publish?type=activity&id={{act.id}}';">下线</button>&nbsp
-                      <button class="btn" onclick="window.location.href='/manage/delete?type=activity&id={{act.id}}';">删除</button></td>
+                  <td><button class="btn" onclick="window.location.href='/activity/update?type=offline&id={{act.id}}';">下线</button>&nbsp
+                      <button class="btn" onclick="window.location.href='/activity/delete?type=activity&id={{act.id}}';">删除</button></td>
                 </tr>
   {% endfor %}
               </tbody>
