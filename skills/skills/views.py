@@ -241,16 +241,25 @@ def activity_add(req, type=None):
 		for i in range(count):
 			#print "region: ",rets[i][0]
 			obj.regions.append( {'name':rets[i][0]} )
+	_sql = "select name from 6s_acttype where pid>0;"
+	print _sql
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		obj.acttypes = []
+		for i in range(count):
+			#print "region: ",rets[i][0]
+			obj.acttypes.append( {'name':rets[i][0]} )
 
 	if type=="modify" and req.GET.has_key("id"):
 		obj.act = {}
 		#_sql = "select name from 6s_activity where id='%s' and user_id=(select id from 6s_user where username='***');"
-		_sql = "select title,preinfo,content,DATE_FORMAT(time_from,'%%Y-%%m-%%d'),DATE_FORMAT(time_to,'%%Y-%%m-%%d') from 6s_activity where id='%s';"%req.GET["id"]
+		_sql = "select title,preinfo,content,DATE_FORMAT(time_from,'%%Y-%%m-%%d'),DATE_FORMAT(time_to,'%%Y-%%m-%%d'),imgs_act,img_cover from 6s_activity where id='%s';"%req.GET["id"]
 		print _sql
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 1:
 			print "6s_activity: ",rets[0],rets[0][3]
-			obj.act = { "title":rets[0][0],"preinfo":rets[0][1],"content":rets[0][2],"time_from":rets[0][3],"time_to":rets[0][4], }	
+			obj.act = { "title":rets[0][0],"preinfo":rets[0][1],"content":rets[0][2],"time_from":rets[0][3],"time_to":rets[0][4],
+									"imgs_act":rets[0][5].split(" "),"img_cover":rets[0][6] }	
 		print "[ERROR]try to modify activity. ",count
 
 	print "--5--"

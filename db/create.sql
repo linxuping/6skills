@@ -133,7 +133,8 @@ CREATE TABLE `6s_activity` (
   -- `acttype` enum('教育','体验') COMMENT '参与人数',
   `act_id` int(11) NOT NULL COMMENT '',
   `user_id` int(11) NOT NULL COMMENT '', -- who create or update
-  `imgs` varchar(255) COMMENT '图片 spirit by empty space',
+  `imgs_act` varchar(255) DEFAULT '' COMMENT '图片 spirit by empty space',
+  `img_cover` varchar(255) DEFAULT '' COMMENT '图片',
   `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
   CONSTRAINT `fk_6s_activity_posid` FOREIGN KEY (position_id) REFERENCES 6s_position(id) ON UPDATE CASCADE,
   CONSTRAINT `fk_6s_activity_actid` FOREIGN KEY (act_id) REFERENCES 6s_acttype(id) ON UPDATE CASCADE,
@@ -141,8 +142,8 @@ CREATE TABLE `6s_activity` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,quantities,act_id,imgs,user_id) values (100,-1,"acttitle","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010800,"position details",16,4,104,"a.jpg b.jpg c.png",1);
-insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,quantities,act_id,imgs,user_id) values (103,-1,"acttitle2","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010800,"position details2",19,6,104,"a2.jpg b2.jpg",1);
+insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,quantities,act_id,imgs_act,img_cover,user_id) values (100,-1,"acttitle","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010800,"position details",16,4,104,"a.jpg b.jpg c.png","m.jpg",1);
+insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,quantities,act_id,imgs_act,img_cover,user_id) values (103,-1,"acttitle2","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010800,"position details2",19,6,104,"a2.jpg b2.jpg","n.jpg",1);
 insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle3","2016-06-03","2016-06-30",6,101010800,104,1);
 insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle4","2016-06-04","2016-06-30",6,101010800,104,1);
 insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle5","2016-06-05","2016-06-30",6,101010800,104,1);

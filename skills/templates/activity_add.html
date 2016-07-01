@@ -148,7 +148,11 @@ alert("{{obj.einfo.error}}");
                           <td>
                             <div class="col-sm-8">
                               <div class="input-group">
-                                <img src="http://i.dimg.cc/48/83/24/ad/12/1d/67/93/77/5b/22/82/6e/84/44/3a.jpg"/>替换成:
+{% if obj.act.imgs_act %}
+{% for img in obj.act.imgs_act %}
+                                <img src="{{img}}"/>
+{% endfor %}<br/>替换成:
+{% endif %}
                                 <input type="file" class="form-control" name="activityimgs" multiple="multiple"/>
                               </div>
                             </div>
@@ -236,8 +240,9 @@ alert("{{obj.einfo.error}}");
                             <div class="col-sm-8">
                               <div class="input-group">
                                 <select>
-                                  <option>111</option> 
-                                  <option>111</option> 
+{% for type in obj.acttypes %}
+                                  <option>{{type.name}}</option> 
+{% endfor %}
                                 </select>
                               </div>
                             </div>
@@ -249,6 +254,9 @@ alert("{{obj.einfo.error}}");
                           <td>
                             <div class="col-sm-8">
                               <div class="input-group">
+{% if obj.act.img_cover %}
+                                <img src="{{obj.act.img_cover}}"/><br/>替换成:
+{% endif %}
                                 <input type="file" class="form-control" name="coverimg" />
                               </div>
                             </div>
