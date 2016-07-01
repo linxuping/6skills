@@ -14,7 +14,7 @@ def db_init():
 				try:
 						#g_conn=MySQLdb.connect(host='',user='',passwd='',db='',port=)
 						print "%s_%s_%s_%s"%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME)
-						g_conn=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=settings.DB_NAME,port=settings.DB_PORT)
+						g_conn=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=settings.DB_NAME,port=settings.DB_PORT,charset='utf8')
 						g_cur=g_conn.cursor()
 						return True,None
 				except:

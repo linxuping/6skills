@@ -223,13 +223,33 @@ def activity_op(request, optype):
 
   # Load documents for the list page
   #documents = Document.objects.all()
+	obj = TempMgr_manage
+	obj.tab.init()
+
+	_sql = "select name from 6s_position where id between 101010000 and 101020000 and pid=101000000;"
+	print _sql
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		obj.cities = []
+		for i in range(count):
+			#print "region: ",rets[i][0]
+			obj.cities.append( {'name':rets[i][0]} )
+	_sql = "select name from 6s_position where id>101010000 and id<101020000;"
+	print _sql
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		obj.regions = []
+		for i in range(count):
+			#print "region: ",rets[i][0]
+			obj.regions.append( {'name':rets[i][0]} )
+
   print "--5--"
   fp = open('templates/activity_add.html')  
   #if request.POST.has_key("actype_normal"):
   #    fp = open('templates/register.html')  
   t = Template(fp.read())  
   fp.close()  
-  html = t.render(Context({'form': form}))  
+  html = t.render(Context({'form': form, "obj":obj}))  
   return HttpResponse(html) 
 '''
   fp = open('templates/manage_update.html')  

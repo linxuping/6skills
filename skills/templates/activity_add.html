@@ -147,14 +147,14 @@ function activity_add_submit()
                             <div class="col-sm-8">
                               <div>
                                 城市<select> 
-                                      <option>111</option> 
-                                      <option>111</option> 
-                                      <option>111</option> 
+{% for city in obj.cities %}
+                                      <option>{{city.name}}</option> 
+{% endfor %}
                                     </select>
                                 区域<select>
-                                      <option>111</option> 
-                                      <option>111</option> 
-                                      <option>111</option> 
+{% for region in obj.regions %}
+                                      <option>{{region.name}}</option> 
+{% endfor %}
                                     </select>
                                 <br/>街道<input type="input" name="street" placeholder="">
                               </div>
