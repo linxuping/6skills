@@ -244,6 +244,7 @@ def activity_op(request, optype):
 			obj.regions.append( {'name':rets[i][0]} )
 
   print "--5--"
+  #obj.einfo.error = "return by server.";
   fp = open('templates/activity_add.html')  
   #if request.POST.has_key("actype_normal"):
   #    fp = open('templates/register.html')  
