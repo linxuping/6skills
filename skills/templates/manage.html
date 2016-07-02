@@ -52,6 +52,7 @@
             <input type="text" class="form-control" placeholder="Search..."/>
             <input type="hidden" id="table_limit" name="table_limit" value="{{obj.tableattrs.limit}}"></input>
             <input type="hidden" id="table_offset" name="table_offset" value="{{obj.tableattrs.offset}}"></input>
+            <input type="hidden" id="table_tab" name="table_tab"></input>
             <input type="hidden" id="table_action" name="table_action"></input>
           </form>
         </div>
@@ -72,22 +73,22 @@
               <a href="/manage/tab/activity_published">&nbsp&nbsp&nbsp&nbsp 已发布活动</a></li>
             <li class="{{obj.tab.activity_nopublish}}">
               <a href="/manage/tab/activity_nopublish">&nbsp&nbsp&nbsp&nbsp 未发布活动</a></li>
-            <li class="{{obj.tab.user_manage}}">
-              <a href="/manage/tab/user_manage">&nbsp&nbsp 用户管理</a></li>
+            <!--<li class="{{obj.tab.user_manage}}">
+              <a href="/manage/tab/user_manage">&nbsp&nbsp 用户管理</a></li>-->
           </ul>
-          <hr/>
+          <hr style="margin-bottom:0px" />
           <ul class="nav nav-sidebar">
             <li>
-              <a href="/manage/tab/user_analyze">
+              <a href="/manage/tab/history_analyze">
                 <b>统计</b>
                 <span class="sr-only">(current)</span></a>
             </li>
-            <li class="{{obj.tab.user_analyze}}">
-              <a href="/manage/tab/user_analyze">&nbsp&nbsp 用户分析</a></li>
+            <!--<li class="{{obj.tab.user_analyze}}">
+              <a href="/manage/tab/user_analyze">&nbsp&nbsp 用户分析</a></li>-->
             <li class="{{obj.tab.history_analyze}}">
               <a href="/manage/tab/history_analyze">&nbsp&nbsp 历史活动分析</a></li>
           </ul>
-          <hr/>
+          <hr style="margin-bottom:0px" />
           <ul class="nav nav-sidebar">
             <li>
               <a href="/manage/tab/account_setting">
@@ -97,7 +98,20 @@
             <li class="{{obj.tab.account_setting}}">
               <a href="/manage/tab/account_setting">&nbsp&nbsp 账号设置</a></li>
           </ul>
-          <hr/></div>
+          <hr style="margin-bottom:0px" />
+          <ul class="nav nav-sidebar">
+            <li>
+              <a href="/manage/tab/audit">
+                <b>审核</b>
+                <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="{{obj.tab.audit_businessman}}">
+              <a href="/manage/tab/audit_businessman">&nbsp&nbsp 商户</a></li>
+            <li class="{{obj.tab.audit_activity}}">
+              <a href="/manage/tab/audit_activity">&nbsp&nbsp 活动</a></li>
+          </ul>
+          <hr/>
+          </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
 
@@ -135,9 +149,9 @@
             </table>
             <ul class="pager">
   {% if obj.tableattrs.offset > 0 %}
-              <li><a href="#" onclick="table_action.value='priv';myform.submit()">上一页</a></li>
+              <li><a href="#" onclick="table_tab.value='activity_published';table_action.value='priv';myform.submit()">上一页</a></li>
   {% endif %}
-              <li><a href="#" onclick="table_action.value='next';myform.submit()">下一页</a></li>
+              <li><a href="#" onclick="table_tab.value='activity_published';table_action.value='next';myform.submit()">下一页</a></li>
             </ul>1/3
             <input type="text" name="" />Goto
           </div>
@@ -176,9 +190,9 @@
             </table>
             <ul class="pager">
   {% if obj.tableattrs.offset > 0 %}
-              <li><a href="#" onclick="table_action.value='priv';myform.submit()">上一页</a></li>
+              <li><a href="#" onclick="table_tab.value='activity_nopublish';table_action.value='priv';myform.submit()">上一页</a></li>
   {% endif %}
-              <li><a href="#" onclick="table_action.value='next';myform.submit()">下一页</a></li>
+              <li><a href="#" onclick="table_tab.value='activity_nopublish';table_action.value='next';myform.submit()">下一页</a></li>
             </ul>1/3
             <input type="text" name="" />Goto
           </div>
@@ -221,9 +235,9 @@
             </table>
             <ul class="pager">
   {% if obj.tableattrs.offset > 0 %}
-              <li><a href="#" onclick="table_action.value='priv';myform.submit()">上一页</a></li>
+              <li><a href="#" onclick="table_tab.value='history_analyze';table_action.value='priv';myform.submit()">上一页</a></li>
   {% endif %}
-              <li><a href="#" onclick="table_action.value='next';myform.submit()">下一页</a></li>
+              <li><a href="#" onclick="table_tab.value='history_analyze';table_action.value='next';myform.submit()">下一页</a></li>
             </ul>1/3
             <input type="text" name="" />Goto
           </div>
@@ -272,9 +286,53 @@
     </table>
   </div>
 </div>
-
 {% endif %}
 
+
+
+{% if obj.tab.audit_businessman == "active" %}
+          <div style="text-align:right">
+            用户类别：<select>
+                      <option>111</option>
+                    </select>&nbsp
+            城市：<select>
+                      <option>111</option>
+                    </select>&nbsp&nbsp&nbsp
+          </div><hr/>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>商户信息</th>
+                  <th>申请日期</th>
+                  <th>当前状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+  {% for man in obj.audi_mans %}
+                <tr>
+                  <td>{{man.company}}</td>
+                  <td>{{man.createtime}}</td>
+                  <td>{{man.status}}</td>
+                  <td><button class="btn" onclick="window.location.href='/businessman/pass?id={{act.id}}';">通过</button>&nbsp
+                      <button class="btn" onclick="window.location.href='/businessman/reject?id={{act.id}}';">拒绝</button>&nbsp
+                      <button class="btn" onclick="window.location.href='/businessman/forbid?id={{act.id}}';">禁止发帖</button>&nbsp
+                      <button class="btn" onclick="window.location.href='/businessman/delete?id={{act.id}}';">删除账号</button>
+                      </td>
+                </tr>
+  {% endfor %}
+              </tbody>
+            </table>
+            <ul class="pager">
+  {% if obj.tableattrs.offset > 0 %}
+              <li><a href="#" onclick="table_tab.value='audit_businessman';table_action.value='priv';myform.submit()">上一页</a></li>
+  {% endif %}
+              <li><a href="#" onclick="table_tab.value='audit_businessman';table_action.value='next';myform.submit()">下一页</a></li>
+            </ul>1/3
+            <input type="text" name="" />Goto
+          </div>
+{% endif %}
 
 
 

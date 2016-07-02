@@ -75,15 +75,12 @@ CREATE TABLE `6s_user` (
   `phone` varchar(24) NOT NULL COMMENT '联系方式',
   `role` enum('admin','business','normal') COMMENT '角色',
   `img` varchar(255) COMMENT '图片',
+  `createtime` datetime NOT NULL COMMENT '添加时间',
   `up_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '频度',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
-  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
+  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用,1 可用,2 审核中,3 拒绝,4 禁止发帖',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-delete from auth_user where username='test';
-insert into auth_user(username,password) values ("test","test");
-insert into 6s_user(refid,username,phone,role,img) values (1,"test","12345",'普通',"/tmp/test.png");
 
 
 select "+------------------ 6s_user_business -------------------+";
@@ -104,13 +101,24 @@ CREATE TABLE `6s_user_business` (
   `email` varchar(24) NOT NULL COMMENT '邮箱',
   `QQ` varchar(24) NOT NULL COMMENT 'QQ',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
-  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
+  -- `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
   CONSTRAINT `fk_6s_user_business_uid` FOREIGN KEY (refid) REFERENCES 6s_user(id) ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into 6s_user(username) values ("test");
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1,"comp","tech","blimg.png","121","shopname","city","region","addr","name","phone","email","QQ");
+
+delete from auth_user where username='test';
+insert into auth_user(username,password) values ("test","test");
+insert into 6s_user(refid,username,phone,role,img,createtime,status) values (1,"test","12345",'普通',"/tmp/test.png",now(),1);
+delete from auth_user where username='test2';
+insert into auth_user(username,password) values ("test2","test2");
+insert into 6s_user(id,refid,username,phone,role,img,createtime,status) values (1001,1,"test2","12345",'普通',"/tmp/test.png",now(),2);
+delete from auth_user where username='test3';
+insert into auth_user(username,password) values ("test3","test3");
+insert into 6s_user(id,refid,username,phone,role,img,createtime,status) values (1002,1,"test3","12345",'普通',"/tmp/test.png",now(),3);
+
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","121","shopname","city","region","addr","name","phone","email","QQ");
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","121","shopname2","city2","region","addr","name2","phone2","email2","QQ2");
 
 
 select "+------------------ 6s_activity -------------------+";

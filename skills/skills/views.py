@@ -288,35 +288,36 @@ def register_business_end(req):
 #manage.
 class TempMgr_manage(TempMgr_base):
 		class _tab:
-				activity_published = ""
-				activity_nopublish = ""
-				user_manage = ""
-				user_analyze = ""
-				history_analyze = ""
-				account_setting = ""
 				def init(self):
-						self.activity_published,self.activity_nopublish,self.user_manage,self.user_analyze,self.history_analyze,self.account_setting="","","","","",""
+						self.activity_published,self.activity_nopublish,self.user_manage,self.user_analyze,self.history_analyze,self.account_setting,self.audit_businessman,self.audit_activity="","","","","","","",""
 		tab = _tab()
 		pass
 
 class dbobj:
 		pass
 
+user_status_map = { 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
 g_page_items_limit = 3
 @csrf_exempt  
 def manage(req, tab="activity_published"):#, action=None
 	attrs = req.POST
 	print ">> manage.",attrs
+	print "args POST: ",req.POST
+	print "args GET: ",req.GET
 
 	obj = TempMgr_manage
 	obj.tab.init()
 	#obj.tab.activity_published = "active" 
 	print ">>>  ",obj.tab,tab,"active"
-	setattr(obj.tab,tab,"active")
+	if attrs.has_key("table_tab"):
+		setattr(obj.tab,attrs["table_tab"],"active") #click priv next, remember the tab.
+	else:
+		setattr(obj.tab,tab,"active") #tab change.
 
 	_limit = g_page_items_limit
 	_offset = 0
-	if attrs.has_key("table_limit") and attrs.has_key("table_offset"):
+	if attrs.has_key("table_limit") and attrs.has_key("table_offset") and attrs.has_key("table_tab"):
+		#save tab status.
 		#check int or not.
 		_limit = int(attrs["table_limit"])
 		_offset = int(attrs["table_offset"])
@@ -332,17 +333,32 @@ def manage(req, tab="activity_published"):#, action=None
 		_limit = g_page_items_limit
 		_offset = 0
 
-	_sql = "select title,time_from,time_to,quantities,id from 6s_activity where status=1 limit %d offset %d;"%(_limit,_offset)
-	print _sql
-	count,rets=dbmgr.db_exec(_sql)
-	if count > 0:
-		obj.actlist = []
-		for i in range(count):
-			obj.actlist.append( {'title':rets[i][0],'time_from':rets[i][1],'time_to':rets[i][2],'quantities':rets[i][3],'id':rets[i][4]} )
-	else:
-		_offset = _offset-_limit
-		if _offset <= 0:
-			_offset = 0
+	if tab == "activity_published":
+		_sql = "select title,time_from,time_to,quantities,id from 6s_activity where status=1 limit %d offset %d;"%(_limit,_offset)
+		print _sql
+		count,rets=dbmgr.db_exec(_sql)
+		if count > 0:
+			obj.actlist = []
+			for i in range(count):
+				obj.actlist.append( {'title':rets[i][0],'time_from':rets[i][1],'time_to':rets[i][2],'quantities':rets[i][3],'id':rets[i][4]} )
+		else:
+			_offset = _offset-_limit
+			if _offset <= 0:
+				_offset = 0
+	elif tab == "audit_businessman":
+		_sql = "select a.company,b.createtime,b.status from 6s_user_business a left join 6s_user b on a.refid=b.id limit %d offset %d;"%(_limit,_offset)
+		print _sql
+		count,rets=dbmgr.db_exec(_sql)
+		if count > 0:
+			obj.audi_mans = []
+			for i in range(count):
+				obj.audi_mans.append( {'company':rets[i][0],'createtime':rets[i][1],'status':user_status_map[rets[i][2]]} )
+		else:
+			_offset = _offset-_limit
+			if _offset <= 0:
+				_offset = 0
+		pass
+
 	obj.tableattrs = { "limit":_limit,"offset":_offset}
 
 	fp = open('templates/manage.html')  
