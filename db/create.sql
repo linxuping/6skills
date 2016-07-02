@@ -64,6 +64,13 @@ CREATE TABLE `6s_acttype` (
 -- CONSTRAINT `fk_actid` FOREIGN KEY (pid) REFERENCES 6s_acttype(id)
 insert into 6s_acttype(id,pid,name) values (100,-1,"本地活动"),(200,-1,"亲子出游"),(300,-1,"兴趣培养"),(400,-1,"早教"),(101,100,"户外活动"),(102,100,"创意手工"),(103,100,"绘本故事会"),(104,100,"博物馆"); -- and so on ....
 
+DROP TABLE IF EXISTS `6s_actstatus`;
+CREATE TABLE `6s_actstatus` (
+  `id` int(11) NOT NULL,
+  `name` char(128) COMMENT '详细描述',
+  PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+insert into 6s_actstatus(id,name) values (0,"停用"),(1,"可用"),(2,"审核中"),(3,"拒绝"),(4,"禁止发帖");
 
 select "+------------------ 6s_user -------------------+";
 DROP TABLE IF EXISTS `6s_user`;

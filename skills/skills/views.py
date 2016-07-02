@@ -296,7 +296,6 @@ class TempMgr_manage(TempMgr_base):
 class dbobj:
 		pass
 
-user_status_map = { 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
 g_page_items_limit = 3
 @csrf_exempt  
 def manage(req, tab="activity_published"):#, action=None
@@ -433,5 +432,22 @@ def ajax_process(req):
 	_jsonobj = json.dumps(_json)
 	return HttpResponse(_jsonobj, mimetype='application/json')
 	#return HttpResponseRedirect('/test2') 
+
+
+
+#--------------------- GLOBAL -----------------------
+user_status_map = {} #{ 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
+def _global_init():
+	global user_status_map
+	_sql = "select id,name from 6s_actstatus;"
+	count,rets=dbmgr.db_exec(_sql)
+	print _sql,count,rets
+	if count > 0:
+		for i in range(count):
+			user_status_map[ int(rets[i][0]) ] = rets[i][1]
+	else:
+		pass #error log
+	
+_global_init()
 
 
