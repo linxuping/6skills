@@ -361,7 +361,9 @@ def manage(req, tab="activity_published"):#, action=None
 			_offset = _offset-_limit
 			if _offset <= 0:
 				_offset = 0
-		obj.select_acts = g_user_status_map
+		obj.select_acts = g_user_status_map.values()
+		print "cities:   ",g_cities
+		obj.select_cities = g_cities
 		pass
 
 	obj.tableattrs = { "limit":_limit,"offset":_offset}
@@ -432,7 +434,6 @@ def ajax_process(req):
 
 
 #--------------------- GLOBAL -----------------------
-g_user_status_map = {} #{ 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
 def _get_user_status_map():
 	user_status_map = {}
 	_sql = "select id,name from 6s_actstatus;"
@@ -468,9 +469,12 @@ def _get_regions(_city):
 			_regions.append( {'name':rets[i][0]} )
 	return _regions
 
+g_user_status_map = {} #{ 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
+g_cities = []
 def _global_init():
-	global g_user_status_map 
+	global g_user_status_map,g_cities
 	g_user_status_map = _get_user_status_map()
+	g_cities = _get_cities()
 	
 _global_init()
 
