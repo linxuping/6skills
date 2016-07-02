@@ -61,10 +61,18 @@ WSGI_APPLICATION = 'skills.wsgi.application'
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 '''
-DB_HOST = 'localhost'
+#W R+
+DB_HOST = ''
 DB_NAME = ''
 DB_USERNAME = ''
 DB_PASSWORD = ''
+DB_PORT = 3306
+#R
+DB_HOST2 = ''
+DB_NAME2 = ''
+DB_USERNAME2 = ''
+DB_PASSWORD2 = ''
+DB_PORT2 = 3306
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -72,9 +80,10 @@ DATABASES = {
         'USER':DB_USERNAME,
         'PASSWORD':DB_PASSWORD,
         'HOST':DB_HOST,
-        'PORT':'',
+        'PORT':DB_PORT,
     }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
