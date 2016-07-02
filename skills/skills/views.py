@@ -225,22 +225,27 @@ def activity_add(req, type=None):
 	obj = TempMgr_manage
 	obj.tab.init()
 
-	_sql = "select name from 6s_position where id between 101010000 and 101020000 and pid=101000000;"
-	print _sql
-	count,rets=dbmgr.db_exec(_sql)
-	if count > 0:
-		obj.cities = []
-		for i in range(count):
-			#print "region: ",rets[i][0]
-			obj.cities.append( {'name':rets[i][0]} )
-	_sql = "select name from 6s_position where id>101010000 and id<101020000;"
-	print _sql
-	count,rets=dbmgr.db_exec(_sql)
-	if count > 0:
-		obj.regions = []
-		for i in range(count):
-			#print "region: ",rets[i][0]
-			obj.regions.append( {'name':rets[i][0]} )
+	#_sql = "select name from 6s_position where id between 101010000 and 101020000 and pid=101000000;"
+	#print _sql
+	#count,rets=dbmgr.db_exec(_sql)
+	#if count > 0:
+	#	obj.cities = []
+	#	for i in range(count):
+	#		#print "region: ",rets[i][0]
+	#		obj.cities.append( {'name':rets[i][0]} )
+	#_sql = "select name from 6s_position where id>101010000 and id<101020000;"
+	#print _sql
+	#count,rets=dbmgr.db_exec(_sql)
+	#if count > 0:
+	#	obj.regions = []
+	#	for i in range(count):
+	#		#print "region: ",rets[i][0]
+	#		obj.regions.append( {'name':rets[i][0]} )
+	obj.cities = _get_cities()
+	if len(obj.cities) > 0:
+		obj.regions = _get_regions(obj.cities[0]['name'])
+	else:
+		pass # error log.
 	_sql = "select name from 6s_acttype where pid>0;"
 	print _sql
 	count,rets=dbmgr.db_exec(_sql)
@@ -351,11 +356,12 @@ def manage(req, tab="activity_published"):#, action=None
 		if count > 0:
 			obj.audi_mans = []
 			for i in range(count):
-				obj.audi_mans.append( {'company':rets[i][0],'createtime':rets[i][1],'status':user_status_map[rets[i][2]]} )
+				obj.audi_mans.append( {'company':rets[i][0],'createtime':rets[i][1],'status':g_user_status_map[rets[i][2]]} )
 		else:
 			_offset = _offset-_limit
 			if _offset <= 0:
 				_offset = 0
+		obj.select_acts = g_user_status_map
 		pass
 
 	obj.tableattrs = { "limit":_limit,"offset":_offset}
@@ -418,17 +424,7 @@ def ajax_process(req):
 	print req.GET  #pass args using "url: '/ajax?name=test',"
 	_json = {}
 	if method=="get_regions" and req.GET.has_key("city"):
-		_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%( req.GET["city"] )
-		count,rets=dbmgr.db_exec(_sql)
-		print _sql,count,rets
-		_json["regions"] = []
-		if count > 0:
-			for i in range(count):
-				_json["regions"].append( {'name':rets[i][0]} )
-		else:
-			pass #error log.
-	#my_response = {'ajax_resp':'Hello, webapp World!'}
-	print "_json: ",_json
+		_json["regions"] = _get_regions( req.GET["city"] )
 	_jsonobj = json.dumps(_json)
 	return HttpResponse(_jsonobj, mimetype='application/json')
 	#return HttpResponseRedirect('/test2') 
@@ -436,9 +432,9 @@ def ajax_process(req):
 
 
 #--------------------- GLOBAL -----------------------
-user_status_map = {} #{ 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
-def _global_init():
-	global user_status_map
+g_user_status_map = {} #{ 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
+def _get_user_status_map():
+	user_status_map = {}
 	_sql = "select id,name from 6s_actstatus;"
 	count,rets=dbmgr.db_exec(_sql)
 	print _sql,count,rets
@@ -447,6 +443,34 @@ def _global_init():
 			user_status_map[ int(rets[i][0]) ] = rets[i][1]
 	else:
 		pass #error log
+	return user_status_map
+def _get_cities():
+	_cities = []
+	#_sql = "select name from 6s_position where id between 101010000 and 101020000 and pid=101000000;"
+	_sql = "select name from 6s_position where pid=101000000;"
+	print _sql
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in range(count):
+			#print "region: ",rets[i][0]
+			_cities.append( {'name':rets[i][0]} )
+	return _cities
+def _get_regions(_city):
+	print "_get_regions", _city
+	_regions = []
+	#_sql = "select name from 6s_position where id>101010000 and id<101020000;"
+	#_sql = "select name from 6s_position where id>(select id from 6s_position where name='%s') and id<(select id+10000 from 6s_position where name='%s');"%(_city,_city)
+	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%( _city )
+	print _sql
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in range(count):
+			_regions.append( {'name':rets[i][0]} )
+	return _regions
+
+def _global_init():
+	global g_user_status_map 
+	g_user_status_map = _get_user_status_map()
 	
 _global_init()
 
