@@ -36,25 +36,27 @@ function activity_add_submit()
   }
   activity_add_form.submit();
 }
-function submit_userinfo(){
+function get_regions(){
 $.ajax({
-    url: '/ajax?name=register_userinfo',
+    url: '/ajax?method=get_regions',
     data:{  
-        selRollBack : selRollBack,  
-        selOperatorsCode : selOperatorsCode,  
-        pass2 : pass2  
+        city : select_city.value,  
     },  
     dataType : 'json',
-    cache: false,
+    cache: true,
     success: function(data) {
-        alert('Load was performed.'+data.ajax_resp);
-        self.location='/register_business';
+        select_region.options.length = 0;
+        for (var i=0; i<data.regions.length; ++i){
+          select_region.options.add( new Option( data.regions[i].name ) );
+          //alert('Load was performed.'+data.regions[i].name);
+          //self.location='/register_business';
+        }
     },
     error : function() {  
         // view("异常！");  
          alert("异常！");  
     }  
-})};
+})}
 
 window.onload = function() { 
 {% if obj.einfo.error %}
@@ -177,7 +179,7 @@ alert("{{obj.einfo.error}}");
                           <td>
                             <div class="col-sm-8">
                               <div>
-                                城市<select id="select_city"> 
+                                城市<select id="select_city" onchange="get_regions()"> 
 {% for city in obj.cities %}
                                       <option>{{city.name}}</option> 
 {% endfor %}

@@ -390,6 +390,32 @@ def activity_op(req, optype):
 
 
 
-
+import json
+#ajax process.
+def ajax_process(req):
+	method = req.GET.get("method",None)
+	print method
+	if not req.is_ajax():
+		print "----------- not ajax -------------->"
+		return HttpResponse('it is not ajax.')
+	
+	print "----------- ajax processing -------------->"
+	print req.GET  #pass args using "url: '/ajax?name=test',"
+	_json = {}
+	if method=="get_regions" and req.GET.has_key("city"):
+		_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%( req.GET["city"] )
+		count,rets=dbmgr.db_exec(_sql)
+		print _sql,count,rets
+		_json["regions"] = []
+		if count > 0:
+			for i in range(count):
+				_json["regions"].append( {'name':rets[i][0]} )
+		else:
+			pass #error log.
+	#my_response = {'ajax_resp':'Hello, webapp World!'}
+	print "_json: ",_json
+	_jsonobj = json.dumps(_json)
+	return HttpResponse(_jsonobj, mimetype='application/json')
+	#return HttpResponseRedirect('/test2') 
 
 
