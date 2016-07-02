@@ -157,6 +157,7 @@ def register_business(req):
     print "reqs: ",req.user
     print "args POST: ",req.POST
     print "args GET: ",req.GET
+    print "has perm? ",req.user.has_perm("role_businessman")
     # Handle file upload
     print "--1--"
     if req.method == 'POST':
@@ -265,7 +266,7 @@ def activity_add(req, type=None):
 			print "6s_activity: ",rets[0],rets[0][3]
 			obj.act = { "title":rets[0][0],"preinfo":rets[0][1],"content":rets[0][2],"time_from":rets[0][3],"time_to":rets[0][4],
 									"imgs_act":rets[0][5].split(" "),"img_cover":rets[0][6] }	
-		print "[ERROR]try to modify activity. ",count
+		print "[INFO]try to modify activity. ",count
 
 	print "--5--"
 	#obj.einfo.error = "return by server.";
