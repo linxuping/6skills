@@ -293,11 +293,16 @@
 {% if obj.tab.audit_businessman == "active" %}
           <div style="text-align:right">
             用户类别：<select>
-                      <option>111</option>
+  {% for act in obj.select_acts %}
+                      <option>{{act}}</option>
+  {% endfor %}
                     </select>&nbsp
             城市：<select>
-                      <option>111</option>
-                    </select>&nbsp&nbsp&nbsp
+  {% for city in obj.select_cities %}
+                      <option>{{city.name}}</option>
+  {% endfor %}
+                    </select>&nbsp
+                    <button class="btn btn-primary" onclick="window.location.href='/businessman/reject?id={{act.id}}';">查询</button>&nbsp&nbsp&nbsp
           </div><hr/>
           <div class="table-responsive">
             <table class="table table-striped">
