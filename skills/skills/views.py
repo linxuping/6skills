@@ -79,7 +79,7 @@ def login(req):
   user = auth.authenticate(username=username, password=password)  
   if user is not None and user.is_active:
     auth.login(req,user) 
-    return HttpResponseRedirect('/register_business') 
+    return HttpResponseRedirect('/manage') 
   else:
     return HttpResponseRedirect('/login') 
 
@@ -157,7 +157,7 @@ def register_business(req):
     print "reqs: ",req.user
     print "args POST: ",req.POST
     print "args GET: ",req.GET
-    print "has perm? ",req.user.has_perm("role_businessman")
+    print "has perm? ",req.user.has_perm("role_businessman"),req.user.is_superuser
     # Handle file upload
     print "--1--"
     if req.method == 'POST':
@@ -312,6 +312,7 @@ def manage(req, tab="activity_published"):#, action=None
 
 	obj = TempMgr_manage
 	obj.tab.init()
+	obj.user = req.user
 	#obj.tab.activity_published = "active" 
 	print ">>>  ",obj.tab,tab,"active"
 	if attrs.has_key("table_tab"):
