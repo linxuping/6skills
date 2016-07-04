@@ -98,7 +98,11 @@ $.ajax({
     }  
 })};
 
-
+window.onload = function() { 
+{% if obj.einfo.error %}
+alert("{{obj.einfo.error}}"); 
+{% endif %}
+};
 
 
 </script>
@@ -208,6 +212,18 @@ $.ajax({
               </div>
             </div>
             <div class="form-group">
+              <label for="phone" class="col-sm-3 control-label"></label>
+              <div class="col-sm-8">
+                <div class="input-group">
+                  <div class="input-group">
+                    <label><input name="businessman" type="radio" value="business" checked/>商户&nbsp&nbsp </label>
+                    <label><input name="visitor" type="radio" value="normal" />普通访客&nbsp </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!--<div class="form-group">
               <label for="authcode" class="col-sm-3 control-label">验证码：</label>
               <div class="col-sm-5">
                 <div class="input-group">
@@ -221,7 +237,7 @@ $.ajax({
                 <a class="btn btn-default" href="javascript:void(0)" onclick="document.getElementById('captcha_img').src='authcode.php?r'+Math.random()" title="换一个">
                   <img id="captcha_img" src="" alt="验证码"></a>
               </label>
-            </div>
+            </div>-->
             <div class="row">
               <div class="col-md-3 col-md-offset-3 col-xs-12">
                 <button type="reset" class="btn btn-default btn-block">

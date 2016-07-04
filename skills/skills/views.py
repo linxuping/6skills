@@ -94,11 +94,13 @@ def register(req):
 		print "reqs: ",req.user
 		print "args POST: ",req.POST
 		print "args GET: ",req.GET
+		obj = TempMgr_manage
 		#Handle file upload
 		print "--1--"
 		if req.method == 'POST':
 				form = DocumentForm(req.POST, req.FILES)
 				print "--2--",form.__dict__
+				img = ""
 				if form.is_valid():
 						print "--3--"
 						#how to changed the file name ??????????????????
@@ -112,38 +114,54 @@ def register(req):
 						#newdoc.init_docfile(str(req.user))
 						print "new doc: ",newdoc.__dict__
 						newdoc.save()
-
-						username = req.POST['username']
-						password = req.POST['password']
-						phone = req.POST['phone']
 						img = _file
-						#auth_user -- check user existed or not .
-						user = User.objects.create_user(username,"skills@me.com",password)
-						user.save()
-						#6s_user
-						try:
-								_sql = "insert into 6s_user(refid,username,phone,role,img) values(%d,'%s','%s','%s','%s');"%(user.id,username,phone,u'normal',img)
-								print _sql
-								count,rets=dbmgr.db_exec(_sql)
-								if count != 1:
-										#delete 6s_user
-										user.delete()
-						except:
-								user.delete()
 
-			# Redirect to the document list after POST
-			#return HttpResponseRedirect(reverse('skills.views.register.business'))
-						return HttpResponseRedirect('/register/business') 
+				username = req.POST['username']
+				password = req.POST['password']
+				phone = req.POST['phone']
+				#auth_user -- check user existed or not .
+				user = None
+				try:
+					user = User.objects.create_user(username,"skills@me.com",password)
+					user.save()
+				except:	
+					_einfo =  str(sys.exc_info())+"; "+str(traceback.format_exc())
+					if "Duplicate entry" in _einfo:
+						obj.einfo.error = "该名字已经被注册！"
+					return _get_html_render('templates/register.html',{"obj":obj} ) 
+				#6s_user
+				try:
+						_sql = "insert into 6s_user(refid,username,phone,role,img) values(%d,'%s','%s','%s','%s');"%(user.id,username,phone,u'normal',img)
+						print _sql
+						count,rets=dbmgr.db_exec(_sql)
+						if count != 1:
+								#delete 6s_user
+								user.delete()
+				except:
+					if user != None:
+						user.delete()
+
+				# Redirect to the document list after POST
+				#return HttpResponseRedirect(reverse('skills.views.register.business'))
+				return HttpResponseRedirect('/register/business') 
 		else:
 				print "--4--"
 				form = DocumentForm() # A empty, unbound form
 
-	# Load documents for the list page
-	#documents = Document.objects.all()
-		fp = open('templates/register.html')  
+		# Load documents for the list page
+		#documents = Document.objects.all()
+		#fp = open('templates/register.html')  
+		#t = Template(fp.read())  
+		#fp.close()  
+		#html = t.render(Context({'form': form}))  
+		return _get_html_render('templates/register.html', {'form': form})
+
+
+def _get_html_render(_url, _dic):
+		fp = open(_url)  
 		t = Template(fp.read())  
 		fp.close()  
-		html = t.render(Context({'form': form}))  
+		html = t.render(Context(_dic))  
 		return HttpResponse(html) 
 
 
