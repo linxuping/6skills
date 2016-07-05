@@ -50,16 +50,27 @@ def search(req):
 @csrf_exempt  
 def login(req):
   _header_log(req)
-  if req.POST.get("log_username",None) == None:
-    return _get_html_render_error('templates/signin.html',"请正确提交登陆数据！",{"id":1})
+  if req.POST.get("log_username",None)==None or req.POST.get("log_password",None)==None:
+    return _get_html_render('templates/signin.html',{"id":1})
   username = req.POST["log_username"]
   password = req.POST["log_password"]
+  _ret,_obj =  _check_mysql_arg('templates/signin.html', username, "str")
+  if not _ret:
+    return _obj
+  _ret,_obj =  _check_mysql_arg('templates/signin.html', password, "str")
+  if not _ret:
+    return _obj
+
+  if not User.objects.filter(username=username).exists():
+    return _get_html_render_error('templates/signin.html',"找不到当前用户，请注册",{}) 
   user = auth.authenticate(username=username, password=password)  
-  if user is not None and user.is_active:
-    auth.login(req,user) 
-    return HttpResponseRedirect('/manage') 
-  else:
-    return _get_html_render('templates/signin.html',{}) 
+  if user is None:
+    return _get_html_render_error('templates/signin.html',"账户密码不正确",{}) 
+  elif not user.is_active:
+    return _get_html_render_error('templates/signin.html',"该账户处于下线状态，请联系管理员",{}) 
+  auth.login(req,user) 
+  return HttpResponseRedirect('/manage/') 
+
 
 def _header_log(req):
 	mo.logger.info("POST:%s, GET:%s, USER:%s"%(str(req.POST),str(req.GET),str(req.user)) )
@@ -449,11 +460,11 @@ def _check_mysql_arg(_url, _arg, _type):
 		#invoke mysql injection. 
 		if _type == "int":
 				if not _arg.isdigit():
-						return False,_get_html_render_error(_url, "请输入正确数字！")
+						return False,_get_html_render_error(_url, "输入值非法(数字)！")
 				return True,None
 		elif _type == "str":
 				if _arg.find('and')!=-1 and _arg.find('=')!=-1 and (_arg.find('\'')!=-1 or _arg.find('\"')!=-1):
-						return False,_get_html_render_error(_url, "请输入正确信息！")
+						return False,_get_html_render_error(_url, "输入值非法(字符串)！")
 				return True,None
 		return True,None
 

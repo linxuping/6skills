@@ -19,8 +19,9 @@ urlpatterns = patterns('',
 		url(r'^manage/tab/(?P<tab>\w+)/', views.manage),
 		#url(r'^manage/tab/(?P<tab>\w+)/(?P<action>\w+)/', views.manage),
 		url(r'^activity/(?P<optype>\w+)/$', views.activity_op),
+		#url(r'^businessman/(?P<optype>\w+)/$', views.businessman_op),
 
-		#url(r'^activity/(?P<optype>\w+)', views.activity_op),
+		#url(r'^activity/(?P<optype>\w+)/', views.activity_op),
 		url(r'^register/normal/', views.register),
 
 		url(r'^register/business/end/', views.register_business_end),
