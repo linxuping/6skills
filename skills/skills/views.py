@@ -5,12 +5,16 @@ from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.contrib import auth
+import skills.settings as settings
 import traceback
 import time
+import os
 import sys
 import modules as mo
 import dbmgr
-
+import datetime
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 class TempMgr_base:  
@@ -66,7 +70,7 @@ def search(req):
 
 @csrf_exempt  
 def login(req):
-  print req.POST
+  _header_log(req)
   if req.POST.get("log_username",None) == None:
     print req.session.items()
     fp = open('templates/signin.html')  
@@ -83,17 +87,16 @@ def login(req):
   else:
     return HttpResponseRedirect('/login') 
 
-
-
-
+def _header_log(req):
+	mo.logger.info("POST:%s, GET:%s, USER:%s"%(str(req.POST),str(req.GET),str(req.user)) )
+def _get_upload_path(user):
+	return datetime.datetime.now().strftime("documents/%Y/%m/%d"+"/%s"%user)
 
 
 
 @csrf_exempt  
 def register(req):
-		print "reqs: ",req.user
-		print "args POST: ",req.POST
-		print "args GET: ",req.GET
+		_header_log(req)
 		obj = TempMgr_manage
 		#Handle file upload
 		print "--1--"
@@ -110,11 +113,14 @@ def register(req):
 						print "----------->",_file
 						#rm media/documents/2016/06/26/_file ??????????????????
 						newdoc = Document(docfile=_file)
-						newdoc.docfile.field.upload_to = "documents/%Y/%m/%d"+"/%s"%str(req.user)
+						upload_path = _get_upload_path( str(req.user) )
+						newdoc.docfile.field.upload_to = upload_path
+
 						#newdoc.init_docfile(str(req.user))
 						print "new doc: ",newdoc.__dict__
 						newdoc.save()
-						img = _file
+						img = os.path.join(settings.MEDIA_URL, upload_path, str(_file))
+						print "new doc fin.: ",newdoc.__dict__
 
 				username = req.POST['username']
 				password = req.POST['password']

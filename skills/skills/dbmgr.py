@@ -51,7 +51,7 @@ def db_select_test():		#cur.execute('select * from user')
 			print ret
 
 
-#print db_init()
+print db_init()
 #print db_exec("select * from 6s_user where username='test';")
 #print db_exec("delete from 6s_user where username='test';")
 #print db_exec("insert into 6s_user(refid,username,phone,role,img,createtime) values(1,'test','','normal','',now());")
