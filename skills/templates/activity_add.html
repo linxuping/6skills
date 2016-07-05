@@ -30,7 +30,7 @@
 <script type="text/javascript">
 function activity_add_submit()
 {
-  if (acttime_from.value > acttime_to.value){
+  if (acttime_from.value=="" || acttime_to.value=="" || acttime_from.value > acttime_to.value){
     alert("请输入正确的活动时间范围 !");
     return;
   }
@@ -95,7 +95,7 @@ alert("{{obj.einfo.error}}");
           <div id="content">
             <div class="container">
               <!--<h1 class="col-md-6 col-md-offset-2 col-xs-10 col-xs-offset-2 page_title ">***</h1>-->
-              <form id="activity_add_form" action="/activity/add" method="post" enctype="multipart/form-data">
+              <form id="activity_add_form" action="/activity/add/" method="post" enctype="multipart/form-data">
                 <!--<div class="col-md-6 col-md-offset-1 col-xs-10 col-xs-offset-1">-->
                 <div class="col-md-offset-1 col-xs-10 col-xs-offset-1">
                   <div class="table-responsive">

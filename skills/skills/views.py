@@ -17,27 +17,6 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
-class TempMgr_base:  
-  #status & data
-  class _status:
-    pass
-  st = _status
-  class _data:
-    pass
-  da = _data
-  class _errinfo:
-    error = ""
-  einfo = _errinfo
-  #methods
-  pass
-class TempMgr_register(TempMgr_base):  
-  pass
-class TempMgr_register_business(TempMgr_base):  
-  pass
-class TempMgr_login(TempMgr_base):  
-  pass
-
-
 
 @csrf_exempt  
 def dispatch(req):
@@ -163,18 +142,6 @@ def register(req):
 		return _get_html_render('templates/register.html', {'form': form})
 
 
-def _get_html_render(_url, _dic):
-		fp = open(_url)  
-		t = Template(fp.read())  
-		fp.close()  
-		html = t.render(Context(_dic))  
-		return HttpResponse(html) 
-def _get_html_render_error(_url, _msg, _dic={}):
-		obj = TempMgr_manage
-		obj.tab.init()
-		obj.einfo.error = _msg
-		_dic["obj"] = obj
-		return _get_html_render(_url, _dic)
 
 
 
@@ -322,17 +289,6 @@ def register_business_end(req):
 
 
 
-#manage.
-class TempMgr_manage(TempMgr_base):
-		class _tab:
-				def init(self):
-						self.activity_published,self.activity_nopublish,self.user_manage,self.user_analyze,self.history_analyze,self.account_setting,self.audit_businessman,self.audit_activity="","","","","","","",""
-		tab = _tab()
-		pass
-
-class dbobj:
-		pass
-
 g_page_items_limit = 3
 @csrf_exempt  
 def manage(req, tab="activity_published"):#, action=None
@@ -445,7 +401,63 @@ def activity_op(req, optype):
 
 
 
+#--------------------- COMMON -----------------------
+class TempMgr_base:  
+  #status & data
+  class _status:
+    pass
+  st = _status
+  class _data:
+    pass
+  da = _data
+  class _errinfo:
+    error = ""
+  einfo = _errinfo
+  #methods
+  pass
+class TempMgr_register(TempMgr_base):  
+  pass
+class TempMgr_register_business(TempMgr_base):  
+  pass
+class TempMgr_login(TempMgr_base):  
+  pass
 
+class TempMgr_manage(TempMgr_base):
+		class _tab:
+				def init(self):
+						self.activity_published,self.activity_nopublish,self.user_manage,self.user_analyze,self.history_analyze,self.account_setting,self.audit_businessman,self.audit_activity="","","","","","","",""
+		tab = _tab()
+		pass
+
+class dbobj:
+		pass
+
+#render_to_response('current_datetime.html', {'current_date': now})
+def _get_html_render(_url, _dic):
+		fp = open(_url)  
+		t = Template(fp.read())  
+		fp.close()  
+		html = t.render(Context(_dic))  
+		return HttpResponse(html) 
+def _get_html_render_error(_url, _msg, _dic={}):
+		obj = TempMgr_manage
+		obj.tab.init()
+		obj.einfo.error = _msg
+		_dic["obj"] = obj
+		return _get_html_render(_url, _dic)
+def _check_mysql_arg(_url, _arg, _type):
+		#invoke mysql injection. 
+		if _type == "int":
+				if not _arg.isdigit():
+						return False,_get_html_render_error(_url, "请输入正确数字！")
+				return True,None
+		elif _type == "str":
+				if _arg.find('and')!=-1 and _arg.find('=')!=-1 and (_arg.find('\'')!=-1 or _arg.find('\"')!=-1):
+						return False,_get_html_render_error(_url, "请输入正确信息！")
+				return True,None
+		return True,None
+
+#--------------------- AJAX -----------------------
 import json
 #ajax process.
 def ajax_process(req):
@@ -490,7 +502,6 @@ def _get_cities():
 			_cities.append( {'name':rets[i][0]} )
 	return _cities
 def _get_regions(_city):
-	print "_get_regions", _city
 	_regions = []
 	#_sql = "select name from 6s_position where id>101010000 and id<101020000;"
 	#_sql = "select name from 6s_position where id>(select id from 6s_position where name='%s') and id<(select id+10000 from 6s_position where name='%s');"%(_city,_city)
