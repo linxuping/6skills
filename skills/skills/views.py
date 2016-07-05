@@ -72,12 +72,7 @@ def search(req):
 def login(req):
   _header_log(req)
   if req.POST.get("log_username",None) == None:
-    print req.session.items()
-    fp = open('templates/signin.html')  
-    t = Template(fp.read())  
-    fp.close()  
-    html = t.render(Context({"id":1}))  
-    return HttpResponse(html) 
+    return _get_html_render_error('templates/signin.html',"请正确提交登陆数据！",{"id":1})
   username = req.POST["log_username"]
   password = req.POST["log_password"]
   user = auth.authenticate(username=username, password=password)  
@@ -85,7 +80,7 @@ def login(req):
     auth.login(req,user) 
     return HttpResponseRedirect('/manage') 
   else:
-    return HttpResponseRedirect('/login') 
+    return _get_html_render('templates/signin.html',{}) 
 
 def _header_log(req):
 	mo.logger.info("POST:%s, GET:%s, USER:%s"%(str(req.POST),str(req.GET),str(req.user)) )
@@ -174,6 +169,13 @@ def _get_html_render(_url, _dic):
 		fp.close()  
 		html = t.render(Context(_dic))  
 		return HttpResponse(html) 
+def _get_html_render_error(_url, _msg, _dic={}):
+		obj = TempMgr_manage
+		obj.tab.init()
+		obj.einfo.error = _msg
+		_dic["obj"] = obj
+		return _get_html_render(_url, _dic)
+
 
 
 
