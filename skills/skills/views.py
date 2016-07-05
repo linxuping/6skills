@@ -118,32 +118,37 @@ def register(req):
 
 				username = req.POST['username']
 				password = req.POST['password']
-				phone = req.POST['phone']
+				phone = req.POST.get('phone','')
+				regtype = req.POST.get('regtype','')
 				#auth_user -- check user existed or not .
 				user = None
 				try:
 					user = User.objects.create_user(username,"skills@me.com",password)
 					user.save()
-				except:	
-					_einfo =  str(sys.exc_info())+"; "+str(traceback.format_exc())
-					if "Duplicate entry" in _einfo:
-						obj.einfo.error = "该名字已经被注册！"
-					return _get_html_render('templates/register.html',{"obj":obj} ) 
-				#6s_user
-				try:
-						_sql = "insert into 6s_user(refid,username,phone,role,img) values(%d,'%s','%s','%s','%s');"%(user.id,username,phone,u'normal',img)
-						print _sql
-						count,rets=dbmgr.db_exec(_sql)
-						if count != 1:
-								#delete 6s_user
-								user.delete()
+					
+					_sql = "insert into 6s_user(refid,username,phone,role,img,createtime) values(%d,'%s','%s','%s','%s',now());"%(40,username,phone,regtype,img)
+					print _sql
+					count,rets=dbmgr.db_exec(_sql)
+					print count,rets
+					if count != 1:
+							#delete 6s_user
+							print "insert failed. " #error log.
+							user.delete()
 				except:
 					if user != None:
 						user.delete()
-
+					_einfo =  str(sys.exc_info())+"; "+str(traceback.format_exc())
+					print _einfo
+					if "Duplicate entry" in _einfo:
+						obj.einfo.error = "该名字已经被注册！"
+					return _get_html_render('templates/register.html',{"obj":obj} ) 
+					
 				# Redirect to the document list after POST
 				#return HttpResponseRedirect(reverse('skills.views.register.business'))
-				return HttpResponseRedirect('/register/business') 
+				if regtype == "business":
+					return HttpResponseRedirect('/register/business') 
+				else:
+					return HttpResponseRedirect('/login') 
 		else:
 				print "--4--"
 				form = DocumentForm() # A empty, unbound form
