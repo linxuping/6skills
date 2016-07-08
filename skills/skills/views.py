@@ -16,6 +16,15 @@ import datetime
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+def req_print(func):
+		def wrapper(*args):
+				print "args: ",args[1:]
+				req = args[0]
+				print "req.POST: ;",req.POST
+				print "req.GET: ",req.GET
+				print "req.user: ",req.user
+				return func(req)
+		return wrapper
 
 
 @csrf_exempt  
@@ -46,7 +55,7 @@ def search(req):
   html = t.render(Context({"id":1}))  
   return HttpResponse(html) 
 
-
+@req_print
 @csrf_exempt  
 def login(req):
   _header_log(req)
@@ -91,6 +100,13 @@ def register(req):
 				img = ""
 				if form.is_valid():
 						print "--3--"
+						username = req.POST['username']
+						password = req.POST['password']
+						phone = req.POST.get('phone','')
+						regtype = req.POST.get('regtype','')
+						if User.objects.filter(username=username).exists():
+								return _get_html_render_error("templates/register.html", "用户%s已存在！"%username, {})
+
 						#how to changed the file name ??????????????????
 						#_file = "%s_%s"%(str(req.user),str(req.FILES['docfile']))
 						#if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
@@ -102,15 +118,9 @@ def register(req):
 						newdoc.docfile.field.upload_to = upload_path
 
 						#newdoc.init_docfile(str(req.user))
-						print "new doc: ",newdoc.__dict__
 						newdoc.save()
 						img = os.path.join(settings.MEDIA_URL, upload_path, str(_file))
-						print "new doc fin.: ",newdoc.__dict__
 
-				username = req.POST['username']
-				password = req.POST['password']
-				phone = req.POST.get('phone','')
-				regtype = req.POST.get('regtype','')
 				#auth_user -- check user existed or not .
 				user = None
 				try:
@@ -118,7 +128,6 @@ def register(req):
 					user.save()
 					
 					_sql = "insert into 6s_user(refid,username,phone,role,img,createtime) values(%d,'%s','%s','%s','%s',now());"%(40,username,phone,regtype,img)
-					print _sql
 					count,rets=dbmgr.db_exec(_sql)
 					print count,rets
 					if count != 1:
@@ -143,13 +152,6 @@ def register(req):
 		else:
 				print "--4--"
 				form = DocumentForm() # A empty, unbound form
-
-		# Load documents for the list page
-		#documents = Document.objects.all()
-		#fp = open('templates/register.html')  
-		#t = Template(fp.read())  
-		#fp.close()  
-		#html = t.render(Context({'form': form}))  
 		return _get_html_render('templates/register.html', {'form': form})
 
 
@@ -299,14 +301,15 @@ def register_business_end(req):
 
 
 
-
 g_page_items_limit = 3
+
+@req_print
 @csrf_exempt  
 def manage(req, tab="activity_published"):#, action=None
 	attrs = req.POST
-	print ">> manage.",attrs
-	print "args POST: ",req.POST
-	print "args GET: ",req.GET
+	#print ">> manage.",attrs
+	#print "args POST: ",req.POST
+	#print "args GET: ",req.GET
 
 	obj = TempMgr_manage
 	obj.tab.init()

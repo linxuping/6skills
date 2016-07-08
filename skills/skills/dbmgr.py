@@ -4,8 +4,10 @@ import time
 import sys 
 import traceback 
 import skills.settings as settings
+import modules as mo
 g_conn = None
 #lock
+
 
 def db_init():
 		global g_conn
@@ -21,7 +23,7 @@ def db_init():
 						time.sleep(1)
 		return False,ret
 
-
+@mo.time_calc
 def db_exec(_sql):
 		global g_conn
 		_cur=g_conn.cursor()
@@ -39,6 +41,7 @@ def db_exec(_sql):
 						print db_init()
 		_cur.close()
 		g_conn.commit()
+		mo.logger.info("[SQL]%s %d %s. "%(_sql,count,str(rets) ))
 		return count,rets
 
 def db_select_test():		#cur.execute('select * from user')
