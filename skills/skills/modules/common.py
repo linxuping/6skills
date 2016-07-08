@@ -8,7 +8,7 @@ def time_calc(func):
 				starttime = datetime.datetime.now()
 				ret = func(args)
 				endtime = datetime.datetime.now()
-				logger.info( "[CALC] %s: %s time:%d."%(str(func),str(args),(endtime - starttime).seconds) )
+				logger.info( "[CALC] %s: %s time:%d."%(func.func_name,str(args),(endtime - starttime).seconds) )
 				return ret
 		return wrapper
 

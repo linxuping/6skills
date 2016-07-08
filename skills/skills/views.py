@@ -18,11 +18,8 @@ sys.setdefaultencoding('utf-8')
 
 def req_print(func):
 		def wrapper(*args):
-				print "args: ",args[1:]
 				req = args[0]
-				print "req.POST: ;",req.POST
-				print "req.GET: ",req.GET
-				print "req.user: ",req.user
+				mo.logger.info("POST:%s, GET:%s, USER:%s, args:%s"%(str(req.POST),str(req.GET),str(req.user),str(args[1:]) ))
 				return func(req)
 		return wrapper
 
@@ -55,10 +52,11 @@ def search(req):
   html = t.render(Context({"id":1}))  
   return HttpResponse(html) 
 
+
 @req_print
 @csrf_exempt  
 def login(req):
-  _header_log(req)
+  #_header_log(req)
   if req.POST.get("log_username",None)==None or req.POST.get("log_password",None)==None:
     return _get_html_render('templates/signin.html',{"id":1})
   username = req.POST["log_username"]
@@ -90,7 +88,7 @@ def _get_upload_path(user):
 
 @csrf_exempt  
 def register(req):
-		_header_log(req)
+		#_header_log(req)
 		obj = TempMgr_manage
 		#Handle file upload
 		print "--1--"
