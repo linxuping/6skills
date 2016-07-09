@@ -1,12 +1,12 @@
 /*
 Navicat MySQL Data Transfer
-Source Server         : 192.168.12.19_新_单账号线上
-Source Server Version : 50508
+Source Server         : 
+Source Server Version : 
 Source Host           : 192.168.12.19:3306
-Source Database       : resource
+Source Database       : 
 Target Server Type    : MYSQL
-Target Server Version : 50508
-File Encoding         : 65001
+Target Server Version : 
+File Encoding         : 
 Date: 2016-06-20 16:12:12
 */
 
@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `6s_user_business`;
 
 select "+------------------ 6s_position -------------------+";
 -- ----------------------------
--- Table structure for 6s_position
+-- Table structure for 6s_position 地理位置 广东 广州 天河 棠下 好又多超市附近
 -- ----------------------------
 DROP TABLE IF EXISTS `6s_position`;
 CREATE TABLE `6s_position` (
@@ -33,25 +33,17 @@ CREATE TABLE `6s_position` (
   `pid` int(11) NOT NULL DEFAULT -1 COMMENT '',
   `name` char(128) COMMENT '详细描述',
   `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
-  `longitude` SMALLINT(4) NOT NULL DEFAULT -1 COMMENT '经度',
-  `latitude` SMALLINT(4) NOT NULL DEFAULT -1 COMMENT '纬度1',
+  `longitude` SMALLINT(4) NOT NULL DEFAULT -1 COMMENT '经度(预留)', 
+  `latitude` SMALLINT(4) NOT NULL DEFAULT -1 COMMENT '纬度(预留)', 
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- CONSTRAINT `6s_position_idfk_1` FOREIGN KEY (`pid`) REFERENCES `6s_position` (`id`)
 
 insert into 6s_position(id,pid,name) values (100000000,-1,"中国"),(101000000,100000000,"广东省"),(101010000,101000000,"广州市"),(101020000,101000000,"深圳市"),(101010100,101010000,"天河区"),(101010200,101010000,"越秀区"),(101010300,101010000,"番禺区"),(101010400,101010000,"海珠区"),(101010500,101010000,"荔湾区"),(101010600,101010000,"白云区"),(101010700,101010000,"从化区"),(101010800,101010000,"萝岗区"),(101010900,101010000,"南沙区"),(101011000,101010000,"增城区"),(101020100,101020000,"宝安区"),(101020200,101020000,"福田区");
   
-/*)
-DROP TABLE IF EXISTS `child_type`;
-CREATE TABLE `child_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '',
-  `age` int(11) NOT NULL DEFAULT -1 COMMENT '',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-*/
 select "+------------------ 6s_acttype -------------------+";
 -- ----------------------------
--- Table structure for 6s_acttype
+-- Table structure for 6s_acttype 活动类型
 -- ----------------------------
 DROP TABLE IF EXISTS `6s_acttype`;
 CREATE TABLE `6s_acttype` (
@@ -64,6 +56,9 @@ CREATE TABLE `6s_acttype` (
 -- CONSTRAINT `fk_actid` FOREIGN KEY (pid) REFERENCES 6s_acttype(id)
 insert into 6s_acttype(id,pid,name) values (100,-1,"本地活动"),(200,-1,"亲子出游"),(300,-1,"兴趣培养"),(400,-1,"早教"),(101,100,"户外活动"),(102,100,"创意手工"),(103,100,"绘本故事会"),(104,100,"博物馆"); -- and so on ....
 
+-- ----------------------------
+-- Table structure for 6s_actstatus 活动状态
+-- ----------------------------
 DROP TABLE IF EXISTS `6s_actstatus`;
 CREATE TABLE `6s_actstatus` (
   `id` int(11) NOT NULL,
@@ -72,6 +67,9 @@ CREATE TABLE `6s_actstatus` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 insert into 6s_actstatus(id,name) values (0,"停用"),(1,"可用"),(2,"审核中"),(3,"拒绝"),(4,"禁止发帖");
 
+-- ----------------------------
+-- Table structure for 6s_user 普通用户、基础信息
+-- ----------------------------
 select "+------------------ 6s_user -------------------+";
 DROP TABLE IF EXISTS `6s_user`;
 CREATE TABLE `6s_user` (
@@ -89,7 +87,9 @@ CREATE TABLE `6s_user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+-- ----------------------------
+-- Table structure for 6s_user_business 商户
+-- ----------------------------
 select "+------------------ 6s_user_business -------------------+";
 DROP TABLE IF EXISTS `6s_user_business`;
 CREATE TABLE `6s_user_business` (
@@ -127,7 +127,9 @@ insert into 6s_user(id,refid,username,phone,role,img,createtime,status) values (
 insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","121","shopname","city","region","addr","name","phone","email","QQ");
 insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","121","shopname2","city2","region","addr","name2","phone2","email2","QQ2");
 
-
+-- ----------------------------
+-- Table structure for 6s_activity 活动
+-- ----------------------------
 select "+------------------ 6s_activity -------------------+";
 DROP TABLE IF EXISTS `6s_activity`;
 CREATE TABLE `6s_activity` (
