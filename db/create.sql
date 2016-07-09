@@ -17,10 +17,10 @@ Date: 2016-06-20 16:12:12
 use sixskillsdb;
 
 select "+------------------ DROP TABLES -------------------+";
+DROP TABLE IF EXISTS `6s_signup`;
 DROP TABLE IF EXISTS `6s_activity`;
 DROP TABLE IF EXISTS `6s_acttype`;
 DROP TABLE IF EXISTS `6s_position`;
-DROP TABLE IF EXISTS `6s_activity`;
 DROP TABLE IF EXISTS `6s_user_business`;
 
 select "+------------------ 6s_position -------------------+";
@@ -74,10 +74,10 @@ select "+------------------ 6s_user -------------------+";
 DROP TABLE IF EXISTS `6s_user`;
 CREATE TABLE `6s_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `refid` int(11) NOT NULL,
+  `refid` int(11) NOT NULL DEFAULT -1, -- 免登陆免refid
   `username` varchar(127) NOT NULL COMMENT '用户名',
   -- `password` varchar(127) NOT NULL COMMENT '密码',
-  `phone` varchar(24) NOT NULL COMMENT '联系方式',
+  `phone` varchar(24) NOT NULL unique COMMENT '联系方式',
   `role` enum('admin','business','normal') COMMENT '角色',
   `img` varchar(255) COMMENT '图片',
   `createtime` datetime NOT NULL COMMENT '添加时间',
@@ -119,13 +119,13 @@ insert into auth_user(username,password) values ("test","test");
 insert into 6s_user(refid,username,phone,role,img,createtime,status) values (1,"test","12345",'普通',"/tmp/test.png",now(),1);
 delete from auth_user where username='test2';
 insert into auth_user(username,password) values ("test2","test2");
-insert into 6s_user(id,refid,username,phone,role,img,createtime,status) values (1001,1,"test2","12345",'普通',"/tmp/test.png",now(),2);
+insert into 6s_user(id,refid,username,phone,role,img,createtime,status) values (1001,1,"test2","12346",'普通',"/tmp/test.png",now(),2);
 delete from auth_user where username='test3';
 insert into auth_user(username,password) values ("test3","test3");
-insert into 6s_user(id,refid,username,phone,role,img,createtime,status) values (1002,1,"test3","12345",'普通',"/tmp/test.png",now(),3);
+insert into 6s_user(id,refid,username,phone,role,img,createtime,status) values (1002,1,"test3","12347",'普通',"/tmp/test.png",now(),3);
 
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","121","shopname","city","region","addr","name","phone","email","QQ");
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","121","shopname2","city2","region","addr","name2","phone2","email2","QQ2");
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","phone","email","QQ");
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","phone2","email2","QQ2");
 
 -- ----------------------------
 -- Table structure for 6s_activity 活动
@@ -167,10 +167,28 @@ insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,us
 insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle6","2016-06-06","2016-06-30",6,101010800,104,1);
 insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle7","2016-06-07","2016-06-30",6,101010800,104,1);
 
-	
+
+-- ----------------------------
+-- Table structure for 6s_signup 报名
+-- ----------------------------
+select "+------------------ 6s_signup -------------------+";
+DROP TABLE IF EXISTS `6s_signup`;
+CREATE TABLE `6s_signup` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL DEFAULT -1, 
+  `act_id` int(11) NOT NULL DEFAULT -1, 
+  `username_child` varchar(127) NOT NULL COMMENT '儿童用户名',
+  `age_child` tinyint(2) NOT NULL COMMENT '儿童年龄',
+  `createtime` datetime NOT NULL COMMENT '添加时间',
+  `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
+  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用,1 可用,2 审核中,3 拒绝,4 禁止发帖',
+  CONSTRAINT `fk_6s_signup_uid` FOREIGN KEY (user_id) REFERENCES 6s_user(id) ON UPDATE CASCADE,
+  CONSTRAINT `fk_6s_signup_actid` FOREIGN KEY (act_id) REFERENCES 6s_activity(id) ON UPDATE CASCADE,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-	   
-	   
-	   
+
+
+
 	   
