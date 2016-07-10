@@ -1,0 +1,15 @@
+        location / {
+            include        uwsgi_params;
+            uwsgi_pass     127.0.0.1:12345;
+            uwsgi_param     UWSGI_SCHEME $scheme;
+            uwsgi_param     SERVER_SOFTWARE    nginx/$nginx_version;
+        }
+        location /static  {
+            # autoindex on;
+            alias /path/static;  
+        }
+        location /media  {
+            alias /path/media;  
+        }
+
+
