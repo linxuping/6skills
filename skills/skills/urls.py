@@ -4,12 +4,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 import views
+import wxapi
 
 urlpatterns = patterns('',
-		# Examples:
-		# url(r'^$', 'skills.views.home', name='home'),
-		# url(r'^blog/', include('blog.urls')),
-
+		#management
 		url(r'^admin/', include(admin.site.urls)),
 		url(r'^index/', views.dispatch),
 		url(r'^search/', views.search),
@@ -28,5 +26,10 @@ urlpatterns = patterns('',
 		url(r'^register/business/', views.register_business,name='list'),
 
 		url(r'^ajax*', views.ajax_process),
+		#management END.
+
+		#wxapi
+		url(r'^activities/special-offers', wxapi.activities_special_offers),
+		#wxapi END.
 )
 
