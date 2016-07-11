@@ -39,7 +39,7 @@ CREATE TABLE `6s_position` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- CONSTRAINT `6s_position_idfk_1` FOREIGN KEY (`pid`) REFERENCES `6s_position` (`id`)
 
-insert into 6s_position(id,pid,name) values (100000000,-1,"中国"),(101000000,100000000,"广东省"),(101010000,101000000,"广州市"),(101020000,101000000,"深圳市"),(101010100,101010000,"天河区"),(101010200,101010000,"越秀区"),(101010300,101010000,"番禺区"),(101010400,101010000,"海珠区"),(101010500,101010000,"荔湾区"),(101010600,101010000,"白云区"),(101010700,101010000,"从化区"),(101010800,101010000,"萝岗区"),(101010900,101010000,"南沙区"),(101011000,101010000,"增城区"),(101020100,101020000,"宝安区"),(101020200,101020000,"福田区");
+insert into 6s_position(id,pid,name) values (100000000,-1,"中国"),(101000000,100000000,"广东省"),(101010000,101000000,"广州市"),(101020000,101000000,"深圳市"),(101010100,101010000,"天河区"),(101010101,101010100,"学院"),(101010102,101010100,"棠下"),(101010103,101010100,"天河公园"),(101010200,101010000,"越秀区"),(101010300,101010000,"番禺区"),(101010400,101010000,"海珠区"),(101010401,101010400,"赤岗"),(101010402,101010400,"洛溪"),(101010500,101010000,"荔湾区"),(101010600,101010000,"白云区"),(101010700,101010000,"从化区"),(101010800,101010000,"萝岗区"),(101010900,101010000,"南沙区"),(101011000,101010000,"增城区"),(101020100,101020000,"宝安区"),(101020200,101020000,"福田区");
   
 select "+------------------ 6s_acttype -------------------+";
 -- ----------------------------
@@ -134,8 +134,8 @@ select "+------------------ 6s_activity -------------------+";
 DROP TABLE IF EXISTS `6s_activity`;
 CREATE TABLE `6s_activity` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '',
-  `price` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
-  `price_adult` int(11) NOT NULL DEFAULT -1 COMMENT 'adult价格',
+  `price_original` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
+  `price_current` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
   `title` varchar(255) COMMENT '标题',
   `preinfo` varchar(255) COMMENT 'youhui xinxi',
   `content` varchar(255) COMMENT '正文',
@@ -146,6 +146,7 @@ CREATE TABLE `6s_activity` (
   `age_from` smallint(4) NOT NULL DEFAULT -1 COMMENT '年龄',
   `age_to` smallint(4) NOT NULL DEFAULT -1 COMMENT '年龄',
   `quantities` int(11) NOT NULL DEFAULT -1 COMMENT '参与人数',
+  `quantities_remain` int(11) NOT NULL DEFAULT -1 COMMENT '剩余人数',
   `mark` float(5,2) NOT NULL DEFAULT 0 COMMENT '评分',
   -- `acttype` enum('教育','体验') COMMENT '参与人数',
   `act_id` int(11) NOT NULL COMMENT '',
@@ -159,13 +160,13 @@ CREATE TABLE `6s_activity` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,quantities,act_id,imgs_act,img_cover,user_id) values (100,-1,"acttitle","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010800,"position details",16,4,104,"a.jpg b.jpg c.png","m.jpg",1);
-insert into 6s_activity(price,price_adult,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,quantities,act_id,imgs_act,img_cover,user_id) values (103,-1,"acttitle2","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010800,"position details2",19,6,104,"a2.jpg b2.jpg","n.jpg",1);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle3","2016-06-03","2016-06-30",6,101010800,104,1);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle4","2016-06-04","2016-06-30",6,101010800,104,1);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle5","2016-06-05","2016-06-30",6,101010800,104,1);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle6","2016-06-06","2016-06-30",6,101010800,104,1);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id) values ("atitle7","2016-06-07","2016-06-30",6,101010800,104,1);
+insert into 6s_activity(price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (100,-1,"acttitle","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,104,"a.jpg b.jpg c.png","m.jpg",1);
+insert into 6s_activity(price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (103,-1,"acttitle2","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,104,"a2.jpg b2.jpg","n.jpg",1);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle3","2016-06-03","2016-06-30",6,101010103,104,1,2,4);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle4","2016-06-04","2016-06-30",6,101010102,104,1,2,5);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle5","2016-06-05","2016-06-30",6,101010101,104,1,4,6);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle6","2016-06-06","2016-06-30",6,101010401,104,1,3,6);
+insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle7","2016-06-07","2016-06-30",6,101010402,104,1,2,7);
 
 
 -- ----------------------------

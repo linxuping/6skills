@@ -13,8 +13,12 @@ import sys
 import modules as mo
 import dbmgr
 import datetime
+import socket
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
+def get_errtag():
+		return "[errno:%s_%s]"%(socket.gethostname(),time.strftime('%m%d_%H%M%S'))
 
 def req_print(func):
 		def wrapper(*args):
@@ -68,6 +72,8 @@ def _get_html_render_error(_url, _msg, _dic={}):
 		obj.einfo.error = _msg
 		_dic["obj"] = obj
 		return _get_html_render(_url, _dic)
+
+
 def _check_mysql_arg(_url, _arg, _type):
 		#invoke mysql injection. 
 		if _type == "int":
@@ -79,6 +85,26 @@ def _check_mysql_arg(_url, _arg, _type):
 						return False,_get_html_render_error(_url, "输入值非法(字符串)！")
 				return True,None
 		return True,None
+
+def _check_mysql_arg_json(_name, _arg, _type):
+		#invoke mysql injection. 
+		if _arg == None:
+				return False,{ "errcode":1, "errmsg":"参数%s不能为空."%_name }
+		if _type == "int":
+				if not _arg.isdigit():
+						return False,{ "errcode":1, "errmsg":"非法参数(i-%s)"%str(_arg) }
+				return True,int(_arg)
+		elif _type == "str":
+				if _arg.find('and')!=-1 and _arg.find('=')!=-1 and (_arg.find('\'')!=-1 or _arg.find('\"')!=-1):
+						return False,{ "errcode":1, "errmsg":"非法参数(s-%s)"%str(_arg) }
+				return True,_arg
+		return False,{ "errcode":1, "errmsg":"未知判断类型(%s)."%str(_type) }
+def check_mysql_arg_jsonobj(_name, _arg, _type):
+	ret,output = _check_mysql_arg_json(_name, _arg, _type)
+	if ret:
+		return ret,output
+	_jsonobj = json.dumps(output)
+	return ret,HttpResponse(_jsonobj, mimetype='application/json')
 
 #--------------------- AJAX -----------------------
 import json
@@ -135,6 +161,12 @@ def _get_regions(_city):
 		for i in range(count):
 			_regions.append( {'name':rets[i][0]} )
 	return _regions
+def get_table_size(_table):
+	_sql = "select count(id) from %s;"%( _table )
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+			return int(rets[0][0])
+	return -1
 
 g_user_status_map = {} #{ 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
 g_cities = []
