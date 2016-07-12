@@ -36,9 +36,9 @@ urlpatterns = patterns('',
 		#activities/details/{uuid} 
 		url(r'^activities/details', wxapi.activities_details),
 		#get-auth-code?phone=138xxx 
-		#url(r'^activities/get-auth-code', wxapi.activities_getauthcode),
+		url(r'^activities/get-auth-code', wxapi.activities_getauthcode),
 		#/auth 
-		#url(r'^wxauth', wxapi.wxauth),
+		url(r'^wxauth', wxapi.wxauth_idencode),
 		#activities/sign
 		#url(r'^activities/sign', wxapi.activities_sign,
 		#activities/my

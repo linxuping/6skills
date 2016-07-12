@@ -188,6 +188,22 @@ CREATE TABLE `6s_signup` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Table structure for 6s_idencode 验证码
+-- ----------------------------
+select "+------------------ 6s_idencode  -------------------+";
+DROP TABLE IF EXISTS `6s_idencode`; 
+CREATE TABLE `6s_idencode` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `openid` varchar(255) NOT NULL unique, 
+  `code` int(11) NOT NULL DEFAULT -1, 
+  `createtime` datetime NOT NULL COMMENT '添加时间',
+  `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+insert into 6s_idencode(openid,code,createtime) values("2132423435",2435,now());
+
+
 
 
 
