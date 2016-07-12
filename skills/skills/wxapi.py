@@ -208,3 +208,78 @@ def wxauth_idencode(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+def activities_sign(req):
+	#check.
+	ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
+	if not ret:
+		return phone
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,name = check_mysql_arg_jsonobj("name", req.GET.get("name",None), "str")
+	if not ret:
+		return name
+	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	if not ret:
+		return actid
+	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "int")
+	if not ret:
+		return age
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "errorcode":0,"errormsg":"" }
+	_sql = "select * from 6s_activity where id=%d;"%(actid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		_sql = "select id from 6s_user where openid='%s';"%openid
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 1:
+			uid = int(rets[0][0])
+			#save to 6s_user.
+			_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,createtime) values(%d,%d,'%s',%d,now());"%(name,age)
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 1:
+				pass
+			else:
+				if str(rets).find("Duplicate entry ") != -1:
+					_json["errorcode"] = 1
+					_json["errormsg"] = "报名信息已经存在！act:%d,u:%d"%(actid,uid)
+				else:
+					_json["errorcode"] = 1
+					_json["errormsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
+		else:
+			_json["errorcode"] = 1
+			_json["errormsg"] = get_errtag()+"User with phone:%s not exist."%phone
+	else:
+		_json["errorcode"] = 1
+		_json["errormsg"] = get_errtag()+"Activity:%d not exist."%actid
+		pass #error log
+
+	_jsonobj = json.dumps(_json)
+	return HttpResponse(_jsonobj, mimetype='application/json')
+	#return HttpResponseRedirect('/test2') 
+
+
+def activities_my(req):
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "activities":[],"errorcode":0,"errormsg":"" }
+	_sql = "select a.act_id,c.title from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%openid
+	count,rets=dbmgr.db_exec(_sql)
+	if count >= 0:
+		for i in range(count):
+			_json["activities"].append( {"actid":ret[i][0],"title":ret[i][1]} )
+	else:
+		_json["errorcode"] = 1
+		_json["errormsg"] = get_errtag()+"DB failed."
+		pass #error log
+
+	_jsonobj = json.dumps(_json)
+	return HttpResponse(_jsonobj, mimetype='application/json')
+	#return HttpResponseRedirect('/test2') 
+
+

@@ -40,9 +40,9 @@ urlpatterns = patterns('',
 		#/auth 
 		url(r'^wxauth', wxapi.wxauth_idencode),
 		#activities/sign
-		#url(r'^activities/sign', wxapi.activities_sign,
+		url(r'^activities/sign', wxapi.activities_sign),
 		#activities/my
-		#url(r'^activities/my', wxapi.activities_my,
+		url(r'^activities/my', wxapi.activities_my),
 		#acitivities/reset?openid={openid}
 		#url(r'^activities/reset', wxapi.activities_reset,
 		#feedback
