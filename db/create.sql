@@ -137,7 +137,7 @@ CREATE TABLE `6s_activity` (
   `price_original` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
   `price_current` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
   `title` varchar(255) COMMENT '标题',
-  `preinfo` varchar(255) COMMENT 'youhui xinxi',
+  `preinfo` varchar(255) COMMENT '提醒信息',
   `content` varchar(255) COMMENT '正文',
   `time_from` timestamp NULL DEFAULT NULL COMMENT '活动时间-开始，NULL 长期',
   `time_to` timestamp NULL DEFAULT NULL COMMENT '活动时间-结束',

@@ -29,7 +29,25 @@ urlpatterns = patterns('',
 		#management END.
 
 		#wxapi
+		#activities/special-offers?area=xxx&age=x&page=x&page_size=x 
 		url(r'^activities/special-offers', wxapi.activities_special_offers),
+		#activities/preview?area=xxx&age=x&page=x&page_size=x 
+		url(r'^activities/preview', wxapi.activities_preview),
+		#activities/details/{uuid} 
+		url(r'^activities/details', wxapi.activities_details),
+		#get-auth-code?phone=138xxx 
+		#url(r'^activities/get-auth-code', wxapi.activities_getauthcode),
+		#/auth 
+		#url(r'^wxauth', wxapi.wxauth),
+		#activities/sign
+		#url(r'^activities/sign', wxapi.activities_sign,
+		#activities/my
+		#url(r'^activities/my', wxapi.activities_my,
+		#acitivities/reset?openid={openid}
+		#url(r'^activities/reset', wxapi.activities_reset,
+		#feedback
+		#url(r'^wxfeedback', wxapi.wxfeedback,
+		#
 		#wxapi END.
 )
 
