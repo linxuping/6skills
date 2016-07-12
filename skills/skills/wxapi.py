@@ -183,19 +183,24 @@ def wxauth_idencode(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errorcode":0,"errormsg":"" }
-	_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
+	_sql = "select * from 6s_idencode where openid='%s' and code='%s';"%(openid,code)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
-		for i in range(count):
-			lis = rets[i]
-			imgs = lis[1].strip("\r\n ").split(" ")
-			_json.update( {"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10]} ) 
-	elif count == 0:
-		_json["errorcode"] = 1
-		_json["errormsg"] = "activity:%d not exist."%actid
+		#save to 6s_user.
+		_sql = "insert into 6s_user(phone,openid,createtime) values('%s','%s',now());"%(phone,openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 1:
+			pass
+		else:
+			if str(rets).find("Duplicate entry ") != -1:
+				_json["errorcode"] = 1
+				_json["errormsg"] = "Phone has existed."
+			else:
+				_json["errorcode"] = 1
+				_json["errormsg"] = get_errtag()+"Add user failed."
 	else:
 		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"DB failed."
+		_json["errormsg"] = get_errtag()+"Auth failed."
 		pass #error log
 
 	_jsonobj = json.dumps(_json)

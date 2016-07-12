@@ -26,10 +26,11 @@ def db_init():
 @mo.time_calc
 def db_exec(_sql):
 		global g_conn
-		_cur=g_conn.cursor()
 		count,rets = -1,None
 		for i in range(3):
+				_cur = None
 				try:
+						_cur=g_conn.cursor()
 						print "exec:  ",_sql
 						count=_cur.execute(_sql) 
 						rets = _cur.fetchall()
@@ -37,10 +38,12 @@ def db_exec(_sql):
 				except:
 						#log.
 						print "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc())
-						time.sleep(1)
+						rets = "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc())
 						print db_init()
-		_cur.close()
-		g_conn.commit()
+				finally:
+						if _cur != None:
+								_cur.close()
+								g_conn.commit()
 		mo.logger.info("[SQL]%s %d %s. "%(_sql,count,str(rets) ))
 		return count,rets
 

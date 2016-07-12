@@ -75,9 +75,10 @@ DROP TABLE IF EXISTS `6s_user`;
 CREATE TABLE `6s_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `refid` int(11) NOT NULL DEFAULT -1, -- 免登陆免refid
-  `username` varchar(127) NOT NULL COMMENT '用户名',
+  `username` varchar(127) DEFAULT '' COMMENT '用户名',
   -- `password` varchar(127) NOT NULL COMMENT '密码',
   `phone` varchar(24) NOT NULL unique COMMENT '联系方式',
+  `openid` varchar(24) NOT NULL COMMENT 'wx openid',
   `role` enum('admin','business','normal') COMMENT '角色',
   `img` varchar(255) COMMENT '图片',
   `createtime` datetime NOT NULL COMMENT '添加时间',
