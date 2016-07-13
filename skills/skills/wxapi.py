@@ -29,8 +29,8 @@ def activities_special_offers(req):
 	#	return area
 	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "str")
 	tmps = age.split("_")
-	if not ret or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
-		return age
+	if (not ret) or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
+		return response_json_error( "age invalid! must be *_*" )
 	_age_from = int(str(tmps[0]))
 	_age_to = int(str(tmps[1]))
 	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
