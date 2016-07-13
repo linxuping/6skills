@@ -106,6 +106,11 @@ def check_mysql_arg_jsonobj(_name, _arg, _type):
 	_jsonobj = json.dumps(output)
 	return ret,HttpResponse(_jsonobj, mimetype='application/json')
 
+def response_json(_dic):
+		return HttpResponse(json.dumps(_dic), mimetype='application/json')
+def response_json_error(_msg):
+		return HttpResponse(json.dumps({"errcode":1, "errmsg":_msg}), mimetype='application/json')
+
 #--------------------- AJAX -----------------------
 import json
 #ajax process.

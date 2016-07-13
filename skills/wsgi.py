@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "skills.settings")
 
+import sys
+sys.path.append("/home/lxp/6skills/skills/templates")
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
