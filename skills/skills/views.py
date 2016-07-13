@@ -17,12 +17,6 @@ from common import *
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-def req_print(func):
-		def wrapper(*args):
-				req = args[0]
-				mo.logger.info("POST:%s, GET:%s, USER:%s, args:%s"%(str(req.POST),str(req.GET),str(req.user),str(args[1:]) ))
-				return func(req)
-		return wrapper
 
 
 @csrf_exempt  

@@ -18,6 +18,7 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 import json
 
+@req_print
 def activities_special_offers(req):
 	#check.
 	ret,area = check_mysql_arg_jsonobj("area", req.GET.get("area",None), "str")
@@ -64,6 +65,7 @@ def activities_special_offers(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@req_print
 def activities_preview(req):
 	area = req.GET.get("area",None)
 	area2 = req.GET.get("area2",None)
@@ -111,6 +113,7 @@ def activities_preview(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@req_print
 def activities_details(req):
 	#check.
 	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
@@ -139,6 +142,7 @@ def activities_details(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@req_print
 def get_authcode(req):
 	#check.
 	#ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
@@ -166,6 +170,7 @@ def get_authcode(req):
 	return HttpResponse(_jsonobj, mimetype='application/json')
 
 
+@req_print
 def wxauth_idencode(req):
 	#check.
 	ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
@@ -205,6 +210,7 @@ def wxauth_idencode(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@req_print
 def activities_sign(req):
 	#check.
 	ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
@@ -257,6 +263,7 @@ def activities_sign(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@req_print
 def activities_my(req):
 	#check.
 	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
@@ -296,6 +303,7 @@ def activities_my(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@req_print
 def activities_reset(req):
 	#check.
 	ret,signid = check_mysql_arg_jsonobj("signid", req.GET.get("signid",None), "int")
@@ -320,6 +328,7 @@ def activities_reset(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@req_print
 def activities_getareas(req):
 	#check.
 	ret,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
