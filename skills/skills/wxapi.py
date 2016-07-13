@@ -265,14 +265,30 @@ def activities_my(req):
 	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
 	if not ret:
 		return openid
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	if page < 1:
+		page = 1
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
-	_json = { "activities":[],"errorcode":0,"errormsg":"" }
-	_sql = "select a.act_id,c.title,a.createtime,c.position_details from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%openid
+	_json = { "activities":[],"pageable":{"page":0,"total":0},"errorcode":0,"errormsg":"" }
+	_sql = "select a.act_id,c.title,a.createtime,c.position_details from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1 limit %d offset %d;"%(openid,page,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
 			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1]} )
+		_sql = "select count(a.act_id) from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 1:
+			_json["pageable"]["total"] = int(rets[0][0])
+			_json["pageable"]["page"] = page
+		else:
+			_json["errorcode"] = 1
+			_json["errormsg"] = get_errtag()+"get signup count failed."
 	else:
 		_json["errorcode"] = 1
 		_json["errormsg"] = get_errtag()+"DB failed."
