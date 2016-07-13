@@ -15,11 +15,12 @@ def db_init():
 		for i in range(3):
 				try:
 						#g_conn=MySQLdb.connect(host='',user='',passwd='',db='',port=)
-						print "%s_%s_%s_%s"%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME)
+						mo.logger.info( "%s_%s_%s_%s"%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME) )
 						g_conn=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=settings.DB_NAME,port=settings.DB_PORT,charset='utf8')
 						return True,None
 				except:
-						ret = str(sys.exc_info()) + "; " + str(traceback.format_exc())
+						ret = str(sys.exc_info()) + "; " + str(traceback.format_exc()) 
+						mo.logger.error( ret )
 						time.sleep(1)
 		return False,ret
 
@@ -31,15 +32,14 @@ def db_exec(_sql):
 				_cur = None
 				try:
 						_cur=g_conn.cursor()
-						print "exec:  ",_sql
+						#print "exec:  ",_sql
 						count=_cur.execute(_sql) 
 						rets = _cur.fetchall()
 						break
 				except:
-						#log.
-						print "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc())
+						mo.logger.error( "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc()) )
 						rets = "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc())
-						print db_init()
+						db_init()
 				finally:
 						if _cur != None:
 								_cur.close()
@@ -57,7 +57,7 @@ def db_select_test():		#cur.execute('select * from user')
 			print ret
 
 
-print db_init()
+db_init()
 #print db_exec("select * from 6s_user where username='test';")
 #print db_exec("delete from 6s_user where username='test';")
 #print db_exec("insert into 6s_user(refid,username,phone,role,img,createtime) values(1,'test','','normal','',now());")

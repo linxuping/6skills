@@ -132,7 +132,7 @@ def _get_user_status_map():
 	user_status_map = {}
 	_sql = "select id,name from 6s_actstatus;"
 	count,rets=dbmgr.db_exec(_sql)
-	print _sql,count,rets
+	mo.logger.info( "%s. %s. %s"%(_sql,str(count),str(rets)) )
 	if count > 0:
 		for i in range(count):
 			user_status_map[ int(rets[i][0]) ] = rets[i][1]
@@ -143,7 +143,6 @@ def _get_cities():
 	_cities = []
 	#_sql = "select name from 6s_position where id between 101010000 and 101020000 and pid=101000000;"
 	_sql = "select name from 6s_position where pid=101000000;"
-	print _sql
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in range(count):
@@ -155,7 +154,6 @@ def _get_regions(_city):
 	#_sql = "select name from 6s_position where id>101010000 and id<101020000;"
 	#_sql = "select name from 6s_position where id>(select id from 6s_position where name='%s') and id<(select id+10000 from 6s_position where name='%s');"%(_city,_city)
 	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%( _city )
-	print _sql
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in range(count):

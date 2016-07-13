@@ -24,8 +24,8 @@ logging.getLogger('').addHandler(console)
 import logging.config
 
 logging.config.fileConfig("skills/modules/logger.config")
-logger = logging.getLogger("file_outputf")
-#logger = logging.getLogger("filef")
+#logger = logging.getLogger("file_outputf")
+logger = logging.getLogger("filef")
 
 
 
