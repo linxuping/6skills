@@ -142,7 +142,7 @@ def activities_details(req):
 	#return HttpResponseRedirect('/test2') 
 
 
-def activities_getauthcode(req):
+def get_authcode(req):
 	#check.
 	#ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
 	#if not ret:
@@ -200,7 +200,7 @@ def wxauth_idencode(req):
 				_json["errormsg"] = get_errtag()+"Add user failed."
 	else:
 		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"Auth failed."
+		_json["errormsg"] = get_errtag()+"验证码错误."
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
@@ -276,11 +276,11 @@ def activities_my(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "activities":[],"pageable":{"page":0,"total":0},"errorcode":0,"errormsg":"" }
-	_sql = "select a.act_id,c.title,a.createtime,c.position_details from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1 limit %d offset %d;"%(openid,page,pagesize*(page-1))
+	_sql = "select a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1 limit %d offset %d;"%(openid,page,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
-			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1]} )
+			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"createtime":rets[i][2],"signid":rets[i][4]} )
 		_sql = "select count(a.act_id) from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 1:
@@ -293,6 +293,30 @@ def activities_my(req):
 		_json["errorcode"] = 1
 		_json["errormsg"] = get_errtag()+"DB failed."
 		pass #error log
+
+	_jsonobj = json.dumps(_json)
+	return HttpResponse(_jsonobj, mimetype='application/json')
+	#return HttpResponseRedirect('/test2') 
+
+
+def activities_reset(req):
+	#check.
+	ret,signid = check_mysql_arg_jsonobj("signid", req.GET.get("signid",None), "int")
+	if not ret:
+		return signid
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "errorcode":0,"errormsg":"" }
+	_sql = "update 6s_signup set status=0 where id=%d;"%(signid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		pass
+	elif count == 0:
+		_json["errorcode"] = 1
+		_json["errormsg"] = get_errtag()+"Nothing update."
+	else:
+		_json["errorcode"] = 1
+		_json["errormsg"] = get_errtag()+"DB failed."
 
 	_jsonobj = json.dumps(_json)
 	return HttpResponse(_jsonobj, mimetype='application/json')
