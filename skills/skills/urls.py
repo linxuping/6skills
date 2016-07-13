@@ -47,6 +47,8 @@ urlpatterns = patterns('',
 		url(r'^activities/reset', wxapi.activities_reset),
 		#feedback
 		#url(r'^wxfeedback', wxapi.wxfeedback,
+		#activities/get-areas
+		url(r'^activities/get-areas', wxapi.activities_getareas),
 		#
 		#wxapi END.
 )

@@ -323,3 +323,25 @@ def activities_reset(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+def activities_getareas(req):
+	#check.
+	ret,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
+	if not ret:
+		return city
+
+	#exec  
+	_json = { "areas":[],"errorcode":0,"errormsg":"" }
+	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%city
+	count,rets=dbmgr.db_exec(_sql)
+	if count >0 :
+		for i in xrange(count):
+			_json["areas"].append( rets[i][0] )
+	else:
+		_json["errorcode"] = 1
+		_json["errormsg"] = get_errtag()+"DB failed."
+
+	_jsonobj = json.dumps(_json)
+	return HttpResponse(_jsonobj, mimetype='application/json')
+	#return HttpResponseRedirect('/test2') 
+
+
