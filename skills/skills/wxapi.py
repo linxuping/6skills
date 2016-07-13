@@ -194,7 +194,7 @@ def wxauth_idencode(req):
 		else:
 			if str(rets).find("Duplicate entry ") != -1:
 				_json["errorcode"] = 1
-				_json["errormsg"] = "Phone has existed."
+				_json["errormsg"] = "用户已经存在！" #?????
 			else:
 				_json["errorcode"] = 1
 				_json["errormsg"] = get_errtag()+"Add user failed."
@@ -268,11 +268,11 @@ def activities_my(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "activities":[],"errorcode":0,"errormsg":"" }
-	_sql = "select a.act_id,c.title from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%openid
+	_sql = "select a.act_id,c.title,a.createtime,c.position_details from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%openid
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
-			_json["activities"].append( {"actid":ret[i][0],"title":ret[i][1]} )
+			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1]} )
 	else:
 		_json["errorcode"] = 1
 		_json["errormsg"] = get_errtag()+"DB failed."

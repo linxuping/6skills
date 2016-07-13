@@ -117,13 +117,13 @@ CREATE TABLE `6s_user_business` (
 
 delete from auth_user where username='test';
 insert into auth_user(username,password) values ("test","test");
-insert into 6s_user(refid,openid,username,phone,role,img,createtime,status) values (1,9901,"test","12345",'普通',"/tmp/test.png",now(),1);
+insert into 6s_user(id,refid,openid,username,phone,role,img,createtime,status) values (1,1,9901,"test","12345",'普通',"/tmp/test.png",now(),1);
 delete from auth_user where username='test2';
 insert into auth_user(username,password) values ("test2","test2");
 insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1001,9902,1,"test2","12346",'普通',"/tmp/test.png",now(),2);
 delete from auth_user where username='test3';
 insert into auth_user(username,password) values ("test3","test3");
-insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1002,9903,1,"test3","12347",'普通',"/tmp/test.png",now(),3);
+insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1002,9903,1,"test3","12347",'普通',"/tmp/test.png",now(),1);
 
 insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","phone","email","QQ");
 insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","phone2","email2","QQ2");
@@ -161,13 +161,13 @@ CREATE TABLE `6s_activity` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-insert into 6s_activity(price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (100,-1,"acttitle","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,104,"a.jpg b.jpg c.png","m.jpg",1);
-insert into 6s_activity(price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (103,-1,"acttitle2","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,104,"a2.jpg b2.jpg","n.jpg",1);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle3","2016-06-03","2016-06-30",6,101010103,104,1,2,4);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle4","2016-06-04","2016-06-30",6,101010102,104,1,2,5);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle5","2016-06-05","2016-06-30",6,101010101,104,1,4,6);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle6","2016-06-06","2016-06-30",6,101010401,104,1,3,6);
-insert into 6s_activity(title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values ("atitle7","2016-06-07","2016-06-30",6,101010402,104,1,2,7);
+insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (1,100,-1,"acttitle","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,104,"a.jpg b.jpg c.png","m.jpg",1);
+insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (2,103,-1,"acttitle2","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,104,"a2.jpg b2.jpg","n.jpg",1);
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values (3,"atitle3","2016-06-03","2016-06-30",6,101010103,104,1,2,4);
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values (4,"atitle4","2016-06-04","2016-06-30",6,101010102,104,1,2,5);
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values (5,"atitle5","2016-06-05","2016-06-30",6,101010101,104,1,4,6);
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values (6,"atitle6","2016-06-06","2016-06-30",6,101010401,104,1,3,6);
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to) values (7,"atitle7","2016-06-07","2016-06-30",6,101010402,104,1,2,7);
 
 
 -- ----------------------------
@@ -179,9 +179,9 @@ CREATE TABLE `6s_signup` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL DEFAULT -1, 
   `act_id` int(11) NOT NULL DEFAULT -1, 
-  `username_pa` varchar(127) NOT NULL COMMENT 'parent用户名',
-  `username_ch` varchar(127) NOT NULL COMMENT '儿童用户名',
-  `age_ch` tinyint(2) NOT NULL COMMENT '儿童年龄',
+  `username_pa` varchar(127) DEFAULT '' COMMENT 'parent用户名',
+  `username_ch` varchar(127) DEFAULT '' COMMENT '儿童用户名',
+  `age_ch` tinyint(2) DEFAULT 0 COMMENT '儿童年龄',
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
   `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用,1 可用,2 审核中,3 拒绝,4 禁止发帖',
@@ -189,6 +189,8 @@ CREATE TABLE `6s_signup` (
   CONSTRAINT `fk_6s_signup_actid` FOREIGN KEY (act_id) REFERENCES 6s_activity(id) ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+insert into 6s_signup(user_id,act_id,createtime) values(1,1,now()),(1001,1,now()),(1002,2,now());
 
 -- ----------------------------
 -- Table structure for 6s_idencode 验证码
