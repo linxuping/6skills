@@ -48,104 +48,104 @@ def search(req):
   return HttpResponse(html) 
 
 
-@req_print
 @csrf_exempt  
+@req_print
 def login(req):
-  #_header_log(req)
   if req.POST.get("log_username",None)==None or req.POST.get("log_password",None)==None:
-    return _get_html_render('templates/signin.html',{"id":1})
+    return get_html_render('templates/signin.html',{"id":1})
   username = req.POST["log_username"]
   password = req.POST["log_password"]
-  _ret,_obj =  _check_mysql_arg('templates/signin.html', username, "str")
+  _ret,_obj =  check_mysql_arg('templates/signin.html', username, "str")
   if not _ret:
     return _obj
-  _ret,_obj =  _check_mysql_arg('templates/signin.html', password, "str")
+  _ret,_obj =  check_mysql_arg('templates/signin.html', password, "str")
   if not _ret:
     return _obj
 
   if not User.objects.filter(username=username).exists():
-    return _get_html_render_error('templates/signin.html',"找不到当前用户，请注册",{}) 
+    return get_html_render_error('templates/signin.html',"找不到当前用户，请注册",{}) 
   user = auth.authenticate(username=username, password=password)  
   if user is None:
-    return _get_html_render_error('templates/signin.html',"账户密码不正确",{}) 
+    return get_html_render_error('templates/signin.html',"账户密码不正确",{}) 
   elif not user.is_active:
-    return _get_html_render_error('templates/signin.html',"该账户处于下线状态，请联系管理员",{}) 
+    return get_html_render_error('templates/signin.html',"该账户处于下线状态，请联系管理员",{}) 
   auth.login(req,user) 
   return HttpResponseRedirect('/manage/') 
 
 
 def _header_log(req):
 	mo.logger.info("POST:%s, GET:%s, USER:%s"%(str(req.POST),str(req.GET),str(req.user)) )
-def _get_upload_path(user):
-	return datetime.datetime.now().strftime("documents/%Y/%m/%d"+"/%s"%user)
-
 
 
 @csrf_exempt  
+@req_print
 def register(req):
-		#_header_log(req)
-		obj = TempMgr_manage
-		#Handle file upload
-		print "--1--"
-		if req.method == 'POST':
-				form = DocumentForm(req.POST, req.FILES)
-				print "--2--",form.__dict__
-				img = ""
-				if form.is_valid():
-						print "--3--"
-						username = req.POST['username']
-						password = req.POST['password']
-						phone = req.POST.get('phone','')
-						regtype = req.POST.get('regtype','')
-						if User.objects.filter(username=username).exists():
-								return _get_html_render_error("templates/register.html", "用户%s已存在！"%username, {})
+	obj = TempMgr_manage
+	if req.method == 'POST':
+		form = DocumentForm(req.POST, req.FILES)
+		img = ""
+		username = req.POST['username']
+		password = req.POST['password']
+		phone = req.POST.get('phone','')
+		regtype = req.POST.get('regtype','')
+		if form.is_valid():
+			if User.objects.filter(username=username).exists():
+				return get_html_render_error("templates/register.html", "用户%s已存在！"%username, {})
 
-						#how to changed the file name ??????????????????
-						#_file = "%s_%s"%(str(req.user),str(req.FILES['docfile']))
-						#if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
-						_file = req.FILES['docfile']
-						print "----------->",_file
-						#rm media/documents/2016/06/26/_file ??????????????????
-						newdoc = Document(docfile=_file)
-						upload_path = _get_upload_path( str(req.user) )
-						newdoc.docfile.field.upload_to = upload_path
-
-						#newdoc.init_docfile(str(req.user))
-						newdoc.save()
-						img = os.path.join(settings.MEDIA_URL, upload_path, str(_file))
-
-				#auth_user -- check user existed or not .
-				user = None
-				try:
-					user = User.objects.create_user(username,"skills@me.com",password)
-					user.save()
-					
-					_sql = "insert into 6s_user(refid,username,phone,role,img,createtime) values(%d,'%s','%s','%s','%s',now());"%(40,username,phone,regtype,img)
-					count,rets=dbmgr.db_exec(_sql)
-					print count,rets
-					if count != 1:
-							#delete 6s_user
-							print "insert failed. " #error log.
-							user.delete()
-				except:
-					if user != None:
-						user.delete()
-					_einfo =  str(sys.exc_info())+"; "+str(traceback.format_exc())
-					print _einfo
-					if "Duplicate entry" in _einfo:
-						obj.einfo.error = "该名字已经被注册！"
-					return _get_html_render('templates/register.html',{"obj":obj} ) 
-					
-				# Redirect to the document list after POST
-				#return HttpResponseRedirect(reverse('skills.views.register.business'))
-				if regtype == "business":
-					return HttpResponseRedirect('/register/business') 
-				else:
-					return HttpResponseRedirect('/login') 
+			#_file = "%s_%s"%(str(req.user),str(req.FILES['docfile']))
+			#if repeated -->>>  functionList_r8KCzYQ.xml  functionList.xml
+			_file = req.FILES['docfile']
+			newdoc = Document(docfile=_file)
+			upload_path = get_upload_path( str(req.user) )
+			img = os.path.join(settings.MEDIA_URL, upload_path, str(_file))
+			#rm media/documents/2016/06/26/_file ??????????????????
+			newdoc.docfile.field.upload_to = upload_path
+			newdoc.save()
 		else:
-				print "--4--"
-				form = DocumentForm() # A empty, unbound form
-		return _get_html_render('templates/register.html', {'form': form})
+			mo.logger.error("form is invalid!")
+
+		#auth_user -- check user existed or not .
+		user = None
+		try:
+			#phone unique
+			_sql = "select id from 6s_user where phone='%s';"%phone
+			count,rets=dbmgr.db_exec(_sql)
+			if count > 0:
+				mo.logger.error( "reg phone %s has existed."%phone )
+				return get_html_render_error('templates/register.html',"号码%s已经被注册过！"%phone,{"obj":obj} ) 
+			
+			user = User.objects.create_user(username,"skills@me.com",password)
+			user.save()
+			
+			_sql = "insert into 6s_user(refid,username,phone,role,img,createtime) values(%d,'%s','%s','%s','%s',now());"%(40,username,phone,regtype,img)
+			count,rets=dbmgr.db_exec(_sql)
+			print count,rets
+			if count != 1:
+				#delete 6s_user
+				user.delete()
+				mo.logger.error("insert user:%s but exec=%d, now delete."%(username,count) )
+				return get_html_render('templates/register.html',{"obj":obj} ) 
+		except:
+			if user != None:
+				user.delete()
+			_einfo =  str(sys.exc_info())+"; "+str(traceback.format_exc())
+			mo.logger.error(_einfo)
+			if "Duplicate entry" in _einfo:
+				obj.einfo.error = "该名字(%s)已经被注册！"%username
+			return get_html_render('templates/register.html',{"obj":obj} ) 
+			
+		# Redirect to the document list after POST
+		#return HttpResponseRedirect(reverse('skills.views.register.business'))
+		if regtype == "business":
+			mo.logger.info("return page /register/business")
+			return HttpResponseRedirect('/register/business') 
+		else:
+			mo.logger.info("return page /login")
+			return HttpResponseRedirect('/login') 
+	else:
+		print "--4--"
+		form = DocumentForm() # A empty, unbound form
+	return get_html_render('templates/register.html', {'form': form})
 
 
 
@@ -407,126 +407,5 @@ def activity_op(req, optype):
 	return HttpResponse(html) 
 
 
-
-#--------------------- COMMON -----------------------
-class TempMgr_base:  
-  #status & data
-  class _status:
-    pass
-  st = _status
-  class _data:
-    pass
-  da = _data
-  class _errinfo:
-    error = ""
-  einfo = _errinfo
-  #methods
-  pass
-class TempMgr_register(TempMgr_base):  
-  pass
-class TempMgr_register_business(TempMgr_base):  
-  pass
-class TempMgr_login(TempMgr_base):  
-  pass
-
-class TempMgr_manage(TempMgr_base):
-		class _tab:
-				def init(self):
-						self.activity_published,self.activity_nopublish,self.user_manage,self.user_analyze,self.history_analyze,self.account_setting,self.audit_businessman,self.audit_activity="","","","","","","",""
-		tab = _tab()
-		pass
-
-class dbobj:
-		pass
-
-#render_to_response('current_datetime.html', {'current_date': now})
-def _get_html_render(_url, _dic):
-		fp = open(_url)  
-		t = Template(fp.read())  
-		fp.close()  
-		html = t.render(Context(_dic))  
-		return HttpResponse(html) 
-def _get_html_render_error(_url, _msg, _dic={}):
-		obj = TempMgr_manage
-		obj.tab.init()
-		obj.einfo.error = _msg
-		_dic["obj"] = obj
-		return _get_html_render(_url, _dic)
-def _check_mysql_arg(_url, _arg, _type):
-		#invoke mysql injection. 
-		if _type == "int":
-				if not _arg.isdigit():
-						return False,_get_html_render_error(_url, "输入值非法(数字)！")
-				return True,None
-		elif _type == "str":
-				if _arg.find('and')!=-1 and _arg.find('=')!=-1 and (_arg.find('\'')!=-1 or _arg.find('\"')!=-1):
-						return False,_get_html_render_error(_url, "输入值非法(字符串)！")
-				return True,None
-		return True,None
-
-#--------------------- AJAX -----------------------
-import json
-#ajax process.
-def ajax_process(req):
-	method = req.GET.get("method",None)
-	print method
-	if not req.is_ajax():
-		print "----------- not ajax -------------->"
-		return HttpResponse('it is not ajax.')
-	
-	print "----------- ajax processing -------------->"
-	print req.GET  #pass args using "url: '/ajax?name=test',"
-	_json = {}
-	if method=="get_regions" and req.GET.has_key("city"):
-		_json["regions"] = _get_regions( req.GET["city"] )
-	_jsonobj = json.dumps(_json)
-	return HttpResponse(_jsonobj, mimetype='application/json')
-	#return HttpResponseRedirect('/test2') 
-
-
-
-#--------------------- GLOBAL -----------------------
-def _get_user_status_map():
-	user_status_map = {}
-	_sql = "select id,name from 6s_actstatus;"
-	count,rets=dbmgr.db_exec(_sql)
-	print _sql,count,rets
-	if count > 0:
-		for i in range(count):
-			user_status_map[ int(rets[i][0]) ] = rets[i][1]
-	else:
-		pass #error log
-	return user_status_map
-def _get_cities():
-	_cities = []
-	#_sql = "select name from 6s_position where id between 101010000 and 101020000 and pid=101000000;"
-	_sql = "select name from 6s_position where pid=101000000;"
-	print _sql
-	count,rets=dbmgr.db_exec(_sql)
-	if count > 0:
-		for i in range(count):
-			#print "region: ",rets[i][0]
-			_cities.append( {'name':rets[i][0]} )
-	return _cities
-def _get_regions(_city):
-	_regions = []
-	#_sql = "select name from 6s_position where id>101010000 and id<101020000;"
-	#_sql = "select name from 6s_position where id>(select id from 6s_position where name='%s') and id<(select id+10000 from 6s_position where name='%s');"%(_city,_city)
-	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%( _city )
-	print _sql
-	count,rets=dbmgr.db_exec(_sql)
-	if count > 0:
-		for i in range(count):
-			_regions.append( {'name':rets[i][0]} )
-	return _regions
-
-g_user_status_map = {} #{ 0:"停用",1:"可用",2:"审核中",3:"拒绝",4:"禁止发帖" }
-g_cities = []
-def _global_init():
-	global g_user_status_map,g_cities
-	g_user_status_map = _get_user_status_map()
-	g_cities = _get_cities()
-	
-_global_init()
 
 

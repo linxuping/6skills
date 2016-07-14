@@ -27,6 +27,11 @@ def req_print(func):
 				return func(req)
 		return wrapper
 
+def get_upload_path(user):
+	path = datetime.datetime.now().strftime("documents/%Y/%m/%d"+"/%s"%user)
+	mo.logger.info("[upload] %s"%path)
+	return path
+
 
 #--------------------- COMMON -----------------------
 class TempMgr_base:  
@@ -60,29 +65,30 @@ class dbobj:
 		pass
 
 #render_to_response('current_datetime.html', {'current_date': now})
-def _get_html_render(_url, _dic):
+def get_html_render(_url, _dic):
 		fp = open(_url)  
 		t = Template(fp.read())  
 		fp.close()  
 		html = t.render(Context(_dic))  
 		return HttpResponse(html) 
-def _get_html_render_error(_url, _msg, _dic={}):
+def get_html_render_error(_url, _msg, _dic={}):
 		obj = TempMgr_manage
 		obj.tab.init()
 		obj.einfo.error = _msg
 		_dic["obj"] = obj
-		return _get_html_render(_url, _dic)
+		mo.logger.error("[error page] %s"%_msg)
+		return get_html_render(_url, _dic)
 
 
-def _check_mysql_arg(_url, _arg, _type):
+def check_mysql_arg(_url, _arg, _type):
 		#invoke mysql injection. 
 		if _type == "int":
 				if not _arg.isdigit():
-						return False,_get_html_render_error(_url, "输入值非法(数字)！")
+						return False,get_html_render_error(_url, "输入值非法(数字)！")
 				return True,None
 		elif _type == "str":
 				if _arg.find('and')!=-1 and _arg.find('=')!=-1 and (_arg.find('\'')!=-1 or _arg.find('\"')!=-1):
-						return False,_get_html_render_error(_url, "输入值非法(字符串)！")
+						return False,get_html_render_error(_url, "输入值非法(字符串)！")
 				return True,None
 		return True,None
 

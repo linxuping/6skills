@@ -15,7 +15,7 @@ def db_init():
 		for i in range(3):
 				try:
 						#g_conn=MySQLdb.connect(host='',user='',passwd='',db='',port=)
-						mo.logger.info( "%s_%s_%s_%s"%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME) )
+						mo.logger.info( "%s_%s_%s_%s %d."%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME,i) )
 						g_conn=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=settings.DB_NAME,port=settings.DB_PORT,charset='utf8')
 						return True,None
 				except:
@@ -32,19 +32,18 @@ def db_exec(_sql):
 				_cur = None
 				try:
 						_cur=g_conn.cursor()
-						#print "exec:  ",_sql
 						count=_cur.execute(_sql) 
 						rets = _cur.fetchall()
 						break
 				except:
-						mo.logger.error( "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc()) )
-						rets = "retry ",i,str(sys.exc_info()) + "; " + str(traceback.format_exc())
+						rets = "[sql error] retry.%d, %s, %s. "%(i,str(sys.exc_info()),str(traceback.format_exc())  )
+						mo.logger.error( rets )
 						db_init()
 				finally:
 						if _cur != None:
 								_cur.close()
 								g_conn.commit()
-		mo.logger.info("[SQL]%s %d %s. "%(_sql,count,str(rets) ))
+		mo.logger.info("[sql] %s %d %s. "%(_sql,count,str(rets) ))
 		return count,rets
 
 def db_select_test():		#cur.execute('select * from user')
