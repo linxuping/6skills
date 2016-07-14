@@ -20,39 +20,39 @@
       <script src="../../assets/js/ie8-responsive-file-warning.js"></script>
     <![endif]-->
     <script src="/static/js/ie-emulation-modes-warning.js"></script>
-    <style>body { padding-top:50px; } h1 { color: black; } .form-group { margin-bottom:2px }  #content{ width:100%; min-height:600px; background:white; padding-top:20px; color:black; } .register{ padding: 20px; font-weight:700; border:black solid 1px; -moz-border-radius: 10px; /* Gecko browsers */ -webkit-border-radius: 10px; /* Webkit browsers */ border-radius:10px; /* W3C syntax */ }
+    <style>body { padding-top:50px; } h1 { color: black; } div { margin-bottom:2px } .align-right {text-align:right;margin-top:5px} .form-group { margin-bottom:2px }  #content{ width:100%; min-height:600px; background:white; padding-top:20px; color:black; } .register{ padding: 20px; font-weight:700; border:black solid 1px; -moz-border-radius: 10px; /* Gecko browsers */ -webkit-border-radius: 10px; /* Webkit browsers */ border-radius:10px; /* W3C syntax */ }
 </style>
     <script language="javascript">
-    function Check() // 验证表单数据有效性
+    function CheckAndSubmit() // 验证表单数据有效性
       {
-        if (document.send.username.value == "") {
+        if (username.value == "") {
           window.alert('请输入用户名!');
           return false;
         }
-        if (document.send.username.value.length < 3) {
+        if (username.value.length < 3) {
           window.alert('用户名长度必须大于3!');
           return false;
         }
-        if (document.send.password.value == "") {
+        if (password.value == "") {
           alert('请输入密码!');
           return false;
         }
-        if (document.send.password.value.length < 6) {
+        if (password.value.length < 6) {
           alert('密码长度必须大于6!');
           return false;
         }
-        if (document.send.password.value != document.send.chkpwd.value) {
+        if (password.value != chkpwd.value) {
           alert('确认密码与密码不一致!');
           return false;
-        }
-        if (document.send.email.value == "") {
+        }/*
+        if (email.value == "") {
           alert('请输入Email!');
           return false;
         }
-        if (document.send.email.value.indexOf("@") == -1) {
+        if (email.value.indexOf("@") == -1) {
           alert('请输入有效的email地址!');
           return false;
-        }
+        }*/
         var regBox = {
           regEmail: /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
           //邮箱
@@ -62,19 +62,26 @@
           //手机
           regTel: /^0[\d]{2,3}-[\d]{7,8}$/
         }
-        var mflag = regBox.regMobile.test(document.send.email.value);
-        if (document.send.phone.value == "") {
-          alert('请输入phone!');
+        var mflag = regBox.regMobile.test(phone.value);
+        if (phone.value == "") {
+          alert('请输入手机号码!');
           return false;
         }
-        if (!mflag) {
-          alert('请输入有效的phone num!');
+        /*if (!mflag) {
+          alert('请输入有效的手机号码!');
           return false;
+        }*/
+        if (document.getElementsByName("regtyperd")[0].checked) {
+          regtype.value = "business";
         }
-        if (document.send.authcode.value == "") {
+        else if (document.getElementsByName("regtyperd")[1].checked) {
+          regtype.value = "normal";
+        }
+        /*if (document.send.authcode.value == "") {
           alert('请输入验证码!');
           return false;
-        }
+        }*/
+        postform.submit();
         return true;
       }
 
@@ -139,16 +146,16 @@ alert("{{obj.einfo.error}}");
     <!-- /.navbar -->
     <div id="content">
       <div class="container">
-        <form action="/register/normal/" method="post" enctype="multipart/form-data">
+        <form action="/register/normal/" method="post" enctype="multipart/form-data" id="postform" >
           <input type="hidden" name="actype_normal"/>
           <div class="row">
             <h1 class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 page_title ">注册</h1></div>
           <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1 register">
             <div class="form-group">
-              <label for="username" class="col-sm-3 control-label">用户名：</label>
+              <label for="username" class="col-sm-3 control-label align-right">用户名：</label>
               <div class="col-sm-8">
                 <div class="input-group">
-                  <input type="text" class="form-control" name="username" placeholder="请输入用户名">
+                  <input type="text" class="form-control" name="username" id="username" placeholder="请输入用户名">
                   <div class="input-group-addon">
                     <span class="glyphicon glyphicon-user"></span>
                   </div>
@@ -156,10 +163,10 @@ alert("{{obj.einfo.error}}");
               </div>
             </div>
             <div class="form-group">
-              <label for="password" class="col-sm-3 control-label">密码：</label>
+              <label for="password" class="col-sm-3 control-label align-right">密码：</label>
               <div class="col-sm-8">
                 <div class="input-group">
-                  <input type="password" class="form-control" name="password" placeholder="请输入密码（六位以上）">
+                  <input type="password" class="form-control" name="password" id="password" placeholder="请输入密码（六位以上）">
                   <div class="input-group-addon">
                     <span class="glyphicon glyphicon-lock"></span>
                   </div>
@@ -167,10 +174,10 @@ alert("{{obj.einfo.error}}");
               </div>
             </div>
             <div class="form-group">
-              <label for="chkpwd" class="col-sm-3 control-label">确认密码：</label>
+              <label for="chkpwd" class="col-sm-3 control-label align-right">确认密码：</label>
               <div class="col-sm-8">
                 <div class="input-group">
-                  <input type="password" class="form-control" name="chkpwd" placeholder="请确认密码">
+                  <input type="password" class="form-control" name="chkpwd" id="chkpwd" placeholder="请确认密码">
                   <div class="input-group-addon">
                     <span class="glyphicon glyphicon-exclamation-sign"></span>
                   </div>
@@ -178,7 +185,7 @@ alert("{{obj.einfo.error}}");
               </div>
             </div>
             <!-- <div class="form-group">
-            <label for="email" class="col-sm-3 control-label">邮箱：</label>
+            <label for="email" class="col-sm-3 control-label  align-right">邮箱：</label>
             <div class="col-sm-8">
             <div class="input-group">
             <input type="text" class="form-control" name="email" placeholder="请输入有效邮箱">
@@ -188,7 +195,7 @@ alert("{{obj.einfo.error}}");
             </div>
             -->
             <div class="form-group">
-              <label for="headportrait" class="col-sm-3 control-label">头像：</label>
+              <label for="headportrait" class="col-sm-3 control-label align-right">头像：</label>
               <div class="col-sm-8">
                 <div class="input-group">
                 {% csrf_token %}
@@ -201,12 +208,12 @@ alert("{{obj.einfo.error}}");
               </div>
             </div>
             <div class="form-group">
-              <label for="phone" class="col-sm-3 control-label">电话：</label>
+              <label for="phone" class="col-sm-3 control-label align-right">手机号码：</label>
               <div class="col-sm-8">
                 <div class="input-group">
-                  <input type="text" class="form-control" name="phone" placeholder="请输入有效电话">
+                  <input type="text" class="form-control" name="phone" id="phone" placeholder="请输入有效电话">
                   <div class="input-group-addon">
-                    <span class="glyphicon glyphicon-envelope"></span>
+                    <span class="glyphicon glyphicon-headphones"></span>
                   </div>
                 </div>
               </div>
@@ -216,8 +223,8 @@ alert("{{obj.einfo.error}}");
               <div class="col-sm-8">
                 <div class="input-group">
                   <div class="input-group">
-                    <label><input name="regtype" type="radio" value="business" checked/>商户&nbsp&nbsp </label>
-                    <label><input name="regtype" type="radio" value="normal" />普通访客&nbsp </label>
+                    <label><input name="regtyperd" type="radio" value="business" checked/>商户 </label>&nbsp&nbsp
+                    <label><input name="regtyperd" type="radio" value="normal" />普通访客 </label>&nbsp
                   </div>
                 </div>
               </div>
@@ -240,22 +247,22 @@ alert("{{obj.einfo.error}}");
             </div>-->
             <div class="row">
               <div class="col-md-3 col-md-offset-3 col-xs-12">
-                <button type="reset" class="btn btn-default btn-block">
-                  <b>&nbsp;&nbsp;清空&nbsp;&nbsp;</b>
+                <button class="btn btn-default btn-block">
+                  <b>&nbsp;&nbsp;清空</b>
                   <span class="glyphicon glyphicon-remove"></span>
                 </button>
               </div>
               <div class="col-md-3 col-xs-12">
-                <button type="submit" class="btn btn-primary btn-block">
-                  <b>&nbsp;&nbsp;提交&nbsp;&nbsp;</b>
-                  <span class="glyphicon glyphicon-arrow-right"></span>
-                </button>&nbsp&nbsp&nbsp&nbsp
+                <input type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" onclick="CheckAndSubmit()" class="btn btn-primary btn-block">
+                  
+                </input>&nbsp&nbsp&nbsp&nbsp
               </div>
             </div>
               <div style="text-align:right">
                 <a href="/login">用现有账号登陆</a>
               </div>
           </div>
+          <input type="hidden" name="regtype" id="regtype" />
         </form>
         <br/>
         <!-- 注册表单结束 --></div>
