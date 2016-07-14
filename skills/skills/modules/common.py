@@ -1,14 +1,16 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*-
-import datetime
+import time
 from mylog import logger
 
 def time_calc(func):
 		def wrapper(args):
-				starttime = datetime.datetime.now()
+				starttime = time.time()
+				print starttime,time.time() 
 				ret = func(args)
-				endtime = datetime.datetime.now()
-				logger.info( "[CALC] %s: %s time:%d."%(func.func_name,str(args),(endtime - starttime).seconds) )
+				endtime = time.time()
+				print endtime ,time.time()
+				logger.info( "[CALC] %s: %s time:%.03f."%(func.func_name,str(args),float(endtime - starttime)) )
 				return ret
 		return wrapper
 
