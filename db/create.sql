@@ -37,6 +37,9 @@ CREATE TABLE `6s_position` (
   `latitude` SMALLINT(4) NOT NULL DEFAULT -1 COMMENT '纬度(预留)', 
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX idx_6s_position_pid ON 6s_position(pid);
+CREATE INDEX idx_6s_position_name ON 6s_position(name);
+
 -- CONSTRAINT `6s_position_idfk_1` FOREIGN KEY (`pid`) REFERENCES `6s_position` (`id`)
 
 insert into 6s_position(id,pid,name) values (100000000,-1,"中国"),(101000000,100000000,"广东省"),(101010000,101000000,"广州市"),(101020000,101000000,"深圳市"),(101010100,101010000,"天河区"),(101010101,101010100,"学院"),(101010102,101010100,"棠下"),(101010103,101010100,"天河公园"),(101010200,101010000,"越秀区"),(101010300,101010000,"番禺区"),(101010400,101010000,"海珠区"),(101010401,101010400,"赤岗"),(101010402,101010400,"洛溪"),(101010500,101010000,"荔湾区"),(101010600,101010000,"白云区"),(101010700,101010000,"从化区"),(101010800,101010000,"萝岗区"),(101010900,101010000,"南沙区"),(101011000,101010000,"增城区"),(101020100,101020000,"宝安区"),(101020200,101020000,"福田区");
@@ -87,6 +90,10 @@ CREATE TABLE `6s_user` (
   `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用,1 可用,2 审核中,3 拒绝,4 禁止发帖',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX idx_6s_user_refid ON 6s_user(refid);
+CREATE INDEX idx_6s_user_username ON 6s_user(username);
+CREATE INDEX idx_6s_user_phone ON 6s_user(phone);
+CREATE INDEX idx_6s_user_openid ON 6s_user(openid);
 
 -- ----------------------------
 -- Table structure for 6s_user_business 商户
@@ -113,6 +120,9 @@ CREATE TABLE `6s_user_business` (
   CONSTRAINT `fk_6s_user_business_uid` FOREIGN KEY (refid) REFERENCES 6s_user(id) ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX idx_6s_user_business_refid ON 6s_user_business(refid);
+CREATE INDEX idx_6s_user_business_name ON 6s_user_business(name);
+CREATE INDEX idx_6s_user_business_phone ON 6s_user_business(phone);
 
 
 delete from auth_user where username='test';
@@ -160,6 +170,10 @@ CREATE TABLE `6s_activity` (
   CONSTRAINT `fk_6s_activity_userid` FOREIGN KEY (user_id) REFERENCES 6s_user(id) ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX idx_6s_activity_title ON 6s_activity(title);
+CREATE INDEX idx_6s_activity_preinfo ON 6s_activity(preinfo);
+CREATE INDEX idx_6s_activity_act_id ON 6s_activity(act_id);
+CREATE INDEX idx_6s_activity_user_id ON 6s_activity(user_id);
 
 insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (1,100,-1,"acttitle","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,104,"a.jpg b.jpg c.png","m.jpg",1);
 insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (2,103,-1,"acttitle2","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,104,"a2.jpg b2.jpg","n.jpg",1);
@@ -189,6 +203,8 @@ CREATE TABLE `6s_signup` (
   CONSTRAINT `fk_6s_signup_actid` FOREIGN KEY (act_id) REFERENCES 6s_activity(id) ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX idx_6s_signup_user_id ON 6s_signup(user_id);
+CREATE INDEX idx_6s_signup_act_id ON 6s_signup(act_id);
 
 insert into 6s_signup(user_id,act_id,createtime) values(1,1,now()),(1001,1,now()),(1002,2,now());
 
@@ -205,6 +221,8 @@ CREATE TABLE `6s_idencode` (
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX idx_6s_idencode_openid ON 6s_idencode(openid);
+
 insert into 6s_idencode(openid,code,createtime) values("2132423435",2435,now());
 
 
