@@ -347,7 +347,8 @@ def activities_getareas(req):
 		_json["errormsg"] = get_errtag()+"DB failed."
 
 	_jsonobj = json.dumps(_json)
-	return HttpResponse(_jsonobj, mimetype='application/json')
-	#return HttpResponseRedirect('/test2') 
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 
 

@@ -117,6 +117,16 @@ def response_json(_dic):
 def response_json_error(_msg):
 		return HttpResponse(json.dumps({"errcode":1, "errmsg":_msg}), mimetype='application/json')
 
+BFE_URL = "http://121.42.41.241:9901"
+def makeup_headers_CORS(resp):
+		resp._headers["Access-Control-Allow-Origin"] = ("Access-Control-Allow-Origin", "%s"%BFE_URL)
+		resp._headers["Access-Control-Allow-Methods"] = ("Access-Control-Allow-Methods", "POST, PUT, DELETE, GET, OPTIONS")
+		resp._headers["Access-Control-Request-Method"] = ("Access-Control-Request-Method", "*")
+		resp._headers["Access-Control-Allow-Headers"] = ("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+		resp._headers["Access-Control-Max-Age"] = ("Access-Control-Max-Age", "1728000")
+		resp._headers["Access-Control-Allow-Credentials"] = ("Access-Control-Allow-Credentials", 'true')
+		resp._headers["P3P"] = ("P3P", "CP=\"CAO PSA OUR COR\"")
+
 #--------------------- AJAX -----------------------
 import json
 #ajax process.
