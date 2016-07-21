@@ -19,10 +19,10 @@ var App = React.createClass({
 			});
 		})
 		.fail(function() {
-			console.log("error");
+			console.log("App error");
 		})
 		.always(function() {
-			console.log("complete");
+			console.log("App complete");
 		});
 
 	},
@@ -41,20 +41,48 @@ var SelectHeader = React.createClass({
 	render: function() {
 		return (
 			<div className="select-header">
-				<Selecter name="area" text="地区"/>
-				<Selecter name="age" text="年龄"/>
+				<Selecter name="area" text="地区" url="http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"/>
+				<Selecter name="age" text="年龄" url="http://121.42.41.241:9900/activities/get-agesel"/>
 			</div>
 		);
 	}
 });
 
 var Selecter = React.createClass({
+	getInitialState: function() {
+		return {
+			values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+			loaded: false
+		};
+	},
+	componentDidMount: function() {
+		$.ajax({
+			url: this.props.url,
+			type: 'get',
+			dataType: 'json',
+			data: {},
+			success: function(res) {
+				this.setState({
+					values: res.values
+				});
+			}.bind(this),
+			error: function() {
+				console.log("Selecter error: "+this.props.url);
+			}.bind(this),
+			complete: function() {
+				//console.log("Selecter complete");
+			}.bind(this)
+		});
+	},
+
 	render: function() {
 		return (
 			<div className="selecter">
 				<label forHtml={this.props.name}>{this.props.text}:</label>
 				<select name={this.props.name} className="weui_select ss-select">
-					<option value="aa">aa</option>
+					{ this.state.values.map(function(elem) {
+							return (<option value="{elem}">{elem}</option>);
+					}) }
 				</select>
 			</div>
 		);
