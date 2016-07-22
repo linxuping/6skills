@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>活动详情</title>
+	<meta chartset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/weui.min.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+<body>
+
+	<div id="content"></div>
+	<script type="text/javascript" src="/static/js/jquery-3.0.0.min.js"></script>
+	<script type="text/javascript" src="/static/js/react/react.min.js"></script>
+	<script type="text/javascript" src="/static/js/react/react-dom.min.js"></script>
+	<script src="/static/js/modules/activity_detail.js"></script>
+	<script src="/static/js/modules/sign.js"></script>
+	<script type="text/javascript">
+	  //<![CDATA[
+		"use strict";
+		ReactDOM.render(
+			React.createElement(ActivityDetail, null),
+			document.getElementById('content')
+		);
+
+	  //]]>
+	</script>
+</body>
+</html>
