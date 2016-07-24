@@ -149,10 +149,87 @@ body{
 	background-color: #fff;
 	.back-btn{
 		font-size: 1.8rem;
-		height: 4.5rem;
+		height: 3.5rem;
 		border-bottom: 1px solid #ccc;
-		line-height: 4.5rem;
-		padding-left: 1rem;
+		line-height: 3.5rem;
+		padding-left: 1.8rem;
 		cursor: pointer;
+		position: relative;
+		&:before{
+			@borderColor: #ccc;
+			position: absolute;
+			content: "";
+			width: 5px;
+			height: 5px;
+			top: 50%;
+			left: 1rem;
+			margin-top: -3px;
+			-webkit-transform: rotate(135deg);
+			transform: rotate(315deg);
+			border-top: 2px solid @borderColor;
+			border-left: 2px solid @borderColor;
+		}
+	}
+}
+.get-btn{
+	display: inline-block;
+}
+.ss-title{
+	padding:0 1rem;
+	font-size: 1.8rem;
+	height: 3.5rem;
+	line-height: 3.5rem;
+	border-bottom: 1px solid #ccc;
+}
+.tc{
+	text-align: center;
+
+}
+.me{
+	margin-top: 3rem;
+	font-size: 2rem;
+	@imgSize: 75px;
+	img{
+		width: @imgSize;
+		height: @imgSize;
+		border-radius: 50%;
+	}
+}
+.my-activities{
+	font-size: 1.5rem;
+	li{
+		padding: 1rem;
+		border-bottom: 1px solid #ccc;
+		position: relative;
+		button{
+			position: absolute;
+			right: 1rem;
+			bottom: 1rem;
+		}
+	}
+	.ss-hd{
+		font-size: 1.8rem;
+	}
+	.time{
+		span{
+			display: block;
+			float: left;
+			width: 80px;
+		}
+		time{
+			display: block;
+			float: left;
+		}
+	}
+
+}
+.myActivities{
+	padding-top: 3.5rem;
+	.back-btn{
+		position: fixed;
+		background-color: #fff;
+		top: 0px;
+		left: 0px;
+		width: 100%;
 	}
 }
