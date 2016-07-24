@@ -15,11 +15,11 @@ var App = React.createClass({ //
 		var area = this.props.area;
 		//console.log(area);
 		if (this.state.age == null)
-			age = "0_3";
+			age = "0_100";
 		else
 			age = this.state.age;
 		if (this.state.area == null)
-			area = "天河区";
+			area = "*";
 		else
 			area = this.state.area;
 
@@ -104,10 +104,15 @@ var Selecter = React.createClass({
 		//console.log(event.target.value);
 		//console.log(App);
 		//console.log(Appobj);
-		if (this.props.name == "area")
+		if (this.props.name == "area"){
 			Appobj.state.area = event.target.value;
-		else if (this.props.name == "age")
-			Appobj.state.age = event.target.value;
+		}
+		else if (this.props.name == "age"){
+			if (event.target.value == "不限")
+				Appobj.state.age = "0_100";
+			else
+				Appobj.state.age = event.target.value;
+		}
 		Appobj.updateActivities();
 		Appobj.setState({loaded: !Appobj.state.loaded});
 		//Appobj.setState({activities: [1,2,3,4,5,6]});
@@ -121,6 +126,7 @@ var Selecter = React.createClass({
 			<div className="selecter">
 				<label forHtml={this.props.name}>{this.props.text}:</label>
 				<select name={this.props.name} className="weui_select ss-select" onChange={this.selectChanged}>
+					<option value="不限">不限</option>
 					{ this.state.values.map(function(elem) {
 							return (<option value={elem}>{elem}</option>);
 					}) }
