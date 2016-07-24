@@ -42,7 +42,10 @@ def activities_special_offers(req):
 
 	#exec 
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errorcode":0,"errormsg":"" }
-	_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 limit %d offset %d;"%(area,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	if area == "*":
+		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 limit %d offset %d;"%(_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	else:
+		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 limit %d offset %d;"%(area,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
@@ -54,7 +57,10 @@ def activities_special_offers(req):
 		_json["errormsg"] = get_errtag()+"DB failed."
 		pass #error log
 
-	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(area,_age_from,_age_to,_age_from,_age_to)
+	if area == "*":
+		_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(_age_from,_age_to,_age_from,_age_to)
+	else:
+		_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(area,_age_from,_age_to,_age_from,_age_to)
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
