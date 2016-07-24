@@ -175,17 +175,17 @@ CREATE INDEX idx_6s_activity_preinfo ON 6s_activity(preinfo);
 CREATE INDEX idx_6s_activity_act_id ON 6s_activity(act_id);
 CREATE INDEX idx_6s_activity_user_id ON 6s_activity(user_id);
 
-insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (1,100,150,"title_12","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,104,"a.jpg b.jpg c.png","m.jpg",1);
-insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (2,103,120,"title_21","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,104,"a2.jpg b2.jpg","n.jpg",1);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (3,"title3","2016-06-03","2016-06-30",6,101010103,104,1,2,4,90);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (4,"title4","2016-06-04","2016-06-30",6,101010102,104,1,2,5,124);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (5,"title5","2016-06-05","2016-06-30",6,101010101,104,1,4,6,89);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (6,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (7,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (8,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (9,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (10,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88);
-insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current) values (11,"title7","2016-06-07","2016-06-30",6,101010402,104,1,2,7,90);
+insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (1,100,150,"title_12","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,104,"a.jpg b.jpg c.png","http://pic27.nipic.com/20130315/9022728_123431241178_2.jpg",1);
+insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,act_id,imgs_act,img_cover,user_id) values (2,103,120,"title_21","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,104,"a2.jpg b2.jpg","http://pic17.nipic.com/20111026/3631203_111238646000_2.jpg",1);
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (3,"title3","2016-06-03","2016-06-30",6,101010103,104,1,2,4,90,"http://pic17.nipic.com/20111026/3631203_111238646000_2.jpg");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (4,"title4","2016-06-04","2016-06-30",6,101010102,104,1,2,5,124,"http://pic17.nipic.com/20111026/3631203_111238646000_2.jpg");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (5,"title5","2016-06-05","2016-06-30",6,101010101,104,1,4,6,89,"");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (6,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88,"");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (7,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88,"http://img3.3lian.com/2014/s5/36/d/14.jpg");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (8,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88,"");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (9,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88,"");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (10,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88,"");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (11,"title7","2016-06-07","2016-06-30",6,101010402,104,1,2,7,90,"");
 
 
 -- ----------------------------

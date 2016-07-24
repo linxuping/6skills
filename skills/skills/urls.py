@@ -49,6 +49,7 @@ urlpatterns = patterns('',
 		#url(r'^wxfeedback', wxapi.wxfeedback,
 		#activities/get-areas
 		url(r'^activities/get-areas', wxapi.activities_getareas),
+		url(r'^activities/get-agesel', wxapi.activities_getagesel),
 		#
 		#wxapi END.
 )

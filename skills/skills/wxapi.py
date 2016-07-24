@@ -42,13 +42,13 @@ def activities_special_offers(req):
 
 	#exec 
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errorcode":0,"errormsg":"" }
-	_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 limit %d offset %d;"%(area,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 limit %d offset %d;"%(area,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json["activities"].append( {"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10]} )
+			_json["activities"].append( {"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
 	else:
 		_json["errorcode"] = 1
 		_json["errormsg"] = get_errtag()+"DB failed."
@@ -61,7 +61,9 @@ def activities_special_offers(req):
 		_json["pageable"]["page"] = page
 
 	_jsonobj = json.dumps(_json)
-	return HttpResponse(_jsonobj, mimetype='application/json')
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 	#return HttpResponseRedirect('/test2') 
 
 
@@ -336,16 +338,27 @@ def activities_getareas(req):
 		return city
 
 	#exec  
-	_json = { "areas":[],"errorcode":0,"errormsg":"" }
+	_json = { "values":[],"errorcode":0,"errormsg":"" }
 	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%city
 	count,rets=dbmgr.db_exec(_sql)
 	if count >0 :
 		for i in xrange(count):
-			_json["areas"].append( rets[i][0] )
+			_json["values"].append( rets[i][0] )
 	else:
 		_json["errorcode"] = 1
 		_json["errormsg"] = get_errtag()+"DB failed."
 
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def activities_getagesel(req):
+	#check.
+	#exec  
+	_json = { "values":["0_3","3_6","6_12"],"errorcode":0,"errormsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
