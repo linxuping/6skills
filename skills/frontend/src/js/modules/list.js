@@ -3,7 +3,7 @@ var App = React.createClass({ //
 	getInitialState: function() {
 		Appobj = this;
 		return {
-			activities: [1, 2, 3],
+			activities: [],
 			age: null,
 			area: null,
 			loaded: false
@@ -76,7 +76,7 @@ var SelectHeader = React.createClass({
 var Selecter = React.createClass({
 	getInitialState: function() {
 		return {
-			values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+			values: [],
 			loaded: false
 		};
 	},
@@ -109,7 +109,7 @@ var Selecter = React.createClass({
 		else if (this.props.name == "age")
 			Appobj.state.age = event.target.value;
 		Appobj.updateActivities();
-		Appobj.setState({loaded: true});
+		Appobj.setState({loaded: !Appobj.state.loaded});
 		//Appobj.setState({activities: [1,2,3,4,5,6]});
 		/*ReactDOM.render(
 			React.createElement(App, null),
