@@ -66,8 +66,8 @@ var SelectHeader = React.createClass({
 	render: function() {
 		return (
 			<div className="select-header">
-				<Selecter name="area" text="地区" url="http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"/>
-				<Selecter name="age" text="年龄" url="http://121.42.41.241:9900/activities/get-agesel"/>
+				<Selecter name="area" text="地区选择" url="http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"/>
+				<Selecter name="age" text="年龄选择" url="http://121.42.41.241:9900/activities/get-agesel"/>
 			</div>
 		);
 	}

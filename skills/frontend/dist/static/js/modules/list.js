@@ -15,11 +15,11 @@ var App = React.createClass({displayName: "App", //
 		var area = this.props.area;
 		//console.log(area);
 		if (this.state.age == null)
-			age = "0_3";
+			age = "0_100";
 		else
 			age = this.state.age;
 		if (this.state.area == null)
-			area = "天河区";
+			area = "*";
 		else
 			area = this.state.area;
 
@@ -66,8 +66,8 @@ var SelectHeader = React.createClass({displayName: "SelectHeader",
 	render: function() {
 		return (
 			React.createElement("div", {className: "select-header"}, 
-				React.createElement(Selecter, {name: "area", text: "地区", url: "http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"}), 
-				React.createElement(Selecter, {name: "age", text: "年龄", url: "http://121.42.41.241:9900/activities/get-agesel"})
+				React.createElement(Selecter, {name: "area", text: "地区选择", url: "http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"}), 
+				React.createElement(Selecter, {name: "age", text: "年龄选择", url: "http://121.42.41.241:9900/activities/get-agesel"})
 			)
 		);
 	}
@@ -104,10 +104,15 @@ var Selecter = React.createClass({displayName: "Selecter",
 		//console.log(event.target.value);
 		//console.log(App);
 		//console.log(Appobj);
-		if (this.props.name == "area")
+		if (this.props.name == "area"){
 			Appobj.state.area = event.target.value;
-		else if (this.props.name == "age")
-			Appobj.state.age = event.target.value;
+		}
+		else if (this.props.name == "age"){
+			if (event.target.value == "不限")
+				Appobj.state.age = "0_100";
+			else
+				Appobj.state.age = event.target.value;
+		}
 		Appobj.updateActivities();
 		Appobj.setState({loaded: !Appobj.state.loaded});
 		//Appobj.setState({activities: [1,2,3,4,5,6]});
@@ -121,6 +126,7 @@ var Selecter = React.createClass({displayName: "Selecter",
 			React.createElement("div", {className: "selecter"}, 
 				React.createElement("label", {forHtml: this.props.name}, this.props.text, ":"), 
 				React.createElement("select", {name: this.props.name, className: "weui_select ss-select", onChange: this.selectChanged}, 
+					React.createElement("option", {value: "不限"}, "不限"), 
 					 this.state.values.map(function(elem) {
 							return (React.createElement("option", {value: elem}, elem));
 					}) 
