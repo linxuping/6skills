@@ -43,15 +43,15 @@ def activities_special_offers(req):
 	#exec 
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errorcode":0,"errormsg":"" }
 	if area == "*":
-		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 limit %d offset %d;"%(_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from limit %d offset %d;"%(_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	else:
-		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 limit %d offset %d;"%(area,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from limit %d offset %d;"%(area,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json["activities"].append( {"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
+			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
 	else:
 		_json["errorcode"] = 1
 		_json["errormsg"] = get_errtag()+"DB failed."
@@ -130,13 +130,13 @@ def activities_details(req):
 
 	#exec 
 	_json = { "errorcode":0,"errormsg":"" }
-	_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
+	_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover,imgs_act,preinfo,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d') from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json.update( {"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10]} ) 
+			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"preinfo":lis[13],"time_from":lis[14],"time_to":lis[15]} ) 
 	elif count == 0:
 		_json["errorcode"] = 1
 		_json["errormsg"] = "activity:%d not exist."%actid
@@ -146,7 +146,9 @@ def activities_details(req):
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
-	return HttpResponse(_jsonobj, mimetype='application/json')
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 	#return HttpResponseRedirect('/test2') 
 
 
@@ -218,22 +220,24 @@ def wxauth_idencode(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@csrf_exempt
 @req_print
 def activities_sign(req):
+	args = req.POST
 	#check.
-	ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
+	ret,phone = check_mysql_arg_jsonobj("phone", args.get("phone",None), "int")
 	if not ret:
 		return phone
-	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	ret,openid = check_mysql_arg_jsonobj("openid", args.get("openid",None), "str")
 	if not ret:
 		return openid
-	ret,name = check_mysql_arg_jsonobj("name", req.GET.get("name",None), "str")
+	ret,name = check_mysql_arg_jsonobj("name", args.get("name",None), "str")
 	if not ret:
 		return name
-	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
 	if not ret:
 		return actid
-	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "int")
+	ret,age = check_mysql_arg_jsonobj("age", args.get("age",None), "int")
 	if not ret:
 		return age
 
@@ -242,22 +246,37 @@ def activities_sign(req):
 	_sql = "select * from 6s_activity where id=%d;"%(actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
+		_sql = "select id from 6s_user where openid='%s';"%openid   #or phone ???
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 0:
+			_sql = "insert into 6s_user(phone,openid,createtime) values('%s','%s',now());"%(phone,openid)
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 0: #try more.
+				count,rets=dbmgr.db_exec(_sql)
+
 		_sql = "select id from 6s_user where openid='%s';"%openid
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 1:
 			uid = int(rets[0][0])
-			#save to 6s_user.
-			_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,createtime) values(%d,%d,'%s',%d,now());"%(name,age)
+			_sql = "select id from 6s_signup where user_id=%d and act_id=%d;"%(uid,actid)
 			count,rets=dbmgr.db_exec(_sql)
-			if count == 1:
-				pass
-			else:
-				if str(rets).find("Duplicate entry ") != -1:
-					_json["errorcode"] = 1
-					_json["errormsg"] = "报名信息已经存在！act:%d,u:%d"%(actid,uid)
+			if count == 0: 
+				#save to 6s_user.
+				_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,createtime) values(%d,%d,'%s',%d,now());"%(uid,actid,name,age)
+				count,rets=dbmgr.db_exec(_sql)
+				if count == 1:
+					pass
 				else:
-					_json["errorcode"] = 1
-					_json["errormsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
+					if str(rets).find("Duplicate entry ") != -1:
+						_json["errorcode"] = 1
+						_json["errormsg"] = "报名信息已经存在！act:%d,u:%d"%(actid,uid)
+					else:
+						_json["errorcode"] = 1
+						_json["errormsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
+			else:
+				_json["errorcode"] = 1
+				_json["errormsg"] = get_errtag()+"您已经对该活动报过名."
+				mo.logger.warn("signup again.  act:%d,u:%d."%(actid,uid))
 		else:
 			_json["errorcode"] = 1
 			_json["errormsg"] = get_errtag()+"User with phone:%s not exist."%phone
@@ -267,7 +286,9 @@ def activities_sign(req):
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
-	return HttpResponse(_jsonobj, mimetype='application/json')
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 	#return HttpResponseRedirect('/test2') 
 
 
@@ -364,7 +385,7 @@ def activities_getareas(req):
 def activities_getagesel(req):
 	#check.
 	#exec  
-	_json = { "values":["0_3","3_6","6_12"],"errorcode":0,"errormsg":"" }
+	_json = { "values":["0_3","4_6","7_12"],"errorcode":0,"errormsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
