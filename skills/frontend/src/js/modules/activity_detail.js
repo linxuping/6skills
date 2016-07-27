@@ -22,7 +22,7 @@ var ActivityDetail = React.createClass({
 	},
 	openSignPage: function(){
 		ReactDOM.render(
-			React.createElement(Sign, null),
+			React.createElement(Sign, {actid: this.props.actid}),
 			document.getElementById('sign-page-wrap')
 		);
 	},
@@ -33,7 +33,7 @@ var ActivityDetail = React.createClass({
 			return;
 		}
 		$.ajax({
-			url: "http://121.42.41.241:9900/activities/details",
+			url: this.props.url,
 			type: 'get',
 			dataType: 'json',
 			data: { "actid":actid },
