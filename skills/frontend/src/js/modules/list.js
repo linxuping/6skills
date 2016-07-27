@@ -137,6 +137,9 @@ var Selecter = React.createClass({
 });
 
 var Activities = React.createClass({
+	openSignupPage: function(actid){
+		location.href='/template/activity_detail.html?actid='+actid;
+	},
 	render: function() {
 		var liStr = this.props.activities &&
 					this.props.activities.map(function(elem, index) {
@@ -158,11 +161,11 @@ var Activities = React.createClass({
 					</div>
 					<div className="ss-join-bd clearfix">
 						<div className="money-box fl">￥{elem.price_current}</div>
-						<button className="weui_btn weui_btn_mini weui_btn_primary fr">我要报名</button>
+						<button className="weui_btn weui_btn_mini weui_btn_primary fr" onClick={this.openSignupPage.bind(this,elem.actid)} >限时报名</button>
 					</div>
 				</li>
 			);
-		});
+		}.bind(this));
 
 		return (
 			<div className="activities-list weui_panel_access">
