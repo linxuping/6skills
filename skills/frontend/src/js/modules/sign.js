@@ -33,6 +33,28 @@ var Sign = React.createClass({
 								<input type="number" name="age" id="" className="weui_input"/>
 							</div>
 						</div>
+
+					</div>
+					<div className="weui_cells_title">儿童性别</div>
+					<div className="weui_cells weui_cells_radio">
+						<label className="weui_cell weui_check_label" for="x11">
+							<div className="weui_cell_bd weui_cell_primary">
+									<p>男</p>
+							</div>
+							<div className="weui_cell_ft">
+								<input type="radio" className="weui_check" name="gender"/>
+								<span className="weui_icon_checked"></span>
+							</div>
+						</label>
+						<label className="weui_cell weui_check_label" for="x11">
+							<div className="weui_cell_bd weui_cell_primary">
+									<p>女</p>
+							</div>
+							<div className="weui_cell_ft">
+								<input type="radio" className="weui_check" name="gender"/>
+								<span className="weui_icon_checked"></span>
+							</div>
+						</label>
 					</div>
 					<div className="weui_cells_tips">注意事项注意事项注意事项注意事项</div>
 					<div className="weui_btn_area">
@@ -42,4 +64,4 @@ var Sign = React.createClass({
 			</div>
 		);
 	}
-});
+});∏

@@ -26,7 +26,7 @@ var App = React.createClass({displayName: "App", //
 		console.log(area);
 		console.log(age);
 		$.ajax({
-			url: "http://121.42.41.241:9900/activities/special-offers",
+			url: this.props.url,
 			type: 'get',
 			dataType: 'json',
 			data: {"area":area,"age":age,"page":"1","pagesize":"100"},
@@ -119,7 +119,7 @@ var Selecter = React.createClass({displayName: "Selecter",
 		/*ReactDOM.render(
 			React.createElement(App, null),
 			document.getElementById('content')
-		).setState({activities: [1,2,3,4,5,6]});*/ 
+		).setState({activities: [1,2,3,4,5,6]});*/
 	},
 	render: function() {
 		return (
