@@ -198,6 +198,10 @@ insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id
 insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (9,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg");
 insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (10,"title6","2016-06-06","2016-06-30",6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg");
 insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover) values (11,"title7","2016-06-07","2016-06-30",6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg");
+#more than 1 week.
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,content) values (12,"title8",DATE_ADD(NOW(), INTERVAL 2 WEEK),DATE_ADD(NOW(), INTERVAL 3 WEEK),6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg","more than one week");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,content) values (13,"title9",DATE_ADD(NOW(), INTERVAL 2 WEEK),DATE_ADD(NOW(), INTERVAL 3 WEEK),6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg","more than one week");
+insert into 6s_activity(id,title,time_from,time_to,quantities,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,content) values (14,"title10",DATE_ADD(NOW(), INTERVAL 2 WEEK),DATE_ADD(NOW(), INTERVAL 3 WEEK),6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg","more than one week");
 
 
 -- ----------------------------

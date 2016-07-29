@@ -23,13 +23,16 @@ var App = React.createClass({ //
 		else
 			area = this.state.area;
 
-		console.log(area);
-		console.log(age);
+		//console.log(area);
+		//console.log(age);
+		var args = {"area":area,"age":age,"page":"1","pagesize":"100"};
+		if (this.props.type == "preview")
+			args["type"] = "preview";
 		$.ajax({
 			url: this.props.url,
 			type: 'get',
 			dataType: 'json',
-			data: {"area":area,"age":age,"page":"1","pagesize":"100"},
+			data: args,
 			success: function(res) {
 				console.log(res.activities);
 				this.setState({

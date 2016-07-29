@@ -39,13 +39,21 @@ def activities_special_offers(req):
 	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
 	if not ret:
 		return pagesize
+	ret,pagetype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
+	sql_datafilter = ""
+	#1 weekend.
+	#1 weekend - 1 month.
+	if pagetype == "preview":
+		sql_datefilter = "time_from>DATE_ADD(NOW(),INTERVAL 1 WEEK) and "
+	else:
+		sql_datefilter = "time_from<=DATE_ADD(NOW(),INTERVAL 1 WEEK) and "
 
 	#exec 
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errorcode":0,"errormsg":"" }
 	if area == "*":
-		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from limit %d offset %d;"%(_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	else:
-		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from limit %d offset %d;"%(area,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from limit %d offset %d;"%(sql_datefilter,area,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):

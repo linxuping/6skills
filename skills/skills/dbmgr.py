@@ -21,7 +21,7 @@ def db_init():
 				except:
 						ret = str(sys.exc_info()) + "; " + str(traceback.format_exc()) 
 						mo.logger.error( ret )
-						time.sleep(1)
+						#time.sleep(1)
 		return False,ret
 
 @mo.time_calc

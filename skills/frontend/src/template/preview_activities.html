@@ -20,7 +20,10 @@
 	  //<![CDATA[
 		"use strict";
 		ReactDOM.render(
-			React.createElement(App, null),
+			React.createElement(App, {
+				url: "http://121.42.41.241:9900/activities/special-offers",
+				type: "preview"
+			}),
 			document.getElementById('content')
 		);
 	  //]]>
