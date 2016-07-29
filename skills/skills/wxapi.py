@@ -44,9 +44,9 @@ def activities_special_offers(req):
 	#1 weekend.
 	#1 weekend - 1 month.
 	if pagetype == "preview":
-		sql_datefilter = "time_from>DATE_ADD(NOW(),INTERVAL 1 WEEK) and "
+		sql_datefilter = "time_from>DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
 	else:
-		sql_datefilter = "time_from<=DATE_ADD(NOW(),INTERVAL 1 WEEK) and "
+		sql_datefilter = "time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
 
 	#exec 
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errorcode":0,"errormsg":"" }
