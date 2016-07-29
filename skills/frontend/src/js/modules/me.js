@@ -118,33 +118,30 @@ var MyActivities = React.createClass({
 	},
 	pullFromServer:function(){
 		$.ajax({
-			url: '/activities/my',
+			url: 'http://121.42.41.241:9900/activities/my',
 			type: 'get',
 			dataType: 'json',
-			data: {param1: 'value1'},
-		})
-		.done(function() {
-			console.log("success");
-		})
-		.fail(function() {
-			console.log("error");
-		})
-		.always(function() {
-			console.log("complete");
+			data: { openid:'9901',page:"1",pagesize:"100" },
+			success: function(res) {
+				console.log("success");
+				this.setState( {"activities":res.activities} );
+			}.bind(this),
+			error: function() {
+				console.log("error");
+			}.bind(this)
 		});
-
 	},
 	render: function() {
 		var myActivitiesStr = this.state.activities &&
-			this.state.activities.map(function(index, elem) {
+			this.state.activities.map(function(elem, index) {
 				return (
 					<li>
-						<header className="ss-hd">西关亲子游活动</header>
+						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
-							<span>活动时间</span><time>2016-07-20 10:00</time>
+							<span>活动时间</span><time>{elem.time_act}</time>
 						</p>
 						<div className="time clearfix">
-							<span>报名时间</span><time>2016-07-20 10:00</time>
+							<span>报名时间</span><time>{elem.time_signup}</time>
 						</div>
 						<button type="button" onClick={this.signReset}
 							data-uid={index} className="weui_btn weui_btn_mini weui_btn_default">
