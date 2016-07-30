@@ -81,11 +81,12 @@ var Feedback = React.createClass({
 var MyActivities = React.createClass({
 	getInitialState: function() {
 		return {
-			activities: [1, 2, 3, 4, 5, 6, 7]
+			activities: []
 		};
 	},
 	signReset: function(ev){
 		var uid = ev.target.dataset.uid;
+		var signid = ev.target.dataset.signid;
 		ReactDOM.render(
 			<ConfirmDialog callback={confirmReset} title="取消报名"
 				content="您确定要取消该活动的报名吗？"/>,
@@ -93,10 +94,10 @@ var MyActivities = React.createClass({
 		);
 		function confirmReset(){
 			$.ajax({
-				url: 'acitivities/reset',
+				url: 'http://121.42.41.241:9900/activities/reset',
 				type: 'post',
 				dataType: 'json',
-				data: {uid: 'value1'},
+				data: { "openid":'9901',"signid":signid },
 			})
 			.done(function() {
 				console.log("success");
@@ -144,7 +145,7 @@ var MyActivities = React.createClass({
 							<span>报名时间</span><time>{elem.time_signup}</time>
 						</div>
 						<button type="button" onClick={this.signReset}
-							data-uid={index} className="weui_btn weui_btn_mini weui_btn_default">
+							data-uid={index} data-signid={elem.signid} className="weui_btn weui_btn_mini weui_btn_default">
 							取消
 						</button>
 					</li>

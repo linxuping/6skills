@@ -14,10 +14,32 @@ function isNum(s)
 	return false;
 }
 var Sign = React.createClass({
+	getInitialState: function() {
+		return {
+			username: "",
+			phone: "",
+		};
+	},
 	back: function(){
 		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 	},
 	componentDidMount: function(){
+		//load.
+		$.ajax({
+			url: 'http://121.42.41.241:9900/activities/get_profile',
+			type: 'get',
+			dataType: 'json',
+			data: { "openid":'9901' },
+		})
+		.done(function(res) {
+			console.log("success");
+			console.log(res);
+			this.setState( { "username":res.profile.username,"phone":res.profile.phone } );
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		});
+
 		validateForm();
 	},
 	render: function() {
@@ -33,7 +55,7 @@ var Sign = React.createClass({
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="text" name="name" id="name" className="weui_input"
-									placeholder="请输入家长真实姓名"/>
+									placeholder="请输入家长真实姓名" value={this.state.username}/>
 							</div>
 						</div>
 						<div className="weui_cell">
@@ -42,7 +64,7 @@ var Sign = React.createClass({
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="number" name="phone" id="phone" className="weui_input"
-									placeholder="请输入手机号码"/>
+									placeholder="请输入手机号码" value={this.state.phone}/>
 							</div>
 						</div>
 						<div className="weui_cell">

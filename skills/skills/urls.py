@@ -50,6 +50,7 @@ urlpatterns = patterns('',
 		#activities/get-areas
 		url(r'^activities/get-areas', wxapi.activities_getareas),
 		url(r'^activities/get-agesel', wxapi.activities_getagesel),
+		url(r'^activities/get_profile', wxapi.activities_getprofile),
 		#
 		#wxapi END.
 )

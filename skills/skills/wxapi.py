@@ -251,7 +251,7 @@ def activities_sign(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "select * from 6s_activity where id=%d;"%(actid)
+	_sql = "select * from 6s_activity where id=%d and status=1;"%(actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		_sql = "select id from 6s_user where openid='%s';"%openid   #or phone ???
@@ -262,11 +262,11 @@ def activities_sign(req):
 			if count == 0: #try more.
 				count,rets=dbmgr.db_exec(_sql)
 
-		_sql = "select id from 6s_user where openid='%s';"%openid
+		_sql = "select id from 6s_user where openid='%s' and status=1;"%openid
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 1:
 			uid = int(rets[0][0])
-			_sql = "select id from 6s_signup where user_id=%d and act_id=%d;"%(uid,actid)
+			_sql = "select id from 6s_signup where user_id=%d and act_id=%d and status=1;"%(uid,actid)
 			count,rets=dbmgr.db_exec(_sql)
 			if count == 0: 
 				#save to 6s_user.
@@ -283,14 +283,14 @@ def activities_sign(req):
 						_json["errmsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
 			else:
 				_json["errcode"] = 3
-				_json["errmsg"] = get_errtag()+"您已经对该活动报过名."
+				_json["errmsg"] = "您已经对该活动报过名."
 				mo.logger.warn("signup again.  act:%d,u:%d."%(actid,uid))
 		else:
 			_json["errcode"] = 4
 			_json["errmsg"] = get_errtag()+"User with phone:%s not exist."%phone
 	else:
 		_json["errcode"] = 5
-		_json["errmsg"] = get_errtag()+"Activity:%d not exist."%actid
+		_json["errmsg"] = "活动:%d不存在."%actid
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
@@ -317,11 +317,11 @@ def activities_my(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "activities":[],"pageable":{"page":0,"total":0},"errcode":0,"errmsg":"" }
-	_sql = "select a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id,DATE_FORMAT(c.time_from,'%%Y-%%m-%%d') from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1 limit %d offset %d;"%(openid,page,pagesize*(page-1))
+	_sql = "select a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id,DATE_FORMAT(c.time_from,'%%Y-%%m-%%d'),a.id from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and a.status=1 and b.status=1 and c.status=1 limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
-			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"time_signup":rets[i][2],"signid":rets[i][4],"time_act":rets[i][5]} )
+			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"time_signup":rets[i][2],"signid":rets[i][4],"time_act":rets[i][5],"signid":rets[i][6]} )
 		_sql = "select count(a.act_id) from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 1:
@@ -342,16 +342,21 @@ def activities_my(req):
 	#return HttpResponseRedirect('/test2') 
 
 
+@csrf_exempt
 @req_print
 def activities_reset(req):
+	args = req.POST
 	#check.
-	ret,signid = check_mysql_arg_jsonobj("signid", req.GET.get("signid",None), "int")
+	ret,signid = check_mysql_arg_jsonobj("signid", args.get("signid",None), "int")
 	if not ret:
 		return signid
+	ret,openid = check_mysql_arg_jsonobj("openid", args.get("openid",None), "str")
+	if not ret:
+		return openid
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "update 6s_signup set status=0 where id=%d;"%(signid)
+	_sql = "update 6s_signup a left join 6s_user b on a.user_id=b.id set a.status=0 where a.id=%d and b.openid='%s';"%(signid,openid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		pass
@@ -363,8 +368,9 @@ def activities_reset(req):
 		_json["errmsg"] = get_errtag()+"DB failed."
 
 	_jsonobj = json.dumps(_json)
-	return HttpResponse(_jsonobj, mimetype='application/json')
-	#return HttpResponseRedirect('/test2') 
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 
 
 @req_print
@@ -396,6 +402,29 @@ def activities_getagesel(req):
 	#check.
 	#exec  
 	_json = { "values":["0_3","4_6","7_12"],"errcode":0,"errmsg":"" }
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def activities_getprofile(req):
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+
+	#exec  
+	_json = { "profile":{},"errcode":0,"errmsg":"" }
+	_sql = "select username,phone from 6s_user where openid='%s';"%openid
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1 :
+		_json["profile"] = { "username":rets[0][0], "phone":rets[0][1] }
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
+
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
