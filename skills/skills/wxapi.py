@@ -49,7 +49,7 @@ def activities_special_offers(req):
 		sql_datefilter = "time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
 
 	#exec 
-	_json = { "activities":[],"pageable":{"page":0,"total":1},"errorcode":0,"errormsg":"" }
+	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
 	if area == "*":
 		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	else:
@@ -61,8 +61,8 @@ def activities_special_offers(req):
 			imgs = lis[1].strip("\r\n ").split(" ")
 			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
 	else:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"DB failed."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
 		pass #error log
 
 	if area == "*":
@@ -105,7 +105,7 @@ def activities_preview(req):
 	if not ret:
 		return pagesize
 	#exec 
-	_json = { "activities":[],"pageable":{"page":0,"total":1},"errorcode":0,"errormsg":"" }
+	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
 	_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s')  limit %d offset %d;"%(area,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
@@ -114,8 +114,8 @@ def activities_preview(req):
 			imgs = lis[1].strip("\r\n ").split(" ")
 			_json["activities"].append( {"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10]} )
 	else:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"DB failed."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
 		pass #error log
 
 	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s');"%(area)
@@ -137,7 +137,7 @@ def activities_details(req):
 		return actid
 
 	#exec 
-	_json = { "errorcode":0,"errormsg":"" }
+	_json = { "errcode":0,"errmsg":"" }
 	_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover,imgs_act,preinfo,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d') from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
@@ -146,11 +146,11 @@ def activities_details(req):
 			imgs = lis[1].strip("\r\n ").split(" ")
 			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"preinfo":lis[13],"time_from":lis[14],"time_to":lis[15]} ) 
 	elif count == 0:
-		_json["errorcode"] = 1
-		_json["errormsg"] = "activity:%d not exist."%actid
+		_json["errcode"] = 1
+		_json["errmsg"] = "activity:%d not exist."%actid
 	else:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"DB failed."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
@@ -173,15 +173,15 @@ def get_authcode(req):
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	import random
 	code = random.randint(1000,9999)
-	_json = { "errorcode":0,"errormsg":"" }
+	_json = { "errcode":0,"errmsg":"" }
 	#_sql = "insert into 6s_idencode(openid,code,createtime) values('%s',%d,now()) ON DUPLICATE KEY UPDATE code=VALUES(code);"%(openid, code)
 	count,rets=dbmgr.db_exec("delete from 6s_idencode where openid='%s';"%openid)
 	_sql = "insert into 6s_idencode(openid,code,createtime) values('%s',%d,now());"%(openid, code)
 	count,rets=dbmgr.db_exec(_sql)
 	#if count<0 and str(rets).find("UNIQUE KEY is unsafe")!=-1:
 	if count < 0:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"DB failed."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
 	else:
 		pass  #send sms.
 	_jsonobj = json.dumps(_json)
@@ -202,7 +202,7 @@ def wxauth_idencode(req):
 		return code
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
-	_json = { "errorcode":0,"errormsg":"" }
+	_json = { "errcode":0,"errmsg":"" }
 	_sql = "select * from 6s_idencode where openid='%s' and code='%s';"%(openid,code)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
@@ -213,14 +213,14 @@ def wxauth_idencode(req):
 			pass
 		else:
 			if str(rets).find("Duplicate entry ") != -1:
-				_json["errorcode"] = 1
-				_json["errormsg"] = "用户已经存在！" #?????
+				_json["errcode"] = 1
+				_json["errmsg"] = "用户已经存在！" #?????
 			else:
-				_json["errorcode"] = 1
-				_json["errormsg"] = get_errtag()+"Add user failed."
+				_json["errcode"] = 1
+				_json["errmsg"] = get_errtag()+"Add user failed."
 	else:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"验证码错误."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"验证码错误."
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
@@ -250,7 +250,7 @@ def activities_sign(req):
 		return age
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
-	_json = { "errorcode":0,"errormsg":"" }
+	_json = { "errcode":0,"errmsg":"" }
 	_sql = "select * from 6s_activity where id=%d;"%(actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
@@ -276,21 +276,21 @@ def activities_sign(req):
 					pass
 				else:
 					if str(rets).find("Duplicate entry ") != -1:
-						_json["errorcode"] = 1
-						_json["errormsg"] = "报名信息已经存在！act:%d,u:%d"%(actid,uid)
+						_json["errcode"] = 1
+						_json["errmsg"] = "报名信息已经存在！act:%d,u:%d"%(actid,uid)
 					else:
-						_json["errorcode"] = 1
-						_json["errormsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
+						_json["errcode"] = 2
+						_json["errmsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
 			else:
-				_json["errorcode"] = 1
-				_json["errormsg"] = get_errtag()+"您已经对该活动报过名."
+				_json["errcode"] = 3
+				_json["errmsg"] = get_errtag()+"您已经对该活动报过名."
 				mo.logger.warn("signup again.  act:%d,u:%d."%(actid,uid))
 		else:
-			_json["errorcode"] = 1
-			_json["errormsg"] = get_errtag()+"User with phone:%s not exist."%phone
+			_json["errcode"] = 4
+			_json["errmsg"] = get_errtag()+"User with phone:%s not exist."%phone
 	else:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"Activity:%d not exist."%actid
+		_json["errcode"] = 5
+		_json["errmsg"] = get_errtag()+"Activity:%d not exist."%actid
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
@@ -316,7 +316,7 @@ def activities_my(req):
 		return pagesize
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
-	_json = { "activities":[],"pageable":{"page":0,"total":0},"errorcode":0,"errormsg":"" }
+	_json = { "activities":[],"pageable":{"page":0,"total":0},"errcode":0,"errmsg":"" }
 	_sql = "select a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id,DATE_FORMAT(c.time_from,'%%Y-%%m-%%d') from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1 limit %d offset %d;"%(openid,page,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
@@ -328,11 +328,11 @@ def activities_my(req):
 			_json["pageable"]["total"] = int(rets[0][0])
 			_json["pageable"]["page"] = page
 		else:
-			_json["errorcode"] = 1
-			_json["errormsg"] = get_errtag()+"get signup count failed."
+			_json["errcode"] = 1
+			_json["errmsg"] = get_errtag()+"get signup count failed."
 	else:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"DB failed."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
@@ -350,17 +350,17 @@ def activities_reset(req):
 		return signid
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
-	_json = { "errorcode":0,"errormsg":"" }
+	_json = { "errcode":0,"errmsg":"" }
 	_sql = "update 6s_signup set status=0 where id=%d;"%(signid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		pass
 	elif count == 0:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"Nothing update."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"Nothing update."
 	else:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"DB failed."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
 
 	_jsonobj = json.dumps(_json)
 	return HttpResponse(_jsonobj, mimetype='application/json')
@@ -375,15 +375,15 @@ def activities_getareas(req):
 		return city
 
 	#exec  
-	_json = { "values":[],"errorcode":0,"errormsg":"" }
+	_json = { "values":[],"errcode":0,"errmsg":"" }
 	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%city
 	count,rets=dbmgr.db_exec(_sql)
 	if count >0 :
 		for i in xrange(count):
 			_json["values"].append( rets[i][0] )
 	else:
-		_json["errorcode"] = 1
-		_json["errormsg"] = get_errtag()+"DB failed."
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
@@ -395,7 +395,7 @@ def activities_getareas(req):
 def activities_getagesel(req):
 	#check.
 	#exec  
-	_json = { "values":["0_3","4_6","7_12"],"errorcode":0,"errormsg":"" }
+	_json = { "values":["0_3","4_6","7_12"],"errcode":0,"errmsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
