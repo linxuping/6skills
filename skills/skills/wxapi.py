@@ -417,10 +417,10 @@ def activities_getprofile(req):
 
 	#exec  
 	_json = { "profile":{},"errcode":0,"errmsg":"" }
-	_sql = "select username,phone from 6s_user where openid='%s';"%openid
+	_sql = "select username,phone,img from 6s_user where openid='%s';"%openid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1 :
-		_json["profile"] = { "username":rets[0][0], "phone":rets[0][1] }
+		_json["profile"] = { "username":rets[0][0],"phone":rets[0][1],"img":rets[0][2] }
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = get_errtag()+"DB failed."

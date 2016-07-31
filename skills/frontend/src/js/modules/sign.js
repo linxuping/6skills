@@ -145,11 +145,10 @@ function validateForm() {
 								title: "报名成功",
 								msg: "恭喜您报名成功！",
 								callback: function(){
-									try{
-										WeixinJSBridge.call('closeWindow');
-									} catch (e){
-
-									}
+									history.back();
+									//try{
+									//	WeixinJSBridge.call('closeWindow');
+									//} catch (e){ }
 								}
 							}),
 							document.getElementById("alert-wrap")

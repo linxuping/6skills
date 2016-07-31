@@ -139,16 +139,16 @@ CREATE INDEX idx_6s_user_business_phone ON 6s_user_business(phone);
 
 delete from auth_user where username='test';
 insert into auth_user(username,password) values ("test","test");
-insert into 6s_user(id,refid,openid,username,phone,role,img,createtime,status) values (1,1,9901,"test","12345",'普通',"/tmp/test.png",now(),1);
+insert into 6s_user(id,refid,openid,username,phone,role,img,createtime,status) values (1,1,9901,"test","12011112222",'普通',"http://121.42.41.241:9900/static/img/head.jpg",now(),1);
 delete from auth_user where username='test2';
 insert into auth_user(username,password) values ("test2","test2");
-insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1001,9902,1,"test2","12346",'普通',"/tmp/test.png",now(),2);
+insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1001,9902,1,"test2","13011112222",'普通',"http://121.42.41.241:9900/static/img/head.jpg",now(),2);
 delete from auth_user where username='test3';
 insert into auth_user(username,password) values ("test3","test3");
-insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1002,9903,1,"test3","12347",'普通',"/tmp/test.png",now(),1);
+insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1002,9903,1,"test3","12345612345",'普通',"http://121.42.41.241:9900/static/img/head.jpg",now(),1);
 
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","phone","email","QQ");
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","phone2","email2","QQ2");
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","15099991234","email","QQ");
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","15099991288","email2","QQ2");
 
 -- ----------------------------
 -- Table structure for 6s_activity 活动
