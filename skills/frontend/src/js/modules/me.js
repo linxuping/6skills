@@ -17,10 +17,14 @@ var Me = React.createClass({
 			console.log("success");
 			console.log(res.profile.username);
 			console.log(res.profile.img);
+			if (res.errcode != 0){
+				location.href="http://121.42.41.241:9900/template/verify_phone.html";
+				return;
+			}
 			this.setState( { "username":res.profile.username,"phone":res.profile.phone,"img":res.profile.img } );
 		}.bind(this))
 		.fail(function() {
-			console.log("error");
+			console.log("fail");
 		});
 	},
 	back: function(){

@@ -188,16 +188,18 @@ def get_authcode(req):
 	return HttpResponse(_jsonobj, mimetype='application/json')
 
 
+@csrf_exempt
 @req_print
 def wxauth_idencode(req):
+	args = req.POST
 	#check.
-	ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
+	ret,phone = check_mysql_arg_jsonobj("phone", args.get("phone",None), "int")
 	if not ret:
 		return phone
-	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	ret,openid = check_mysql_arg_jsonobj("openid", args.get("openid",None), "str")
 	if not ret:
 		return openid
-	ret,code = check_mysql_arg_jsonobj("code", req.GET.get("code",None), "int")
+	ret,code = check_mysql_arg_jsonobj("code", args.get("code",None), "int")
 	if not ret:
 		return code
 
@@ -207,20 +209,24 @@ def wxauth_idencode(req):
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		#save to 6s_user.
-		_sql = "insert into 6s_user(phone,openid,createtime) values('%s','%s',now());"%(phone,openid)
+		_sql = "select * from 6s_user where openid='%s';"%(openid)
 		count,rets=dbmgr.db_exec(_sql)
-		if count == 1:
-			pass
-		else:
-			if str(rets).find("Duplicate entry ") != -1:
-				_json["errcode"] = 1
-				_json["errmsg"] = "用户已经存在！" #?????
+		if count == 0:
+			_sql = "insert into 6s_user(phone,openid,createtime) values('%s','%s',now());"%(phone,openid)
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 1:
+				pass
 			else:
-				_json["errcode"] = 1
-				_json["errmsg"] = get_errtag()+"Add user failed."
+				pass
+				#if str(rets).find("Duplicate entry ") != -1:
+				#	_json["errcode"] = 1
+				#	_json["errmsg"] = "用户已经存在！" #?????
+				#else:
+				#	_json["errcode"] = 1
+				#	_json["errmsg"] = get_errtag()+"Add user failed."
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"验证码错误."
+		_json["errmsg"] = "验证码错误."
 		pass #error log
 
 	_jsonobj = json.dumps(_json)
