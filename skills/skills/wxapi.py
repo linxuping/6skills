@@ -18,8 +18,71 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 import json
 
+
 @req_print
 def activities_special_offers(req):
+	#check.
+	ret,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
+	if not ret:
+		return city
+	ret,district = check_mysql_arg_jsonobj("district", req.GET.get("district",None), "str")
+	if not ret:
+		return district
+	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "str")
+	tmps = age.split("_")
+	if (not ret) or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
+		return response_json_error( "age invalid! must be *_*" )
+	_age_from = int(str(tmps[0]))
+	_age_to = int(str(tmps[1]))
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
+	ret,pagetype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
+	sql_datefilter = ""
+	#1 weekend.
+	#1 weekend - 1 month.
+	if pagetype == "preview":
+		sql_datefilter = "time_from>DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+	else:
+		sql_datefilter = "time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+
+	#exec 
+	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	if district == "": #by date
+		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	else: #by distr and date
+		_sql = "(select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from)  union  (select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,price_original,price_current,quantities_remain,img_cover from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid<>(select id from 6s_position where name='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1 order by time_from)  limit %d offset %d;"%(sql_datefilter,district,_age_from,_age_to,_age_from,_age_to,sql_datefilter,district,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	count,rets=dbmgr.db_exec(_sql)
+	if count >= 0:
+		for i in range(count):
+			lis = rets[i]
+			imgs = lis[1].strip("\r\n ").split(" ")
+			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"DB failed."
+		pass #error log
+
+	#if district == "":
+	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(_age_from,_age_to,_age_from,_age_to)
+	#else:
+	#	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(area,_age_from,_age_to,_age_from,_age_to)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
+		_json["pageable"]["page"] = page
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+	#return HttpResponseRedirect('/test2')
+
+@req_print
+def activities_special_offers_old(req):
 	#check.
 	ret,area = check_mysql_arg_jsonobj("area", req.GET.get("area",None), "str")
 	if not ret:
@@ -40,7 +103,7 @@ def activities_special_offers(req):
 	if not ret:
 		return pagesize
 	ret,pagetype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
-	sql_datafilter = ""
+	sql_datefilter = ""
 	#1 weekend.
 	#1 weekend - 1 month.
 	if pagetype == "preview":
