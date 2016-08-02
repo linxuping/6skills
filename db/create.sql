@@ -95,7 +95,7 @@ CREATE TABLE `6s_user` (
   `phone` varchar(24) NOT NULL unique COMMENT '联系方式',
   `openid` varchar(24) DEFAULT '' COMMENT 'wx openid',
   `role` enum('admin','business','normal') COMMENT '角色',
-  `img` varchar(255) COMMENT '图片',
+  `img` varchar(255) default 'http://121.42.41.241:9900/static/img/head.jpg' COMMENT '图片',
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `up_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '频度',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
