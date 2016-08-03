@@ -71,8 +71,8 @@ var Verify = React.createClass({displayName: "Verify",
 			return false;
 		}
 		$.ajax({
-			//url: 'http://121.42.41.241:9900/get-auth-code',
-			url: '/test/get-auth-code.json',
+			url: 'http://121.42.41.241:9900/get-auth-code',
+			//url: '/test/get-auth-code.json',
 			type: 'get',
 			dataType: 'json',
 			data: { "openid":'9901', "phone": $("#phone").val()},

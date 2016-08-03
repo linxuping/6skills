@@ -113,41 +113,44 @@ var MyActivities = React.createClass({
 		};
 	},
 	signReset: function(ev){
-		var uid = ev.target.dataset.uid;
-		var signid = ev.target.dataset.signid;
+		this.setState({
+			signidWantToReset: ev.target.dataset.signid
+		});
 		ReactDOM.render(
-			<ConfirmDialog callback={confirmReset} title="取消报名"
+			<ConfirmDialog callback={this.confirmReset} title="取消报名"
 				content="您确定要取消该活动的报名吗？"/>,
 			document.getElementById("confirm-dialog-wrap")
 		);
-		function confirmReset(){
-			$.ajax({
-				url: 'http://121.42.41.241:9900/activities/reset',
-				type: 'post',
-				dataType: 'json',
-				data: { "openid":'9901',"signid":signid },
-			})
-			.done(function() {
-				console.log("success");
-				console.log("取消报名成功")
-				this.pullFromServer();
-			}.bind(this))
-			.fail(function() {
-				console.log("error");
-			})
-			.always(function() {
-				console.log("complete");
-				React.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
-			});
-
-		}
 	},
+	confirmReset: function (argument) {
+		$.ajax({
+			url: 'http://121.42.41.241:9900/activities/reset',
+			//url: '/test/sign.json',
+			type: 'get',
+			dataType: 'json',
+			data: { "openid":'9901',"signid": this.state.signidWantToReset },
+		})
+		.done(function() {
+			console.log("success");
+			console.log("取消报名成功")
+			this.pullFromServer();
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+			React.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+		});
+	},
+
 	componentDidMount: function() {
 	 	this.pullFromServer();
 	},
 	pullFromServer:function(){
 		$.ajax({
 			url: 'http://121.42.41.241:9900/activities/my',
+			//url: '/test/my.json',
 			type: 'get',
 			dataType: 'json',
 			data: { openid:'9901',page:"1",pagesize:"100" },
