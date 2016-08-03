@@ -1,5 +1,5 @@
 function validateForm() {
-	$("#auth-form").validate({
+	return $("#auth-form").validate({
 		rules: {
 			"phone": {required: true, digits: true, rangelength:[11, 11]},
 			"code": {required: true}
@@ -31,12 +31,26 @@ function validateForm() {
 							document.getElementById("alert-wrap")
 						);
 					} else {
-						alert("报名失败：" + obj.errmsg);
+						ReactDOM.render(
+							React.createElement(AlertDialog, {
+								title: "提示",
+								msg: "验证失败：" + obj.errmsg
+							}),
+							document.getElementById("alert-wrap")
+						);
+						//alert("验证失败：" + obj.errmsg);
 						code.value = "";
 					}
 				},
 				error: function(xmlHQ, textStatus) {
-					alert("服务出错，请稍后重试！");
+					ReactDOM.render(
+						React.createElement(AlertDialog, {
+							title: "提示",
+							msg: "服务出错，请稍后重试！"
+						}),
+						document.getElementById("alert-wrap")
+					);
+					//alert("服务出错，请稍后重试！");
 				},
 				complete: function(){
 					$(form).find(":submit").attr("disabled", false);
@@ -47,23 +61,56 @@ function validateForm() {
 }
 
 var Verify = React.createClass({
-	verifyHandler: function () {
+	verifyHandler: function (ev) {
+		if(!this.state.validateForm.element($("#phone"))){
+			$("#phone").focus();
+			return false;
+		}
+		var target = $(ev.target);
+		if (target.hasClass('weui_btn_disabled')) {
+			return false;
+		}
 		$.ajax({
-			url: 'http://121.42.41.241:9900/get-auth-code',
+			//url: 'http://121.42.41.241:9900/get-auth-code',
+			url: '/test/get-auth-code.json',
 			type: 'get',
 			dataType: 'json',
-			data: { "openid":'9901' },
+			data: { "openid":'9901', "phone": $("#phone").val()},
 		})
 		.done(function(res) {
 			console.log("success");
+			target.addClass('weui_btn_disabled weui_btn_default')
+				.removeClass('weui_btn_plain_primary');
+			this.countDown(target, 60);
 		}.bind(this))
 		.fail(function() {
-			console.log("fail");
+			ReactDOM.render(
+				React.createElement(AlertDialog, {
+					title: "提示",
+					msg: "服务出错，请稍后重试！"
+				}),
+				document.getElementById("alert-wrap")
+			);
 		});
 	},
 
+	countDown: function(elem, tm) {
+		if (tm > 0) {
+			elem.text(tm + "s重新发送");
+			setTimeout(function(){
+				this.countDown(elem, tm - 1);
+			}.bind(this), 1000);
+		} else {
+			elem.text("获取验证码")
+				.addClass('weui_btn_plain_primary')
+				.removeClass('weui_btn_disabled weui_btn_default');
+		}
+	},
+
 	componentDidMount: function(){
-		validateForm();
+		this.setState({
+			validateForm : validateForm()
+		});
 	},
 	render: function() {
 		return (
