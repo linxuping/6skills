@@ -23,13 +23,16 @@ var App = React.createClass({displayName: "App", //
 		else
 			area = this.state.area;
 
-		console.log(area);
-		console.log(age);
+		//console.log(area);
+		//console.log(age);
+		var args = {"area":area,"age":age,"page":"1","pagesize":"100","city":"","district":"天河区"};
+		if (this.props.type == "preview")
+			args["type"] = "preview";
 		$.ajax({
 			url: this.props.url,
 			type: 'get',
 			dataType: 'json',
-			data: {"area":area,"age":age,"page":"1","pagesize":"100"},
+			data: args,
 			success: function(res) {
 				console.log(res.activities);
 				this.setState({
@@ -62,11 +65,11 @@ var App = React.createClass({displayName: "App", //
 	}
 });
 
+//				<Selecter name="area" text="地区选择" url="http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"/>
 var SelectHeader = React.createClass({displayName: "SelectHeader",
 	render: function() {
 		return (
 			React.createElement("div", {className: "select-header"}, 
-				React.createElement(Selecter, {name: "area", text: "地区选择", url: "http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"}), 
 				React.createElement(Selecter, {name: "age", text: "年龄选择", url: "http://121.42.41.241:9900/activities/get-agesel"})
 			)
 		);

@@ -1,22 +1,8 @@
-function getUrlParam(name) {
-	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
-	var r = window.location.search.substr(1).match(reg);  //匹配目标参数
-	if (r != null) return unescape(r[2]); return null; //返回参数值
-}
-function IsNum(s)
-{
-	if(s!=null){
-		var r,re;
-		re = /\d*/i; //\d表示数字,*表示匹配多个数字
-		r = s.match(re);
-		return (r==s)?true:false;
-	}
-	return false;
-}
 var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 	getInitialState: function() {
 		return {
 			activity: {},
+			imgs: {},
 			loaded: false
 		};
 	},
@@ -38,8 +24,10 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			dataType: 'json',
 			data: { "actid":actid },
 			success: function(res) {
+				console.log(res);
 				this.setState({
-					activity: res
+					activity: res,
+					imgs: res.imgs,
 				});
 			}.bind(this),
 			error: function() {
@@ -59,15 +47,15 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 					), 
 					React.createElement("h4", {className: "title"}, this.state.activity.title), 
 					React.createElement("div", {className: "media-bd"}, 
-						React.createElement("p", {className: "privilage"}, "降价10%"), 
+						React.createElement("p", {className: "privilage"}, this.state.activity.preinfo), 
 						React.createElement("p", {className: "money clearfix"}, 
-							React.createElement("span", {className: "now fl"}, "现价￥750.00"), 
-							React.createElement("span", {className: "original fr"}, "原价￥820.00")
+							React.createElement("span", {className: "now fl"}, "现价￥", this.state.activity.price_current), 
+							React.createElement("span", {className: "original fr"}, "原价￥", this.state.activity.price_original)
 						), 
-						React.createElement("p", {className: "age"}, "0-3岁"), 
-						React.createElement("p", {className: "time"}, "活动时间: 6月30日14：00 ~ 16：00"), 
-						React.createElement("p", {className: "area"}, "活动地点：东山番茄苗艺术中心"), 
-						React.createElement("p", {className: "detail-content"}, "东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心东山番茄苗艺术中心"
+						React.createElement("p", {className: "age"}, this.state.activity.ages, "岁"), 
+						React.createElement("p", {className: "time"}, "活动时间: ", this.state.activity.time_from, " ~ ", this.state.activity.time_to), 
+						React.createElement("p", {className: "area"}, "活动地点：", this.state.activity.area), 
+						React.createElement("p", {className: "detail-content"}, this.state.activity.content
 						)
 					)
 				), 

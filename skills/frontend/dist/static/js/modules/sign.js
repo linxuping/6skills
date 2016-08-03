@@ -1,14 +1,51 @@
+function getUrlParam(name) {
+	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+	var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+	if (r != null) return unescape(r[2]); return null; //返回参数值
+}
+function isNum(s)
+{
+	if(s!=null){
+		var r,re;
+		re = /\d*/i; //\d表示数字,*表示匹配多个数字
+		r = s.match(re);
+		return (r==s)?true:false;
+	}
+	return false;
+}
 var Sign = React.createClass({displayName: "Sign",
+	getInitialState: function() {
+		return {
+			username: "",
+			phone: "",
+		};
+	},
 	back: function(){
 		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 	},
 	componentDidMount: function(){
+		//load.
+		$.ajax({
+			url: 'http://121.42.41.241:9900/activities/get_profile',
+			type: 'get',
+			dataType: 'json',
+			data: { "openid":'9901' },
+		})
+		.done(function(res) {
+			console.log("success");
+			console.log(res);
+			this.setState( { "username":res.profile.username,"phone":res.profile.phone } );
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		});
+
 		validateForm();
 	},
 	render: function() {
 		return (
 			React.createElement("div", {className: "sign-page"}, 
-				React.createElement("form", {action: "/test/sign.json", method: "get", id: "sign-form"}, 
+				React.createElement("form", {action: "http://121.42.41.241:9900/activities/sign", method: "post", id: "sign-form"}, 
 					React.createElement("div", {className: "back-btn", onClick: this.back}, "返回"), 
 					React.createElement("div", {className: "weui_cells_title"}, "填写报名信息"), 
 					React.createElement("div", {className: "weui_cells weui_cells_form"}, 
@@ -18,7 +55,7 @@ var Sign = React.createClass({displayName: "Sign",
 							), 
 							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
 								React.createElement("input", {type: "text", name: "name", id: "name", className: "weui_input", 
-									placeholder: "请输入家长真实姓名"})
+									placeholder: "请输入家长真实姓名", value: this.state.username})
 							)
 						), 
 						React.createElement("div", {className: "weui_cell"}, 
@@ -27,7 +64,7 @@ var Sign = React.createClass({displayName: "Sign",
 							), 
 							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
 								React.createElement("input", {type: "number", name: "phone", id: "phone", className: "weui_input", 
-									placeholder: "请输入手机号码"})
+									placeholder: "请输入手机号码", value: this.state.phone})
 							)
 						), 
 						React.createElement("div", {className: "weui_cell"}, 
@@ -76,6 +113,11 @@ var Sign = React.createClass({displayName: "Sign",
 });
 
 function validateForm() {
+	var actid = getUrlParam("actid");
+	if (!isNum(actid)){
+		alert("actid must be number.");
+		return;
+	}
 	$("#sign-form").validate({
 		rules: {
 			"name": {required: true},
@@ -84,15 +126,16 @@ function validateForm() {
 			"gender": {required: true}
 		},
 		messages: {
-			name: {required: ""},
-			phone: {required: "", digits: "", rangelength: ""},
-			age: {required: "", min: "", max: ""},
-			gender: {required: ""}
+			name: {required: "必填"},
+			phone: {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
+			age: {required: "请输入年龄", min: "", max: ""},
+			gender: {required: "请选择性别"}
 		},
 		submitHandler: function(form){
 			$(form).find(":submit").attr("disabled", true);
 			$(form).ajaxSubmit({
 				dataType: "json",
+				data: { "openid":"9901", "actid":actid },
 				success: function(obj){
 					//此处加入sdk关闭网页
 					obj = typeof obj === "object" ? obj : JSON.parse(obj);
@@ -102,11 +145,10 @@ function validateForm() {
 								title: "报名成功",
 								msg: "恭喜您报名成功！",
 								callback: function(){
-									try{
-										WeixinJSBridge.call('closeWindow');
-									} catch (e){
-
-									}
+									history.back();
+									//try{
+									//	WeixinJSBridge.call('closeWindow');
+									//} catch (e){ }
 								}
 							}),
 							document.getElementById("alert-wrap")
