@@ -15,7 +15,7 @@ var App = React.createClass({ //
 		var area = this.props.area;
 		//console.log(area);
 		if (this.state.age == null)
-			age = "0_100";
+			age = "0-100";
 		else
 			age = this.state.age;
 		if (this.state.area == null)
