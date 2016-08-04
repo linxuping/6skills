@@ -29,9 +29,9 @@ def activities_special_offers(req):
 	if not ret:
 		return district
 	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "str")
-	tmps = age.split("_")
+	tmps = age.split("-")
 	if (not ret) or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
-		return response_json_error( "age invalid! must be *_*" )
+		return response_json_error( "age invalid! must be *-*" )
 	_age_from = int(str(tmps[0]))
 	_age_to = int(str(tmps[1]))
 	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
@@ -470,7 +470,7 @@ def activities_getareas(req):
 def activities_getagesel(req):
 	#check.
 	#exec  
-	_json = { "values":["0_3","4_6","7_12"],"errcode":0,"errmsg":"" }
+	_json = { "values":["0-3","4-6","7-12"],"errcode":0,"errmsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
