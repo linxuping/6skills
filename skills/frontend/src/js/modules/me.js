@@ -126,7 +126,7 @@ var MyActivities = React.createClass({
 		$.ajax({
 			url: 'http://121.42.41.241:9900/activities/reset',
 			//url: '/test/sign.json',
-			type: 'get',
+			type: 'post',
 			dataType: 'json',
 			data: { "openid":'9901',"signid": this.state.signidWantToReset },
 		})
