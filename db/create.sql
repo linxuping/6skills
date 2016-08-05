@@ -164,7 +164,7 @@ CREATE TABLE `6s_activity` (
   `content` varchar(255) COMMENT '正文',
   `time_from` timestamp NULL DEFAULT NULL COMMENT '活动时间-开始，NULL 长期',
   `time_to` timestamp NULL DEFAULT NULL COMMENT '活动时间-结束',
-  `position_id` int(11) NOT NULL COMMENT '地点',
+  `position_id` int(11) NOT NULL COMMENT '集合地点',
   `position_details` varchar(255) COMMENT '详细地址',
   `age_from` smallint(4) NOT NULL DEFAULT 0 COMMENT '年龄',
   `age_to` smallint(4) NOT NULL DEFAULT 0 COMMENT '年龄',

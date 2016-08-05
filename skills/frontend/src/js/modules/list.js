@@ -157,8 +157,8 @@ var Activities = React.createClass({
 								{elem.title}
 							</h4>
 							<p className="weui_media_desc">活动剩余名额：{elem.quantities_remain}名</p>
-							<p className="weui_media_desc">{elem.tags}</p>
-							<p className="weui_media_desc">{elem.area}</p>
+							<p className="weui_media_desc">类型：{elem.tags}</p>
+							<p className="weui_media_desc">集合地点：{elem.area}</p>
 							<p className="weui_media_desc">{elem.ages}岁</p>
 						</div>
 					</div>
