@@ -15,7 +15,7 @@ var App = React.createClass({displayName: "App", //
 		var area = this.props.area;
 		//console.log(area);
 		if (this.state.age == null)
-			age = "0_100";
+			age = "0-100";
 		else
 			age = this.state.age;
 		if (this.state.area == null)
@@ -157,8 +157,8 @@ var Activities = React.createClass({displayName: "Activities",
 								elem.title
 							), 
 							React.createElement("p", {className: "weui_media_desc"}, "活动剩余名额：", elem.quantities_remain, "名"), 
-							React.createElement("p", {className: "weui_media_desc"}, elem.tags), 
-							React.createElement("p", {className: "weui_media_desc"}, elem.area), 
+							React.createElement("p", {className: "weui_media_desc"}, "类型：", elem.tags), 
+							React.createElement("p", {className: "weui_media_desc"}, "集合地点：", elem.area), 
 							React.createElement("p", {className: "weui_media_desc"}, elem.ages, "岁")
 						)
 					), 
