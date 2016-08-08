@@ -48,9 +48,29 @@ body {
   overflow: visible;
   white-space: nowrap;
 }
+.select-header .selecter label:after {
+  position: absolute;
+  display: block;
+  content: " ";
+  border: 6px solid #fff;
+  border-top: 6px solid transparent;
+  left: 120px;
+  top: 20px;
+}
+.select-header .selecter label:before {
+  position: absolute;
+  display: block;
+  content: " ";
+  border: 6px solid #ccc;
+  border-top: 6px solid transparent;
+  left: 120px;
+  top: 18px;
+}
 .select-header .selecter .ss-select {
   float: left;
   width: 75%;
+  position: relative;
+  display: block;
 }
 .select-header:after {
   display: table;

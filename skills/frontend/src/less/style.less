@@ -46,10 +46,30 @@ body{
 			float: left;
 			overflow: visible;
 			white-space: nowrap;
+			&:after{
+				position: absolute;
+				display: block;
+				content: " ";
+				border: 6px solid #fff;
+				border-top: 6px solid transparent;
+				left: 120px;
+				top: 20px;
+			}
+			&:before{
+				position: absolute;
+				display: block;
+				content: " ";
+				border: 6px solid #ccc;
+				border-top: 6px solid transparent;
+				left: 120px;
+				top: 18px;
+			}
 		}
 		.ss-select{
 			float: left;
 			width: 75%;
+			position: relative;
+			display: block;
 		}
 	}
 	&:after{

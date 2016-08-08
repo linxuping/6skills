@@ -163,7 +163,7 @@ var Activities = React.createClass({displayName: "Activities",
 		//location.href='/template/activity_detail.html?actid='+actid;
 		ReactDOM.render(
 			React.createElement(Sign, {actid: actid}),
-			document.getElementById("sign-wrap")
+			document.getElementById("sign-page-wrap")
 		);
 	},
 	openDetailPage: function (actid) {
@@ -218,7 +218,7 @@ var Activities = React.createClass({displayName: "Activities",
 						liStr
 					), 
 					moreBtn, 
-					React.createElement("div", {id: "sign-wrap"})
+					React.createElement("div", {id: "sign-page-wrap"})
 				)
 			)
 		);

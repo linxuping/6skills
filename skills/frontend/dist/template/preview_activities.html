@@ -16,14 +16,12 @@
 	<script type="text/javascript" src="/static/js/react/react.min.js"></script>
 	<script type="text/javascript" src="/static/js/react/react-dom.min.js"></script>
 	<script type="text/javascript" src="/static/js/modules/list.js"></script>
-	<script type="text/javascript" src="/static/js/modules/sign.js"></script>
 	<script type="text/javascript">
 	  //<![CDATA[
 		"use strict";
 		ReactDOM.render(
 			React.createElement(App, {
-				//url: "http://121.42.41.241:9900/activities/special-offers",
-				url: "/test/list.json",
+				url: "http://121.42.41.241:9900/activities/special-offers",
 				type: "preview"
 			}),
 			document.getElementById('content')
