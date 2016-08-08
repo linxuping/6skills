@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>活动预告</title>
-	<meta chartset="utf-8">
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
 	<link rel="stylesheet" type="text/css" href="/static/css/weui.min.css">
@@ -21,7 +21,8 @@
 		"use strict";
 		ReactDOM.render(
 			React.createElement(App, {
-				url: "http://121.42.41.241:9900/activities/special-offers",
+				//url: "http://121.42.41.241:9900/activities/special-offers",
+				url: "/test/list.json",
 				type: "preview"
 			}),
 			document.getElementById('content')

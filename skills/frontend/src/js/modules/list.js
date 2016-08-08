@@ -16,7 +16,7 @@ var App = React.createClass({ //
 		var area = this.props.area;
 		//console.log(area);
 		if (this.state.age == null)
-			age = "0_100";
+			age = "0-100";
 		else
 			age = this.state.age;
 		if (this.state.area == null)
@@ -189,17 +189,20 @@ var Activities = React.createClass({
 								{elem.title}
 							</h4>
 							<p className="weui_media_desc">活动剩余名额：{elem.quantities_remain}名</p>
-							<p className="weui_media_desc">{elem.tags}</p>
-							<p className="weui_media_desc">{elem.area}</p>
+							<p className="weui_media_desc">类型：{elem.tags}</p>
+							<p className="weui_media_desc">集合地点：{elem.area}</p>
 							<p className="weui_media_desc">{elem.ages}岁</p>
 						</div>
 					</div>
 					<div className="ss-join-bd clearfix">
 						<div className="money-box fl">￥{elem.price_current}</div>
-						<button className="weui_btn weui_btn_mini weui_btn_primary fr"
-							onClick={this.openSignupPage.bind(this,elem.actid)} >
-							{this.props.type == "preview" ? "我要报名" : "限时报名"}
-						</button>
+
+						{	(elem.quantities_remain == 0)? "":
+								<button className="weui_btn weui_btn_mini weui_btn_primary fr"
+									onClick={this.openSignupPage.bind(this,elem.actid)} >
+									{this.props.type == "preview" ? "我要报名" : "限时报名"}
+								</button>
+						}
 					</div>
 				</li>
 			);

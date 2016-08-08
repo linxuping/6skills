@@ -62,16 +62,16 @@ WSGI_APPLICATION = 'skills.wsgi.application'
     }
 '''
 #W R+
-DB_HOST = ''
-DB_NAME = ''
-DB_USERNAME = ''
-DB_PASSWORD = ''
+DB_HOST = '127.0.0.1'
+DB_NAME = 'sixskillsdb'
+DB_USERNAME = 'root'
+DB_PASSWORD = 'sixskillslinxuping'
 DB_PORT = 3306
 #R
-DB_HOST2 = ''
-DB_NAME2 = ''
-DB_USERNAME2 = ''
-DB_PASSWORD2 = ''
+DB_HOST2 = '127.0.0.1'
+DB_NAME2 = 'sixskillsdb'
+DB_USERNAME2 = 'root'
+DB_PASSWORD2 = 'sixskillslinxuping'
 DB_PORT2 = 3306
 DATABASES = {
     'default': {
@@ -90,7 +90,8 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+#TIME_ZONE = 'UTC'
+TIME_ZONE = 'Etc/GMT-8'
 
 USE_I18N = True
 
