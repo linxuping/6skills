@@ -21,6 +21,9 @@ var Sign = React.createClass({displayName: "Sign",
 		};
 	},
 	back: function(){
+		if (this.props.backTitle) {
+			document.title = this.props.backTitle;
+		}
 		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 	},
 	componentDidMount: function(){
@@ -40,9 +43,15 @@ var Sign = React.createClass({displayName: "Sign",
 			console.log("error");
 		});
 
-		validateForm();
+		validateForm(this.props.actid);
 	},
 	render: function() {
+		var ages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+		ages = ages.map(function(elem, index) {
+			return (
+				React.createElement("option", {value: elem}, elem, "岁")
+			);
+		});
 		return (
 			React.createElement("div", {className: "sign-page"}, 
 				React.createElement("form", {action: "http://121.42.41.241:9900/activities/sign", method: "post", id: "sign-form"}, 
@@ -67,13 +76,14 @@ var Sign = React.createClass({displayName: "Sign",
 									placeholder: "请输入手机号码", value: this.state.phone})
 							)
 						), 
-						React.createElement("div", {className: "weui_cell"}, 
+						React.createElement("div", {className: "weui_cell weui_cell_select weui_select_after"}, 
 							React.createElement("div", {className: "weui_cell_hd"}, 
 								React.createElement("label", {htmlFor: "age", className: "weui_label"}, "儿童年龄")
 							), 
 							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("input", {type: "number", name: "age", id: "age", className: "weui_input", 
-									placeholder: "请输入儿童年龄"})
+								React.createElement("select", {name: "age", id: "age", className: "weui_select", defautVlaue: "1"}, 
+									ages
+								)
 							)
 						)
 
@@ -92,7 +102,7 @@ var Sign = React.createClass({displayName: "Sign",
 						), 
 						React.createElement("label", {className: "weui_cell weui_check_label", for: "x11"}, 
 							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-									React.createElement("p", null, "女")
+								React.createElement("p", null, "女")
 							), 
 							React.createElement("div", {className: "weui_cell_ft"}, 
 								React.createElement("input", {type: "radio", className: "weui_check", name: "gender", 
@@ -112,8 +122,8 @@ var Sign = React.createClass({displayName: "Sign",
 	}
 });
 
-function validateForm() {
-	var actid = getUrlParam("actid");
+function validateForm(actid) {
+	var actid = getUrlParam("actid") || actid;
 	if (!isNum(actid)){
 		alert("actid must be number.");
 		return;

@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>限时优惠</title>
-	<meta chartset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/weui.min.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <title>限时优惠</title>
+    <meta chartset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/weui.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <style type="text/css">
+
+    </style>
 </head>
+
 <body>
+    <div id="content"></div>
+    <script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
+<!--     <script type="text/javascript" src="/static/js/iscroll.js"></script> -->
+    <script type="text/javascript" src="/static/js/react/react.min.js"></script>
+    <script type="text/javascript" src="/static/js/react/react-dom.min.js"></script>
+    <script type="text/javascript" src="/static/js/modules/list.js"></script>
+    <script type="text/javascript" src="/static/js/modules/sign.js"></script>
+    <script type="text/javascript">
+    //<![CDATA[
 
-	<div id="content"></div>
+    ReactDOM.render(
+        React.createElement(App, {
+            //url: "http://121.42.41.241:9900/activities/special-offers"
+            url: "/test/list.json"
+        }),
+        document.getElementById('content')
+    );
 
-	<script type="text/javascript" src="/static/js/jquery-3.0.0.min.js"></script>
-	<script type="text/javascript" src="/static/js/react/react.min.js"></script>
-	<script type="text/javascript" src="/static/js/react/react-dom.min.js"></script>
-	<script type="text/javascript" src="/static/js/modules/list.js"></script>
-	<script type="text/javascript">
-	  //<![CDATA[
-		"use strict";
-		ReactDOM.render(
-			React.createElement(App,{
-				url: "http://121.42.41.241:9900/activities/special-offers"
-				//url: "/test/list.json"
-			}),
-			document.getElementById('content')
-		);
-	  //]]>
-	</script>
+    //]]>
+    </script>
 </body>
+
 </html>

@@ -4,6 +4,7 @@ var App = React.createClass({ //
 		Appobj = this;
 		return {
 			activities: [],
+			pageable: {},
 			age: null,
 			area: null,
 			loaded: false
@@ -25,7 +26,7 @@ var App = React.createClass({ //
 
 		//console.log(area);
 		//console.log(age);
-		var args = {"area":area,"age":age,"page":"1","pagesize":"100","city":"","district":"天河区"};
+		var args = {"area":area,"age":age,"page": this.state.pageable.page || 1,"pagesize":10,"city":"","district":"天河区"};
 		if (this.props.type == "preview")
 			args["type"] = "preview";
 		$.ajax({
@@ -34,10 +35,17 @@ var App = React.createClass({ //
 			dataType: 'json',
 			data: args,
 			success: function(res) {
-				console.log(res.activities);
+				//console.log(res.activities);
+				var activities = this.state.activities.concat(res.activities)
 				this.setState({
-					activities: res.activities
+					activities: activities,
+					pageable: res.pageable
 				});
+				// myScroll = new IScroll('#wrapper', { mouseWheel: true });
+				// myScroll.on('scrollEnd', function(){
+				// 	console.log(event);
+				// 	//alert('msg');
+				// });
 			}.bind(this),
 			error: function() {
 				this.setState({
@@ -46,6 +54,15 @@ var App = React.createClass({ //
 				console.log("App error");
 			}.bind(this),
 		});
+	},
+
+	moreClickHandler: function () {
+		var pageable = this.state.pageable;
+		pageable.page += 1;
+		this.setState({
+			pageable: pageable
+		});
+		this.updateActivities();
 	},
 
 	componentDidMount: function() {
@@ -59,7 +76,8 @@ var App = React.createClass({ //
 		return (
 			<div className="app">
 				<SelectHeader />
-				<Activities activities={this.state.activities}/>
+				<Activities activities={this.state.activities} pageable={this.state.pageable}
+					moreClick={this.moreClickHandler} type={this.props.type} />
 			</div>
 		);
 	}
@@ -131,7 +149,7 @@ var Selecter = React.createClass({
 				<select name={this.props.name} className="weui_select ss-select" onChange={this.selectChanged}>
 					<option value="不限">不限</option>
 					{ this.state.values.map(function(elem) {
-							return (<option value={elem}>{elem}</option>);
+							return (<option value={elem}>{elem}岁</option>);
 					}) }
 				</select>
 			</div>
@@ -141,14 +159,28 @@ var Selecter = React.createClass({
 
 var Activities = React.createClass({
 	openSignupPage: function(actid){
+		//console.log(event)
+		//location.href='/template/activity_detail.html?actid='+actid;
+		ReactDOM.render(
+			React.createElement(Sign, {actid: actid}),
+			document.getElementById("sign-wrap")
+		);
+	},
+	openDetailPage: function (actid) {
+		if (event.target.tagName == "BUTTON") {
+			return false;
+		}
 		location.href='/template/activity_detail.html?actid='+actid;
 	},
+
 	render: function() {
+		console.log(this.props.activities)
 		var liStr = this.props.activities &&
 					this.props.activities.map(function(elem, index) {
 			return (
-				<li className="ss-media-box">
-					<div className="weui_media_box weui_media_appmsg" data-uuid={index}>
+				<li className="ss-media-box"
+					onClick={this.openDetailPage.bind(this, elem.actid)}>
+					<div className="weui_media_box weui_media_appmsg">
 						<div className="weui_media_hd ss-media-hd">
 							<img className="weui_media_appmsg_thumb" src={elem.img_cover} alt=""/>
 						</div>
@@ -164,17 +196,30 @@ var Activities = React.createClass({
 					</div>
 					<div className="ss-join-bd clearfix">
 						<div className="money-box fl">￥{elem.price_current}</div>
-						<button className="weui_btn weui_btn_mini weui_btn_primary fr" onClick={this.openSignupPage.bind(this,elem.actid)} >限时报名</button>
+						<button className="weui_btn weui_btn_mini weui_btn_primary fr"
+							onClick={this.openSignupPage.bind(this,elem.actid)} >
+							{this.props.type == "preview" ? "我要报名" : "限时报名"}
+						</button>
 					</div>
 				</li>
 			);
 		}.bind(this));
+		var moreBtn
+		if (this.props.pageable.total && this.props.pageable.total > this.props.pageable.page) {
+			moreBtn = <div className="more-btn" onClick={this.props.moreClick}>
+									点击加载更多...
+								</div>
+		}
 
 		return (
-			<div className="activities-list weui_panel_access">
-				<ul className="weui_panel_bd">
-					{liStr}
-				</ul>
+			<div className="activities-list weui_panel_access" id="wrapper">
+				<div id="scroller">
+					<ul className="weui_panel_bd">
+						{liStr}
+					</ul>
+					{moreBtn}
+					<div id="sign-wrap"></div>
+				</div>
 			</div>
 		);
 	}

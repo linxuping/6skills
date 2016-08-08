@@ -7,8 +7,9 @@ var ActivityDetail = React.createClass({
 		};
 	},
 	openSignPage: function(){
+		document.title = "活动报名";
 		ReactDOM.render(
-			React.createElement(Sign, {actid: this.props.actid}),
+			React.createElement(Sign, {actid: this.props.actid, backTitle: "活动详情"}),
 			document.getElementById('sign-page-wrap')
 		);
 	},

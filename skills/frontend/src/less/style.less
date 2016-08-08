@@ -32,12 +32,15 @@ body{
 	@height: 45px;
 	height: @height;
 	border-bottom: #ccc 1px solid;
+	position: fixed;
+	top: 0px;
+	background-color: #fff;
+	z-index: 99;
 	.selecter{
 		display: table-cell;
 		width: 1%;
 		label{
 			display: block;
-			width: 25%;
 			line-height: @height;
 			padding-left: 5px;
 			float: left;
@@ -45,8 +48,8 @@ body{
 			white-space: nowrap;
 		}
 		.ss-select{
-			width: 75%;
 			float: left;
+			width: 75%;
 		}
 	}
 	&:after{
@@ -55,7 +58,16 @@ body{
 		content: "";
 	}
 }
-
+.activities-list{
+	margin-top: 45px;
+	.more-btn{
+		height: 3.5rem;
+		text-align: center;
+		font-size: 1.6rem;
+		line-height: 3.5rem;
+		cursor: pointer;
+	}
+}
 .ss-media-box{
 	@ssMediaSize: 90px;
 	.ss-media-hd {
@@ -73,6 +85,7 @@ body{
 		margin-top: -7px;
 		.money-box{
 			color: #d00;
+			font-size: 1.6rem;
 		}
 	}
 	border-bottom: 1px solid #ccc;
