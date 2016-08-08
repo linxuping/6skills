@@ -320,43 +320,54 @@ def activities_sign(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "select * from 6s_activity where id=%d and status=1;"%(actid)
+	_sql = "select quantities_remain from 6s_activity where id=%d and status=1;"%(actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
-		_sql = "select id from 6s_user where openid='%s';"%openid   #or phone ???
-		count,rets=dbmgr.db_exec(_sql)
-		if count == 0:
-			_sql = "insert into 6s_user(phone,openid,createtime) values('%s','%s',now());"%(phone,openid)
-			count,rets=dbmgr.db_exec(_sql)
-			if count == 0: #try more.
-				count,rets=dbmgr.db_exec(_sql)
-
-		_sql = "select id from 6s_user where openid='%s' and status=1;"%openid
-		count,rets=dbmgr.db_exec(_sql)
-		if count == 1:
-			uid = int(rets[0][0])
-			_sql = "select id from 6s_signup where user_id=%d and act_id=%d and status=1;"%(uid,actid)
-			count,rets=dbmgr.db_exec(_sql)
-			if count == 0: 
-				#save to 6s_user.
-				_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,createtime) values(%d,%d,'%s',%d,now());"%(uid,actid,name,age)
-				count,rets=dbmgr.db_exec(_sql)
-				if count == 1:
-					pass
-				else:
-					if str(rets).find("Duplicate entry ") != -1:
-						_json["errcode"] = 1
-						_json["errmsg"] = "报名信息已经存在！act:%d,u:%d"%(actid,uid)
-					else:
-						_json["errcode"] = 2
-						_json["errmsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
-			else:
-				_json["errcode"] = 3
-				_json["errmsg"] = "您已经对该活动报过名."
-				mo.logger.warn("signup again.  act:%d,u:%d."%(actid,uid))
+		if int(rets[0][0]) <= 0:
+			_json["errcode"] = 1
+			_json["errmsg"] = "已经没有剩余名额,可以尝试联系客服看有无名额调配！"
+			mo.logger.warn("quantities_remain=%s. act:%d."%(rets[0][0],actid))
 		else:
-			_json["errcode"] = 4
-			_json["errmsg"] = get_errtag()+"User with phone:%s not exist."%phone
+			_sql = "select id from 6s_user where openid='%s';"%openid   #or phone ???
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 0:
+				_sql = "insert into 6s_user(phone,openid,createtime) values('%s','%s',now());"%(phone,openid)
+				count,rets=dbmgr.db_exec(_sql)
+				if count == 0: #try more.
+					count,rets=dbmgr.db_exec(_sql)
+
+			_sql = "select id from 6s_user where openid='%s' and status=1;"%openid
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 1:
+				uid = int(rets[0][0])
+				_sql = "select id from 6s_signup where user_id=%d and act_id=%d and status=1;"%(uid,actid)
+				count,rets=dbmgr.db_exec(_sql)
+				if count == 0: 
+					#save to 6s_user.
+					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,createtime) values(%d,%d,'%s',%d,now());"%(uid,actid,name,age)
+					count,rets=dbmgr.db_exec(_sql)
+					if count == 1:
+						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)
+						count,rets=dbmgr.db_exec(_sql)
+						if count == 1:
+							pass
+						else:
+							_json["errcode"] = 1
+							_json["errmsg"] = "报名剩余人数-1失败！act:%d,u:%d"%(actid,uid)
+					else:
+						if str(rets).find("Duplicate entry ") != -1:
+							_json["errcode"] = 1
+							_json["errmsg"] = "报名信息已经存在！act:%d,u:%d"%(actid,uid)
+						else:
+							_json["errcode"] = 2
+							_json["errmsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
+				else:
+					_json["errcode"] = 3
+					_json["errmsg"] = "您已经对该活动报过名."
+					mo.logger.warn("signup again.  act:%d,u:%d."%(actid,uid))
+			else:
+				_json["errcode"] = 4
+				_json["errmsg"] = get_errtag()+"User with phone:%s not exist."%phone
 	else:
 		_json["errcode"] = 5
 		_json["errmsg"] = "活动:%d不存在."%actid
@@ -407,6 +418,7 @@ def activities_my(req):
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
+	makeup_header_cache_ignore(resp)
 	return resp
 	#return HttpResponseRedirect('/test2') 
 
@@ -425,7 +437,7 @@ def activities_reset(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "update 6s_signup a left join 6s_user b on a.user_id=b.id set a.status=0 where a.id=%d and b.openid='%s';"%(signid,openid)
+	_sql = "update 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id set c.quantities_remain=c.quantities_remain+1, a.status=0 where a.id=%d and b.openid='%s';"%(signid,openid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		pass

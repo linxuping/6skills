@@ -164,7 +164,7 @@ var Activities = React.createClass({
 					</div>
 					<div className="ss-join-bd clearfix">
 						<div className="money-box fl">￥{elem.price_current}</div>
-						<button className="weui_btn weui_btn_mini weui_btn_primary fr" onClick={this.openSignupPage.bind(this,elem.actid)} >限时报名</button>
+						{(elem.quantities_remain==0)? "":<button className="weui_btn weui_btn_mini weui_btn_primary fr" onClick={this.openSignupPage.bind(this,elem.actid)} >限时报名</button> }
 					</div>
 				</li>
 			);

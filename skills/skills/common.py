@@ -127,6 +127,9 @@ def makeup_headers_CORS(resp):
 		resp._headers["Access-Control-Allow-Credentials"] = ("Access-Control-Allow-Credentials", 'true')
 		resp._headers["P3P"] = ("P3P", "CP=\"CAO PSA OUR COR\"")
 
+def makeup_header_cache_ignore(resp):
+		resp._headers["Cache-control"] = ("Cache-control", 'no-cache、no-store')
+
 #--------------------- AJAX -----------------------
 import json
 #ajax process.
