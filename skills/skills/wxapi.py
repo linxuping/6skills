@@ -67,9 +67,9 @@ def activities_special_offers(req):
 		pass #error log
 
 	#if district == "":
-	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(_age_from,_age_to,_age_from,_age_to)
+	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,_age_from,_age_to,_age_from,_age_to)
 	#else:
-	#	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(area,_age_from,_age_to,_age_from,_age_to)
+	#	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,area,_age_from,_age_to,_age_from,_age_to)
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1

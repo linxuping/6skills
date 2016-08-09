@@ -219,7 +219,7 @@ var Activities = React.createClass({
 			);
 		}.bind(this));
 		var moreBtn
-		if (this.props.pageable.total && this.props.pageable.total > this.props.pageable.page) {
+		if (this.props.pageable.total>1 && this.props.pageable.total > this.props.pageable.page) {
 			moreBtn = <div className="more-btn" onClick={this.props.moreClick}>
 									点击加载更多...
 								</div>

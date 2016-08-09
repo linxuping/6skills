@@ -36,7 +36,7 @@ def db_exec(_sql):
 						rets = _cur.fetchall()
 						break
 				except:
-						rets = "[sql error] retry.%d, %s, %s. "%(i,str(sys.exc_info()),str(traceback.format_exc())  )
+						rets = "[sql error] retry.%d, %s, %s. [%s]"%(i,str(sys.exc_info()),str(traceback.format_exc()),_sql  )
 						mo.logger.error( rets )
 						db_init()
 				finally:
