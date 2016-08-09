@@ -174,10 +174,13 @@ var Activities = React.createClass({
 			document.getElementById("sign-page-wrap")
 		);
 	},
-	openDetailPage: function (actid) {
+	openDetailPage: function (actid, remains) {
 		if (event.target.tagName == "BUTTON") {
 			return false;
 		}
+		console.log(remains);
+		if (remains == 0)
+			return false;
 		location.href='/template/activity_detail.html?actid='+actid;
 	},
 
@@ -187,7 +190,7 @@ var Activities = React.createClass({
 					this.props.activities.map(function(elem, index) {
 			return (
 				<li className="ss-media-box"
-					onClick={this.openDetailPage.bind(this, elem.actid)}>
+					onClick={this.openDetailPage.bind(this, elem.actid, elem.quantities_remain)}>
 					<div className="weui_media_box weui_media_appmsg">
 						<div className="weui_media_hd ss-media-hd">
 							<img className="weui_media_appmsg_thumb" src={elem.img_cover} alt=""/>
