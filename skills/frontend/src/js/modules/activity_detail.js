@@ -56,7 +56,7 @@ var ActivityDetail = React.createClass({
 						<p className="age">{this.state.activity.ages}岁</p>
 						<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
 						<p className="area">活动地点：{this.state.activity.area}</p>
-						<p className="detail-content">{this.state.activity.content}
+						<p className="detail-content"><div dangerouslySetInnerHTML={{__html: this.state.activity.content}}></div>
 						</p>
 					</div>
 				</article>
