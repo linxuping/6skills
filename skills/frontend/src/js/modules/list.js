@@ -35,12 +35,18 @@ var App = React.createClass({ //
 			dataType: 'json',
 			data: args,
 			success: function(res) {
-				//console.log(res.activities);
-				var activities = this.state.activities.concat(res.activities)
+				var activities = null;
+				if (res.pageable.page == 1)
+					activities = res.activities;
+				else
+					activities = this.state.activities.concat(res.activities);
 				this.setState({
 					activities: activities,
 					pageable: res.pageable
 				});
+				console.log("[updateActivities.]");
+				console.log(res.activities);
+				console.log(this.state.activities);
 				// myScroll = new IScroll('#wrapper', { mouseWheel: true });
 				// myScroll.on('scrollEnd', function(){
 				// 	console.log(event);
@@ -70,8 +76,9 @@ var App = React.createClass({ //
 	},
 
 	render: function() {
-		console.log("rending.");
+		console.log("[rending.]");
 		console.log(this.state.activities);
+		console.log(this.state.pageable);
 		//this.updateActivities();
 		return (
 			<div className="app">
@@ -130,12 +137,13 @@ var Selecter = React.createClass({
 		}
 		else if (this.props.name == "age"){
 			if (event.target.value == "不限")
-				Appobj.state.age = "0_100";
+				Appobj.state.age = "0-100";
 			else
 				Appobj.state.age = event.target.value;
 		}
+		Appobj.state.pageable.page = 1;
 		Appobj.updateActivities();
-		Appobj.setState({loaded: !Appobj.state.loaded});
+		//Appobj.setState({loaded: !Appobj.state.loaded});
 		//Appobj.setState({activities: [1,2,3,4,5,6]});
 		/*ReactDOM.render(
 			React.createElement(App, null),
@@ -174,7 +182,7 @@ var Activities = React.createClass({
 	},
 
 	render: function() {
-		console.log(this.props.activities)
+		//console.log(this.props.activities)
 		var liStr = this.props.activities &&
 					this.props.activities.map(function(elem, index) {
 			return (

@@ -44,7 +44,7 @@ def db_exec(_sql):
 								_cur.close()
 								g_conn.commit()
 		#mo.logger.info("[sql] %s %d %s. "%(_sql,count,str(rets) ))
-		mo.logger.info("[sql] %s, count:%d."%(_sql,count ))
+		mo.logger.info("[sql] %s, count:%d."%(_sql[:50]+"...",count ))
 		return count,rets
 
 def db_select_test():		#cur.execute('select * from user')
