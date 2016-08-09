@@ -60,7 +60,7 @@ def activities_special_offers(req):
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
+			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = get_errtag()+"DB failed."
@@ -122,7 +122,7 @@ def activities_special_offers_old(req):
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
+			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11]} )
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = get_errtag()+"DB failed."
@@ -175,7 +175,7 @@ def activities_preview(req):
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json["activities"].append( {"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10]} )
+			_json["activities"].append( {"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10]} )
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = get_errtag()+"DB failed."
@@ -207,7 +207,7 @@ def activities_details(req):
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"brief":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"preinfo":lis[13],"time_from":lis[14],"time_to":lis[15]} ) 
+			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_original":lis[8],"price_current":lis[9],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"preinfo":lis[13],"time_from":lis[14],"time_to":lis[15]} ) 
 	elif count == 0:
 		_json["errcode"] = 1
 		_json["errmsg"] = "activity:%d not exist."%actid
