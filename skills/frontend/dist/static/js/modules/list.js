@@ -169,6 +169,9 @@ var Activities = React.createClass({displayName: "Activities",
 	openSignupPage: function(actid){
 		//console.log(event)
 		//location.href='/template/activity_detail.html?actid='+actid;
+		if ($(event.target).hasClass('weui_btn_disabled')) {
+			return false;
+		}
 		ReactDOM.render(
 			React.createElement(Sign, {actid: actid}),
 			document.getElementById("sign-page-wrap")
@@ -207,13 +210,10 @@ var Activities = React.createClass({displayName: "Activities",
 					), 
 					React.createElement("div", {className: "ss-join-bd clearfix"}, 
 						React.createElement("div", {className: "money-box fl"}, "￥", elem.price_current), 
-
-							(elem.quantities_remain == 0)? "":
-								React.createElement("button", {className: "weui_btn weui_btn_mini weui_btn_primary fr", 
-									onClick: this.openSignupPage.bind(this,elem.actid)}, 
-									this.props.type == "preview" ? "我要报名" : "限时报名"
-								)
-						
+							React.createElement("button", {className: (elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr", 
+								onClick: this.openSignupPage.bind(this,elem.actid)}, 
+								this.props.type == "preview" ? "我要报名" : "限时报名"
+							)
 					)
 				)
 			);
