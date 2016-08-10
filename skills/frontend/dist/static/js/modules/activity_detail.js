@@ -56,7 +56,7 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 						React.createElement("p", {className: "age"}, this.state.activity.ages, "岁"), 
 						React.createElement("p", {className: "time"}, "活动时间: ", this.state.activity.time_from, " ~ ", this.state.activity.time_to), 
 						React.createElement("p", {className: "area"}, "活动地点：", this.state.activity.area), 
-						React.createElement("p", {className: "detail-content"}, this.state.activity.content
+						React.createElement("p", {className: "detail-content"}, React.createElement("div", {dangerouslySetInnerHTML: {__html: this.state.activity.content}})
 						)
 					)
 				), 

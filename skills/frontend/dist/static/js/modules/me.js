@@ -44,6 +44,13 @@ var Me = React.createClass({displayName: "Me",
 			React.createElement(MyActivities, {back: this.back}), document.getElementById("sign-page-wrap")
 		);
 	},
+	gotoMyCollections: function () {
+		document.title = "我的收藏";
+		ReactDOM.render(
+			React.createElement(MyCollections, {back: this.back}),
+			document.getElementById("sign-page-wrap")
+		);
+	},
 	render: function() {
 		return (
 			React.createElement("div", {className: "me"}, 
@@ -61,6 +68,15 @@ var Me = React.createClass({displayName: "Me",
 								), 
 								React.createElement("div", {className: "weui_cell_ft"})
 							), 
+
+							React.createElement("a", {href: "javascript:void(0);", className: "weui_cell", 
+								 onClick: this.gotoMyCollections}, 
+								React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+									React.createElement("p", null, "我的收藏")
+								), 
+								React.createElement("div", {className: "weui_cell_ft"})
+							), 
+
 							React.createElement("a", {href: "javascript:void(0);", className: "weui_cell", 
 								 onClick: this.gotoFeedback}, 
 								React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
@@ -195,6 +211,82 @@ var MyActivities = React.createClass({displayName: "MyActivities",
 		);
 	}
 });
+
+var MyCollections = React.createClass({displayName: "MyCollections",
+	getInitialState: function() {
+		return {
+			activities: []
+		};
+	},
+	componentDidMount: function() {
+		this.pullFromServer();
+	},
+	pullFromServer: function() {
+		$.ajax({
+			//url: 'http://121.42.41.241:9900/activities/my',
+			url: '/test/my.json',
+			type: 'get',
+			dataType: 'json',
+			data: { openid:'9901',page:"1",pagesize:"100" },
+			success: function(res) {
+				console.log("success");
+				this.setState( {"activities":res.activities} );
+			}.bind(this),
+			error: function() {
+				console.log("error");
+			}.bind(this)
+		});
+	},
+
+	delCollectionHandler: function (event) {
+		var actid = event.target.dataset.actid;
+		$.ajax({
+			url: '/test/sign.json',
+			type: 'post',
+			dataType: 'json',
+			data: { "openid":'9901',"actid": this.state.signidWantToReset },
+		})
+		.done(function() {
+			this.pullFromServer();
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	},
+
+	render: function() {
+		var myActivitiesStr = this.state.activities &&
+			this.state.activities.map(function(elem, index) {
+				return (
+					React.createElement("li", null, 
+						React.createElement("header", {className: "ss-hd"}, elem.title), 
+						React.createElement("p", {className: "time clearfix"}, 
+							React.createElement("span", null, "活动时间"), React.createElement("time", null, elem.time_act)
+						), 
+						React.createElement("button", {type: "button", onClick: this.delCollectionHandler, 
+							"data-uid": index, "data-actid": elem.actid, className: "weui_btn weui_btn_mini weui_btn_default"}, 
+							"删除"
+						)
+					)
+				);
+			}.bind(this));
+		return (
+			React.createElement("div", {className: "myActivities sign-page", style: {"overflow": "auto"}}, 
+				React.createElement("div", {className: "back-btn", onClick: this.props.back}, "返回"), 
+				React.createElement("div", {className: "cell"}, 
+					React.createElement("ul", {className: "my-activities"}, 
+						myActivitiesStr
+					), 
+					React.createElement("div", {id: "confirm-dialog-wrap"})
+				)
+			)
+		);
+	}
+});
+
 
 var ConfirmDialog = React.createClass({displayName: "ConfirmDialog",
 	reset: function(){
