@@ -44,13 +44,19 @@ urlpatterns = patterns('',
 		#activities/my
 		url(r'^activities/my', wxapi.activities_my),
 		#acitivities/reset?openid={openid}
-		url(r'^activities/reset', wxapi.activities_reset),
+		url(r'^activities/reset$', wxapi.activities_reset),
 		#feedback
 		#url(r'^wxfeedback', wxapi.wxfeedback,
 		#activities/get-areas
 		url(r'^activities/get-areas', wxapi.activities_getareas),
 		url(r'^activities/get-agesel', wxapi.activities_getagesel),
 		url(r'^activities/get_profile', wxapi.activities_getprofile),
+		#activities/mycollections
+		url(r'^activities/mycollections', wxapi.activities_mycollections),
+		#acitivities/reset_collection?openid={openid}
+		url(r'^activities/reset_collection', wxapi.activities_reset_collection),
+		#activities/collect
+		url(r'^activities/collect', wxapi.activities_collect),
 		#
 		#wxapi END.
 )

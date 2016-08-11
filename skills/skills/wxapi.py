@@ -512,3 +512,106 @@ def activities_getprofile(req):
 	return resp
 
 
+@req_print
+def activities_mycollections(req):
+	args = req.GET
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	if page < 1:
+		page = 1
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "activities":[],"pageable":{"page":0,"total":0},"errcode":0,"errmsg":"" }
+	_sql = "select a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id,DATE_FORMAT(c.time_from,'%%Y-%%m-%%d'),a.id from 6s_collection a left join 6s_user b on a.openid=b.openid left join 6s_activity c on a.act_id=c.id where b.openid='%s' and a.status=1 and b.status=1 and c.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
+	count,rets=dbmgr.db_exec(_sql)
+	if count >= 0:
+		for i in range(count):
+			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"time_signup":rets[i][2],"signid":rets[i][4],"time_act":rets[i][5],"collid":rets[i][6]} )
+		_sql = "select count(a.act_id) from 6s_collection a left join 6s_user b on a.openid=b.openid left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 1:
+			_json["pageable"]["total"] = int(rets[0][0])
+			_json["pageable"]["page"] = page
+		else:
+			_json["errcode"] = 1
+			_json["errmsg"] = get_errtag()+"get collection count failed."
+			mo.logger.error(get_errtag()+"get collection count failed. "+REQ_TAG(args))
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = get_errtag()+"数据操作失败."
+		mo.logger.error(get_errtag()+"DB failed."+REQ_TAG(args))
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	makeup_header_cache_ignore(resp)
+	return resp
+
+
+@csrf_exempt
+@req_print
+def activities_reset_collection(req):
+	args = req.POST
+	#check.
+	ret,collid = check_mysql_arg_jsonobj("collid", args.get("collid",None), "int")
+	if not ret:
+		return collid
+	ret,openid = check_mysql_arg_jsonobj("openid", args.get("openid",None), "str")
+	if not ret:
+		return openid
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "delete from 6s_collection where id='%d';"%(collid)   
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		pass
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "取消收藏失败."
+		mo.logger.error(get_errtag()+"del collection failed."+REQ_TAG(args))
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@csrf_exempt
+@req_print
+def activities_collect(req):
+	args = req.POST
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", args.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
+	if not ret:
+		return actid
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "select * from 6s_collection where openid='%s' and act_id='%s';"%(openid,actid)   
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		_sql = "insert into 6s_collection(act_id,openid,createtime) values('%s','%s',now());"%(actid,openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 0: #try more.
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 0:
+				_json["errcode"] = 1
+				_json["errmsg"] = "收藏失败！"
+				mo.logger.error("collect fail.  act:%d,openid:%s."%(actid,openid))
+	#mo.logger.info("collect ok.  act:%d,openid:%s."%(actid,openid))
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp

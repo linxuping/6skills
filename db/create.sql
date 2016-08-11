@@ -230,6 +230,30 @@ CREATE INDEX idx_6s_signup_act_id ON 6s_signup(act_id);
 
 insert into 6s_signup(user_id,act_id,createtime) values(1,1,now()),(1001,1,now()),(1002,2,now());
 
+
+-- ----------------------------
+-- Table structure for 6s_collection 收藏
+-- ----------------------------
+select "+------------------ 6s_collection -------------------+";
+DROP TABLE IF EXISTS `6s_collection`;
+CREATE TABLE `6s_collection` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  -- `user_id` int(11) NOT NULL DEFAULT -1, 
+  `openid` varchar(255) NOT NULL, 
+  `act_id` int(11) NOT NULL DEFAULT -1, 
+  `createtime` datetime NOT NULL COMMENT '添加时间',
+  `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
+  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用,1 可用,2 审核中,3 拒绝,4 禁止发帖',
+  -- CONSTRAINT `fk_6s_collection_uid` FOREIGN KEY (user_id) REFERENCES 6s_user(id) ON UPDATE CASCADE,
+  CONSTRAINT `fk_6s_collection_actid` FOREIGN KEY (act_id) REFERENCES 6s_activity(id) ON UPDATE CASCADE,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+CREATE INDEX idx_6s_collection_openid ON 6s_collection(openid);
+CREATE INDEX idx_6s_collection_act_id ON 6s_collection(act_id);
+
+insert into 6s_collection(openid,act_id,createtime) values('9901',1,now()),('9901',2,now()),('9901',3,now());
+
+
 -- ----------------------------
 -- Table structure for 6s_idencode 验证码
 -- ----------------------------

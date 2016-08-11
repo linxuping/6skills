@@ -20,10 +20,13 @@ sys.setdefaultencoding('utf-8')
 def get_errtag():
 		return "[errno:%s_%s]"%(socket.gethostname(),time.strftime('%m%d_%H%M%S'))
 
+def REQ_TAG(args):
+		return "[openid:%s actid:%s]"%(args.get("openid","null"), args.get("actid","null"))
+
 def req_print(func):
 		def wrapper(*args):
 				req = args[0]
-				mo.logger.info("POST:%s, GET:%s, USER:%s, args:%s"%(str(req.POST),str(req.GET),str(req.user),str(args[1:]) ))
+				mo.logger.info("->%s POST:%s, GET:%s, USER:%s, args:%s"%(func.func_name,str(req.POST),str(req.GET),str(req.user),str(args[1:]) ))
 				return func(req)
 		return wrapper
 
