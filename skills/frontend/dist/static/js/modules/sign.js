@@ -123,7 +123,7 @@ var Sign = React.createClass({displayName: "Sign",
 });
 
 function validateForm(actid) {
-	var actid = getUrlParam("actid") || actid;
+	var actid = getUrlParam("actid") || String(actid);
 	if (!isNum(actid)){
 		alert("actid must be number.");
 		return;

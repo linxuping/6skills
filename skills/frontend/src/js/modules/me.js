@@ -44,6 +44,13 @@ var Me = React.createClass({
 			<MyActivities back={this.back}/>, document.getElementById("sign-page-wrap")
 		);
 	},
+	gotoMyCollections: function () {
+		document.title = "我的收藏";
+		ReactDOM.render(
+			<MyCollections back={this.back}/>,
+			document.getElementById("sign-page-wrap")
+		);
+	},
 	render: function() {
 		return (
 			<div className="me">
@@ -61,6 +68,15 @@ var Me = React.createClass({
 								</div>
 								<div className="weui_cell_ft"></div>
 							</a>
+
+							<a href="javascript:void(0);" className="weui_cell"
+								 onClick={this.gotoMyCollections}>
+								<div className="weui_cell_bd weui_cell_primary">
+									<p>我的收藏</p>
+								</div>
+								<div className="weui_cell_ft"></div>
+							</a>
+
 							<a href="javascript:void(0);" className="weui_cell"
 								 onClick={this.gotoFeedback}>
 								<div className="weui_cell_bd weui_cell_primary">
@@ -195,6 +211,82 @@ var MyActivities = React.createClass({
 		);
 	}
 });
+
+var MyCollections = React.createClass({
+	getInitialState: function() {
+		return {
+			activities: []
+		};
+	},
+	componentDidMount: function() {
+		this.pullFromServer();
+	},
+	pullFromServer: function() {
+		$.ajax({
+			//url: 'http://121.42.41.241:9900/activities/my',
+			url: '/test/my.json',
+			type: 'get',
+			dataType: 'json',
+			data: { openid:'9901',page:"1",pagesize:"100" },
+			success: function(res) {
+				console.log("success");
+				this.setState( {"activities":res.activities} );
+			}.bind(this),
+			error: function() {
+				console.log("error");
+			}.bind(this)
+		});
+	},
+
+	delCollectionHandler: function (event) {
+		var actid = event.target.dataset.actid;
+		$.ajax({
+			url: '/test/sign.json',
+			type: 'post',
+			dataType: 'json',
+			data: { "openid":'9901',"actid": this.state.signidWantToReset },
+		})
+		.done(function() {
+			this.pullFromServer();
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	},
+
+	render: function() {
+		var myActivitiesStr = this.state.activities &&
+			this.state.activities.map(function(elem, index) {
+				return (
+					<li>
+						<header className="ss-hd">{elem.title}</header>
+						<p className="time clearfix">
+							<span>活动时间</span><time>{elem.time_act}</time>
+						</p>
+						<button type="button" onClick={this.delCollectionHandler}
+							data-uid={index} data-actid={elem.actid} className="weui_btn weui_btn_mini weui_btn_default">
+							删除
+						</button>
+					</li>
+				);
+			}.bind(this));
+		return (
+			<div className="myActivities sign-page" style={{"overflow": "auto"}}>
+				<div className="back-btn" onClick={this.props.back}>返回</div>
+				<div className="cell">
+					<ul className="my-activities">
+						{myActivitiesStr}
+					</ul>
+					<div id="confirm-dialog-wrap"></div>
+				</div>
+			</div>
+		);
+	}
+});
+
 
 var ConfirmDialog = React.createClass({
 	reset: function(){

@@ -35,12 +35,18 @@ var App = React.createClass({displayName: "App", //
 			dataType: 'json',
 			data: args,
 			success: function(res) {
-				//console.log(res.activities);
-				var activities = this.state.activities.concat(res.activities)
+				var activities = null;
+				if (res.pageable.page == 1)
+					activities = res.activities;
+				else
+					activities = this.state.activities.concat(res.activities);
 				this.setState({
 					activities: activities,
 					pageable: res.pageable
 				});
+				console.log("[updateActivities.]");
+				console.log(res.activities);
+				console.log(this.state.activities);
 				// myScroll = new IScroll('#wrapper', { mouseWheel: true });
 				// myScroll.on('scrollEnd', function(){
 				// 	console.log(event);
@@ -70,8 +76,9 @@ var App = React.createClass({displayName: "App", //
 	},
 
 	render: function() {
-		console.log("rending.");
+		console.log("[rending.]");
 		console.log(this.state.activities);
+		console.log(this.state.pageable);
 		//this.updateActivities();
 		return (
 			React.createElement("div", {className: "app"}, 
@@ -130,12 +137,13 @@ var Selecter = React.createClass({displayName: "Selecter",
 		}
 		else if (this.props.name == "age"){
 			if (event.target.value == "不限")
-				Appobj.state.age = "0_100";
+				Appobj.state.age = "0-100";
 			else
 				Appobj.state.age = event.target.value;
 		}
+		Appobj.state.pageable.page = 1;
 		Appobj.updateActivities();
-		Appobj.setState({loaded: !Appobj.state.loaded});
+		//Appobj.setState({loaded: !Appobj.state.loaded});
 		//Appobj.setState({activities: [1,2,3,4,5,6]});
 		/*ReactDOM.render(
 			React.createElement(App, null),
@@ -161,25 +169,31 @@ var Activities = React.createClass({displayName: "Activities",
 	openSignupPage: function(actid){
 		//console.log(event)
 		//location.href='/template/activity_detail.html?actid='+actid;
+		if ($(event.target).hasClass('weui_btn_disabled')) {
+			return false;
+		}
 		ReactDOM.render(
 			React.createElement(Sign, {actid: actid}),
 			document.getElementById("sign-page-wrap")
 		);
 	},
-	openDetailPage: function (actid) {
+	openDetailPage: function (actid, remains) {
 		if (event.target.tagName == "BUTTON") {
 			return false;
 		}
+		console.log(remains);
+		if (remains == 0)
+			return false;
 		location.href='/template/activity_detail.html?actid='+actid;
 	},
 
 	render: function() {
-		console.log(this.props.activities)
+		//console.log(this.props.activities)
 		var liStr = this.props.activities &&
 					this.props.activities.map(function(elem, index) {
 			return (
 				React.createElement("li", {className: "ss-media-box", 
-					onClick: this.openDetailPage.bind(this, elem.actid)}, 
+					onClick: this.openDetailPage.bind(this, elem.actid, elem.quantities_remain)}, 
 					React.createElement("div", {className: "weui_media_box weui_media_appmsg"}, 
 						React.createElement("div", {className: "weui_media_hd ss-media-hd"}, 
 							React.createElement("img", {className: "weui_media_appmsg_thumb", src: elem.img_cover, alt: ""})
@@ -196,19 +210,16 @@ var Activities = React.createClass({displayName: "Activities",
 					), 
 					React.createElement("div", {className: "ss-join-bd clearfix"}, 
 						React.createElement("div", {className: "money-box fl"}, "￥", elem.price_current), 
-
-							(elem.quantities_remain == 0)? "":
-								React.createElement("button", {className: "weui_btn weui_btn_mini weui_btn_primary fr", 
-									onClick: this.openSignupPage.bind(this,elem.actid)}, 
-									this.props.type == "preview" ? "我要报名" : "限时报名"
-								)
-						
+							React.createElement("button", {className: (elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr", 
+								onClick: this.openSignupPage.bind(this,elem.actid)}, 
+								this.props.type == "preview" ? "我要报名" : "限时报名"
+							)
 					)
 				)
 			);
 		}.bind(this));
 		var moreBtn
-		if (this.props.pageable.total && this.props.pageable.total > this.props.pageable.page) {
+		if (this.props.pageable.total>1 && this.props.pageable.total > this.props.pageable.page) {
 			moreBtn = React.createElement("div", {className: "more-btn", onClick: this.props.moreClick}, 
 									"点击加载更多..."
 								)
