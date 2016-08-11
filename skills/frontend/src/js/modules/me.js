@@ -223,37 +223,38 @@ var MyCollections = React.createClass({
 	},
 	pullFromServer: function() {
 		$.ajax({
-			//url: 'http://121.42.41.241:9900/activities/my',
-			url: '/test/my.json',
+			url: 'http://121.42.41.241:9900/activities/mycollections',
+			//url: '/test/my.json',
 			type: 'get',
 			dataType: 'json',
 			data: { openid:'9901',page:"1",pagesize:"100" },
 			success: function(res) {
-				console.log("success");
+				console.log("mycollections success");
 				this.setState( {"activities":res.activities} );
 			}.bind(this),
 			error: function() {
-				console.log("error");
+				console.log("mycollections error");
 			}.bind(this)
 		});
 	},
 
 	delCollectionHandler: function (event) {
-		var actid = event.target.dataset.actid;
+		var collid = event.target.dataset.collid;
 		$.ajax({
-			url: '/test/sign.json',
+			url: 'http://121.42.41.241:9900/activities/reset_collection',
+			//url: '/test/sign.json',
 			type: 'post',
 			dataType: 'json',
-			data: { "openid":'9901',"actid": this.state.signidWantToReset },
+			data: { "openid":'9901',"collid": collid },
 		})
 		.done(function() {
 			this.pullFromServer();
 		}.bind(this))
 		.fail(function() {
-			console.log("error");
+			console.log("delCollection error");
 		})
 		.always(function() {
-			console.log("complete");
+			console.log("delCollection complete");
 		});
 	},
 
@@ -267,7 +268,7 @@ var MyCollections = React.createClass({
 							<span>活动时间</span><time>{elem.time_act}</time>
 						</p>
 						<button type="button" onClick={this.delCollectionHandler}
-							data-uid={index} data-actid={elem.actid} className="weui_btn weui_btn_mini weui_btn_default">
+							data-uid={index} data-collid={elem.collid} className="weui_btn weui_btn_mini weui_btn_default">
 							删除
 						</button>
 					</li>
