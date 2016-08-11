@@ -214,6 +214,10 @@ var Activities = React.createClass({
 								onClick={this.openSignupPage.bind(this,elem.actid)} >
 								{this.props.type == "preview" ? "我要报名" : "限时报名"}
 							</button>
+							<button className={(elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr"}
+								onClick={this.openSignupPage.bind(this,elem.actid)} >
+								{this.props.type == "preview" ? "我要报名" : "限时报名"}
+							</button>
 					</div>
 				</li>
 			);

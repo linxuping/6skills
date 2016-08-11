@@ -159,16 +159,20 @@ body{
 	padding-bottom: @btnHeight;
 	overflow: auto;
 	.sign-btn{
-		position: fixed;
+		position:fixed;
 		background-color: #FFF;
 		color: #000;
-		border-top: 1px solid #ccc;
+		border: 1px solid #ccc;
 		bottom: 0px;
-		width: 100%;
+		width: 50%;
 		height: @btnHeight - 0.4rem;
 		line-height: @btnHeight - 0.4rem;
 		text-align: center;
 		font-size: 1.8rem;
+	}
+	.sign-btn-right{
+		.sign-btn;
+		margin-left: 50%;
 	}
 }
 
