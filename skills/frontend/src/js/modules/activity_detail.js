@@ -14,6 +14,8 @@ var ActivityDetail = React.createClass({
 		);
 	},
 	collectPage: function(){
+		//check if no Pay attention to the public number.
+		//turn to page 'attention'
 		$.ajax({
 			url: 'http://121.42.41.241:9900/activities/collect',
 			//url: '/test/sign.json',
@@ -22,7 +24,7 @@ var ActivityDetail = React.createClass({
 			data: { "openid":'9901',"actid": this.props.actid },
 		})
 		.done(function() {
-			alert("收藏成功.")
+			$(".sign-btn")[0].innerHTML = "已收藏";$
 		}.bind(this))
 		.fail(function() {
 			console.log("collect error");
