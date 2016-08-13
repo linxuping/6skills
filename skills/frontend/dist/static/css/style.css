@@ -161,13 +161,26 @@ body {
   position: fixed;
   background-color: #FFF;
   color: #000;
-  border-top: 1px solid #ccc;
+  border: 1px solid #ccc;
   bottom: 0px;
-  width: 100%;
+  width: 50%;
   height: 4.1rem;
   line-height: 4.1rem;
   text-align: center;
   font-size: 1.8rem;
+}
+.activity-detail .sign-btn-right {
+  position: fixed;
+  background-color: #FFF;
+  color: #000;
+  border: 1px solid #ccc;
+  bottom: 0px;
+  width: 50%;
+  height: 4.1rem;
+  line-height: 4.1rem;
+  text-align: center;
+  font-size: 1.8rem;
+  margin-left: 50%;
 }
 .sign-page {
   z-index: 99;

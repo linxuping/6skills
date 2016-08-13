@@ -13,6 +13,26 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			document.getElementById('sign-page-wrap')
 		);
 	},
+	collectPage: function(){
+		//check if no Pay attention to the public number.
+		//turn to page 'attention'
+		$.ajax({
+			url: 'http://121.42.41.241:9900/activities/collect',
+			//url: '/test/sign.json',
+			type: 'post',
+			dataType: 'json',
+			data: { "openid":'9901',"actid": this.props.actid },
+		})
+		.done(function() {
+			$(".sign-btn")[0].innerHTML = "已收藏";$
+		}.bind(this))
+		.fail(function() {
+			console.log("collect error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	},
 	componentDidMount: function() {
 		var actid = getUrlParam("actid");
 		if (!IsNum(actid)){
@@ -61,6 +81,10 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 					)
 				), 
 				React.createElement("div", {className: "sign-btn", style: {"cursor": "pointer"}, 
+					onClick: this.collectPage}, 
+					"收藏"
+				), 
+				React.createElement("div", {className: "sign-btn-right", style: {"cursor": "pointer"}, 
 					onClick: this.openSignPage}, 
 					"我要报名"
 				), 
