@@ -8,17 +8,17 @@ var Me = React.createClass({
 	},
 	componentDidMount: function(){
 		$.ajax({
-			url: 'http://121.42.41.241:9900/activities/get_profile',
+			url: ges('activities/get_profile'),
 			type: 'get',
 			dataType: 'json',
-			data: { "openid":'9901' },
+			data: { "openid":geopenid() },
 		})
 		.done(function(res) {
 			console.log("success");
 			console.log(res.profile.username);
 			console.log(res.profile.img);
 			if (res.errcode != 0){
-				location.href="http://121.42.41.241:9900/template/verify_phone.html";
+				location.href=ges("template/verify_phone.html");
 				return;
 			}
 			this.setState( { "username":res.profile.username,"phone":res.profile.phone,"img":res.profile.img } );
@@ -140,11 +140,11 @@ var MyActivities = React.createClass({
 	},
 	confirmReset: function (argument) {
 		$.ajax({
-			url: 'http://121.42.41.241:9900/activities/reset',
+			url: ges('activities/reset'),
 			//url: '/test/sign.json',
 			type: 'post',
 			dataType: 'json',
-			data: { "openid":'9901',"signid": this.state.signidWantToReset },
+			data: { "openid":geopenid(),"signid": this.state.signidWantToReset },
 		})
 		.done(function() {
 			console.log("success");
@@ -165,11 +165,11 @@ var MyActivities = React.createClass({
 	},
 	pullFromServer:function(){
 		$.ajax({
-			url: 'http://121.42.41.241:9900/activities/my',
+			url: ges('activities/my'),
 			//url: '/test/my.json',
 			type: 'get',
 			dataType: 'json',
-			data: { openid:'9901',page:"1",pagesize:"100" },
+			data: { openid:geopenid(),page:"1",pagesize:"100" },
 			success: function(res) {
 				console.log("success");
 				this.setState( {"activities":res.activities} );
@@ -223,11 +223,11 @@ var MyCollections = React.createClass({
 	},
 	pullFromServer: function() {
 		$.ajax({
-			url: 'http://121.42.41.241:9900/activities/mycollections',
+			url: ges('activities/mycollections'),
 			//url: '/test/my.json',
 			type: 'get',
 			dataType: 'json',
-			data: { openid:'9901',page:"1",pagesize:"100" },
+			data: { openid:geopenid(),page:"1",pagesize:"100" },
 			success: function(res) {
 				console.log("mycollections success");
 				this.setState( {"activities":res.activities} );
@@ -241,11 +241,11 @@ var MyCollections = React.createClass({
 	delCollectionHandler: function (event) {
 		var collid = event.target.dataset.collid;
 		$.ajax({
-			url: 'http://121.42.41.241:9900/activities/reset_collection',
+			url: ges('activities/reset_collection'),
 			//url: '/test/sign.json',
 			type: 'post',
 			dataType: 'json',
-			data: { "openid":'9901',"collid": collid },
+			data: { "openid":geopenid(),"collid": collid },
 		})
 		.done(function() {
 			this.pullFromServer();

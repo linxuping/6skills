@@ -29,10 +29,10 @@ var Sign = React.createClass({
 	componentDidMount: function(){
 		//load.
 		$.ajax({
-			url: 'http://121.42.41.241:9900/activities/get_profile',
+			url: ges('activities/get_profile'),
 			type: 'get',
 			dataType: 'json',
-			data: { "openid":'9901' },
+			data: { "openid":geopenid() },
 		})
 		.done(function(res) {
 			console.log("success");
@@ -52,9 +52,10 @@ var Sign = React.createClass({
 				<option value={elem}>{elem}岁</option>
 			);
 		});
+		var sign_url = ges("activities/sign");
 		return (
 			<div className="sign-page">
-				<form action="http://121.42.41.241:9900/activities/sign" method="post" id="sign-form">
+				<form action={sign_url} method="post" id="sign-form">
 					<div className="back-btn" onClick={this.back}>返回</div>
 					<div className="weui_cells_title">填写报名信息</div>
 					<div className="weui_cells weui_cells_form">
@@ -145,7 +146,7 @@ function validateForm(actid) {
 			$(form).find(":submit").attr("disabled", true);
 			$(form).ajaxSubmit({
 				dataType: "json",
-				data: { "openid":"9901", "actid":actid },
+				data: { "openid":geopenid(), "actid":actid },
 				success: function(obj){
 					//此处加入sdk关闭网页
 					obj = typeof obj === "object" ? obj : JSON.parse(obj);

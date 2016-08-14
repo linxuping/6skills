@@ -17,11 +17,11 @@ var ActivityDetail = React.createClass({
 		//check if no Pay attention to the public number.
 		//turn to page 'attention'
 		$.ajax({
-			url: 'http://121.42.41.241:9900/activities/collect',
+			url: ges('activities/collect'),
 			//url: '/test/sign.json',
 			type: 'post',
 			dataType: 'json',
-			data: { "openid":'9901',"actid": this.props.actid },
+			data: { "openid":geopenid(),"actid": this.props.actid },
 		})
 		.done(function() {
 			$(".sign-btn")[0].innerHTML = "已收藏";$

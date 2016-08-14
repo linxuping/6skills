@@ -79,6 +79,7 @@ var App = React.createClass({ //
 		console.log("[rending.]");
 		console.log(this.state.activities);
 		console.log(this.state.pageable);
+		var get_areas_url = ges("activities/get-areas?city="+get_area());
 		//this.updateActivities();
 		return (
 			<div className="app">
@@ -90,12 +91,13 @@ var App = React.createClass({ //
 	}
 });
 
-//				<Selecter name="area" text="地区选择" url="http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"/>
+//				<Selecter name="area" text="地区选择" url={get_areas_url}/>
 var SelectHeader = React.createClass({
 	render: function() {
+		var get_agesel_url = ges("activities/get-agesel");
 		return (
 			<div className="select-header">
-				<Selecter name="age" text="年龄选择" url="http://121.42.41.241:9900/activities/get-agesel"/>
+				<Selecter name="age" text="年龄选择" url={get_agesel_url}/>
 			</div>
 		);
 	}
@@ -210,10 +212,6 @@ var Activities = React.createClass({
 					</div>
 					<div className="ss-join-bd clearfix">
 						<div className="money-box fl">￥{elem.price_current}</div>
-							<button className={(elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr"}
-								onClick={this.openSignupPage.bind(this,elem.actid)} >
-								{this.props.type == "preview" ? "我要报名" : "限时报名"}
-							</button>
 							<button className={(elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr"}
 								onClick={this.openSignupPage.bind(this,elem.actid)} >
 								{this.props.type == "preview" ? "我要报名" : "限时报名"}
