@@ -429,8 +429,9 @@ def activities_getagesel(req):
 
 @req_print
 def activities_getqrcode(req):
+	args = req.GET	
 	#check.
-	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
 	if not ret:
 		return actid
 
