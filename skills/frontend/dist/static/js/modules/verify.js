@@ -12,7 +12,7 @@ function validateForm() {
 			$(form).find(":submit").attr("disabled", true);
 			$(form).ajaxSubmit({
 				dataType: "json",
-				data: { "openid":"9901" },
+				data: { "openid":geopenid() },
 				success: function(obj){
 					//此处加入sdk关闭网页
 					obj = typeof obj === "object" ? obj : JSON.parse(obj);
@@ -22,7 +22,7 @@ function validateForm() {
 								title: "验证成功",
 								msg: "恭喜您验证成功！",
 								callback: function(){
-									location.href = "http://121.42.41.241:9900/template/me.html";
+									location.href = ges("template/me.html");
 									//try{
 									//	WeixinJSBridge.call('closeWindow');
 									//} catch (e){ }
@@ -71,11 +71,11 @@ var Verify = React.createClass({displayName: "Verify",
 			return false;
 		}
 		$.ajax({
-			url: 'http://121.42.41.241:9900/get-auth-code',
+			url: ges('get-auth-code'),
 			//url: '/test/get-auth-code.json',
 			type: 'get',
 			dataType: 'json',
-			data: { "openid":'9901', "phone": $("#phone").val()},
+			data: { "openid":geopenid(), "phone": $("#phone").val()},
 		})
 		.done(function(res) {
 			console.log("success");
@@ -113,10 +113,11 @@ var Verify = React.createClass({displayName: "Verify",
 		});
 	},
 	render: function() {
+		var wxauth_url = ges("wxauth");
 		return (
 			React.createElement("div", {className: "verify"}, 
 				React.createElement("div", {className: "weui_cells_title"}, "验证手机号"), 
-				React.createElement("form", {action: "http://121.42.41.241:9900/wxauth", method: "post", id: "auth-form"}, 
+				React.createElement("form", {action: wxauth_url, method: "post", id: "auth-form"}, 
 					React.createElement("div", {className: "weui_cells weui_cells_form"}, 
 						React.createElement("div", {className: "weui_cell"}, 
 							React.createElement("div", {className: "weui_cell_hd"}, 

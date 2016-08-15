@@ -79,6 +79,7 @@ var App = React.createClass({displayName: "App", //
 		console.log("[rending.]");
 		console.log(this.state.activities);
 		console.log(this.state.pageable);
+		var get_areas_url = ges("activities/get-areas?city="+get_area());
 		//this.updateActivities();
 		return (
 			React.createElement("div", {className: "app"}, 
@@ -90,12 +91,13 @@ var App = React.createClass({displayName: "App", //
 	}
 });
 
-//				<Selecter name="area" text="地区选择" url="http://121.42.41.241:9900/activities/get-areas?city=%E5%B9%BF%E5%B7%9E%E5%B8%82"/>
+//				<Selecter name="area" text="地区选择" url={get_areas_url}/>
 var SelectHeader = React.createClass({displayName: "SelectHeader",
 	render: function() {
+		var get_agesel_url = ges("activities/get-agesel");
 		return (
 			React.createElement("div", {className: "select-header"}, 
-				React.createElement(Selecter, {name: "age", text: "年龄选择", url: "http://121.42.41.241:9900/activities/get-agesel"})
+				React.createElement(Selecter, {name: "age", text: "年龄选择", url: get_agesel_url})
 			)
 		);
 	}

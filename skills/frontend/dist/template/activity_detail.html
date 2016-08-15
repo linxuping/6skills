@@ -16,6 +16,7 @@
 	<script type="text/javascript" src="/static/js/react/react-dom.min.js"></script>
 	<script type="text/javascript" src="/static/js/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="/static/js/jquery.form.min.js"></script>
+	<script src="/static/js/modules/config.js"></script>
 	<script src="/static/js/modules/common.js"></script>
 	<script src="/static/js/modules/activity_detail.js"></script>
 	<script src="/static/js/modules/sign.js"></script>
@@ -25,8 +26,8 @@
 		var actid = getUrlParam("actid");
 		ReactDOM.render(
 			React.createElement(ActivityDetail, {
-				url: "http://121.42.41.241:9900/activities/details",
-				//url: "/test/details.json",
+				//url: ges("activities/details"),
+				url: "/test/details.json",
 				actid: actid
 			}),
 			document.getElementById('content')

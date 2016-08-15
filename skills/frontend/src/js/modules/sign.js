@@ -18,6 +18,7 @@ var Sign = React.createClass({
 		return {
 			username: "",
 			phone: "",
+			loaded: false
 		};
 	},
 	back: function(){
@@ -27,7 +28,115 @@ var Sign = React.createClass({
 		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 	},
 	componentDidMount: function(){
-		//load.
+		var url = ges('activities/get_signup_status');
+		var actid = getUrlParam("actid") || this.props.actid;
+		$.ajax({
+			url: url,
+			type: 'get',
+			dataType: 'json',
+			data: {openid: geopenid(), actid: actid},
+		})
+		.done(function(res) {
+			this.setState({
+				status: res.status,
+				qrcode: res.qrcode,
+				loaded: true
+			});
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	},
+	render: function() {
+		var mountStr;
+		if (this.state.loaded === false) {
+			mountStr = <p style={{"textAlign": "center"}}>加载中...</p>
+		} else if (this.state.status && this.state.qrcode) {
+			mountStr = <QrCode back={this.back} qrcode={this.state.qrcode}/>
+		} else {
+			mountStr = <SignForm actid={this.props.actid} back={this.back}
+				qrcode={this.state.qrcode} status={this.state.status}/>
+		}
+
+		return (
+			<div className="sign-page">
+				{mountStr}
+			</div>
+		);
+	}
+});
+
+function validateForm(actid, formConponent) {
+	var actid = getUrlParam("actid") || String(actid);
+	if (!isNum(actid)){
+		alert("actid must be number.");
+		return;
+	}
+	$("#sign-form").validate({
+		rules: {
+			"name": {required: true},
+			"phone": {required: true, digits: true, rangelength:[11, 11]},
+			"age": {required: true, min: 0, max: 99},
+			"gender": {required: true}
+		},
+		messages: {
+			name: {required: "必填"},
+			phone: {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
+			age: {required: "请输入年龄", min: "", max: ""},
+			gender: {required: "请选择性别"}
+		},
+		submitHandler: function(form){
+			$(form).find(":submit").attr("disabled", true);
+			$(form).ajaxSubmit({
+				dataType: "json",
+				data: { "openid":geopenid(), "actid":actid },
+				success: function(obj){
+					//此处加入sdk关闭网页
+					obj = typeof obj === "object" ? obj : JSON.parse(obj);
+					if (obj.errcode === 0) {
+						ReactDOM.render(
+							React.createElement(AlertDialog, {
+								title: "报名成功",
+								msg: "恭喜您报名成功！",
+								callback: function(){
+									formConponent.props.back();
+									//try{
+									//	WeixinJSBridge.call('closeWindow');
+									//} catch (e){ }
+								}
+							}),
+							document.getElementById("alert-wrap")
+						);
+					} else {
+						alert("报名失败：" + obj.errmsg);
+					}
+				},
+				error: function(xmlHQ, textStatus) {
+					alert("服务出错，请稍后重试！");
+				},
+				complete: function(){
+					$(form).find(":submit").attr("disabled", false);
+				}
+			})
+		}
+	});
+}
+
+
+var SignForm = React.createClass({
+	getInitialState: function() {
+		return {
+			username: "",
+			phone: ""
+		};
+	},
+	componentDidMount:function() {
+		if (this.props.status) {
+			return;
+		}
 		$.ajax({
 			url: ges('activities/get_profile'),
 			type: 'get',
@@ -43,8 +152,9 @@ var Sign = React.createClass({
 			console.log("error");
 		});
 
-		validateForm(this.props.actid);
+		validateForm(this.props.actid, this);
 	},
+
 	render: function() {
 		var ages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 		ages = ages.map(function(elem, index) {
@@ -54,9 +164,9 @@ var Sign = React.createClass({
 		});
 		var sign_url = ges("activities/sign");
 		return (
-			<div className="sign-page">
+			<div className="SignForm">
 				<form action={sign_url} method="post" id="sign-form">
-					<div className="back-btn" onClick={this.back}>返回</div>
+					<div className="back-btn" onClick={this.props.back}>返回</div>
 					<div className="weui_cells_title">填写报名信息</div>
 					<div className="weui_cells weui_cells_form">
 						<div className="weui_cell">
@@ -65,7 +175,7 @@ var Sign = React.createClass({
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="text" name="name" id="name" className="weui_input"
-									placeholder="请输入家长真实姓名" value={this.state.username}/>
+									placeholder="请输入家长真实姓名" defaultValue={this.state.username}/>
 							</div>
 						</div>
 						<div className="weui_cell">
@@ -74,7 +184,7 @@ var Sign = React.createClass({
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="number" name="phone" id="phone" className="weui_input"
-									placeholder="请输入手机号码" value={this.state.phone}/>
+									placeholder="请输入手机号码" defaultValue={this.state.phone}/>
 							</div>
 						</div>
 						<div className="weui_cell weui_cell_select weui_select_after">
@@ -114,7 +224,12 @@ var Sign = React.createClass({
 					</div>
 					<div className="weui_cells_tips">注意事项注意事项注意事项注意事项</div>
 					<div className="weui_btn_area">
-						<button type="submit" className="weui_btn weui_btn_primary">确定</button>
+						{
+							this.props.status === false ?
+							<button type="submit" className="weui_btn weui_btn_primary">确定</button>
+							:
+							<button type="button" className="weui_btn weui_btn_disabled">已报名</button>
+						}
 					</div>
 				</form>
 				<div id="alert-wrap"></div>
@@ -123,61 +238,23 @@ var Sign = React.createClass({
 	}
 });
 
-function validateForm(actid) {
-	var actid = getUrlParam("actid") || String(actid);
-	if (!isNum(actid)){
-		alert("actid must be number.");
-		return;
+var QrCode = React.createClass({
+	render: function() {
+		return (
+			<div className="QrCode">
+				<div className="back-btn" onClick={this.props.back}>返回</div>
+				<div className="qrcode-box">
+					<div className="tip">
+						<h3>您已报名该活动</h3>
+						<p>长按下面二维码加入该活动微信群</p>
+						<img src={this.props.qrcode} alt=""/>
+					</div>
+				</div>
+			</div>
+		);
 	}
-	$("#sign-form").validate({
-		rules: {
-			"name": {required: true},
-			"phone": {required: true, digits: true, rangelength:[11, 11]},
-			"age": {required: true, min: 0, max: 99},
-			"gender": {required: true}
-		},
-		messages: {
-			name: {required: "必填"},
-			phone: {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
-			age: {required: "请输入年龄", min: "", max: ""},
-			gender: {required: "请选择性别"}
-		},
-		submitHandler: function(form){
-			$(form).find(":submit").attr("disabled", true);
-			$(form).ajaxSubmit({
-				dataType: "json",
-				data: { "openid":geopenid(), "actid":actid },
-				success: function(obj){
-					//此处加入sdk关闭网页
-					obj = typeof obj === "object" ? obj : JSON.parse(obj);
-					if (obj.errcode === 0) {
-						ReactDOM.render(
-							React.createElement(AlertDialog, {
-								title: "报名成功",
-								msg: "恭喜您报名成功！",
-								callback: function(){
-									history.back();
-									//try{
-									//	WeixinJSBridge.call('closeWindow');
-									//} catch (e){ }
-								}
-							}),
-							document.getElementById("alert-wrap")
-						);
-					} else {
-						alert("报名失败：" + obj.errmsg);
-					}
-				},
-				error: function(xmlHQ, textStatus) {
-					alert("服务出错，请稍后重试！");
-				},
-				complete: function(){
-					$(form).find(":submit").attr("disabled", false);
-				}
-			})
-		}
-	});
-}
+});
+
 
 var AlertDialog = React.createClass({
 	confirmHandler: function () {

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>活动预告</title>
+	<title>活动报名</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.18.1/build/cssreset/cssreset-min.css">
@@ -17,6 +17,8 @@
 	<script type="text/javascript" src="/static/js/react/react-dom.min.js"></script>
 	<script type="text/javascript" src="/static/js/jquery.validate.min.js"></script>
 	<script type="text/javascript" src="/static/js/jquery.form.min.js"></script>
+	<script type="text/javascript" src="/static/js/modules/config.js"></script>
+	<script type="text/javascript" src="/static/js/modules/common.js"></script>
 	<script type="text/javascript" src="/static/js/modules/sign.js"></script>
 	<script type="text/javascript" src="/static/js/modules/list.js"></script>
 	<script type="text/javascript">
@@ -24,7 +26,7 @@
 		"use strict";
 		ReactDOM.render(
 			React.createElement(App, {
-				url: "http://121.42.41.241:9900/activities/special-offers",
+				url: ges("activities/special-offers"),
 				//url: "/test/list.json",
 				type: "preview"
 			}),

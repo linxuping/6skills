@@ -37,4 +37,7 @@ function codeLatLng(lat, lng) {
 	geocoder.getAddress(latLng);
 }
 
+function get_area() {
+	return "天河区";
+}
 

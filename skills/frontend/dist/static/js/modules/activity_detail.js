@@ -17,11 +17,11 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 		//check if no Pay attention to the public number.
 		//turn to page 'attention'
 		$.ajax({
-			url: 'http://121.42.41.241:9900/activities/collect',
+			url: ges('activities/collect'),
 			//url: '/test/sign.json',
 			type: 'post',
 			dataType: 'json',
-			data: { "openid":'9901',"actid": this.props.actid },
+			data: { "openid":geopenid(),"actid": this.props.actid },
 		})
 		.done(function() {
 			$(".sign-btn")[0].innerHTML = "已收藏";$
@@ -68,11 +68,14 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 					), 
 					React.createElement("h4", {className: "title"}, this.state.activity.title), 
 					React.createElement("div", {className: "media-bd"}, 
-						React.createElement("p", {className: "privilage"}, this.state.activity.preinfo), 
 						React.createElement("p", {className: "money clearfix"}, 
-							React.createElement("span", {className: "now fl"}, "现价￥", this.state.activity.price_current), 
-							React.createElement("span", {className: "original fr"}, "原价￥", this.state.activity.price_original)
+							(this.state.activity.price_child_pre==null)? "":React.createElement("span", {className: "now fl"}, "儿童价￥", this.state.activity.price_child_pre), 
+							(this.state.activity.price_child==-1)?     "":React.createElement("span", {className: "original fr"}, "儿童 原价￥", this.state.activity.price_child), 
+							React.createElement("br", null), 
+							(this.state.activity.price_adult_pre==null)? "":React.createElement("span", {className: "now fl"}, "大人价￥", this.state.activity.price_adult_pre), 
+							(this.state.activity.price_adult==-1)?   "":React.createElement("span", {className: "original fr"}, "大人 原价￥", this.state.activity.price_adult)
 						), 
+						React.createElement("p", {className: "privilage"}, React.createElement("b", null, this.state.activity.preinfo)), 
 						React.createElement("p", {className: "age"}, this.state.activity.ages, "岁"), 
 						React.createElement("p", {className: "time"}, "活动时间: ", this.state.activity.time_from, " ~ ", this.state.activity.time_to), 
 						React.createElement("p", {className: "area"}, "活动地点：", this.state.activity.area), 
