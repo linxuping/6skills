@@ -68,11 +68,14 @@ var ActivityDetail = React.createClass({
 					</div>
 					<h4 className="title">{this.state.activity.title}</h4>
 					<div className="media-bd">
-						<p className="privilage">{this.state.activity.preinfo}</p>
 						<p className="money clearfix">
-							<span className="now fl">现价￥{this.state.activity.price_current}</span>
-							<span className="original fr">原价￥{this.state.activity.price_original}</span>
+							{(this.state.activity.price_child_pre==null)? "":<span className="now fl">儿童价￥{this.state.activity.price_child_pre}</span>}
+							{(this.state.activity.price_child==-1)?     "":<span className="original fr">儿童 原价￥{this.state.activity.price_child}</span>}
+							<br/>
+							{(this.state.activity.price_adult_pre==null)? "":<span className="now fl">大人价￥{this.state.activity.price_adult_pre}</span>}
+							{(this.state.activity.price_adult==-1)?   "":<span className="original fr">大人 原价￥{this.state.activity.price_adult}</span>}
 						</p>
+						<p className="privilage"><b>{this.state.activity.preinfo}</b></p>
 						<p className="age">{this.state.activity.ages}岁</p>
 						<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
 						<p className="area">活动地点：{this.state.activity.area}</p>

@@ -51,6 +51,7 @@ urlpatterns = patterns('',
 		url(r'^activities/get-areas', wxapi.activities_getareas),
 		url(r'^activities/get-agesel', wxapi.activities_getagesel),
 		url(r'^activities/get_profile', wxapi.activities_getprofile),
+		url(r'^activities/get_qrcode', wxapi.activities_getqrcode),
 		#activities/mycollections
 		url(r'^activities/mycollections', wxapi.activities_mycollections),
 		#acitivities/reset_collection?openid={openid}

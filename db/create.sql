@@ -18,6 +18,7 @@ use sixskillsdb;
 
 select "+------------------ DROP TABLES -------------------+";
 DROP TABLE IF EXISTS `6s_signup`;
+DROP TABLE IF EXISTS `6s_collection`;
 DROP TABLE IF EXISTS `6s_activity`;
 DROP TABLE IF EXISTS `6s_acttype`;
 DROP TABLE IF EXISTS `6s_position`;
@@ -150,6 +151,31 @@ insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) v
 insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","15099991234","email","QQ");
 insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","15099991288","email2","QQ2");
 
+
+-- ----------------------------
+-- Table structure for 6s_preinfo 
+-- ----------------------------
+select "+------------------ 6s_preinfo -------------------+";
+DROP TABLE IF EXISTS `6s_preinfo`;
+CREATE TABLE `6s_preinfo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '',
+  `price_child` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
+  `price_adult` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
+  `time_from` timestamp NULL DEFAULT NULL COMMENT '活动时间-开始，NULL 长期',
+  `time_to` timestamp NULL DEFAULT NULL COMMENT '活动时间-结束',
+  `quantities` int(11) NOT NULL DEFAULT 0 COMMENT '参与人数',
+  `quantities_remain` int(11) NOT NULL DEFAULT 0 COMMENT '剩余人数',
+  `content` varchar(255) COMMENT '提醒信息',
+  `createtime` datetime NOT NULL COMMENT '添加时间',
+  `act_id` int(11) default 0 COMMENT '指派的活动',
+  `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
+  `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+insert into 6s_preinfo(id,price_child,price_adult,time_from,time_to,quantities,quantities_remain,content,createtime) values(101,19,29,"2016-08-10","2016-08-14",12,12,"2周年活动优惠2折.",now());
+insert into 6s_preinfo(id,price_child,price_adult,time_from,time_to,quantities,quantities_remain,content,createtime) values(102,19,29,"2016-08-10","2016-08-14",12,12,"2周年活动优惠95折.",now());
+
+
 -- ----------------------------
 -- Table structure for 6s_activity 活动
 -- ----------------------------
@@ -157,10 +183,10 @@ select "+------------------ 6s_activity -------------------+";
 DROP TABLE IF EXISTS `6s_activity`;
 CREATE TABLE `6s_activity` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '',
-  `price_original` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
-  `price_current` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
+  `price_child` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
+  `price_adult` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
   `title` varchar(255) COMMENT '标题',
-  `preinfo` varchar(255) COMMENT '提醒信息',
+  `preinfo` varchar(255) COMMENT '提醒信息-忽略',
   `content` text COMMENT '正文',
   `time_from` timestamp NULL DEFAULT NULL COMMENT '活动时间-开始，NULL 长期',
   `time_to` timestamp NULL DEFAULT NULL COMMENT '活动时间-结束',
@@ -176,34 +202,38 @@ CREATE TABLE `6s_activity` (
   -- `acttype` enum('教育','体验') COMMENT '参与人数',
   `act_id` int(11) NOT NULL COMMENT '',
   `user_id` int(11) NOT NULL COMMENT '', -- who create or update
+  `preinfo_id` int(11) default NULL,
   `imgs_act` varchar(255) DEFAULT '' COMMENT '图片 spirit by empty space',
   `img_cover` varchar(255) DEFAULT '' COMMENT '图片',
+  `img_qrcode` varchar(255) DEFAULT '' COMMENT '二维码',
   `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
   CONSTRAINT `fk_6s_activity_posid` FOREIGN KEY (position_id) REFERENCES 6s_position(id) ON UPDATE CASCADE,
   CONSTRAINT `fk_6s_activity_actid` FOREIGN KEY (act_id) REFERENCES 6s_acttype(id) ON UPDATE CASCADE,
   CONSTRAINT `fk_6s_activity_userid` FOREIGN KEY (user_id) REFERENCES 6s_user(id) ON UPDATE CASCADE,
+  CONSTRAINT `fk_6s_activity_preinfoid` FOREIGN KEY (preinfo_id) REFERENCES 6s_preinfo(id) ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE INDEX idx_6s_activity_title ON 6s_activity(title);
-CREATE INDEX idx_6s_activity_preinfo ON 6s_activity(preinfo);
+-- CREATE INDEX idx_6s_activity_preinfo ON 6s_activity(preinfo);
 CREATE INDEX idx_6s_activity_act_id ON 6s_activity(act_id);
 CREATE INDEX idx_6s_activity_user_id ON 6s_activity(user_id);
 
-insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,quantities_remain,act_id,imgs_act,img_cover,user_id,createtime) values (1,100,150,"亲子游 驴妈妈「驴悦亲子游」","youhui xinxi","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,4,104,"a.jpg b.jpg c.png","http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",1,now());
-insert into 6s_activity(id,price_original,price_current,title,preinfo,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,quantities_remain,act_id,imgs_act,img_cover,user_id,createtime) values (2,103,120,"创意趣味亲子游首选快乐时光","youhui xinxi2","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,6,104,"a2.jpg b2.jpg","http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",1,now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (3,"亲子游 大晴天旅行网 亲子游 完全自由的旅行","2016-06-03","2016-06-30",6,1,101010103,104,1,2,4,90,"http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (4,"“互联网+”概念的兴起","2016-06-04","2016-06-30",6,6,101010102,104,1,2,5,124,"http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (5,"以80后父母为主力拉动的亲子旅游市场越来越火爆","2016-06-05","2016-06-30",6,0,101010101,104,1,4,6,89,"http://img1.imgtn.bdimg.com/it/u=2539161237,3881183444&fm=21&gp=0.jpg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (6,"爸爸去哪儿","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=2539161237,3881183444&fm=21&gp=0.jpg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (7,"一系列亲子游节目的影响","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (8,"亲子游去哪好，动物王国，海底世界","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (9,"爸爸去哪儿多种经典线路","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (10,"途牛推出亲子旅游频道","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,createtime) values (11,"亲子游线路","2016-06-07","2016-06-30",6,6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
+
+insert into 6s_activity(id,price_child,price_adult,title,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,quantities_remain,act_id,imgs_act,img_cover,user_id,createtime,img_qrcode,preinfo_id) values (1,100,150,"亲子游 驴妈妈「驴悦亲子游」","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,4,104,"a.jpg b.jpg c.png","http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",1,now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg',101);
+insert into 6s_activity(id,price_child,price_adult,title,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,quantities_remain,act_id,imgs_act,img_cover,user_id,createtime,img_qrcode,preinfo_id) values (2,103,120,"创意趣味亲子游首选快乐时光","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,6,104,"a2.jpg b2.jpg","http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",1,now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg',102);
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (3,"亲子游 大晴天旅行网 亲子游 完全自由的旅行","2016-06-03","2016-06-30",6,1,101010103,104,1,2,4,90,"http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (4,"“互联网+”概念的兴起","2016-06-04","2016-06-30",6,6,101010102,104,1,2,5,124,"http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (5,"以80后父母为主力拉动的亲子旅游市场越来越火爆","2016-06-05","2016-06-30",6,0,101010101,104,1,4,6,89,"http://img1.imgtn.bdimg.com/it/u=2539161237,3881183444&fm=21&gp=0.jpg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (6,"爸爸去哪儿","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=2539161237,3881183444&fm=21&gp=0.jpg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (7,"一系列亲子游节目的影响","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (8,"亲子游去哪好，动物王国，海底世界","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (9,"爸爸去哪儿多种经典线路","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (10,"途牛推出亲子旅游频道","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (11,"亲子游线路","2016-06-07","2016-06-30",6,6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
 #more than 1 week.
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,content,createtime) values (12,"亲子游攻略",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/gd/pics/hv1/123/187/2105/136925433.jpg","more than one week",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,content,createtime) values (13,"还有各种亲子旅游特价产品",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/16/1698/169862/16986270_980x1200_0.jpg","more than one week",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_current,img_cover,content,createtime) values (14,"最低千元起!另外还有迪士尼乐园",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (12,"亲子游攻略",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/gd/pics/hv1/123/187/2105/136925433.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (13,"还有各种亲子旅游特价产品",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/16/1698/169862/16986270_980x1200_0.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (14,"最低千元起!另外还有迪士尼乐园",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
 
 
 -- ----------------------------
