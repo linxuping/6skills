@@ -258,9 +258,10 @@ def activities_sign(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "select quantities_remain from 6s_activity where id=%d and status=1;"%(actid)
+	_sql = "select quantities_remain,img_qrcode from 6s_activity where id=%d and status=1;"%(actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
+		_json["qrcode"] = rets[0][1]
 		if int(rets[0][0]) <= 0:
 			_json["errcode"] = 1
 			_json["errmsg"] = "已经没有剩余名额,可以尝试联系客服看有无名额调配！"
@@ -580,3 +581,34 @@ def activities_collect(req):
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
 	return resp
+
+
+@req_print
+def activities_getsignupstatus(req):
+	args = req.GET
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	if not ret:
+		return actid
+
+	#exec  
+	_json = { "status":False,"errcode":0,"errmsg":"" }
+	_sql = "select a.id,b.img_qrcode from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_user c on a.user_id=c.id where c.openid='%s' and a.act_id=%d;"%(openid,actid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1 :
+		_json["status"] = True
+		_json["qrcode"] = rets[0][1]
+	else:
+		_json["status"] = False
+		#_json["errmsg"] = "未报名."
+		mo.logger.error("no sign openid:%s actid:%d. "%(openid,actid)+REQ_TAG(args))
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+

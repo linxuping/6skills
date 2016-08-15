@@ -27,7 +27,12 @@ def req_print(func):
 		def wrapper(*args):
 				req = args[0]
 				mo.logger.info("->%s POST:%s, GET:%s, USER:%s, args:%s"%(func.func_name,str(req.POST),str(req.GET),str(req.user),str(args[1:]) ))
-				return func(req)
+				try:
+					ret = func(req)
+				except:
+					rets = "[func error] %s, %s."%(str(sys.exc_info()),str(traceback.format_exc())  )
+					mo.logger.error( rets )
+				return ret
 		return wrapper
 
 def get_upload_path(user):

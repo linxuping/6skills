@@ -205,7 +205,7 @@ CREATE TABLE `6s_activity` (
   `preinfo_id` int(11) default NULL,
   `imgs_act` varchar(255) DEFAULT '' COMMENT '图片 spirit by empty space',
   `img_cover` varchar(255) DEFAULT '' COMMENT '图片',
-  `img_qrcode` varchar(255) DEFAULT '' COMMENT '二维码',
+  `img_qrcode` varchar(255) DEFAULT NULL COMMENT '二维码',
   `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
   CONSTRAINT `fk_6s_activity_posid` FOREIGN KEY (position_id) REFERENCES 6s_position(id) ON UPDATE CASCADE,
   CONSTRAINT `fk_6s_activity_actid` FOREIGN KEY (act_id) REFERENCES 6s_acttype(id) ON UPDATE CASCADE,

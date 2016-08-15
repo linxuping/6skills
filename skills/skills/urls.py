@@ -58,6 +58,7 @@ urlpatterns = patterns('',
 		url(r'^activities/reset_collection', wxapi.activities_reset_collection),
 		#activities/collect
 		url(r'^activities/collect', wxapi.activities_collect),
+		url(r'^activities/get_signup_status', wxapi.activities_getsignupstatus),
 		#
 		#wxapi END.
 )
