@@ -70,7 +70,8 @@ CREATE TABLE `6s_acttype` (
   PRIMARY KEY (`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 -- CONSTRAINT `fk_actid` FOREIGN KEY (pid) REFERENCES 6s_acttype(id)
-insert into 6s_acttype(id,pid,name) values (100,-1,"本地活动"),(101,100,"户外活动"),(102,100,"夏令营"),(103,100,"图书馆"),(104,100,"美术馆"),(105,100,"少年宫"),(106,100,"幼儿游泳馆"),(107,100,"儿童剧场"),(108,100,"公园"),(109,100,"绘本馆"),(110,100,"运动馆"),(111,100,"茶文化馆"),(112,100,"国学馆"),(113,100,"艺术展"),(114,100,"讲座"),(115,100,"游戏"),(116,100,"博物馆"),(200,-1,"亲子出游"),(201,200,"国内亲子游"),(202,200,"海外亲子游"),(300,-1,"兴趣培养"),(301,300,"绘画"),(302,300,"声乐"),(303,300,"器乐"),(304,300,"跆拳道"),(305,300,"体能"),(306,300,"轮滑"),(307,300,"舞蹈"),(308,300,"书法"),(309,300,"击剑"),(310,300,"乒乓球"),(311,300,"羽毛球"),(312,300,"英语"),(313,300,"足球"),(314,300,"篮球"),(315,300,"棒球"),(316,300,"围棋"),(317,300,"游泳"),(318,300,"国际象棋"),(319,300,"魔术"),(320,300,"瑜伽"),(321,300,"机器人"),(322,300,"创意手工"),(323,300,"烘焙"),(324,300,"建筑"),(325,300,"才艺"),(400,-1,"早教");
+insert into 6s_acttype(id,pid,name) values (100,-1,"本地活动"),(101,100,"户外活动"),(102,100,"运动拓展"),(103,100,"绘本阅读"),(104,100,"手工DIY"),(105,100,"职业体验"),(106,100,"探索自然"),(107,100,"亲子摄影"),(108,100,"儿童选秀"),(109,100,"教育讲座"),(110,100,"早教体验课"),(111,100,"夏令营"),(112,100,"博物馆"),(113,100,"图书馆"),(114,100,"美术馆"),(115,100,"少年宫"),(116,100,"幼儿游泳馆"),(117,100,"儿童剧场"),(118,100,"儿童公园"),(119,100,"茶文化馆"),(120,100,"国学馆"),(121,100,"艺术展"),(200,-1,"兴趣培养"),(201,200,"绘画"),(202,200,"声乐"),(203,200,"器乐"),(204,200,"体能"),(205,200,"跆拳道"),(206,200,"轮滑"),(207,200,"舞蹈"),(208,200,"书法"),(209,200,"击剑"),(210,200,"乒乓球"),(211,200,"羽毛球"),(212,200,"英语"),(213,200,"足球"),(214,200,"篮球"),(215,200,"棒球"),(216,200,"围棋"),(217,200,"游泳"),(218,200,"国际象棋"),(219,200,"魔术"),(220,200,"瑜伽"),(221,200,"机器人"),(222,200,"创意手工"),(223,200,"烘焙"),(224,200,"建筑"),(225,200,"才艺"),(300,-1,"亲子出游"),(301,300,"国内亲子游"),(302,300,"海外亲子游"),(400,-1,"其他");
+
 
 -- ----------------------------
 -- Table structure for 6s_actstatus 活动状态
@@ -82,6 +83,40 @@ CREATE TABLE `6s_actstatus` (
   PRIMARY KEY (`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 insert into 6s_actstatus(id,name) values (0,"停用"),(1,"可用"),(2,"审核中"),(3,"拒绝"),(4,"禁止发帖");
+
+
+
+select "+------------------ 6s_auth -------------------+";
+-- ----------------------------
+-- Table structure for 6s_permission 权限
+-- ----------------------------
+DROP TABLE IF EXISTS `6s_permission`;
+CREATE TABLE `6s_permission` (
+  `id` int(11) NOT NULL,
+  `name` char(128) COMMENT '权限描述',
+  PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+insert into 6s_permission(id,name) values (0,"can_do1"),(1,"can_do2"),(2,"can_do3"),(3,"can_do4"),(4,"can_do5");
+-- ----------------------------
+-- Table structure for 6s_role 角色
+-- ----------------------------
+DROP TABLE IF EXISTS `6s_role`;
+CREATE TABLE `6s_role` (
+  `id` int(11) NOT NULL,
+  `name` char(128) COMMENT '角色描述',
+  PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+insert into 6s_role(id,name) values (0,"admin"),(1,"business"),(2,"visitor");
+-- ----------------------------
+-- Table structure for 6s_authorize 
+-- ----------------------------
+DROP TABLE IF EXISTS `6s_authorize`;
+CREATE TABLE `6s_authorize` (
+  `role_id` int(11) NOT NULL,
+  `perm_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+insert into 6s_authorize values (0,0),(0,1),(0,2),(1,1),(1,2),(2,2);
+
 
 -- ----------------------------
 -- Table structure for 6s_user 普通用户、基础信息
@@ -302,6 +337,19 @@ CREATE INDEX idx_6s_idencode_openid ON 6s_idencode(openid);
 
 insert into 6s_idencode(openid,code,createtime) values("2132423435",2435,now());
 
+
+select "+------------------ 6s_session -------------------+";
+-- ----------------------------
+-- Table structure for 6s_session 权限
+-- ----------------------------
+DROP TABLE IF EXISTS `6s_session`;
+CREATE TABLE `6s_session` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL DEFAULT -1, 
+  `from_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
+  PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+insert into 6s_session(id,user_id,from_time) values (1010101,1,now());
 
 
 

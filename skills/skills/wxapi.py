@@ -283,7 +283,7 @@ def activities_sign(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: 
 					#save to 6s_user.
-					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,createtime) values(%d,%d,'%s',%d,now());"%(uid,actid,name,age)
+					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,createtime) values(%d,%d,'%s',%d,%s,now());"%(uid,actid,name,age,phone)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 1:
 						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)
