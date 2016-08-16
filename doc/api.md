@@ -201,3 +201,353 @@
 ```
 
 
+##后台管理
+### 1. 商户登录
+**POST**
+** URL ** /api/admin/auth
+
+**参数**
+```
+{
+	phone: "135********",
+	password: "password"
+}
+```
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+	"user_type": "登录用户类型"
+}
+```
+
+**失败返回**
+```
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 2. 商户注册第一步
+**POST**
+** URL ** /api/admin/signup-first-step
+
+**参数**
+```
+{
+	phone: "phone",
+	code: "code",
+	password: "password"
+}
+```
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+phone | string | Y |
+code | string | Y | 验证码
+password| string | Y |
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 3. 商户注册第二步
+**POST**
+** URL ** /api/admin/signup-second-step
+
+**参数**
+```json
+{
+	avatar: "url",
+	name: "name",
+	desc: "description"
+}
+```
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+avatar|url|N|商户头像
+name|string|Y|名称
+desc|text|Y|商户简介
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 4. 获取用户权限及用户信息
+**POST**
+** URL ** /api/admin/get-usrinfo
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+	"userinfo": {
+		"name": "谷歌集团",
+		"avatar": "http://avatar.jpg",
+		"permissions":["per1", "per2", "per3"],
+	}
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 5. 商户首页统计信息
+**GET**
+** URL ** /api/admin/manager/statistic
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+	"info": {
+		"publish": 8,
+		"sign": 200,
+		"page_view": 1000
+	}
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 6. 已发布活动
+**GET**
+** URL ** /api/admin/current-activities
+
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+	"activities": [
+		{
+			"actid": 33,
+			"title": "上海迪斯尼",
+			"publish_time": 1471365349281,
+			"url": "http://6skills.com/activity/23.html",
+			"sign_num": 23
+		},
+		...
+	],
+	"pageable": {
+		"page": 1,
+		"total": 4
+	}
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 7. 未发布活动
+**GET**
+** URL ** /api/admin/unpublish-activities
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+	"activities": [
+		{
+			"actid": 33,
+			"title": "上海迪斯尼"
+		},
+		...
+	],
+	"pageable": {
+		"page": 1,
+		"total": 4
+	}
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 8. 活动上线
+**POST**
+** URL ** /api/admin/publish
+
+**参数**
+```json
+{
+	actid: actid
+}
+```
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+actid|number|Y|
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 9. 活动报名用户
+**GET**
+** URL ** /api/admin/activity-sign-user?actid=3
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+actid|number|Y|
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+	"users": [
+		{
+			"avatar": "avatar",
+			"wx_nickname": "三炮",
+			"name": "张三",
+			"phone": "138****",
+			"kid_age": 4,
+			"kid_gender": "男"
+		},
+		...
+	],
+	"pageable": {
+		"page": 2,
+		"total": 4
+	}
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 10. 导出报名信息
+**POST**
+** URL ** /api/admin/export-activity-users
+
+**参数**
+```json
+{
+	actid: 2
+}
+```
+
+**成功返回**
+字节流
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 11. 替换活动微信群二维码
+**POST**
+** URL ** /api/admin/replace-qr
+
+**参数**
+```json
+{
+	"actid": 3,
+	"qrcode": "http://qrcode.jpg"
+}
+```
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+actid|number|Y|
+qrcode|url|Y|二维码url
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
