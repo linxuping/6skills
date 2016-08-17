@@ -5,6 +5,7 @@ admin.autodiscover()
 
 import views
 import wxapi
+import tbapi
 
 urlpatterns = patterns('',
 		#management

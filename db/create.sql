@@ -127,7 +127,8 @@ CREATE TABLE `6s_user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `refid` int(11) NOT NULL DEFAULT -1, -- 免登陆免refid
   `username` varchar(127) DEFAULT '' COMMENT '用户名',
-  -- `password` varchar(127) NOT NULL COMMENT '密码',
+  `password` varchar(127) NOT NULL COMMENT '密码',
+  `pwdmd5` varchar(127) NOT NULL COMMENT '密码md5',
   `phone` varchar(24) NOT NULL unique COMMENT '联系方式',
   `openid` varchar(24) DEFAULT '' COMMENT 'wx openid',
   `role` enum('admin','business','normal') COMMENT '角色',
@@ -254,15 +255,15 @@ CREATE INDEX idx_6s_activity_act_id ON 6s_activity(act_id);
 CREATE INDEX idx_6s_activity_user_id ON 6s_activity(user_id);
 
 
-insert into 6s_activity(id,price_child,price_adult,title,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,quantities_remain,act_id,imgs_act,img_cover,user_id,createtime,img_qrcode,preinfo_id) values (1,100,150,"亲子游 驴妈妈「驴悦亲子游」","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,4,104,"a.jpg b.jpg c.png","http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",1,now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg',101);
-insert into 6s_activity(id,price_child,price_adult,title,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,quantities_remain,act_id,imgs_act,img_cover,user_id,createtime,img_qrcode,preinfo_id) values (2,103,120,"创意趣味亲子游首选快乐时光","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,6,104,"a2.jpg b2.jpg","http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",1,now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg',102);
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (3,"亲子游 大晴天旅行网 亲子游 完全自由的旅行","2016-06-03","2016-06-30",6,1,101010103,104,1,2,4,90,"http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg');
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (4,"“互联网+”概念的兴起","2016-06-04","2016-06-30",6,6,101010102,104,1,2,5,124,"http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg');
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (5,"以80后父母为主力拉动的亲子旅游市场越来越火爆","2016-06-05","2016-06-30",6,0,101010101,104,1,4,6,89,"http://img1.imgtn.bdimg.com/it/u=2539161237,3881183444&fm=21&gp=0.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg');
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (6,"爸爸去哪儿","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=2539161237,3881183444&fm=21&gp=0.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg');
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (7,"一系列亲子游节目的影响","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg');
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (8,"亲子游去哪好，动物王国，海底世界","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg');
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (9,"爸爸去哪儿多种经典线路","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.jpg');
+insert into 6s_activity(id,price_child,price_adult,title,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,quantities_remain,act_id,imgs_act,img_cover,user_id,createtime,img_qrcode,preinfo_id) values (1,100,150,"亲子游 驴妈妈「驴悦亲子游」","actcontent","2016-06-01","2016-06-03",101010401,"position details",3,5,4,4,104,"a.jpg b.jpg c.png","http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",1,now(),'http://121.42.41.241:9900/static/img/qrcode_test.png',101);
+insert into 6s_activity(id,price_child,price_adult,title,content,time_from,time_to,position_id,position_details,age_from,age_to,quantities,quantities_remain,act_id,imgs_act,img_cover,user_id,createtime,img_qrcode,preinfo_id) values (2,103,120,"创意趣味亲子游首选快乐时光","actcontent2","2016-06-02","2016-06-03",101010402,"position details2",4,6,6,6,104,"a2.jpg b2.jpg","http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",1,now(),'http://121.42.41.241:9900/static/img/qrcode_test.png',102);
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (3,"亲子游 大晴天旅行网 亲子游 完全自由的旅行","2016-06-03","2016-06-30",6,1,101010103,104,1,2,4,90,"http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (4,"“互联网+”概念的兴起","2016-06-04","2016-06-30",6,6,101010102,104,1,2,5,124,"http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (5,"以80后父母为主力拉动的亲子旅游市场越来越火爆","2016-06-05","2016-06-30",6,0,101010101,104,1,4,6,89,"http://img1.imgtn.bdimg.com/it/u=2539161237,3881183444&fm=21&gp=0.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (6,"爸爸去哪儿","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=2539161237,3881183444&fm=21&gp=0.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (7,"一系列亲子游节目的影响","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (8,"亲子游去哪好，动物王国，海底世界","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,img_qrcode) values (9,"爸爸去哪儿多种经典线路","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (10,"途牛推出亲子旅游频道","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (11,"亲子游线路","2016-06-07","2016-06-30",6,6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
 #more than 1 week.
@@ -344,12 +345,12 @@ select "+------------------ 6s_session -------------------+";
 -- ----------------------------
 DROP TABLE IF EXISTS `6s_session`;
 CREATE TABLE `6s_session` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL DEFAULT -1, 
-  `from_time` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
-  PRIMARY KEY (`id`) 
+  `user_id` int(11) NOT NULL, 
+  `session_id` int(11) NOT NULL, 
+  `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`user_id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-insert into 6s_session(id,user_id,from_time) values (1010101,1,now());
+insert into 6s_session(user_id,session_id) values (1,1010101);
 
 
 
