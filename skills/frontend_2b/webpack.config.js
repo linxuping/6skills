@@ -40,8 +40,8 @@ function makeConf(options) {
             publicPath: '/'
         },
         externals:{
-            'jQuery':'window.jQuery',
-            '$':'window.Zepto',
+            // 'jQuery':'window.jQuery',
+            // '$':'jQuery',
         },
 
         resolve: {
@@ -80,7 +80,12 @@ function makeConf(options) {
                 // Modules must be shared between all entries
                 minChunks: chunks.length // 提取所有chunks共同依赖的模块
             }),
-            new webpack.HotModuleReplacementPlugin()
+            new webpack.HotModuleReplacementPlugin(),
+            new webpack.ProvidePlugin({
+                $:"jquery",
+                jQuery:"jquery",
+                "window.jQuery":"jquery"
+            })
         ],
 
         devtool: debug ? 'eval-source-map' : false,
