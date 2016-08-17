@@ -46,11 +46,11 @@ def check_user_valid(username, pwdmd5):
 		return False,None
 
 
-def check_session_valid(username, session_id):
-	_sql = "select DATE_ADD(start, INTERVAL 3 DAY)<NOW() from 6s_session where user_id='%s' and session_id='%s';"%(username,session_id)
+def check_session_valid(uid, session_id):
+	_sql = "select DATE_ADD(start, INTERVAL 3 DAY)<NOW() from 6s_session where user_id='%s' and session_id='%s';"%(uid,session_id)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 0:
-		mo.logger.error("6s_session userid:%s session_id:%s not find."%(username,session_id))
+		mo.logger.error("6s_session userid:%s session_id:%s not find."%(uid,session_id))
 	elif count == 1:
 		if rets[0][0] == 1:
 			return True
@@ -59,6 +59,23 @@ def check_session_valid(username, session_id):
 	return False
 
 
+def get_perms(uid, session_id):
+	if check_session_valid(uid, session_id):
+		_sql = "select distinct d.name from 6s_user a left join 6s_role b on a.role_id=b.id left join 6s_authorize c on b.id=c.role_id left join 6s_permission d on c.perm_id=d.id where uid=%s;"%(uid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count > 0:
+			return True,[x[0] for x in rets]
+		else:
+			mo.logger.error("user:%d get empty perms. "%userid)
+	else:
+		mo.logger.warn( "user:%d session_id:%d invalid ! "%(uid,session_id) )
+	return False,{}
 
+
+
+
+
+
+#--------- GLOBAL INIT ---------#
 
 

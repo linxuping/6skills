@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS `6s_activity`;
 DROP TABLE IF EXISTS `6s_acttype`;
 DROP TABLE IF EXISTS `6s_position`;
 DROP TABLE IF EXISTS `6s_user_business`;
+DROP TABLE IF EXISTS `6s_user`;
 
 select "+------------------ 6s_position -------------------+";
 -- ----------------------------
@@ -106,7 +107,7 @@ CREATE TABLE `6s_role` (
   `name` char(128) COMMENT '角色描述',
   PRIMARY KEY (`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-insert into 6s_role(id,name) values (0,"admin"),(1,"business"),(2,"visitor");
+insert into 6s_role(id,name) values (0,"admin"),(1,"business"),(2,"normal");
 -- ----------------------------
 -- Table structure for 6s_authorize 
 -- ----------------------------
@@ -131,13 +132,15 @@ CREATE TABLE `6s_user` (
   `pwdmd5` varchar(127) NOT NULL COMMENT '密码md5',
   `phone` varchar(24) NOT NULL unique COMMENT '联系方式',
   `openid` varchar(24) DEFAULT '' COMMENT 'wx openid',
-  `role` enum('admin','business','normal') COMMENT '角色',
+  -- `role` enum('admin','business','normal') COMMENT '角色',
   `img` varchar(255) default 'http://121.42.41.241:9900/static/img/head.jpg' COMMENT '图片',
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `up_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '频度',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
   `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用,1 可用,2 审核中,3 拒绝,4 禁止发帖',
-  PRIMARY KEY (`id`)
+  `role_id` int(11) NOT NULL DEFAULT 0, 
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_6s_user_roleid` FOREIGN KEY (role_id) REFERENCES 6s_role(id) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE INDEX idx_6s_user_refid ON 6s_user(refid);
 CREATE INDEX idx_6s_user_username ON 6s_user(username);
@@ -176,13 +179,13 @@ CREATE INDEX idx_6s_user_business_phone ON 6s_user_business(phone);
 
 delete from auth_user where username='test';
 insert into auth_user(username,password) values ("test","test");
-insert into 6s_user(id,refid,openid,username,phone,role,img,createtime,status) values (1,1,9901,"test","12011112222",'普通',"http://121.42.41.241:9900/static/img/head.jpg",now(),1);
+insert into 6s_user(id,refid,openid,username,phone,img,createtime,status) values (1,1,9901,"test","12011112222","http://121.42.41.241:9900/static/img/head.jpg",now(),1);
 delete from auth_user where username='test2';
 insert into auth_user(username,password) values ("test2","test2");
-insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1001,9902,1,"test2","13011112222",'普通',"http://121.42.41.241:9900/static/img/head.jpg",now(),2);
+insert into 6s_user(id,openid,refid,username,phone,img,createtime,status) values (1001,9902,1,"test2","13011112222","http://121.42.41.241:9900/static/img/head.jpg",now(),2);
 delete from auth_user where username='test3';
 insert into auth_user(username,password) values ("test3","test3");
-insert into 6s_user(id,openid,refid,username,phone,role,img,createtime,status) values (1002,9903,1,"test3","12345612345",'普通',"http://121.42.41.241:9900/static/img/head.jpg",now(),1);
+insert into 6s_user(id,openid,refid,username,phone,img,createtime,status) values (1002,9903,1,"test3","12345612345","http://121.42.41.241:9900/static/img/head.jpg",now(),1);
 
 insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","15099991234","email","QQ");
 insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","15099991288","email2","QQ2");
