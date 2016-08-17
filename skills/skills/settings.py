@@ -20,11 +20,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'x$p%ac(otm3+mz@m9@_h&_zd8ymm=e08y&-am_6ssr7bn_nm^y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -62,16 +62,16 @@ WSGI_APPLICATION = 'skills.wsgi.application'
     }
 '''
 #W R+
-DB_HOST = '127.0.0.1'
-DB_NAME = 'sixskillsdb'
-DB_USERNAME = 'root'
-DB_PASSWORD = 'sixskillslinxuping'
+DB_HOST = ''
+DB_NAME = ''
+DB_USERNAME = ''
+DB_PASSWORD = ''
 DB_PORT = 3306
 #R
-DB_HOST2 = '127.0.0.1'
-DB_NAME2 = 'sixskillsdb'
-DB_USERNAME2 = 'root'
-DB_PASSWORD2 = 'sixskillslinxuping'
+DB_HOST2 = ''
+DB_NAME2 = ''
+DB_USERNAME2 = ''
+DB_PASSWORD2 = ''
 DB_PORT2 = 3306
 DATABASES = {
     'default': {
