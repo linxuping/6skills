@@ -7,6 +7,7 @@ var Me = React.createClass({
 		};
 	},
 	componentDidMount: function(){
+		this.handlerRoute();
 		$.ajax({
 			url: ges('activities/get_profile'),
 			type: 'get',
@@ -27,27 +28,53 @@ var Me = React.createClass({
 			console.log("fail");
 		});
 	},
+
+	handlerRoute: function(){
+		var hash = window.location.href.split("#")[1];
+		if (hash !== undefined) {
+			if ("myactivities".indexOf(hash) !== -1) {
+				this.gotoMyActivities();
+			} else if ("collections".indexOf(hash) !== -1) {
+				this.gotoMyCollections();
+			}
+		}
+	},
+
 	back: function(){
 		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 		document.title = "我";
+		var href = window.location.href.split("#")[0];
+		history.replaceState("myActivities", null, href);
+	},
+	gotoActivityDetail: function(){
+		var target = event.target.toLowerCase == "li" ? $(event.target) : $(event.target).parents("li");
+		var actid = target.attr('data-actid');
+		if (actid == undefined) {return false};
+		window.location = "activity_detail.html?actid=" + actid
 	},
 	gotoFeedback: function(){
-		document.title = "意见反馈";
+		document.title = "联系我们";
 		ReactDOM.render(
-			<Feedback back={this.back}/>, document.getElementById("sign-page-wrap")
+			<Feedback back={this.back} />,
+			document.getElementById("sign-page-wrap")
 		);
 	},
 
 	gotoMyActivities: function(){
 		document.title = "已报名活动";
+		var href = window.location.href.split("#")[0];
+		history.replaceState("myActivities", null, href + "#myactivities");
 		ReactDOM.render(
-			<MyActivities back={this.back}/>, document.getElementById("sign-page-wrap")
+			<MyActivities back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
+			document.getElementById("sign-page-wrap")
 		);
 	},
 	gotoMyCollections: function () {
 		document.title = "我的收藏";
+		var href = window.location.href.split("#")[0];
+		history.replaceState("myActivities", null, href + "#collections");
 		ReactDOM.render(
-			<MyCollections back={this.back}/>,
+			<MyCollections back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
 			document.getElementById("sign-page-wrap")
 		);
 	},
@@ -80,7 +107,7 @@ var Me = React.createClass({
 							<a href="javascript:void(0);" className="weui_cell"
 								 onClick={this.gotoFeedback}>
 								<div className="weui_cell_bd weui_cell_primary">
-									<p>意见反馈</p>
+									<p>联系我们</p>
 								</div>
 								<div className="weui_cell_ft"></div>
 							</a>
@@ -93,30 +120,26 @@ var Me = React.createClass({
 	}
 });
 
+//FIXED ME
 var Feedback = React.createClass({
 	render: function() {
 		return (
 			<div className="feedback sign-page">
 				<div className="back-btn" onClick={this.props.back}>返回</div>
-				<form action="#">
-
-					<input type="hidden" name="uid" value=""/>
-
-					<div className="cell">
-						<div className="bd">
-							<div className="weui_cells weui_cells_form">
-								<div className="weui_cell">
-									<div className="weui_cell_bd weui_cell_primary">
-										<textarea name="feedback" id="feedback" rows="4" className="weui_textarea" placeholder="请输入反馈意见"></textarea>
-									</div>
-								</div>
-							</div>
-							<div className="weui_btn_area">
-								<button className="weui_btn weui_btn_primary" type="submit">确定</button>
-							</div>
-						</div>
-					</div>
-				</form>
+				<h3>转载文章</h3>
+				<p>转载文章请在文中附下图，即视为有效制授权，无需再联系我们</p>
+				<p className="qr">
+					<img src="http://news.5hb.org/uploads/weichat/3d874197c1d119f80890747b67d21b34.jpg" alt=""/>
+				</p>
+				<h3>在线客服</h3>
+				<p className="ol-serv">
+					点击咨询在线客服
+					<a target="_blank" href="http://sighttp.qq.com/authd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb"><img border="0"  src="http://wpa.qq.com/imgd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb&pic=52" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+				</p>
+				<h3>其他合作</h3>
+				<p>
+					邮箱：<mail>1344671651@qq.com</mail>
+				</p>
 			</div>
 		);
 	}
@@ -129,6 +152,7 @@ var MyActivities = React.createClass({
 		};
 	},
 	signReset: function(ev){
+		ev.stopPropagation();
 		this.setState({
 			signidWantToReset: ev.target.dataset.signid
 		});
@@ -183,7 +207,8 @@ var MyActivities = React.createClass({
 		var myActivitiesStr = this.state.activities &&
 			this.state.activities.map(function(elem, index) {
 				return (
-					<li>
+					<li onClick={this.props.gotoActivityDetail}
+						style={{"cursor": "pointer"}} data-actid={elem.actid}>
 						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
 							<span>活动时间</span><time>{elem.time_act}</time>
@@ -262,7 +287,8 @@ var MyCollections = React.createClass({
 		var myActivitiesStr = this.state.activities &&
 			this.state.activities.map(function(elem, index) {
 				return (
-					<li>
+					<li onClick={this.props.gotoActivityDetail}
+						style={{"cursor": "pointer"}} data-actid={elem.actid}>
 						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
 							<span>活动时间</span><time>{elem.time_act}</time>

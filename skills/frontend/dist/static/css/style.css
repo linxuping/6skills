@@ -284,3 +284,34 @@ body {
   width: 256px;
   height: 256px;
 }
+.feedback h3 {
+  margin: 10px 15px;
+  font-size: 18px;
+}
+.feedback p {
+  font-size: 14px;
+  margin: 5px 15px;
+  text-indent: 2em;
+}
+.feedback img {
+  border-radius: 0px;
+}
+.feedback .qr {
+  text-align: center;
+}
+.feedback .qr img {
+  width: 200px;
+  height: 200px;
+}
+.feedback .ol-serv {
+  line-height: 25px;
+}
+.feedback .ol-serv span {
+  padding-top: 3px;
+  padding-right: 5px;
+}
+.feedback .ol-serv img {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}

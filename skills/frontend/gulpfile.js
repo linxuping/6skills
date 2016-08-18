@@ -16,6 +16,7 @@ var gulp = require('gulp'),
     revCollector = require('gulp-rev-collector'),              //- 路径替换
     minimist = require('minimist'),
     gulpif = require('gulp-if');
+    var plumber = require('gulp-plumber');
     var browsersync = require('browser-sync');
 	var config      = require('./config').browsersync.development;
 
@@ -53,6 +54,7 @@ var flag = false;         //- 是否生产部署
 // 用户样式
 gulp.task('styles', function(){
 	return gulp.src(src.css + '/**/*.less')
+	.pipe(plumber())
 	.pipe(less())
 	//.pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
 	.pipe(gulp.dest(dist.css))
@@ -107,6 +109,7 @@ gulp.task('scripts', function(){
 // react 模块
 gulp.task('react', function(){
 	return gulp.src([src.js + '/modules/**'])
+	.pipe(plumber())
 	.pipe(react())
 	.pipe(gulp.dest(dist.js + '/modules'))
 	// .pipe(rename({suffix: '.min'}))

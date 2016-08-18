@@ -1,4 +1,4 @@
-## 公众号需要接口
+## 公众号接口api
 
 ### 1. 限时优惠
 **GET**
@@ -551,3 +551,137 @@ qrcode|url|Y|二维码url
 	"errmsg": "errmsg"
 }
 ```
+
+### 12. 创建活动 newactivity
+**POST**
+** URL ** /api/admin/activities/add
+
+**参数**
+```json
+{
+	"title":"云南亲子一日游",
+	"coverImage":"http://www.xxx.jpg",
+	"beginTime":"20160602",
+	"endTime":"20160602",
+	"city":"广州",
+	"area":"越秀区",
+	"address":"越秀广场",
+	"firstClassification": 3333,
+	"secondClassification": 3333,
+	"isFree": false,
+	"kidFee": 300,
+	"adultFee": 300,
+	"personNum": 33,
+	"ageGroup": "3-6岁",
+	"qrcode":"http://url.jpg",
+	"details":"活动详情活动详情活动详情"
+}
+```
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+title|string|Y|活动标题
+coverImage|url|Y|封面图
+beginTime|string|Y|活动开始时间
+endTime|string|Y|活动结束时间
+city|string|Y|活动集合地点城市
+area|string|Y|活动集合地点区域
+address|string|Y|活动集合地点具体地址
+firstClassification|number|Y|活动一级分类
+secondClassification|number|Y|活动二级分类
+isFree|boolean|Y|是否收费
+kidFee|string|N|收费时必须
+adultFee|string|N|收费时必须
+personNum|number|Y|人数限制
+ageGroup|string|Y|适合的年龄段
+qrcode|url|N|活动微信群二维码
+details|text|Y|活动详情
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 13. 添加优惠 addpreference
+**POST**
+** URL ** /api/admin/activities/preference/add
+
+**参数**
+```json
+{
+	"description": "",
+	"beginTime:": "2016-08-12",
+	"endTime": "2016-09-30",
+	"maxnum": 20,
+	"actid": 20,
+	"discountPrice": "40.00"
+}
+```
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+description|string|Y|优惠信息说明
+beginTime|string|Y|优惠开始时间
+endTime|string|Y|优惠结束时间
+maxnum|number|Y|优惠报名人数限制
+actid|number|N|活动
+discountPrice|string|Y|折后价
+
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 14.优惠活动列表
+**get**
+**url** /activities/preferencelist?area=xxx&age=x&page=x&page_size=x
+
+**返回**
+```json
+{
+    "activities": [
+        {
+            "actid": 33,
+            "title": "活动名称",
+            "beginTime": 1471535651971,
+            "endTime": 1471535651971,
+            "status": "状态",
+        },
+        ...
+    ],
+    "pageable": {
+        "page": 0,
+        "total": 1
+    },
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+

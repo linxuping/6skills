@@ -7,6 +7,7 @@ var Me = React.createClass({displayName: "Me",
 		};
 	},
 	componentDidMount: function(){
+		this.handlerRoute();
 		$.ajax({
 			url: ges('activities/get_profile'),
 			type: 'get',
@@ -27,27 +28,53 @@ var Me = React.createClass({displayName: "Me",
 			console.log("fail");
 		});
 	},
+
+	handlerRoute: function(){
+		var hash = window.location.href.split("#")[1];
+		if (hash !== undefined) {
+			if ("myactivities".indexOf(hash) !== -1) {
+				this.gotoMyActivities();
+			} else if ("collections".indexOf(hash) !== -1) {
+				this.gotoMyCollections();
+			}
+		}
+	},
+
 	back: function(){
 		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 		document.title = "我";
+		var href = window.location.href.split("#")[0];
+		history.replaceState("myActivities", null, href);
+	},
+	gotoActivityDetail: function(){
+		var target = event.target.toLowerCase == "li" ? $(event.target) : $(event.target).parents("li");
+		var actid = target.attr('data-actid');
+		if (actid == undefined) {return false};
+		window.location = "activity_detail.html?actid=" + actid
 	},
 	gotoFeedback: function(){
-		document.title = "意见反馈";
+		document.title = "联系我们";
 		ReactDOM.render(
-			React.createElement(Feedback, {back: this.back}), document.getElementById("sign-page-wrap")
+			React.createElement(Feedback, {back: this.back}),
+			document.getElementById("sign-page-wrap")
 		);
 	},
 
 	gotoMyActivities: function(){
 		document.title = "已报名活动";
+		var href = window.location.href.split("#")[0];
+		history.replaceState("myActivities", null, href + "#myactivities");
 		ReactDOM.render(
-			React.createElement(MyActivities, {back: this.back}), document.getElementById("sign-page-wrap")
+			React.createElement(MyActivities, {back: this.back, gotoActivityDetail: this.gotoActivityDetail}),
+			document.getElementById("sign-page-wrap")
 		);
 	},
 	gotoMyCollections: function () {
 		document.title = "我的收藏";
+		var href = window.location.href.split("#")[0];
+		history.replaceState("myActivities", null, href + "#collections");
 		ReactDOM.render(
-			React.createElement(MyCollections, {back: this.back}),
+			React.createElement(MyCollections, {back: this.back, gotoActivityDetail: this.gotoActivityDetail}),
 			document.getElementById("sign-page-wrap")
 		);
 	},
@@ -80,7 +107,7 @@ var Me = React.createClass({displayName: "Me",
 							React.createElement("a", {href: "javascript:void(0);", className: "weui_cell", 
 								 onClick: this.gotoFeedback}, 
 								React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-									React.createElement("p", null, "意见反馈")
+									React.createElement("p", null, "联系我们")
 								), 
 								React.createElement("div", {className: "weui_cell_ft"})
 							)
@@ -93,29 +120,25 @@ var Me = React.createClass({displayName: "Me",
 	}
 });
 
+//FIXED ME
 var Feedback = React.createClass({displayName: "Feedback",
 	render: function() {
 		return (
 			React.createElement("div", {className: "feedback sign-page"}, 
 				React.createElement("div", {className: "back-btn", onClick: this.props.back}, "返回"), 
-				React.createElement("form", {action: "#"}, 
-
-					React.createElement("input", {type: "hidden", name: "uid", value: ""}), 
-
-					React.createElement("div", {className: "cell"}, 
-						React.createElement("div", {className: "bd"}, 
-							React.createElement("div", {className: "weui_cells weui_cells_form"}, 
-								React.createElement("div", {className: "weui_cell"}, 
-									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-										React.createElement("textarea", {name: "feedback", id: "feedback", rows: "4", className: "weui_textarea", placeholder: "请输入反馈意见"})
-									)
-								)
-							), 
-							React.createElement("div", {className: "weui_btn_area"}, 
-								React.createElement("button", {className: "weui_btn weui_btn_primary", type: "submit"}, "确定")
-							)
-						)
-					)
+				React.createElement("h3", null, "转载文章"), 
+				React.createElement("p", null, "转载文章请在文中附下图，即视为有效制授权，无需再联系我们"), 
+				React.createElement("p", {className: "qr"}, 
+					React.createElement("img", {src: "http://news.5hb.org/uploads/weichat/3d874197c1d119f80890747b67d21b34.jpg", alt: ""})
+				), 
+				React.createElement("h3", null, "在线客服"), 
+				React.createElement("p", {className: "ol-serv"}, 
+					"点击咨询在线客服", 
+					React.createElement("a", {target: "_blank", href: "http://sighttp.qq.com/authd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb"}, React.createElement("img", {border: "0", src: "http://wpa.qq.com/imgd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb&pic=52", alt: "点击这里给我发消息", title: "点击这里给我发消息"}))
+				), 
+				React.createElement("h3", null, "其他合作"), 
+				React.createElement("p", null, 
+					"邮箱：", React.createElement("mail", null, "1344671651@qq.com")
 				)
 			)
 		);
@@ -129,6 +152,7 @@ var MyActivities = React.createClass({displayName: "MyActivities",
 		};
 	},
 	signReset: function(ev){
+		ev.stopPropagation();
 		this.setState({
 			signidWantToReset: ev.target.dataset.signid
 		});
@@ -183,7 +207,8 @@ var MyActivities = React.createClass({displayName: "MyActivities",
 		var myActivitiesStr = this.state.activities &&
 			this.state.activities.map(function(elem, index) {
 				return (
-					React.createElement("li", null, 
+					React.createElement("li", {onClick: this.props.gotoActivityDetail, 
+						style: {"cursor": "pointer"}, "data-actid": elem.actid}, 
 						React.createElement("header", {className: "ss-hd"}, elem.title), 
 						React.createElement("p", {className: "time clearfix"}, 
 							React.createElement("span", null, "活动时间"), React.createElement("time", null, elem.time_act)
@@ -262,7 +287,8 @@ var MyCollections = React.createClass({displayName: "MyCollections",
 		var myActivitiesStr = this.state.activities &&
 			this.state.activities.map(function(elem, index) {
 				return (
-					React.createElement("li", null, 
+					React.createElement("li", {onClick: this.props.gotoActivityDetail, 
+						style: {"cursor": "pointer"}, "data-actid": elem.actid}, 
 						React.createElement("header", {className: "ss-hd"}, elem.title), 
 						React.createElement("p", {className: "time clearfix"}, 
 							React.createElement("span", null, "活动时间"), React.createElement("time", null, elem.time_act)
