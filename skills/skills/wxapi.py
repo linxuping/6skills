@@ -255,6 +255,9 @@ def activities_sign(req):
 	ret,age = check_mysql_arg_jsonobj("age", args.get("age",None), "int")
 	if not ret:
 		return age
+	ret,gender = check_mysql_arg_jsonobj("gender", args.get("gender",None), "str")
+	if not ret:
+		return gender
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
@@ -283,7 +286,7 @@ def activities_sign(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: 
 					#save to 6s_user.
-					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,createtime) values(%d,%d,'%s',%d,%s,now());"%(uid,actid,name,age,phone)
+					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime) values(%d,%d,'%s',%d,%s,%s,now());"%(uid,actid,name,age,phone,gender)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 1:
 						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)

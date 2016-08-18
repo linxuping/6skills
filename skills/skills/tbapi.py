@@ -71,7 +71,107 @@ def get_perms(uid, session_id):
 		mo.logger.warn( "user:%d session_id:%d invalid ! "%(uid,session_id) )
 	return False,{}
 
+def set_cookie(resp,userid,sessionid):
+	dt = datetime.datetime.now() + datetime.timedelta(hours = int(72))
+	resp.set_cookie("6suserid",userid,expires=dt)
+	resp.set_cookie("6ssessionid",sessionid,expires=dt)
 
+def get_userinfo(req):
+	userid = req.COOKIES.get("6suserid",None)
+	if userid == None:
+		mo.logger.error("userid is None.")
+	sessionid = req.COOKIES.get("6ssessionid",None)
+	if sessionid == None:
+		mo.logger.error("sessionid is None.")
+	return (userid!=None and sessionid!=None),userid,sessionid
+
+#--------------------------
+
+
+@req_print
+def activity_sign_user(req):
+	args = req.GET
+	print "cookies: ",req.COOKIES,req.COOKIES.get("userid",None)
+	#check.
+	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	if not ret:
+		return actid
+
+	_json = { "users":[],"pageable":{"page":0,"total":1},"errcode":1,"errmsg":"" }
+	_sql = "select a.username_pa,a.username_ch,a.phone,a.age_ch,a.gender from 6s_signup a left join 6s_user b on a.user_id=b.id where a.status=1 and b.status=1 and a.act_id=%d;"%actid
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in xrange(count):
+			_json["users"].append( {"name":rets[i][1],"phone":rets[i][2],"kid_age":rets[i][3],"kid_gender":rets[i][4]} )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@csrf_exempt
+@req_print
+def activity_publish(req):
+	args = req.POST
+	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
+	if not ret:
+		return actid
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "update 6s_signup set status=1 where act_id=%d;"%(actid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		_json["errcode"] = 1
+		_json["errmsg"] = "活动上线状态未更新."
+		mo.logger.error("act must be updated. actid:%d"%actid)
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def get_publish_activities(req):
+	args = req.GET
+	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	ret,userid,sessionid = get_userinfo(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		_json["errcode"] = 1 
+		_json["errmsg"] = "必须上传用户基础信息."
+
+	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_session a left join 6s_signup b on a.user_id=b.user_id left join 6s_activity c on b.act_id=c.id where b.status=1 and c.status =1 and a.user_id='%s' and a.session_id='%s';"%(userid,sessionid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in xrange(count):
+			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"publish_time":rets[i][2],"sign_num":rets[i][3]} )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def get_unpublish_activities(req):
+	args = req.GET
+	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	ret,userid,sessionid = get_userinfo(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		_json["errcode"] = 1 
+		_json["errmsg"] = "必须上传用户基础信息."
+
+	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_session a left join 6s_signup b on a.user_id=b.user_id left join 6s_activity c on b.act_id=c.id where b.status=1 and c.status=2 and a.user_id='%s' and a.session_id='%s';"%(userid,sessionid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in xrange(count):
+			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"publish_time":rets[i][2],"sign_num":rets[i][3]} )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 
 
 

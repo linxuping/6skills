@@ -62,5 +62,12 @@ urlpatterns = patterns('',
 		url(r'^activities/get_signup_status', wxapi.activities_getsignupstatus),
 		#
 		#wxapi END.
+		
+		#tbapi.
+		url(r'^api/admin/activity-sign-user', tbapi.activity_sign_user),
+		url(r'^api/admin/publish', tbapi.activity_publish),
+		url(r'^api/admin/current-activities', tbapi.get_publish_activities),
+		url(r'^api/admin/unpublish-activities', tbapi.get_unpublish_activities),
+		#tbapi END.
 )
 

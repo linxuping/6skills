@@ -245,7 +245,7 @@ CREATE TABLE `6s_activity` (
   `imgs_act` varchar(255) DEFAULT '' COMMENT '图片 spirit by empty space',
   `img_cover` varchar(255) DEFAULT '' COMMENT '图片',
   `img_qrcode` varchar(255) DEFAULT NULL COMMENT '二维码',
-  `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
+  `status` tinyint(4) DEFAULT '1' COMMENT '状态.0-下线,1-上线,2-未发布',
   CONSTRAINT `fk_6s_activity_posid` FOREIGN KEY (position_id) REFERENCES 6s_position(id) ON UPDATE CASCADE,
   CONSTRAINT `fk_6s_activity_actid` FOREIGN KEY (act_id) REFERENCES 6s_acttype(id) ON UPDATE CASCADE,
   CONSTRAINT `fk_6s_activity_userid` FOREIGN KEY (user_id) REFERENCES 6s_user(id) ON UPDATE CASCADE,
@@ -288,6 +288,7 @@ CREATE TABLE `6s_signup` (
   `username_ch` varchar(127) DEFAULT '' COMMENT '儿童用户名',
   `age_ch` tinyint(2) DEFAULT 0 COMMENT '儿童年龄',
   `phone` varchar(24) default '' COMMENT '联系方式',
+  `gender` enum("male","female") NOT NULL default 'male',
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
   `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用,1 可用,2 审核中,3 拒绝,4 禁止发帖',
@@ -349,11 +350,11 @@ select "+------------------ 6s_session -------------------+";
 DROP TABLE IF EXISTS `6s_session`;
 CREATE TABLE `6s_session` (
   `user_id` int(11) NOT NULL, 
-  `session_id` int(11) NOT NULL, 
+  `session_id` int(11) NOT NULL default -1, 
   `start` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`user_id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-insert into 6s_session(user_id,session_id) values (1,1010101);
+insert into 6s_session(user_id,session_id) values (1,10101);
 
 
 
