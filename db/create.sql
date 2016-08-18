@@ -129,7 +129,7 @@ CREATE TABLE `6s_user` (
   `refid` int(11) NOT NULL DEFAULT -1, -- 免登陆免refid
   `username` varchar(127) DEFAULT '' COMMENT '用户名',
   `password` varchar(127) NOT NULL COMMENT '密码',
-  `pwdmd5` varchar(127) NOT NULL COMMENT '密码md5',
+  `pwdmd5` varchar(127) NOT NULL default -1 COMMENT '密码md5',
   `phone` varchar(24) NOT NULL unique COMMENT '联系方式',
   `openid` varchar(24) DEFAULT '' COMMENT 'wx openid',
   -- `role` enum('admin','business','normal') COMMENT '角色',

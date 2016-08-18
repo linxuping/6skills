@@ -21,13 +21,15 @@ import json
 
 def gen_new_sessionid(userid):
 	session_id = int(time.time())
+	_sql = "select * from 6s_session where user_id='%s';"%userid
+	count,rets=dbmgr.db_exec(_sql)
 	if count == 0:
 		_sql = "insert into from 6s_session(user_id,session_id) values('%s','%d'));"%(userid,session_id)
 		count,rets=dbmgr.db_exec(_sql)
 		if count != 1:
 			mo.logger.error("insert 6s_session failed. userid:%s"%(userid))
 	else:
-		_sql = "update 6s_session set start=now() where user_id=%s;"%(userid)
+		_sql = "update 6s_session set start=now(),session_id='%s' where user_id=%s;"%(session_id,userid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count != 1:
 			mo.logger.error("update 6s_session failed. userid:%s"%(userid))
@@ -47,7 +49,7 @@ def check_user_valid(username, pwdmd5):
 
 
 def check_session_valid(uid, session_id):
-	_sql = "select DATE_ADD(start, INTERVAL 3 DAY)<NOW() from 6s_session where user_id='%s' and session_id='%s';"%(uid,session_id)
+	_sql = "select DATE_ADD(start, INTERVAL 3 DAY)>NOW() from 6s_session where user_id='%s' and session_id='%s';"%(uid,session_id)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 0:
 		mo.logger.error("6s_session userid:%s session_id:%s not find."%(uid,session_id))
@@ -61,15 +63,15 @@ def check_session_valid(uid, session_id):
 
 def get_perms(uid, session_id):
 	if check_session_valid(uid, session_id):
-		_sql = "select distinct d.name from 6s_user a left join 6s_role b on a.role_id=b.id left join 6s_authorize c on b.id=c.role_id left join 6s_permission d on c.perm_id=d.id where uid=%s;"%(uid)
+		_sql = "select distinct d.name,b.name from 6s_user a left join 6s_role b on a.role_id=b.id left join 6s_authorize c on b.id=c.role_id left join 6s_permission d on c.perm_id=d.id where a.id=%s;"%(uid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count > 0:
-			return True,[x[0] for x in rets]
+			return True,rets[0][1],[x[0] for x in rets]
 		else:
-			mo.logger.error("user:%d get empty perms. "%userid)
+			mo.logger.error("user:%d get empty perms. "%uid)
 	else:
 		mo.logger.warn( "user:%d session_id:%d invalid ! "%(uid,session_id) )
-	return False,{}
+	return False,None,{}
 
 def set_cookie(resp,userid,sessionid):
 	dt = datetime.datetime.now() + datetime.timedelta(hours = int(72))
@@ -168,6 +170,39 @@ def get_unpublish_activities(req):
 	if count > 0:
 		for i in xrange(count):
 			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"publish_time":rets[i][2],"sign_num":rets[i][3]} )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@csrf_exempt
+@req_print
+def tbauth(req):
+	args = req.POST
+	ret,phone = check_mysql_arg_jsonobj("phone", args.get("phone",None), "str")
+	if not ret:
+		return phone
+	ret,passwd = check_mysql_arg_jsonobj("passwd", args.get("passwd",None), "str")
+	if not ret:
+		return passwd
+
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "select id from 6s_user where phone='%s' and pwdmd5='%s';"%(phone,passwd)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		sessionid = gen_new_sessionid(rets[0][0])
+		_json["sessionid"] = sessionid
+		ret,role,perms = get_perms(rets[0][0],sessionid)
+		if ret:
+			_json["userid"] = rets[0][0]
+			_json["role"] = role
+			_json["permissions"] = perms
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "登陆失败."
+		mo.logger.error("login failed. %s %s "%(phone,passwd) )
+
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
