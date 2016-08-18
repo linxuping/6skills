@@ -17,6 +17,12 @@ import socket
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+def encode_md5(str):
+	import hashlib   
+	m2 = hashlib.md5()   
+	m2.update(str)   
+	return m2.hexdigest()   
+
 def get_errtag():
 		return "[errno:%s_%s]"%(socket.gethostname(),time.strftime('%m%d_%H%M%S'))
 

@@ -340,7 +340,7 @@ CREATE TABLE `6s_idencode` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 CREATE INDEX idx_6s_idencode_openid ON 6s_idencode(openid);
 
-insert into 6s_idencode(openid,code,createtime) values("2132423435",2435,now());
+insert into 6s_idencode(openid,code,createtime) values("12345678901",1234,now());
 
 
 select "+------------------ 6s_session -------------------+";

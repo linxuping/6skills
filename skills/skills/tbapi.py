@@ -208,6 +208,44 @@ def tbauth(req):
 	makeup_headers_CORS(resp)
 	return resp
 
+role_business = 1
+@csrf_exempt
+@req_print
+def signup_first_step(req):
+	args = req.POST
+	ret,phone = check_mysql_arg_jsonobj("phone", args.get("phone",None), "str")
+	if not ret:
+		return phone
+	ret,code = check_mysql_arg_jsonobj("code", args.get("code",None), "str")
+	if not ret:
+		return code
+	ret,password = check_mysql_arg_jsonobj("password", args.get("password",None), "str")
+	if not ret:
+		return password
+
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "select id from 6s_idencode where openid='%s' and code='%s';"%(phone,code)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		return response_json_error("验证码不正确.")
+	_sql = "select id from 6s_user where phone='%s';"%phone
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		return response_json_error("该手机号码已经注册过.")
+		mo.logger.error("phone:%s has been registered. "%phone)
+
+	_sql = "insert into 6s_user(phone,password,pwdmd5,role_id) values('%s','%s','%s','%d');"%(phone,password,encode_md5(password),role_business)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		mo.logger.info("register ok. %s %s code:%s "%(phone,password,code) )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "注册失败."
+		mo.logger.error("register failed. %s %s code:%s "%(phone,password,code) )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 
 
 
