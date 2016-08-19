@@ -6,7 +6,7 @@ from mylog import logger
 def time_calc(func):
 		def wrapper(args):
 				starttime = time.time()
-				print starttime,time.time() 
+				#print starttime,time.time() 
 				ret = func(args)
 				endtime = time.time()
 				print endtime ,time.time()
