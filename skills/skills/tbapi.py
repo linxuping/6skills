@@ -200,6 +200,8 @@ def tbauth(req):
 			_json["userid"] = rets[0][0]
 			_json["role"] = role
 			_json["permissions"] = perms
+		else:
+			return response_json_error("获取用户权限失败.")
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "登陆失败."
@@ -307,6 +309,8 @@ def get_userinfo(req):
 		_json["userinfo"]["name"] = uname
 		_json["userinfo"]["role"] = role
 		_json["userinfo"]["permissions"] = perms
+	else:
+		return response_json_error("获取用户权限失败.")
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
