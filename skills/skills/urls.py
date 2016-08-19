@@ -76,6 +76,8 @@ urlpatterns = patterns('',
 		url(r'^api/admin/get_uploadtoken', tbapi.get_uploadtoken),
 		url(r'^api/admin/get-userinfo', tbapi.get_userinfo),
 		url(r'^api/admin/manager/statistic', tbapi.get_manager_statistic),
+		url(r'^api/admin/export-activity-users', tbapi.get_export_activity_users),
+		url(r'^api/admin/replace-qr', tbapi.replace_qr),
 		#0819.
 		#tbapi END.
 )

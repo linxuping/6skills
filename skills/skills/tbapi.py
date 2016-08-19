@@ -387,6 +387,27 @@ def get_manager_statistic(req):
 	return resp
 
 
+@csrf_exempt
+@req_print
+def replace_qr(req):
+	args = req.POST
+	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
+	if not ret:
+		return actid
+	ret,qrcode = check_mysql_arg_jsonobj("qrcode", args.get("qrcode",None), "str")
+	if not ret:
+		return qrcode
+
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "update 6s_activity set img_qrcode='%s' where id=%d;"%(qrcode,actid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		return response_json_error("二维码未更新.")
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
 
 
 from qiniu import Auth
