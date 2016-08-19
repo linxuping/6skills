@@ -121,6 +121,32 @@ def get_activity_sign_user(req):
 	return resp
 
 
+@req_print
+def get_export_activity_users(req):
+	args = req.GET
+	print "cookies: ",req.COOKIES,req.COOKIES.get("userid",None)
+	#check.
+	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	if not ret:
+		return actid
+
+	_sql = "select a.username_pa,a.username_ch,a.phone,a.age_ch,a.gender from 6s_signup a left join 6s_user b on a.user_id=b.id where a.status=1 and b.status=1 and a.act_id=%d;"%actid
+	count,rets=dbmgr.db_exec(_sql)
+	_stream = ""
+	if count > 0:
+		_stream += "name,phone,kid_age,kid_gender\r\n"
+		for i in xrange(count):
+			_stream += "%s,%s,%s,%s\r\n"%(rets[i][1],rets[i][2],rets[i][3],rets[i][4])
+		if _stream == "":	
+			return response_json_error("有报名用户但没有导出信息.")
+	else:
+		return response_json_error("没有报名用户.")
+	#_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_stream, mimetype='text/html')
+	makeup_headers_CORS(resp)
+	return resp
+
+
 @csrf_exempt
 @req_print
 def get_activity_publish(req):
