@@ -134,6 +134,7 @@ CREATE TABLE `6s_user` (
   `openid` varchar(24) DEFAULT '' COMMENT 'wx openid',
   -- `role` enum('admin','business','normal') COMMENT '角色',
   `img` varchar(255) default 'http://121.42.41.241:9900/static/img/head.jpg' COMMENT '图片',
+  `description` varchar(24) COMMENT '',
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `up_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '频度',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
@@ -154,21 +155,22 @@ select "+------------------ 6s_user_business -------------------+";
 DROP TABLE IF EXISTS `6s_user_business`;
 CREATE TABLE `6s_user_business` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `refid` int(11) NOT NULL,
-  `company` varchar(127) NOT NULL COMMENT '公司',
-  `service_item` varchar(127) NOT NULL COMMENT '服务项目',-- local,travel,interest,tech
+  `refid` int(11) NOT NULL UNIQUE,
+  `company` varchar(127) COMMENT '公司',
+  `service_item` varchar(127) COMMENT '服务项目',-- local,travel,interest,tech
   `img_business_licence` varchar(255) COMMENT '营业执照',
-  `phone_customservice` varchar(24) NOT NULL COMMENT '公司客服',
-  `shop_name` varchar(24) NOT NULL COMMENT '门店名称',
-  `city` varchar(24) NOT NULL COMMENT '城市',
-  `region` varchar(24) NOT NULL COMMENT '区域',
-  `address` varchar(24) NOT NULL COMMENT '信息地址',
+  `phone_customservice` varchar(24) COMMENT '公司客服',
+  `shop_name` varchar(24) COMMENT '门店名称',
+  `city` varchar(24) COMMENT '城市',
+  `region` varchar(24) COMMENT '区域',
+  `address` varchar(24) COMMENT '信息地址',
   `name` varchar(24) NOT NULL COMMENT '姓名',
-  `phone` varchar(24) NOT NULL COMMENT '电话',
-  `email` varchar(24) NOT NULL COMMENT '邮箱',
-  `QQ` varchar(24) NOT NULL COMMENT 'QQ',
+  `phone` varchar(24) COMMENT '电话',
+  `email` varchar(24) COMMENT '邮箱',
+  `QQ` varchar(24) COMMENT 'QQ',
+  `createtime` datetime NOT NULL COMMENT '添加时间',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
-  -- `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
+  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
   CONSTRAINT `fk_6s_user_business_uid` FOREIGN KEY (refid) REFERENCES 6s_user(id) ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -187,8 +189,8 @@ delete from auth_user where username='test3';
 insert into auth_user(username,password) values ("test3","test3");
 insert into 6s_user(id,openid,refid,username,phone,img,createtime,status) values (1002,9903,1,"test3","12345612345","http://121.42.41.241:9900/static/img/head.jpg",now(),1);
 
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","15099991234","email","QQ");
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","15099991288","email2","QQ2");
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ,createtime) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","15099991234","email","QQ",now());
+insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ,createtime) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","15099991288","email2","QQ2",now());
 
 
 -- ----------------------------

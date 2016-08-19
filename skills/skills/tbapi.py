@@ -141,8 +141,9 @@ def get_publish_activities(req):
 	ret,userid,sessionid = get_userinfo(req)
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
-		_json["errcode"] = 1 
-		_json["errmsg"] = "必须上传用户基础信息."
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(uid,sessionid):
+		return response_json_error("session过期.")
 
 	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_session a left join 6s_signup b on a.user_id=b.user_id left join 6s_activity c on b.act_id=c.id where b.status=1 and c.status =1 and a.user_id='%s' and a.session_id='%s';"%(userid,sessionid)
 	count,rets=dbmgr.db_exec(_sql)
@@ -162,8 +163,9 @@ def get_unpublish_activities(req):
 	ret,userid,sessionid = get_userinfo(req)
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
-		_json["errcode"] = 1 
-		_json["errmsg"] = "必须上传用户基础信息."
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(uid,sessionid):
+		return response_json_error("session过期.")
 
 	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_session a left join 6s_signup b on a.user_id=b.user_id left join 6s_activity c on b.act_id=c.id where b.status=1 and c.status=2 and a.user_id='%s' and a.session_id='%s';"%(userid,sessionid)
 	count,rets=dbmgr.db_exec(_sql)
@@ -208,7 +210,7 @@ def tbauth(req):
 	makeup_headers_CORS(resp)
 	return resp
 
-role_business = 1
+
 @csrf_exempt
 @req_print
 def signup_first_step(req):
@@ -246,6 +248,49 @@ def signup_first_step(req):
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
 	return resp
+
+
+@csrf_exempt
+@req_print
+def signup_second_step(req):
+	args = req.POST
+	ret,url = check_mysql_arg_jsonobj("url", args.get("url",None), "str")
+	if not ret:
+		return url
+	ret,name = check_mysql_arg_jsonobj("name", args.get("name",None), "str")
+	if not ret:
+		return name
+	ret,description = check_mysql_arg_jsonobj("description", args.get("description",None), "str")
+	if not ret:
+		return description
+	ret,userid,sessionid = get_userinfo(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+
+	_json = { "errcode":0,"errmsg":"" }
+	#_sql = "select * from 6s_user_business where refid=%d;"%(userid)
+	#count,rets=dbmgr.db_exec(_sql)
+	#if count > 0:
+	#	mo.logger.error("6s_user_business refid:%d has been registered. "%userid)
+	#	return response_json_error("该商户已经注册过.")
+
+	_sql = "update 6s_user set img='%s',username='%s',description='%s' where id=%s;"%(url,name,description,userid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		mo.logger.info("signup_second_step ok. useid:%s "%userid )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "更新信息失败."
+		mo.logger.error("signup_second_step failed. useid:%s "%userid )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
 
 
 from qiniu import Auth

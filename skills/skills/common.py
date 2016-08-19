@@ -17,6 +17,10 @@ import socket
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+role_admin = 0
+role_business = 1
+role_normal = 2
+
 def encode_md5(str):
 	import hashlib   
 	m2 = hashlib.md5()   
