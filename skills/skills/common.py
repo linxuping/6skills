@@ -37,11 +37,15 @@ def req_print(func):
 		def wrapper(*args):
 				req = args[0]
 				mo.logger.info("->%s POST:%s, GET:%s, USER:%s, args:%s"%(func.func_name,str(req.POST),str(req.GET),str(req.user),str(args[1:]) ))
+				starttime = time.time()
 				try:
 					ret = func(req)
 				except:
 					rets = "[func error] %s, %s."%(str(sys.exc_info()),str(traceback.format_exc())  )
 					mo.logger.error( rets )
+				endtime = time.time()
+				_sql = "insert into 6s_trace values('%s','%s',%.03f,now());"%(req.COOKIES.get("6suserid",'-1'), func.func_name,float(endtime-starttime) );
+				count,rets=dbmgr.db_exec(_sql)
 				return ret
 		return wrapper
 

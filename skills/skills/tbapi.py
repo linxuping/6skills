@@ -48,6 +48,16 @@ def check_user_valid(username, pwdmd5):
 		return False,None
 
 
+def check_user_admin(userid):
+	_sql = "select role_id from 6s_user where id='%s';"%userid
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		return rets[0][0]==role_admin
+	else:
+		mo.logger.error("cannot find user:%s."%userid)
+	return False
+
+
 def check_session_valid(uid, session_id):
 	_sql = "select DATE_ADD(start, INTERVAL 3 DAY)>NOW() from 6s_session where user_id='%s' and session_id='%s';"%(uid,session_id)
 	count,rets=dbmgr.db_exec(_sql)
@@ -91,7 +101,7 @@ def get_userinfo_from_cookie(req):
 
 
 @req_print
-def activity_sign_user(req):
+def get_activity_sign_user(req):
 	args = req.GET
 	print "cookies: ",req.COOKIES,req.COOKIES.get("userid",None)
 	#check.
@@ -113,7 +123,7 @@ def activity_sign_user(req):
 
 @csrf_exempt
 @req_print
-def activity_publish(req):
+def get_activity_publish(req):
 	args = req.POST
 	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
 	if not ret:
@@ -315,7 +325,41 @@ def get_userinfo(req):
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
+	#debug...............
+	set_cookie(resp,userid,sessionid)
 	return resp
+
+
+@req_print
+def get_manager_statistic(req):
+	args = req.GET
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+
+	_json = { "info":{},"errcode":0,"errmsg":"" }
+	_sql = "select count(id) from 6s_activity where status=1 and user_id=%s;"%userid
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["info"]["publish"] = int(rets[0][0])
+	_sql = "select sum(quantities-quantities_remain) from 6s_activity where status=1 and user_id=%s;"%userid
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["info"]["sign"] = int(rets[0][0])
+	_sql = "select count(user_id) from 6s_trace where user_id=%s and method='activities_details';"%userid
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["info"]["page_view"] = int(rets[0][0])
+
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
 
 
 

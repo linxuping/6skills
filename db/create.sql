@@ -358,6 +358,18 @@ CREATE TABLE `6s_session` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 insert into 6s_session(user_id,session_id) values (1,10101);
 
+select "+------------------ 6s_calc -------------------+";
+-- ----------------------------
+-- Table structure for 6s_calc 统计
+-- ----------------------------
+DROP TABLE IF EXISTS `6s_trace`;
+CREATE TABLE `6s_trace` (
+  `user_id` int(11) NOT NULL, 
+  `method` varchar(48) NOT NULL, 
+  `time` float(8,3) NOT NULL, 
+  `createtime` timestamp DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 
