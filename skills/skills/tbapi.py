@@ -63,22 +63,22 @@ def check_session_valid(uid, session_id):
 
 def get_perms(uid, session_id):
 	if check_session_valid(uid, session_id):
-		_sql = "select distinct d.name,b.name from 6s_user a left join 6s_role b on a.role_id=b.id left join 6s_authorize c on b.id=c.role_id left join 6s_permission d on c.perm_id=d.id where a.id=%s;"%(uid)
+		_sql = "select distinct d.name,b.name,a.username from 6s_user a left join 6s_role b on a.role_id=b.id left join 6s_authorize c on b.id=c.role_id left join 6s_permission d on c.perm_id=d.id where a.id=%s;"%(uid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count > 0:
-			return True,rets[0][1],[x[0] for x in rets]
+			return True,rets[0][1],rets[0][2],[x[0] for x in rets]
 		else:
 			mo.logger.error("user:%d get empty perms. "%uid)
 	else:
 		mo.logger.warn( "user:%d session_id:%d invalid ! "%(uid,session_id) )
-	return False,None,{}
+	return False,None,None,{}
 
 def set_cookie(resp,userid,sessionid):
 	dt = datetime.datetime.now() + datetime.timedelta(hours = int(72))
 	resp.set_cookie("6suserid",userid,expires=dt)
 	resp.set_cookie("6ssessionid",sessionid,expires=dt)
 
-def get_userinfo(req):
+def get_userinfo_from_cookie(req):
 	userid = req.COOKIES.get("6suserid",None)
 	if userid == None:
 		mo.logger.error("userid is None.")
@@ -138,7 +138,7 @@ def activity_publish(req):
 def get_publish_activities(req):
 	args = req.GET
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
-	ret,userid,sessionid = get_userinfo(req)
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
 		return response_json_error("必须上传用户基础信息.")
@@ -160,7 +160,7 @@ def get_publish_activities(req):
 def get_unpublish_activities(req):
 	args = req.GET
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
-	ret,userid,sessionid = get_userinfo(req)
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
 		return response_json_error("必须上传用户基础信息.")
@@ -195,7 +195,7 @@ def tbauth(req):
 	if count == 1:
 		sessionid = gen_new_sessionid(rets[0][0])
 		_json["sessionid"] = sessionid
-		ret,role,perms = get_perms(rets[0][0],sessionid)
+		ret,role,uname,perms = get_perms(rets[0][0],sessionid)
 		if ret:
 			_json["userid"] = rets[0][0]
 			_json["role"] = role
@@ -263,7 +263,7 @@ def signup_second_step(req):
 	ret,description = check_mysql_arg_jsonobj("description", args.get("description",None), "str")
 	if not ret:
 		return description
-	ret,userid,sessionid = get_userinfo(req)
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
 		return response_json_error("必须上传用户基础信息.")
@@ -290,6 +290,28 @@ def signup_second_step(req):
 	makeup_headers_CORS(resp)
 	return resp
 
+
+@req_print
+def get_userinfo(req):
+	args = req.GET
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+
+	_json = { "userinfo":{},"errcode":0,"errmsg":"" }
+	ret,role,uname,perms = get_perms(userid,sessionid)
+	if ret:
+		_json["userinfo"]["name"] = uname
+		_json["userinfo"]["role"] = role
+		_json["userinfo"]["permissions"] = perms
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 
 
 

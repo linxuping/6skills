@@ -74,6 +74,7 @@ urlpatterns = patterns('',
 		url(r'^api/admin/signup-second-step', tbapi.signup_second_step),
 
 		url(r'^api/admin/get_uploadtoken', tbapi.get_uploadtoken),
+		url(r'^api/admin/get-userinfo', tbapi.get_userinfo),
 		#0819.
 		#tbapi END.
 )
