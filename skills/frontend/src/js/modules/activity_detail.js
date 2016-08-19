@@ -43,7 +43,7 @@ var ActivityDetail = React.createClass({
 			url: this.props.url,
 			type: 'get',
 			dataType: 'json',
-			data: { "actid":actid },
+			data: { "actid":actid,"openid":geopenid() },
 			success: function(res) {
 				console.log(res);
 				this.setState({
