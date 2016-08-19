@@ -248,6 +248,34 @@ def signup_first_step(req):
 	return resp
 
 
+from qiniu import Auth
+'''
+返回上传文件时需要的token。输入为key字符串，输出为token字符串
+key为文件的唯一标识，为避免重复，建议由2部分组成，前半部分为商户的唯一标识手机号，后半部分为文件名
+例如：key = '13912345678/my-python-logo.png'
+前端获取token后，上传本地文件，上传成功后的url格式为http://img.6skills.com/key
+
+'''
+@req_print
+def get_uploadtoken(req):
+	args = req.GET
+	#check.
+	ret,key = check_mysql_arg_jsonobj("key", args.get("key",None), "str")
+	if not ret:
+		return key
+
+	access_key = '-YQ_Z6KbcOw1oGbhSM9au01otcr8UWvK5O4FfyiK'
+	secret_key = 'wDhQo8wTEuESIN2dMYd5pEBl_Yoe5RsX0x4dThxa'
+	q = Auth(access_key, secret_key)
+	bucket_name = 'sixskills'
+
+	#超时过期时间为3600
+	token = q.upload_token(bucket_name, key, 3600)
+	mo.logger.info("get_uploadtoken key:%s token:%s "%(key,token) )
+	_json = {"token": "", "errcode": 0, "errmsg": ""}
+	_json["token"] = token
+	_jsonobj = json.dumps(_json)
+	return HttpResponse(_jsonobj, mimetype='application/json')
 
 #--------- GLOBAL INIT ---------#
 
