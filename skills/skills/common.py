@@ -44,7 +44,7 @@ def req_print(func):
 					rets = "[func error] %s, %s."%(str(sys.exc_info()),str(traceback.format_exc())  )
 					mo.logger.error( rets )
 				endtime = time.time()
-				_sql = "insert into 6s_trace values('%s','%s',%.03f,now());"%(req.COOKIES.get("6suserid",'-1'), func.func_name,float(endtime-starttime) );
+				_sql = "insert into 6s_trace values('%s','%s',%.03f,now());"%(req.GET.get("openid",req.COOKIES.get("6suserid",'-1')), func.func_name,float(endtime-starttime) );
 				count,rets=dbmgr.db_exec(_sql)
 				return ret
 		return wrapper
