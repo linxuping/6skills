@@ -685,3 +685,235 @@ discountPrice|string|Y|折后价
 }
 ```
 
+### 15. 商户验证
+**POST**
+** URL ** /api/admin/authorization
+
+**参数**
+```json
+{
+	"item":"服务项目",
+    "hasbusilicense":"是否有营业执照",
+    "license":"营业执照号",
+    "licensePic":"营业执照照片",
+    "identity":"身份证号"，
+    "identityPic":"身份证图片",
+    "companyTel":"公司客服电话",
+    "companyName":"门店名称",
+    "city":"城市",
+    "area":"区域",
+    "address":"详细地址",
+    "contactName":"联系人姓名",
+    "contactTel":"联系人电话",
+    "contactEmail":"联系人邮箱",
+    "contactQQ":"联系人QQ号",
+    "contactWechat":"联系人微信号"
+}
+```
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 16.信息设置 account_setting
+**post**
+**url**/api/admin/account
+
+**参数**
+```json
+{
+    "favicon":"头像",
+    "accountName":"商户的名称",
+    "newPwd":"修改密码后的新密码"
+}
+```
+
+**返回**
+```json
+{
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
+### 17.管理员主页 superadmin home
+**get**
+**url**/api/superadmin/home
+
+**返回**
+```json
+{
+    "activities":[
+            {
+            "activityName":"活动名称",
+            "outtime":"活动发布时间",
+            "actilink":"连接",
+            "signupNum":"报名的人数",
+            "action":"操作"
+            },
+            ...
+    ]
+}
+```
+
+### 18.活动 superadmin-activity
+**post**
+**url**/api/superadmin/activity
+
+**参数**
+```json
+{
+    "city":"筛选城市"
+}
+```
+
+**返回**
+```json
+{
+    "city":"筛选条件"
+    "activities":[
+            {
+            "activityName":"活动名称",
+            "onlinetime":"活动上线时间",
+            "classification":"类型",
+            "status":"当前状态",
+            "action":"操作"
+            },
+            ...
+    ]
+}
+```
+
+### 19.添加优惠 superadmin addpreference
+**post**
+**url** /api/superadmin/addpreference
+
+**参数**
+```json
+{
+    "prefenceInfo":"优惠信息说明"
+    "duration":"持续的时间",
+    "maxnum":"优惠报名数限制",
+    "activityPre":"要优惠的活动",
+    "discountPrice":"折后价"
+}
+```
+
+**返回**
+```json
+{
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
+### 20.优惠列表 preferencelist
+**get**
+**url** /api/superadmin/preferencelist
+**返回**
+```json
+{
+    "activities":[
+    {
+        "activityName":"活动名称",
+        "beginTime":"开始时间",
+        "endTime":"结束时间",
+        "status":"状态",
+        "action":"操作"
+    },
+    ...
+    ]
+}
+```
+
+### 21. 审核认证 superadmin authorization
+**post**
+**url** /api/superadmin/authorization-list
+**参数**
+```json
+{
+    "city":"城市"
+}
+```
+
+**返回**
+```json
+{
+    "adminInfo":[
+    {
+        "adminAccount":"商户账号",
+        "adminTel":"商户手机号",
+        "applicationTime":"申请日期",
+        "status":"当前状态",
+        "action":"操作"
+    },
+    ...
+    ]
+}
+```
+
+### 22.认证 superadmin authorization
+**post**
+**url** /api/superadmin/authorizationInfo
+**返回**
+```json
+{
+    "item":"服务项目",
+    "haslicense":"是否有营业执照",
+    "licenseId":"营业执照号",
+    "identyId":"身份证号",
+    "tel":"公司客服电话",
+    "companyName":"门店名称",
+    "city":"城市",
+    "area":"区域",
+    "address":"详细地址",
+    "contactName":"联系人姓名",
+    "contactTel":"联系人电话",
+    "contactmail":"联系人邮箱",
+    "contactQQ":"联系人QQ号",
+    "contactWechat":"联系人微信"
+}
+```
+
+### 23.报名信息 superadmin-activity-user
+**post**
+**url** /api/superadmin/activity-user
+**参数**
+```json
+{
+    "city":"城市",
+    "time": "时间",
+    "actid": "活动id,可为空"
+}
+```
+
+**返回**
+```json
+{
+    "activities": [
+    	{
+		    "time":"时间",
+		    "title":"活动",
+		    "wechat":"用户微信号",
+		    "name":"用户姓名",
+		    "tel":"用户的电话号码",
+		    "childAge":"儿童年龄",
+		    "childSex":"儿童性别"
+	    }
+    ],
+    errcode: 0,
+    errmsg: ""
+}
+```
