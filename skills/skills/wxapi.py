@@ -63,8 +63,8 @@ def activities_special_offers(req):
 			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"tags":lis[3],"area":lis[4],"ages":"%s-%s"%(lis[5],lis[6]),"price_child":lis[7],"price_adult":lis[8],"quantities_remain":lis[9],"img_cover":lis[10]} )#,"price_child_pre":lis[11],"price_adult_pre":lis[12],"preinfo":lis[13]
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"DB failed."
-		pass #error log
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("db fail. ")
 
 	#if district == "":
 	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,_age_from,_age_to,_age_from,_age_to)
@@ -116,8 +116,8 @@ def activities_preview(req):
 			_json["activities"].append( {"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_child":lis[8],"price_adult":lis[9],"quantities_remain":lis[10]} )
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"DB failed."
-		pass #error log
+		_json["errmsg"] = "数据操作失败."
+		mo.logger.error("activities_preview sql exec count:%d. "%count)
 
 	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where c.pid=(select id from 6s_position where name ='%s');"%(area)
 	count,rets=dbmgr.db_exec(_sql)
@@ -151,8 +151,8 @@ def activities_details(req):
 		_json["errmsg"] = "activity:%d not exist."%actid
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"DB failed."
-		pass #error log
+		_json["errmsg"] = "数据操作失败."
+		mo.logger.error("activities_details sql exec count:%d. "%count)
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
@@ -182,7 +182,8 @@ def get_authcode(req):
 	#if count<0 and str(rets).find("UNIQUE KEY is unsafe")!=-1:
 	if count < 0:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"DB failed."
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("db fail. ")
 	else:
 		pass  #send sms.
 	_jsonobj = json.dumps(_json)
@@ -218,6 +219,7 @@ def wxauth_idencode(req):
 			if count == 1:
 				pass
 			else:
+				mo.logger.error("insert user failed.")
 				pass
 				#if str(rets).find("Duplicate entry ") != -1:
 				#	_json["errcode"] = 1
@@ -228,7 +230,7 @@ def wxauth_idencode(req):
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "验证码错误."
-		pass #error log
+		mo.logger.warn("验证码错误.")
 
 	_jsonobj = json.dumps(_json)
 	return HttpResponse(_jsonobj, mimetype='application/json')
@@ -286,7 +288,7 @@ def activities_sign(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: 
 					#save to 6s_user.
-					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime) values(%d,%d,'%s',%d,%s,%s,now());"%(uid,actid,name,age,phone,gender)
+					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime) values(%d,%d,'%s',%d,'%s','%s',now());"%(uid,actid,name,age,phone,gender)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 1:
 						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)
@@ -296,24 +298,28 @@ def activities_sign(req):
 						else:
 							_json["errcode"] = 1
 							_json["errmsg"] = "报名剩余人数-1失败！act:%d,u:%d"%(actid,uid)
+							mo.logger.error("报名剩余人数-1失败！act:%d,u:%d"%(actid,uid))
 					else:
 						if str(rets).find("Duplicate entry ") != -1:
 							_json["errcode"] = 1
 							_json["errmsg"] = "报名信息已经存在！act:%d,u:%d"%(actid,uid)
+							mo.logger.error("报名信息已经存在！act:%d,u:%d"%(actid,uid))
 						else:
 							_json["errcode"] = 2
-							_json["errmsg"] = get_errtag()+"报名失败. act:%d,u:%d"%(actid,uid)
+							_json["errmsg"] = "报名失败. "
+							mo.logger.error("报名失败. actid:%d,uid:%d. "%(actid,uid))
 				else:
 					_json["errcode"] = 3
 					_json["errmsg"] = "您已经对该活动报过名."
-					mo.logger.warn("signup again.  act:%d,u:%d."%(actid,uid))
+					mo.logger.error("您已经对该活动报过名.  act:%d,u:%d."%(actid,uid))
 			else:
 				_json["errcode"] = 4
-				_json["errmsg"] = get_errtag()+"User with phone:%s not exist."%phone
+				_json["errmsg"] = "用户不存在."
+				mo.logger.error("用户信息异常. openid:%s count:%d"%(openid,count) )
 	else:
 		_json["errcode"] = 5
-		_json["errmsg"] = "活动:%d不存在."%actid
-		pass #error log
+		_json["errmsg"] = "活动不存在."
+		mo.logger.error("活动:%d不存在."%actid )
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
@@ -351,11 +357,12 @@ def activities_my(req):
 			_json["pageable"]["page"] = page
 		else:
 			_json["errcode"] = 1
-			_json["errmsg"] = get_errtag()+"get signup count failed."
+			_json["errmsg"] = "数据操作失败."
+			mo.logger.error("get signup count fail. actid:%d"%actid )
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"DB failed."
-		pass #error log
+		_json["errmsg"] = "数据操作失败."
+		mo.logger.error("db fail." )
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
@@ -385,10 +392,12 @@ def activities_reset(req):
 		pass
 	elif count == 0:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"Nothing update."
+		_json["errmsg"] = "报名信息未更新."
+		mo.logger.warn("Nothing update.." )
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"DB failed."
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("db fail." )
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
@@ -412,7 +421,8 @@ def activities_getareas(req):
 			_json["values"].append( rets[i][0] )
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"DB failed."
+		_json["errmsg"] = "该城市区域未入库."
+		mo.logger.error("该城市区域未入库. city:%s"%city )
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
@@ -472,7 +482,7 @@ def activities_getprofile(req):
 		_json["profile"] = { "username":rets[0][0],"phone":rets[0][1],"img":rets[0][2] }
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"DB failed."
+		_json["errmsg"] = "找不到当前用户."
 		mo.logger.error("cannot find user:%s. "%openid+REQ_TAG(args))
 
 	_jsonobj = json.dumps(_json)
@@ -511,12 +521,12 @@ def activities_mycollections(req):
 			_json["pageable"]["page"] = page
 		else:
 			_json["errcode"] = 1
-			_json["errmsg"] = get_errtag()+"get collection count failed."
-			mo.logger.error(get_errtag()+"get collection count failed. "+REQ_TAG(args))
+			_json["errmsg"] = "数据操作异常."
+			mo.logger.error("get collection count failed. "+REQ_TAG(args))
 	else:
-		_json["errcode"] = 1
-		_json["errmsg"] = get_errtag()+"数据操作失败."
-		mo.logger.error(get_errtag()+"DB failed."+REQ_TAG(args))
+		_json["errcode"] = 2
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("DB failed."+REQ_TAG(args))
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
@@ -546,7 +556,7 @@ def activities_reset_collection(req):
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "取消收藏失败."
-		mo.logger.error(get_errtag()+"del collection failed."+REQ_TAG(args))
+		mo.logger.error("del collection failed."+REQ_TAG(args))
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
