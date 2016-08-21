@@ -426,9 +426,7 @@ def get_uploadtoken(req):
 	if not ret:
 		return key
 
-	access_key = '-YQ_Z6KbcOw1oGbhSM9au01otcr8UWvK5O4FfyiK'
-	secret_key = 'wDhQo8wTEuESIN2dMYd5pEBl_Yoe5RsX0x4dThxa'
-	q = Auth(access_key, secret_key)
+	q = Auth(settings.access_key, settings.secret_key)
 	bucket_name = 'sixskills'
 
 	#超时过期时间为3600
