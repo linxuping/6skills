@@ -1,13 +1,18 @@
+require('../../lib/css/bootstrap.min.css');
+require('../../lib/css/jquery-ui.custom.min.css');
+require('../../lib/css/ace.min.css');
+require('../../lib/font-awesome/4.5.0/css/font-awesome.min.css')
+require('../../css/style.less');
+
 import React from 'react';
-var jQuery = require('jquery');
+require('jquery');
+require('react-bootstrap');
+require('../../lib/js/ace-elements.min.js');
 var ace = require('../../lib/js/ace.min.js');
 import Footer from './footer.jsx';
 import CusNavbar from './navbar.jsx';
 import Sidebar from './sibebar.jsx';
-require('../../lib/css/bootstrap.min.css');
-require('../../lib/css/ace.min.css');
-require('../../lib/font-awesome/4.5.0/css/font-awesome.min.css')
-require('../../css/style.less');
+
 
 
 class Layout extends React.Component {
@@ -17,6 +22,8 @@ class Layout extends React.Component {
     }
 
     componentDidMount() {
+      //一定要这句 可能ace跟jquery版本不对
+      jQuery.support.transition = {};
       try{
         ace.settings.loadState('main-container');
         ace.settings.loadState('sidebar');
