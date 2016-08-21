@@ -164,9 +164,9 @@ def activities_details(req):
 @req_print
 def get_authcode(req):
 	#check.
-	#ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
-	#if not ret:
-	#	return phone
+	ret,phone = check_mysql_arg_jsonobj("phone", req.GET.get("phone",None), "int")
+	if not ret:
+		return phone
 	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
 	if not ret:
 		return openid
@@ -185,7 +185,29 @@ def get_authcode(req):
 		_json["errmsg"] = "数据操作异常."
 		mo.logger.error("db fail. ")
 	else:
-		pass  #send sms.
+		import top
+		top.setDefaultAppInfo(settings.sms_id, settings.sms_secret)
+		req = top.api.AlibabaAliqinFcSmsNumSendRequest()
+
+		req.sms_type = "normal"
+		req.sms_free_sign_name = "测试"
+		req.sms_param = "{\"number\":\"%s\"}" % (code)
+		req.rec_num = "%s" % (phone)
+		req.sms_template_code = "SMS_13250672"
+		try:
+			resp = req.getResponse()
+			if resp["alibaba_aliqin_fc_sms_num_send_response"]["result"]["err_code"] == "0":
+				mo.logger.error("send sms to %s:%s. "%(phone,code) )
+				pass
+			else:
+				_json["errcode"] = 1
+				_json["errmsg"] = "验证码发送失败(1)."
+				mo.logger.error("send sms fail: %s" % (resp))
+		except Exception, e:
+			ret = str(sys.exc_info()) + "; " + str(traceback.format_exc()) 
+			_json["errcode"] = 1
+			_json["errmsg"] = "验证码发送失败(2)."
+			mo.logger.error("send sms fail: %s"%ret )
 	_jsonobj = json.dumps(_json)
 	return HttpResponse(_jsonobj, mimetype='application/json')
 

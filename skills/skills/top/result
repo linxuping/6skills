@@ -1,0 +1,51 @@
+./__init__.py:from skills.top.api.base import sign
+./api/__init__.py:from skills.top.api.rest import *
+./api/__init__.py:from skills.top.api.base import FileItem
+./api/rest/__init__.py:from skills.top.api.rest.TopIpoutGetRequest import TopIpoutGetRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcFlowChargeProvinceRequest import AlibabaAliqinFcFlowChargeProvinceRequest
+./api/rest/__init__.py:from skills.top.api.rest.HttpdnsGetRequest import HttpdnsGetRequest
+./api/rest/__init__.py:from skills.top.api.rest.TopSecretGetRequest import TopSecretGetRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcFlowQueryRequest import AlibabaAliqinFcFlowQueryRequest
+./api/rest/__init__.py:from skills.top.api.rest.KfcKeywordSearchRequest import KfcKeywordSearchRequest
+./api/rest/__init__.py:from skills.top.api.rest.TopatsTaskDeleteRequest import TopatsTaskDeleteRequest
+./api/rest/__init__.py:from skills.top.api.rest.TimeGetRequest import TimeGetRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcSmsNumSendRequest import AlibabaAliqinFcSmsNumSendRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcTtsNumSinglecallRequest import AlibabaAliqinFcTtsNumSinglecallRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcSmsNumQueryRequest import AlibabaAliqinFcSmsNumQueryRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcFlowChargeRequest import AlibabaAliqinFcFlowChargeRequest
+./api/rest/__init__.py:from skills.top.api.rest.TopatsResultGetRequest import TopatsResultGetRequest
+./api/rest/__init__.py:from skills.top.api.rest.AreasGetRequest import AreasGetRequest
+./api/rest/__init__.py:from skills.top.api.rest.TopAuthTokenCreateRequest import TopAuthTokenCreateRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcFlowGradeRequest import AlibabaAliqinFcFlowGradeRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcVoiceNumDoublecallRequest import AlibabaAliqinFcVoiceNumDoublecallRequest
+./api/rest/__init__.py:from skills.top.api.rest.AlibabaAliqinFcVoiceNumSinglecallRequest import AlibabaAliqinFcVoiceNumSinglecallRequest
+./api/rest/__init__.py:from skills.top.api.rest.TopAuthTokenRefreshRequest import TopAuthTokenRefreshRequest
+./api/rest/__init__.py:from skills.top.api.rest.AppipGetRequest import AppipGetRequest
+./api/rest/AreasGetRequest.py:from skills.top.api.base import RestApi
+./api/rest/TimeGetRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopatsResultGetRequest.py:from top.api.base import RestApi
+./api/rest/AlibabaAliqinFcFlowChargeRequest.py:from skills.top.api.base import RestApi
+./api/rest/AlibabaAliqinFcVoiceNumSinglecallRequest.py:from skills.top.api.base import RestApi
+./api/rest/AlibabaAliqinFcTtsNumSinglecallRequest.py:from skills.top.api.base import RestApi
+./api/rest/KfcKeywordSearchRequest.py:from skills.top.api.base import RestApi
+./api/rest/AlibabaAliqinFcFlowQueryRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopIpoutGetRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopIpoutGetRequest.py:		return 'taobao.top.ipout.get'
+./api/rest/TopAuthTokenCreateRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopAuthTokenCreateRequest.py:		return 'taobao.top.auth.token.create'
+./api/rest/AlibabaAliqinFcSmsNumSendRequest.py:from skills.top.api.base import RestApi
+./api/rest/AlibabaAliqinFcVoiceNumDoublecallRequest.py:from skills.top.api.base import RestApi
+./api/rest/AlibabaAliqinFcFlowChargeProvinceRequest.py:from skills.top.api.base import RestApi
+./api/rest/AlibabaAliqinFcSmsNumQueryRequest.py:from skills.top.api.base import RestApi
+./api/rest/AlibabaAliqinFcFlowGradeRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopatsTaskDeleteRequest.py:from skills.top.api.base import RestApi
+./api/rest/AppipGetRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopAuthTokenRefreshRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopAuthTokenRefreshRequest.py:		return 'taobao.top.auth.token.refresh'
+./api/rest/HttpdnsGetRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopSecretGetRequest.py:from skills.top.api.base import RestApi
+./api/rest/TopSecretGetRequest.py:		return 'taobao.top.secret.get'
+./api/base.py:        if(top.getDefaultAppInfo()):
+./api/base.py:            self.__app_key = top.getDefaultAppInfo().appkey
+./api/base.py:            self.__secret = top.getDefaultAppInfo().secret
+./api/base.py:        #                 appinfo top.appinfo(appkey,secret)
