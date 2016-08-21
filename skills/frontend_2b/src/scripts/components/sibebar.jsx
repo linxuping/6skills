@@ -1,5 +1,31 @@
+/*
+                   _ooOoo_
+                  o8888888o
+                  88" . "88
+                  (| -_- |)
+                  O\  =  /O
+               ____/`---'\____
+             .'  \\|     |//  `.
+            /  \\|||  :  |||//  \
+           /  _||||| -:- |||||-  \
+           |   | \\\  -  /// |   |
+           | \_|  ''\---/''  |   |
+           \  .-\__  `-`  ___/-. /
+         ___`. .'  /--.--\  `. . __
+      ."" '<  `.___\_<|>_/___.'  >'"".
+     | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+     \  \ `-.   \_ __\ /__ _/   .-` /  /
+======`-.____`-.___\_____/___.-`____.-'======
+                   `=---='
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         佛祖保佑       永无BUG
+*/
+
 import React from 'react';
-import {Nav, NavItem} from 'react-bootstrap';
+import ReactDom from 'react-dom';
+import $ from 'jquery';
+
+import {Nav, NavItem, NavDropdown, MenuItem, Dropdown} from 'react-bootstrap';
 
 export default class Sidebar extends React.Component {
   static propTypes = {
@@ -10,238 +36,72 @@ export default class Sidebar extends React.Component {
     super(props);
   }
 
+  state = {
+    menus: [
+      {id: "index", name: "首页", fa: "fa-home", href: "/"},
+      {name: "管理", fa: "fa-cogs", href: "#",
+       submenu: [
+         {id: "act-manager", name: "活动管理", href: "#"},
+         {id: "auth-manager", name: "商户认证审核", href: "#"},
+         {id: "perf-manager", name: "限时优惠", href: "#"},
+       ]
+      },
+      {name: "统计", fa: "fa-list", href: "#",
+        submenu: [
+          {id: "analytics", name: "活动报名统计", href:"#"}
+        ]
+      }
+    ]
+  };
+
+  componentDidMount() {
+    var path = window.location.pathname;
+    console.log(path)
+    this.setState({
+      url: path
+    });
+  }
+
   render() {
     return (
-      <div id="sidebar" className="sidebar responsive ace-save-state">
+      <div id="sidebar" className="sidebar responsive ace-save-state" >
+
         <ul className="nav nav-list">
-          <li className="active">
-            <a href="index.html">
-              <i className="menu-icon fa fa-tachometer"></i>
-              <span className="menu-text"> Dashboard </span>
-            </a>
+          {
+            this.state.menus.map(function(elem, index) {
+              return (
+                <li key={index} className={this.state.url == elem.href ? "active": ""}>
+                  <a href={elem.href} className={elem.submenu == undefined ? "": "dropdown-toggle"}>
+                    <i className={"menu-icon fa fa-fw " + elem.fa}></i>
+                    <span className="menu-text">{elem.name}</span>
 
-            <b className="arrow"></b>
-          </li>
+                    {
+                      elem.submenu == undefined ? "": <b className="arrow fa fa-angle-down"></b>
+                    }
 
-          <li className="">
-            <a href="#" className="dropdown-toggle">
-              <i className="menu-icon fa fa-desktop"></i>
-              <span className="menu-text">
-                UI &amp; Elements
-              </span>
-
-              <b className="arrow fa fa-angle-down"></b>
-            </a>
-
-            <b className="arrow"></b>
-
-            <ul className="submenu">
-              <li className="">
-                <a href="typography.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Typography
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="elements.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Elements
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="buttons.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Buttons &amp; Icons
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="content-slider.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Content Sliders
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="treeview.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Treeview
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="jquery-ui.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  jQuery UI
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="nestable-list.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Nestable Lists
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="#" className="dropdown-toggle">
-                  <i className="menu-icon fa fa-caret-right"></i>
-
-                  Three Level Menu
-                  <b className="arrow fa fa-angle-down"></b>
-                </a>
-
-                <b className="arrow"></b>
-
-                <ul className="submenu">
-                  <li className="">
-                    <a href="#">
-                      <i className="menu-icon fa fa-leaf green"></i>
-                      Item #1
-                    </a>
-
-                    <b className="arrow"></b>
-                  </li>
-
-                  <li className="">
-                    <a href="#" className="dropdown-toggle">
-                      <i className="menu-icon fa fa-pencil orange"></i>
-
-                      4th level
-                      <b className="arrow fa fa-angle-down"></b>
-                    </a>
-
-                    <b className="arrow"></b>
-
-                    <ul className="submenu">
-                      <li className="">
-                        <a href="#">
-                          <i className="menu-icon fa fa-plus purple"></i>
-                          Add Product
-                        </a>
-
-                        <b className="arrow"></b>
-                      </li>
-
-                      <li className="">
-                        <a href="#">
-                          <i className="menu-icon fa fa-eye pink"></i>
-                          View Products
-                        </a>
-
-                        <b className="arrow"></b>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-
-          <li className="">
-            <a href="#" className="dropdown-toggle">
-              <i className="menu-icon fa fa-list"></i>
-              <span className="menu-text"> Tables </span>
-
-              <b className="arrow fa fa-angle-down"></b>
-            </a>
-
-            <b className="arrow"></b>
-
-            <ul className="submenu">
-              <li className="">
-                <a href="tables.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Simple &amp; Dynamic
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="jqgrid.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  jqGrid plugin
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-            </ul>
-          </li>
-
-          <li className="">
-            <a href="#" className="dropdown-toggle">
-              <i className="menu-icon fa fa-pencil-square-o"></i>
-              <span className="menu-text"> Forms </span>
-
-              <b className="arrow fa fa-angle-down"></b>
-            </a>
-
-            <b className="arrow"></b>
-
-            <ul className="submenu">
-              <li className="">
-                <a href="form-elements.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Form Elements
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="form-elements-2.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Form Elements 2
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="form-wizard.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Wizard &amp; Validation
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="wysiwyg.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Wysiwyg &amp; Markdown
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-
-              <li className="">
-                <a href="dropzone.html">
-                  <i className="menu-icon fa fa-caret-right"></i>
-                  Dropzone File Upload
-                </a>
-
-                <b className="arrow"></b>
-              </li>
-            </ul>
-          </li>
+                  </a>
+                  <b className="arrow"></b>
+                  {
+                    elem.submenu == undefined ? "" :
+                      <ul className="submenu">
+                        {
+                          elem.submenu.map(function(elem, index) {
+                            return (
+                              <li key={index} className={this.state.url == elem.href ? "active": ""}>
+                                <a href={elem.href}>
+                                  <i className="menu-icon fa fa-caret-right"></i>
+                                  {elem.name}
+                                </a>
+                              </li>
+                            )
+                          }.bind(this))
+                        }
+                      </ul>
+                  }
+                </li>
+              )
+            }.bind(this))
+          }
         </ul>
       </div>
     );
