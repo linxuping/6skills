@@ -24,10 +24,18 @@ def db_init():
 						#time.sleep(1)
 		return False,ret
 
+
+class DBOperation:
+	default = "default"
+	select = "select"
+	insert = "insert"
+
+
 @mo.time_calc
-def db_exec(_sql):
+def db_exec(_sql, op=DBOperation.default):
 		global g_conn
 		count,rets = -1,None
+		ret = None
 		for i in range(3):
 				_cur = None
 				try:
@@ -41,10 +49,13 @@ def db_exec(_sql):
 						db_init()
 				finally:
 						if _cur != None:
+								ret = _cur.lastrowid
 								_cur.close()
 								g_conn.commit()
 		#mo.logger.info("[sql] %s %d %s. "%(_sql,count,str(rets) ))
 		mo.logger.info("[sql] %s, count:%d."%(_sql[:50]+"...",count ))
+		if op == DBOperation.insert:
+			return count,rets,ret
 		return count,rets
 
 def db_select_test():		#cur.execute('select * from user')

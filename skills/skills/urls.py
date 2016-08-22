@@ -78,7 +78,10 @@ urlpatterns = patterns('',
 		url(r'^api/admin/manager/statistic', tbapi.get_manager_statistic),
 		url(r'^api/admin/export-activity-users', tbapi.get_export_activity_users),
 		url(r'^api/admin/replace-qr', tbapi.replace_qr),
-		#0819.
+		#0822.
+		url(r'^api/admin/activities/preference/add', tbapi.add_preference),
+		url(r'^api/admin/activities/preferencelist', tbapi.get_preferencelist),
+		#url(r'^api/admin/replace-qr', tbapi.replace_qr),
 		#tbapi END.
 )
 

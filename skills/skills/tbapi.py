@@ -178,7 +178,7 @@ def get_publish_activities(req):
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
 		return response_json_error("必须上传用户基础信息.")
-	if not check_session_valid(uid,sessionid):
+	if not check_session_valid(userid,sessionid):
 		return response_json_error("session过期.")
 
 	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_session a left join 6s_signup b on a.user_id=b.user_id left join 6s_activity c on b.act_id=c.id where b.status=1 and c.status =1 and a.user_id='%s' and a.session_id='%s';"%(userid,sessionid)
@@ -200,7 +200,7 @@ def get_unpublish_activities(req):
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
 		return response_json_error("必须上传用户基础信息.")
-	if not check_session_valid(uid,sessionid):
+	if not check_session_valid(userid,sessionid):
 		return response_json_error("session过期.")
 
 	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_session a left join 6s_signup b on a.user_id=b.user_id left join 6s_activity c on b.act_id=c.id where b.status=1 and c.status=2 and a.user_id='%s' and a.session_id='%s';"%(userid,sessionid)
@@ -408,6 +408,74 @@ def replace_qr(req):
 	makeup_headers_CORS(resp)
 	return resp
 
+
+@csrf_exempt
+@req_print
+def add_preference(req):
+	args = req.POST
+	ret,description = check_mysql_arg_jsonobj("description", args.get("description",None), "str")
+	if not ret:
+		return description
+	ret,begintime = check_mysql_arg_jsonobj("begintime", args.get("begintime",None), "str")
+	if not ret:
+		return begintime
+	ret,endtime = check_mysql_arg_jsonobj("endtime", args.get("endtime",None), "str")
+	if not ret:
+		return endtime
+	ret,price = check_mysql_arg_jsonobj("discountPrice", args.get("discountPrice",None), "int")
+	if not ret:
+		return price
+	ret,maxnum = check_mysql_arg_jsonobj("maxnum", args.get("maxnum",None), "int")
+	if not ret:
+		return maxnum
+	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
+	if not ret:
+		return actid
+
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "insert into 6s_preinfo(price_child,time_from,time_to,content,quantities) values (%d,'%s','%s','%s',%d);"%(price,begintime,endtime,description,maxnum)
+	count,rets,insertid=dbmgr.db_exec(_sql,dbmgr.DBOperation.insert)
+	mo.logger.info("add 6s_preinfo result id:%s. "%str(ret) )
+	if count == 1:
+		_sql = "update 6s_activity set preinfo_id=%d where id=%d"%(insertid,actid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count != 1:
+			_json["errcode"] = 1
+			_json["errmsg"] = "活动添加优惠信息失败."
+			mo.logger.error("活动添加优惠信息 actid:%d preinfo:%d. "%(actid,insertid) )
+		else:
+			mo.logger.info("活动添加优惠信息 actid:%d preinfo:%d. "%(actid,insertid) )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "添加优惠信息失败."
+		mo.logger.error("添加优惠信息失败. "+REQ_TAG(args) )
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def get_preferencelist(req):
+	args = req.GET
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+
+	_json = { "preferencelist":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	_sql = "select a.content,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),if(a.status=1,\"在线\",if(a.status=2,\"未开始\",\"其他\")) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where c.id=%s and a.status>0;"%userid
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in xrange(count):
+			_json["preferencelist"].append( {"content":rets[i][0],"time_from":rets[i][1],"time_to":rets[i][2],"status":rets[i][3]} )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 
 
 from qiniu import Auth

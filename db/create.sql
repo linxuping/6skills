@@ -200,8 +200,8 @@ select "+------------------ 6s_preinfo -------------------+";
 DROP TABLE IF EXISTS `6s_preinfo`;
 CREATE TABLE `6s_preinfo` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '',
-  `price_child` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
-  `price_adult` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
+  `price_child` float(8,2) NOT NULL DEFAULT 0 COMMENT '价格',
+  `price_adult` float(8,2) NOT NULL DEFAULT 0 COMMENT '价格',
   `time_from` timestamp NULL DEFAULT NULL COMMENT '活动时间-开始，NULL 长期',
   `time_to` timestamp NULL DEFAULT NULL COMMENT '活动时间-结束',
   `quantities` int(11) NOT NULL DEFAULT 0 COMMENT '参与人数',
@@ -210,11 +210,11 @@ CREATE TABLE `6s_preinfo` (
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `act_id` int(11) default 0 COMMENT '指派的活动',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
-  `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
+  `status` tinyint(4) DEFAULT '2' COMMENT '状态.1-上线,0-下线,2-准备上线',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-insert into 6s_preinfo(id,price_child,price_adult,time_from,time_to,quantities,quantities_remain,content,createtime) values(101,19,29,"2016-08-10","2016-08-14",12,12,"2周年活动优惠2折.",now());
-insert into 6s_preinfo(id,price_child,price_adult,time_from,time_to,quantities,quantities_remain,content,createtime) values(102,19,29,"2016-08-10","2016-08-14",12,12,"2周年活动优惠95折.",now());
+insert into 6s_preinfo(id,price_child,time_from,time_to,quantities,quantities_remain,content,createtime) values(101,19,"2016-08-10","2016-08-14",12,12,"2周年活动优惠2折.",now());
+insert into 6s_preinfo(id,price_child,time_from,time_to,quantities,quantities_remain,content,createtime) values(102,19,"2016-08-10","2016-08-14",12,12,"2周年活动优惠95折.",now());
 
 
 -- ----------------------------
@@ -224,8 +224,8 @@ select "+------------------ 6s_activity -------------------+";
 DROP TABLE IF EXISTS `6s_activity`;
 CREATE TABLE `6s_activity` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '',
-  `price_child` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
-  `price_adult` int(11) NOT NULL DEFAULT -1 COMMENT '价格',
+  `price_child` float(8,2) NOT NULL DEFAULT 0 COMMENT '价格',
+  `price_adult` float(8,2) NOT NULL DEFAULT 0 COMMENT '价格',
   `title` varchar(255) COMMENT '标题',
   `preinfo` varchar(255) COMMENT '提醒信息-忽略',
   `content` text COMMENT '正文',
