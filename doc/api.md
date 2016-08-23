@@ -752,30 +752,28 @@ discountPrice|string|Y|折后价
 
 
 ### 18.活动 superadmin-activity
-**post**
-**url**/api/superadmin/activity
-
-**参数**
-```json
-{
-    "city":"筛选城市"
-}
-```
+**get**
+**url**/api/superadmin/activities/get? city=***&type=***&page=***&pagesize=***
 
 **返回**
 ```json
 {
     "city":"筛选条件"
     "activities":[
-            {
-            "activityName":"活动名称",
-            "onlinetime":"活动上线时间",
-            "classification":"类型",
-            "status":"当前状态",
-            "action":"操作"
-            },
-            ...
-    ]
+        {
+	    "activityName":"活动名称",
+	    "onlinetime":"活动上线时间",
+	    "classification":"类型",
+	    "status":"当前状态",
+        },
+	...
+    ],
+    "pageable": {
+        "page": 0,
+        "total": 1
+    },
+    "errcode": 0,
+    "errmsg": ""
 }
 ```
 
