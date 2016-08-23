@@ -411,6 +411,95 @@ def replace_qr(req):
 
 @csrf_exempt
 @req_print
+def business_authorize(req):
+	args = req.POST
+	ret,item = check_mysql_arg_jsonobj("item", args.get("item",None), "str")
+	if not ret:
+		return item
+	ret,hasbusilicense = check_mysql_arg_jsonobj("hasbusilicense", args.get("hasbusilicense",None), "int")
+	if not ret:
+		return hasbusilicense
+	ret,license = check_mysql_arg_jsonobj("license", args.get("license",''), "str")
+	if not ret:
+		return license
+	ret,licensePic = check_mysql_arg_jsonobj("licensePic", args.get("licensePic",''), "str")
+	if not ret:
+		return licensePic
+	ret,identity = check_mysql_arg_jsonobj("identity", args.get("identity",None), "str")
+	if not ret:
+		return identity
+	ret,identityPic = check_mysql_arg_jsonobj("identityPic", args.get("identityPic",None), "str")
+	if not ret:
+		return identityPic
+	ret,companyTel = check_mysql_arg_jsonobj("companyTel", args.get("companyTel",None), "str")
+	if not ret:
+		return companyTel
+	ret,companyName = check_mysql_arg_jsonobj("companyName", args.get("companyName",None), "str")
+	if not ret:
+		return companyName
+	ret,city = check_mysql_arg_jsonobj("city", args.get("city",None), "str")
+	if not ret:
+		return city
+	ret,area = check_mysql_arg_jsonobj("area", args.get("area",None), "str")
+	if not ret:
+		return area
+	ret,address = check_mysql_arg_jsonobj("address", args.get("address",None), "str")
+	if not ret:
+		return address
+	ret,contactName = check_mysql_arg_jsonobj("contactName", args.get("contactName",None), "str")
+	if not ret:
+		return contactName
+	ret,contactName = check_mysql_arg_jsonobj("contactName", args.get("contactName",None), "str")
+	if not ret:
+		return contactName
+	ret,contactTel = check_mysql_arg_jsonobj("contactTel", args.get("contactTel",None), "str")
+	if not ret:
+		return contactTel
+	ret,contactEmail = check_mysql_arg_jsonobj("contactEmail", args.get("contactEmail",None), "str")
+	if not ret:
+		return contactEmail
+	ret,contactQQ = check_mysql_arg_jsonobj("contactQQ", args.get("contactQQ",None), "str")
+	if not ret:
+		return contactQQ
+	ret,contactWechat = check_mysql_arg_jsonobj("contactWechat",args.get("contactWechat",None), "str")
+	if not ret:
+		return contactWechat
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+
+	#check exists.
+	_sql = "select id from 6s_acttype where name='%s';"%item
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		mo.logger.warn("acttype can't be found: %s. "%item )
+	_sql = "select a.id from 6s_position a left join 6s_position b on a.pid=b.id where a.name='%s' and b.name='%s';"%(area,city)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		mo.logger.error("6s_position: %s_%s is invalid. "%(city,area) )
+		return response_json_error("暂时不支持'%s:%s'这个地区的活动录入，请联系客服."%(city,area))
+
+	_sql = "delete from 6s_user_business where refid=%s;"%userid
+	count,rets=dbmgr.db_exec(_sql)
+	_sql = "insert into 6s_user_business(refid,service_item,license_num,license_pic,identity_num,identity_pic,company_tel,company_name,city,area,address,name,phone,email,qq,wx,createtime) values(%s,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',now()); "%(userid,item,license,licensePic,identity,identityPic,companyTel,companyName,city,area,address,contactName,contactTel,contactEmail,contactQQ,contactWechat)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		pass
+	else:
+		mo.logger.error("6s_user_business insert fail. userid:%s count:%d"%(userid,count) )
+		return response_json_error("认证失败，请联系客服处理.")
+	_json = { "errcode":0,"errmsg":"" }
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@csrf_exempt
+@req_print
 def add_preference(req):
 	args = req.POST
 	ret,description = check_mysql_arg_jsonobj("description", args.get("description",None), "str")

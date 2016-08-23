@@ -639,7 +639,7 @@ def activities_getsignupstatus(req):
 	else:
 		_json["status"] = False
 		#_json["errmsg"] = "未报名."
-		mo.logger.error("no sign openid:%s actid:%d. "%(openid,actid)+REQ_TAG(args))
+		#mo.logger.info("no sign activity openid:%s actid:%d. "%(openid,actid)+REQ_TAG(args))
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
