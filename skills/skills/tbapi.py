@@ -169,7 +169,8 @@ def get_activity_publish(req):
 	makeup_headers_CORS(resp)
 	return resp
 
-
+#api/admin/current-activities?page=1&pagesize=3&city=广州市&type=本地活动
+#api/admin/current-activities?page=1&pagesize=3
 @req_print
 def get_publish_activities(req):
 	args = req.GET
@@ -179,6 +180,9 @@ def get_publish_activities(req):
 	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
 	if not ret:
 		return pagesize
+	ret2,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
+	ret3,acttype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
+
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
 	ret,userid,sessionid = get_userinfo_from_cookie(req)
 	ret,userid,sessionid = True,"1","10101"
@@ -188,13 +192,20 @@ def get_publish_activities(req):
 		return response_json_error("session过期.")
 	isadmin = check_user_admin(userid)
 
-	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_activity c where c.status =1 and (%d or c.user_id='%s') limit %d offset %d;"%(isadmin,userid,pagesize,pagesize*(page-1))
+	_sql = ""
+	if ret2 and ret3:
+		_sql = "select a.id,a.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),a.quantities from 6s_activity a left join 6s_acttype d on a.act_id=d.id where a.status=1 and (%d or a.user_id='%s') and a.position_id between (select id from 6s_position where name ='%s') and (select id+10000 from 6s_position where name ='%s') and a.act_id between (select id from 6s_acttype where name ='%s') and (select id+100 from 6s_acttype where name ='%s') limit %d offset %d;"%(isadmin,userid,city,city,acttype,acttype,pagesize,pagesize*(page-1))
+	else:
+		_sql = "select id,title,DATE_FORMAT(createtime,'%%Y-%%m-%%d'),quantities from 6s_activity where status=1 and (%d or user_id='%s') limit %d offset %d;"%(isadmin,userid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in xrange(count):
 			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"publish_time":rets[i][2],"sign_num":rets[i][3]} )
 
-	_sql = "select count(c.id) from 6s_activity c where c.status =1 and (%d or c.user_id='%s');"%(isadmin,userid)
+	if ret2 and ret3:
+		_sql = "select count(a.id) from 6s_activity a left join 6s_acttype d on a.act_id=d.id where a.status=1 and (%d or a.user_id='%s') and a.position_id between (select id from 6s_position where name ='%s') and (select id+10000 from 6s_position where name ='%s') and a.act_id between (select id from 6s_acttype where name ='%s') and (select id+100 from 6s_acttype where name ='%s');"%(isadmin,userid,city,city,acttype,acttype)
+	else:
+		_sql = "select count(c.id) from 6s_activity c where c.status =1 and (%d or c.user_id='%s');"%(isadmin,userid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
