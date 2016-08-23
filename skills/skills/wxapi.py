@@ -453,6 +453,30 @@ def activities_getareas(req):
 
 
 @req_print
+def activities_getcities(req):
+	ret,province = check_mysql_arg_jsonobj("province", req.GET.get("province",None), "str")
+	if not ret:
+		return province
+
+	#exec  
+	_json = { "values":[],"errcode":0,"errmsg":"" }
+	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%province
+	count,rets=dbmgr.db_exec(_sql)
+	if count >0 :
+		for i in xrange(count):
+			_json["values"].append( rets[i][0] )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "该省区域未入库."
+		mo.logger.error("该省区域未入库. province:%s"%province )
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
 def activities_getagesel(req):
 	#check.
 	#exec  
