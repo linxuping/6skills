@@ -66,7 +66,7 @@ DROP TABLE IF EXISTS `6s_acttype`;
 CREATE TABLE `6s_acttype` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '',
   `pid` int(11) NOT NULL COMMENT '',
-  `name` char(128) COMMENT '详细描述',
+  `name` char(128) UNIQUE COMMENT '详细描述',
   `status` tinyint(4) DEFAULT '1' COMMENT '状态.1-上线,0-下线',
   PRIMARY KEY (`id`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -156,18 +156,22 @@ DROP TABLE IF EXISTS `6s_user_business`;
 CREATE TABLE `6s_user_business` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `refid` int(11) NOT NULL UNIQUE,
-  `company` varchar(127) COMMENT '公司',
+  -- `company` varchar(127) COMMENT '公司',
   `service_item` varchar(127) COMMENT '服务项目',-- local,travel,interest,tech
-  `img_business_licence` varchar(255) COMMENT '营业执照',
-  `phone_customservice` varchar(24) COMMENT '公司客服',
-  `shop_name` varchar(24) COMMENT '门店名称',
+  `license_num` varchar(64) default '',
+  `license_pic` varchar(255) default '',
+  `identity_num` varchar(64),
+  `identity_pic` varchar(255),
+  `company_tel` varchar(24) COMMENT '公司客服',
+  `company_name` varchar(24) COMMENT '门店名称',
   `city` varchar(24) COMMENT '城市',
-  `region` varchar(24) COMMENT '区域',
+  `area` varchar(24) COMMENT '区域',
   `address` varchar(24) COMMENT '信息地址',
   `name` varchar(24) NOT NULL COMMENT '姓名',
   `phone` varchar(24) COMMENT '电话',
   `email` varchar(24) COMMENT '邮箱',
-  `QQ` varchar(24) COMMENT 'QQ',
+  `qq` varchar(24),
+  `wx` varchar(24),
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
   `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
@@ -189,8 +193,8 @@ delete from auth_user where username='test3';
 insert into auth_user(username,password) values ("test3","test3");
 insert into 6s_user(id,openid,refid,username,phone,img,createtime,status) values (1002,9903,1,"test3","12345612345","http://121.42.41.241:9900/static/img/head.jpg",now(),1);
 
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ,createtime) values(1001,"comp","tech","blimg.png","12348","shopname","city","region","addr","name","15099991234","email","QQ",now());
-insert into 6s_user_business(refid,company,service_item,img_business_licence,phone_customservice,shop_name,city,region,address,name,phone,email,QQ,createtime) values(1002,"comp2","tech2","blimg2.png","12349","shopname2","city2","region","addr","name2","15099991288","email2","QQ2",now());
+insert into 6s_user_business(refid,service_item,license_pic,company_tel,company_name,city,area,address,name,phone,email,qq,createtime) values(1001,"tech","blimg.png","12348","shopname","city","area","addr","name","15099991234","email","qq",now());
+insert into 6s_user_business(refid,service_item,license_pic,company_tel,company_name,city,area,address,name,phone,email,qq,createtime) values(1002,"tech2","blimg2.png","12349","shopname2","city2","area","addr","name2","15099991288","email2","qq2",now());
 
 
 -- ----------------------------
@@ -269,8 +273,8 @@ insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_child,img_cover,createtime,img_qrcode) values (7,"一系列亲子游节目的影响","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_child,img_cover,createtime,img_qrcode) values (8,"亲子游去哪好，动物王国，海底世界","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://cdn.duitang.com/uploads/blog/201411/21/20141121130437_3UySC.thumb.224_0.jpeg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_child,img_cover,createtime,img_qrcode) values (9,"爸爸去哪儿多种经典线路","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now(),'http://121.42.41.241:9900/static/img/qrcode_test.png');
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (10,"途牛推出亲子旅游频道","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
-insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime) values (11,"亲子游线路","2016-06-07","2016-06-30",6,6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,status) values (10,"途牛推出亲子旅游频道","2016-06-06","2016-06-30",6,6,101010401,104,1,3,6,88,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now(),2);
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,createtime,status) values (11,"亲子游线路","2016-06-07","2016-06-30",6,6,101010402,104,1,2,7,90,"http://img1.imgtn.bdimg.com/it/u=3319855790,3301229541&fm=21&gp=0.jpg",now(),2);
 #more than 1 week.
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (12,"亲子游攻略",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/gd/pics/hv1/123/187/2105/136925433.jpg","more than one week",now());
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (13,"还有各种亲子旅游特价产品",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/16/1698/169862/16986270_980x1200_0.jpg","more than one week",now());
@@ -301,7 +305,7 @@ CREATE TABLE `6s_signup` (
 CREATE INDEX idx_6s_signup_user_id ON 6s_signup(user_id);
 CREATE INDEX idx_6s_signup_act_id ON 6s_signup(act_id);
 
-insert into 6s_signup(user_id,act_id,createtime) values(1,1,now()),(1001,1,now()),(1002,2,now());
+insert into 6s_signup(user_id,act_id,createtime) values(1,1,now()),(1,2,now()),(1,3,now()),(1001,1,now()),(1002,2,now());
 
 
 -- ----------------------------
