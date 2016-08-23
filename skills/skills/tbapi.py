@@ -567,6 +567,46 @@ def get_preferencelist(req):
 	return resp
 
 
+@csrf_exempt
+@req_print
+def account_set(req):
+	args = req.POST
+	ret,favicon = check_mysql_arg_jsonobj("favicon", args.get("favicon",None), "str")
+	if not ret:
+		return favicon
+	ret,accountName = check_mysql_arg_jsonobj("accountName", args.get("accountName",None), "str")
+	if not ret:
+		return accountName
+	ret,password = check_mysql_arg_jsonobj("newPwd", args.get("newPwd",None), "str")
+	if not ret:
+		return password
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "update 6s_user set img='%s',password='%s',pwdmd5='%s' where id=%s;"%(favicon,password,encode_md5(password),userid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1:
+		pass
+	elif count == 0:
+		mo.logger.warn("6s_user no update. "+REQ_TAG(args) )
+	else:
+		mo.logger.error("6s_user no update. "+REQ_TAG(args) )
+		return response_json_error("用户信息未更新.")
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+
+
+
+
 from qiniu import Auth
 '''
 返回上传文件时需要的token。输入为key字符串，输出为token字符串
