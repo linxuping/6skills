@@ -92,8 +92,8 @@ body {
   padding-bottom: 10px;
 }
 .ss-media-box .ss-media-hd {
-  width: 90px !important;
-  height: 90px !important;
+  width: 120px !important;
+  height: 120px !important;
 }
 .ss-media-box .ss-media-bd {
   width: 100%;
@@ -270,6 +270,9 @@ body {
   left: 0px;
   width: 100%;
 }
+.QrCode {
+  margin-top: 3rem;
+}
 .QrCode .tip {
   text-align: center;
 }
@@ -281,8 +284,8 @@ body {
   font-size: 1.4rem;
 }
 .QrCode .tip img {
-  width: 256px;
-  height: 256px;
+  width: 150px;
+  height: 150px;
 }
 .feedback h3 {
   margin: 10px 15px;

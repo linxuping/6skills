@@ -14,13 +14,6 @@ function isNum(s)
 	return false;
 }
 var Sign = React.createClass({
-	getInitialState: function() {
-		return {
-			username: "",
-			phone: "",
-			loaded: false
-		};
-	},
 	back: function(){
 		if (this.props.backTitle) {
 			document.title = this.props.backTitle;
@@ -28,42 +21,12 @@ var Sign = React.createClass({
 		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 	},
 	componentDidMount: function(){
-		var url = ges('activities/get_signup_status');
-		var actid = getUrlParam("actid") || this.props.actid;
-		$.ajax({
-			url: url,
-			type: 'get',
-			dataType: 'json',
-			data: {openid: geopenid(), actid: actid},
-		})
-		.done(function(res) {
-			this.setState({
-				status: res.status,
-				qrcode: res.qrcode,
-				loaded: true
-			});
-		}.bind(this))
-		.fail(function() {
-			console.log("error");
-		})
-		.always(function() {
-			console.log("complete");
-		});
+
 	},
 	render: function() {
-		var mountStr;
-		if (this.state.loaded === false) {
-			mountStr = <p style={{"textAlign": "center"}}>加载中...</p>
-		} else if (this.state.status && this.state.qrcode) {
-			mountStr = <QrCode back={this.back} qrcode={this.state.qrcode}/>
-		} else {
-			mountStr = <SignForm actid={this.props.actid} back={this.back}
-				qrcode={this.state.qrcode} status={this.state.status}/>
-		}
-
 		return (
 			<div className="sign-page">
-				{mountStr}
+				<SignForm actid={this.props.actid} back={this.back} reload={this.props.reload}/>
 			</div>
 		);
 	}
@@ -102,7 +65,7 @@ function validateForm(actid, formConponent) {
 								title: "报名成功",
 								msg: "恭喜您报名成功！",
 								callback: function(){
-									formConponent.props.back();
+									formConponent.back();
 									//try{
 									//	WeixinJSBridge.call('closeWindow');
 									//} catch (e){ }
@@ -133,25 +96,22 @@ var SignForm = React.createClass({
 			phone: ""
 		};
 	},
-	componentDidMount:function() {
-		if (this.props.status) {
-			return;
-		}
-		$.ajax({
-			url: ges('activities/get_profile'),
-			type: 'get',
-			dataType: 'json',
-			data: { "openid":geopenid() },
-		})
-		.done(function(res) {
-			console.log("success");
-			console.log(res);
-			this.setState( { "username":res.profile.username,"phone":res.profile.phone } );
-		}.bind(this))
-		.fail(function() {
-			console.log("error");
-		});
 
+	back: function(){
+		var url = location.pathname;
+		if (url.indexOf("activity_detail") != -1) {
+			this.props.back();
+			this.props.reload();
+			setTimeout(function(){
+				location.href = "#qrcode";
+			}, 500)
+
+		} else {
+			window.location = "/template/activity_detail.html?actid=" + this.props.actid;
+		}
+	},
+
+	componentDidMount:function() {
 		validateForm(this.props.actid, this);
 	},
 
@@ -162,7 +122,12 @@ var SignForm = React.createClass({
 				<option value={elem}>{elem}岁</option>
 			);
 		});
+		var profile = sessionStorage.getItem("_profile");
+		if (profile) {
+			profile = JSON.parse(profile);
+		}
 		var sign_url = ges("activities/sign");
+		//var sign_url = "/test/sign.json";
 		return (
 			<div className="SignForm">
 				<form action={sign_url} method="post" id="sign-form">
@@ -175,7 +140,7 @@ var SignForm = React.createClass({
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="text" name="name" id="name" className="weui_input"
-									placeholder="请输入家长真实姓名" defaultValue={this.state.username}/>
+									placeholder="请输入家长真实姓名" defaultValue={profile.username}/>
 							</div>
 						</div>
 						<div className="weui_cell">
@@ -184,7 +149,7 @@ var SignForm = React.createClass({
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="number" name="phone" id="phone" className="weui_input"
-									placeholder="请输入手机号码" defaultValue={this.state.phone}/>
+									placeholder="请输入手机号码" defaultValue={profile.phone}/>
 							</div>
 						</div>
 						<div className="weui_cell weui_cell_select weui_select_after">
@@ -224,12 +189,9 @@ var SignForm = React.createClass({
 					</div>
 					<div className="weui_cells_tips">注意事项注意事项注意事项注意事项</div>
 					<div className="weui_btn_area">
-						{
-							this.props.status === false ?
+
 							<button type="submit" className="weui_btn weui_btn_primary">确定</button>
-							:
-							<button type="button" className="weui_btn weui_btn_disabled">已报名</button>
-						}
+
 					</div>
 				</form>
 				<div id="alert-wrap"></div>
@@ -237,24 +199,6 @@ var SignForm = React.createClass({
 		);
 	}
 });
-
-var QrCode = React.createClass({
-	render: function() {
-		return (
-			<div className="QrCode">
-				<div className="back-btn" onClick={this.props.back}>返回</div>
-				<div className="qrcode-box">
-					<div className="tip">
-						<h3>您已报名该活动</h3>
-						<p>长按下面二维码加入该活动微信群</p>
-						<img src={this.props.qrcode} alt=""/>
-					</div>
-				</div>
-			</div>
-		);
-	}
-});
-
 
 var AlertDialog = React.createClass({
 	confirmHandler: function () {

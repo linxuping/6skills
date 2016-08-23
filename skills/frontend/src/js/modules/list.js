@@ -128,6 +128,28 @@ var Selecter = React.createClass({
 				//console.log("Selecter complete");
 			}.bind(this)
 		});
+
+		//获取用户信息,如果没有
+		if (sessionStorage.getItem("_profile") == undefined) {
+			return;
+		}
+		$.ajax({
+			url: ges('activities/get_profile'),
+			//url: "/test/get_profile.json",
+			type: 'get',
+			dataType: 'json',
+			data: { "openid":geopenid() },
+		})
+		.done(function(res) {
+			console.log("success");
+			if (res.errcode == 0) {
+				sessionStorage.setItem("_profile", JSON.stringify(res.profile));
+			}
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		});
+
 	},
 	selectChanged: function() {
 		//this.setState({value: event.target.value});
@@ -168,9 +190,13 @@ var Selecter = React.createClass({
 });
 
 var Activities = React.createClass({
-	openSignupPage: function(actid){
+	openSignupPage: function(actid, remains){
 		//console.log(event)
 		//location.href='/template/activity_detail.html?actid='+actid;
+		if (remains == 0) {
+			sessionStorage.setItem('_remains_' + actid, remains)
+			location.href='/template/activity_detail.html?actid=' + actid;
+		}
 		if ($(event.target).hasClass('weui_btn_disabled')) {
 			return false;
 		}
@@ -183,9 +209,8 @@ var Activities = React.createClass({
 		if (event.target.tagName == "BUTTON") {
 			return false;
 		}
-		console.log(remains);
-		if (remains == 0)
-			return false;
+		// console.log(remains);
+		sessionStorage.setItem('_remains_' + actid, remains)
 		location.href='/template/activity_detail.html?actid='+actid;
 	},
 
@@ -213,7 +238,7 @@ var Activities = React.createClass({
 					<div className="ss-join-bd clearfix">
 						<div className="money-box fl">￥{elem.price_child}</div>
 							<button className={(elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr"}
-								onClick={this.openSignupPage.bind(this,elem.actid)} >
+								onClick={this.openSignupPage.bind(this,elem.actid, elem.quantities_remain)} >
 								{this.props.type == "preview" ? "我要报名" : "限时报名"}
 							</button>
 					</div>

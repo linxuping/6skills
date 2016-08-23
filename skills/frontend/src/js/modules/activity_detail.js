@@ -6,13 +6,25 @@ var ActivityDetail = React.createClass({
 			loaded: false
 		};
 	},
+
 	openSignPage: function(){
-		document.title = "活动报名";
-		ReactDOM.render(
-			React.createElement(Sign, {actid: this.props.actid, backTitle: "活动详情"}),
-			document.getElementById('sign-page-wrap')
-		);
+		if (this.state.status) {
+			window.location = "#qrcode";
+			alert("您已经报过名了，请到已报名活动中查看！")
+		} else {
+			var actid = getUrlParam("actid");
+			if (sessionStorage.getItem("_remains_" + actid) == 0) {
+				alert("活动人数已满，无法报名");
+				return;
+			}
+			document.title = "活动报名";
+			ReactDOM.render(
+				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus}),
+				document.getElementById('sign-page-wrap')
+			);
+		}
 	},
+
 	collectPage: function(){
 		//check if no Pay attention to the public number.
 		//turn to page 'attention'
@@ -33,6 +45,31 @@ var ActivityDetail = React.createClass({
 			console.log("complete");
 		});
 	},
+
+	getSignupStatus: function(){
+		var url = ges('activities/get_signup_status');
+		//var url = "/test/get_signup_status.json";
+		$.ajax({
+			url: url,
+			type: 'get',
+			dataType: 'json',
+			data: {openid: geopenid(), actid: actid},
+		})
+		.done(function(res) {
+			this.setState({
+				status: res.status,
+				qrcode: res.qrcode,
+				loaded: true
+			});
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	},
+
 	componentDidMount: function() {
 		var actid = getUrlParam("actid");
 		if (!IsNum(actid)){
@@ -58,6 +95,8 @@ var ActivityDetail = React.createClass({
 				console.log("get actid error.");
 			}.bind(this),
 		});
+
+		this.getSignupStatus();
 	},
 	render: function() {
 		return (
@@ -76,8 +115,14 @@ var ActivityDetail = React.createClass({
 						<p className="age">{this.state.activity.ages}岁</p>
 						<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
 						<p className="area">活动地点：{this.state.activity.area}</p>
-						<p className="detail-content"><div dangerouslySetInnerHTML={{__html: this.state.activity.content}}></div>
+						<p className="detail-content" dangerouslySetInnerHTML={{__html: this.state.activity.content}}>
 						</p>
+
+						{
+							this.state.status && this.state.qrcode ?
+								<QrCode qrcode={this.state.qrcode}/> : ""
+						}
+
 					</div>
 				</article>
 				<div className="sign-btn" style={{"cursor": "pointer"}}
@@ -86,9 +131,27 @@ var ActivityDetail = React.createClass({
 				</div>
 				<div className="sign-btn-right" style={{"cursor": "pointer"}}
 					onClick={this.openSignPage}>
-					我要报名
+					{
+						this.state.status ? "已报名" : "我要报名"
+					}
+
 				</div>
 				<div id="sign-page-wrap"></div>
+			</div>
+		);
+	}
+});
+
+var QrCode = React.createClass({
+	render: function() {
+		return (
+			<div className="QrCode" id="qrcode">
+				<div className="qrcode-box">
+					<div className="tip">
+						<img src={this.props.qrcode} alt=""/>
+						<p>长按二维码加入活动微信群</p>
+					</div>
+				</div>
 			</div>
 		);
 	}
