@@ -753,7 +753,8 @@ discountPrice|string|Y|折后价
 
 ### 18.活动 superadmin-activity
 **get**
-**url**/api/superadmin/activities/get? city=***&type=***&page=***&pagesize=***
+**url**/api/superadmin/activities/get? city=***&type=***&page=***&pagesize=***  忽略
+**重用  /api/admin/current-activities? city=***&type=***&page=***&pagesize=*** 
 
 **返回**
 ```json
