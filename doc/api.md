@@ -666,10 +666,9 @@ discountPrice|string|Y|折后价
 **返回**
 ```json
 {
-    "activities": [
+    "preferencelist": [
         {
-            "actid": 33,
-            "title": "活动名称",
+            "content": 33,
             "beginTime": 1471535651971,
             "endTime": 1471535651971,
             "status": "状态",
@@ -687,7 +686,7 @@ discountPrice|string|Y|折后价
 
 ### 15. 商户验证
 **POST**
-** URL ** /api/admin/authorization
+** URL ** /api/admin/business/authorize
 
 **参数**
 ```json
@@ -729,7 +728,7 @@ discountPrice|string|Y|折后价
 
 ### 16.信息设置 account_setting
 **post**
-**url**/api/admin/account
+**url**/api/admin/account/set
 
 **参数**
 ```json
@@ -749,50 +748,32 @@ discountPrice|string|Y|折后价
 ```
 
 ### 17.管理员主页 superadmin home
-**get**
-**url**/api/superadmin/home
+**重用 current-activities unpublish-activities**
 
-**返回**
-```json
-{
-    "activities":[
-            {
-            "activityName":"活动名称",
-            "outtime":"活动发布时间",
-            "actilink":"连接",
-            "signupNum":"报名的人数",
-            "action":"操作"
-            },
-            ...
-    ]
-}
-```
 
 ### 18.活动 superadmin-activity
-**post**
-**url**/api/superadmin/activity
-
-**参数**
-```json
-{
-    "city":"筛选城市"
-}
-```
+**get**
+**重用url**/api/admin/current-activities? city=a&type=b&page=1&pagesize=1
 
 **返回**
 ```json
 {
     "city":"筛选条件"
     "activities":[
-            {
-            "activityName":"活动名称",
-            "onlinetime":"活动上线时间",
-            "classification":"类型",
-            "status":"当前状态",
-            "action":"操作"
-            },
-            ...
-    ]
+        {
+	    "activityName":"活动名称",
+	    "onlinetime":"活动上线时间",
+	    "classification":"类型",
+	    "status":"当前状态",
+        },
+	...
+    ],
+    "pageable": {
+        "page": 0,
+        "total": 1
+    },
+    "errcode": 0,
+    "errmsg": ""
 }
 ```
 
