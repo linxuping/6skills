@@ -603,7 +603,26 @@ def account_set(req):
 	return resp
 
 
+@req_print
+def super_home(req):
+	args = req.GET
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
 
+	_json = { "preferencelist":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	_sql = "select a.content,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),if(a.status=1,\"在线\",if(a.status=2,\"未开始\",\"其他\")) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where c.id=%s and a.status>0;"%userid
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in xrange(count):
+			_json["preferencelist"].append( {"content":rets[i][0],"time_from":rets[i][1],"time_to":rets[i][2],"status":rets[i][3]} )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
 
 
 

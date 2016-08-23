@@ -83,7 +83,7 @@ urlpatterns = patterns('',
 		url(r'^api/admin/activities/preferencelist', tbapi.get_preferencelist),
 		url(r'^api/admin/business/authorize', tbapi.business_authorize),
 		url(r'^api/admin/account/set', tbapi.account_set),
-		#url(r'^api/admin/replace-qr', tbapi.replace_qr),
+		#url(r'^api/superadmin/home', tbapi.super_home),
 		#url(r'^api/admin/replace-qr', tbapi.replace_qr),
 		#tbapi END.
 )
