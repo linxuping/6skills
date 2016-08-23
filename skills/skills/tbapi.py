@@ -173,6 +173,12 @@ def get_activity_publish(req):
 @req_print
 def get_publish_activities(req):
 	args = req.GET
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
 	ret,userid,sessionid = get_userinfo_from_cookie(req)
 	ret,userid,sessionid = True,"1","10101"
@@ -180,12 +186,20 @@ def get_publish_activities(req):
 		return response_json_error("必须上传用户基础信息.")
 	if not check_session_valid(userid,sessionid):
 		return response_json_error("session过期.")
+	isadmin = check_user_admin(userid)
 
-	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_session a left join 6s_signup b on a.user_id=b.user_id left join 6s_activity c on b.act_id=c.id where b.status=1 and c.status =1 and a.user_id='%s' and a.session_id='%s';"%(userid,sessionid)
+	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_activity c where c.status =1 and (%d or c.user_id='%s') limit %d offset %d;"%(isadmin,userid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in xrange(count):
 			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"publish_time":rets[i][2],"sign_num":rets[i][3]} )
+
+	_sql = "select count(c.id) from 6s_activity c where c.status =1 and (%d or c.user_id='%s');"%(isadmin,userid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
+		_json["pageable"]["page"] = page
+
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
@@ -195,6 +209,12 @@ def get_publish_activities(req):
 @req_print
 def get_unpublish_activities(req):
 	args = req.GET
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
 	ret,userid,sessionid = get_userinfo_from_cookie(req)
 	ret,userid,sessionid = True,"1","10101"
@@ -202,12 +222,20 @@ def get_unpublish_activities(req):
 		return response_json_error("必须上传用户基础信息.")
 	if not check_session_valid(userid,sessionid):
 		return response_json_error("session过期.")
+	isadmin = check_user_admin(userid)
 
-	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_session a left join 6s_signup b on a.user_id=b.user_id left join 6s_activity c on b.act_id=c.id where b.status=1 and c.status=2 and a.user_id='%s' and a.session_id='%s';"%(userid,sessionid)
+	_sql = "select c.id,c.title,DATE_FORMAT(c.createtime,'%%Y-%%m-%%d'),c.quantities from 6s_activity c where c.status=2 and (%d or c.user_id='%s') limit %d offset %d;"%(isadmin,userid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in xrange(count):
 			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"publish_time":rets[i][2],"sign_num":rets[i][3]} )
+
+	_sql = "select count(c.id) from 6s_activity c where c.status=2 and (%d or c.user_id='%s');"%(isadmin,userid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
+		_json["pageable"]["page"] = page
+
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
@@ -560,7 +588,7 @@ def get_preferencelist(req):
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in xrange(count):
-			_json["preferencelist"].append( {"content":rets[i][0],"time_from":rets[i][1],"time_to":rets[i][2],"status":rets[i][3]} )
+			_json["preferencelist"].append( {"content":rets[i][0],"beginTime":rets[i][1],"endTime":rets[i][2],"status":rets[i][3]} )
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
@@ -602,7 +630,7 @@ def account_set(req):
 	makeup_headers_CORS(resp)
 	return resp
 
-
+'''
 @req_print
 def super_home(req):
 	args = req.GET
@@ -623,6 +651,7 @@ def super_home(req):
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
 	return resp
+'''
 
 
 
