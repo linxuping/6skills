@@ -815,26 +815,8 @@ discountPrice|string|Y|折后价
 
 ### 22.认证 superadmin authorization
 **post**
-**url** /api/superadmin/authorizationInfo
-**返回**
-```json
-{
-    "item":"服务项目",
-    "haslicense":"是否有营业执照",
-    "licenseId":"营业执照号",
-    "identyId":"身份证号",
-    "tel":"公司客服电话",
-    "companyName":"门店名称",
-    "city":"城市",
-    "area":"区域",
-    "address":"详细地址",
-    "contactName":"联系人姓名",
-    "contactTel":"联系人电话",
-    "contactmail":"联系人邮箱",
-    "contactQQ":"联系人QQ号",
-    "contactWechat":"联系人微信"
-}
-```
+**url** 重用 /api/admin/business/authorize
+
 
 ### 23.报名信息 superadmin-activity-user
 **post**
