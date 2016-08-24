@@ -661,7 +661,7 @@ discountPrice|string|Y|折后价
 
 ### 14.优惠活动列表
 **get**
-**url** /activities/preferencelist?area=xxx&age=x&page=x&page_size=x
+**url** /api/admin/activities/preferencelist?area=xxx&age=x&page=x&page_size=x
 
 **返回**
 ```json
