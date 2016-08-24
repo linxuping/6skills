@@ -661,7 +661,7 @@ discountPrice|string|Y|折后价
 
 ### 14.优惠活动列表
 **get**
-**url** /activities/preferencelist?area=xxx&age=x&page=x&page_size=x
+**url** /api/admin/activities/preference/list?area=xxx&age=x&page=x&page_size=x
 
 **返回**
 ```json
@@ -779,94 +779,41 @@ discountPrice|string|Y|折后价
 
 ### 19.添加优惠 superadmin addpreference
 **post**
-**url** /api/superadmin/addpreference
+**url** 重用 /api/admin/activities/preference/add
 
-**参数**
-```json
-{
-    "prefenceInfo":"优惠信息说明"
-    "duration":"持续的时间",
-    "maxnum":"优惠报名数限制",
-    "activityPre":"要优惠的活动",
-    "discountPrice":"折后价"
-}
-```
 
+### 20.优惠列表 preferencelist
+**get**
+**url** 重用 /api/admin/activities/preference/list?area=xxx&age=x&page=x&page_size=x
+
+
+### 21. 审核认证 superadmin authorization
+**get**
+**url** /api/superadmin/businessman/list?city=city&status=audit&page=1&pagesize=10
 **返回**
 ```json
 {
+    "businessman":[
+    {
+        "adminAccount":"商户账号",
+        "adminTel":"商户手机号",
+        "applicationTime":"申请日期",
+    },
+    ...
+    ],
+    "pageable": {
+        "page": 0,
+        "total": 1
+    },
     "errcode": 0,
     "errmsg": ""
 }
 ```
 
-### 20.优惠列表 preferencelist
-**get**
-**url** /api/superadmin/preferencelist
-**返回**
-```json
-{
-    "activities":[
-    {
-        "activityName":"活动名称",
-        "beginTime":"开始时间",
-        "endTime":"结束时间",
-        "status":"状态",
-        "action":"操作"
-    },
-    ...
-    ]
-}
-```
-
-### 21. 审核认证 superadmin authorization
-**post**
-**url** /api/superadmin/authorization-list
-**参数**
-```json
-{
-    "city":"城市"
-}
-```
-
-**返回**
-```json
-{
-    "adminInfo":[
-    {
-        "adminAccount":"商户账号",
-        "adminTel":"商户手机号",
-        "applicationTime":"申请日期",
-        "status":"当前状态",
-        "action":"操作"
-    },
-    ...
-    ]
-}
-```
-
 ### 22.认证 superadmin authorization
 **post**
-**url** /api/superadmin/authorizationInfo
-**返回**
-```json
-{
-    "item":"服务项目",
-    "haslicense":"是否有营业执照",
-    "licenseId":"营业执照号",
-    "identyId":"身份证号",
-    "tel":"公司客服电话",
-    "companyName":"门店名称",
-    "city":"城市",
-    "area":"区域",
-    "address":"详细地址",
-    "contactName":"联系人姓名",
-    "contactTel":"联系人电话",
-    "contactmail":"联系人邮箱",
-    "contactQQ":"联系人QQ号",
-    "contactWechat":"联系人微信"
-}
-```
+**url** 重用 /api/admin/business/authorize
+
 
 ### 23.报名信息 superadmin-activity-user
 **post**
