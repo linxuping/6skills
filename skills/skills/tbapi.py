@@ -587,19 +587,33 @@ def add_preference(req):
 @req_print
 def get_preferencelist(req):
 	args = req.GET
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
 	ret,userid,sessionid = get_userinfo_from_cookie(req)
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
 		return response_json_error("必须上传用户基础信息.")
 	if not check_session_valid(userid,sessionid):
 		return response_json_error("session过期.")
+	isadmin = check_user_admin(userid)
 
 	_json = { "preferencelist":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
-	_sql = "select a.content,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),if(a.status=1,\"在线\",if(a.status=2,\"未开始\",\"其他\")) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where c.id=%s and a.status>0;"%userid
+	_sql = "select a.content,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),if(a.status=1,\"在线\",if(a.status=2,\"未开始\",\"其他\")) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where (%d or c.id=%s) and a.status>0 limit %d offset %d;;"%(isadmin,userid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in xrange(count):
 			_json["preferencelist"].append( {"content":rets[i][0],"beginTime":rets[i][1],"endTime":rets[i][2],"status":rets[i][3]} )
+
+	_sql = "select count(a.id) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where (%d or c.id=%s) and a.status>0;"%(isadmin,userid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
+		_json["pageable"]["page"] = page
+
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
