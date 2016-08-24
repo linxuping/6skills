@@ -779,45 +779,13 @@ discountPrice|string|Y|折后价
 
 ### 19.添加优惠 superadmin addpreference
 **post**
-**url** /api/superadmin/addpreference
+**url** 重用 /api/admin/activities/preference/add
 
-**参数**
-```json
-{
-    "prefenceInfo":"优惠信息说明"
-    "duration":"持续的时间",
-    "maxnum":"优惠报名数限制",
-    "activityPre":"要优惠的活动",
-    "discountPrice":"折后价"
-}
-```
-
-**返回**
-```json
-{
-    "errcode": 0,
-    "errmsg": ""
-}
-```
 
 ### 20.优惠列表 preferencelist
 **get**
-**url** /api/superadmin/preferencelist
-**返回**
-```json
-{
-    "activities":[
-    {
-        "activityName":"活动名称",
-        "beginTime":"开始时间",
-        "endTime":"结束时间",
-        "status":"状态",
-        "action":"操作"
-    },
-    ...
-    ]
-}
-```
+**url** 重用 /activities/preferencelist?area=xxx&age=x&page=x&page_size=x
+
 
 ### 21. 审核认证 superadmin authorization
 **post**
