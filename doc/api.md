@@ -661,7 +661,7 @@ discountPrice|string|Y|折后价
 
 ### 14.优惠活动列表
 **get**
-**url** /api/admin/activities/preferencelist?area=xxx&age=x&page=x&page_size=x
+**url** /api/admin/activities/preference/list?area=xxx&age=x&page=x&page_size=x
 
 **返回**
 ```json
@@ -784,19 +784,12 @@ discountPrice|string|Y|折后价
 
 ### 20.优惠列表 preferencelist
 **get**
-**url** 重用 /activities/preferencelist?area=xxx&age=x&page=x&page_size=x
+**url** 重用 /api/admin/activities/preference/list?area=xxx&age=x&page=x&page_size=x
 
 
 ### 21. 审核认证 superadmin authorization
-**post**
-**url** /api/superadmin/businessman/unaudit
-**参数**
-```json
-{
-    "city":"城市"
-}
-```
-
+**get**
+**url** /api/superadmin/businessman/list?city=city&status=audit&page=1&pagesize=10
 **返回**
 ```json
 {
@@ -809,7 +802,13 @@ discountPrice|string|Y|折后价
         "action":"操作"
     },
     ...
-    ]
+    ],
+    "pageable": {
+        "page": 0,
+        "total": 1
+    },
+    "errcode": 0,
+    "errmsg": ""
 }
 ```
 
