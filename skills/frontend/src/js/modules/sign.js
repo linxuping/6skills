@@ -125,7 +125,7 @@ var SignForm = React.createClass({
 		var profile = sessionStorage.getItem("_profile");
 		if (profile) {
 			profile = JSON.parse(profile);
-		}
+		} else {profile = {}}
 		var sign_url = ges("activities/sign");
 		//var sign_url = "/test/sign.json";
 		return (
