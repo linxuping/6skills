@@ -821,7 +821,7 @@ discountPrice|string|Y|折后价
 **返回**
 ```json
 {
-    "activities": [
+    "signup": [
     	{
 		    "time":"时间",
 		    "title":"活动",
