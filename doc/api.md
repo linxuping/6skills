@@ -793,13 +793,11 @@ discountPrice|string|Y|折后价
 **返回**
 ```json
 {
-    "adminInfo":[
+    "businessman":[
     {
         "adminAccount":"商户账号",
         "adminTel":"商户手机号",
         "applicationTime":"申请日期",
-        "status":"当前状态",
-        "action":"操作"
     },
     ...
     ],
