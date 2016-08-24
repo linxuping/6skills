@@ -815,18 +815,9 @@ discountPrice|string|Y|折后价
 **url** 重用 /api/admin/business/authorize
 
 
-### 23.报名信息 superadmin-activity-user
+### 23.报名信息 superadmin-signup/list
 **post**
-**url** /api/superadmin/activity-user
-**参数**
-```json
-{
-    "city":"城市",
-    "time": "时间",
-    "actid": "活动id,可为空"
-}
-```
-
+**url** /api/superadmin/signup/list?city=city&time=time&page=1&pagesize=100
 **返回**
 ```json
 {
@@ -841,6 +832,10 @@ discountPrice|string|Y|折后价
 		    "childSex":"儿童性别"
 	    }
     ],
+    "pageable": {
+        "page": 0,
+        "total": 1
+    },
     errcode: 0,
     errmsg: ""
 }
