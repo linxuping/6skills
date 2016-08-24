@@ -80,11 +80,13 @@ urlpatterns = patterns('',
 		url(r'^api/admin/replace-qr', tbapi.replace_qr),
 		#0822.
 		url(r'^api/admin/activities/preference/add', tbapi.add_preference),
-		url(r'^api/admin/activities/preferencelist', tbapi.get_preferencelist),
+		url(r'^api/admin/activities/preference/list', tbapi.get_preferencelist),
 		#0823
 		url(r'^api/admin/business/authorize', tbapi.business_authorize),
 		url(r'^api/admin/account/set', tbapi.account_set),
 		url(r'^activities/get-cities', wxapi.activities_getcities),
+		#0824
+		url(r'^api/superadmin/businessman/list', tbapi.businessman_list),
 		#url(r'^api/superadmin/home', tbapi.super_home),
 		#url(r'^api/admin/replace-qr', tbapi.replace_qr),
 		#tbapi END.

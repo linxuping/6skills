@@ -52,7 +52,7 @@ def check_user_admin(userid):
 	_sql = "select role_id from 6s_user where id='%s';"%userid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
-		return rets[0][0]==role_admin
+		return rets[0][0]==role.admin
 	else:
 		mo.logger.error("cannot find user:%s."%userid)
 	return False
@@ -313,7 +313,7 @@ def signup_first_step(req):
 		return response_json_error("该手机号码已经注册过.")
 		mo.logger.error("phone:%s has been registered. "%phone)
 
-	_sql = "insert into 6s_user(phone,password,pwdmd5,role_id) values('%s','%s','%s','%d');"%(phone,password,encode_md5(password),role_business)
+	_sql = "insert into 6s_user(phone,password,pwdmd5,role_id) values('%s','%s','%s','%d');"%(phone,password,encode_md5(password),role.business)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		mo.logger.info("register ok. %s %s code:%s "%(phone,password,code) )
@@ -609,6 +609,51 @@ def get_preferencelist(req):
 			_json["preferencelist"].append( {"content":rets[i][0],"beginTime":rets[i][1],"endTime":rets[i][2],"status":rets[i][3]} )
 
 	_sql = "select count(a.id) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where (%d or c.id=%s) and a.status>0;"%(isadmin,userid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
+		_json["pageable"]["page"] = page
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def businessman_list(req):
+	args = req.GET
+	ret,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
+	if not ret:
+		return city
+	ret,status = check_mysql_arg_jsonobj("status", req.GET.get("status",None), "str")
+	if not ret:
+		return status
+	status = mystatus.online if status=="已审" else (mystatus.unaudit if status=="待审" else None)
+	if status == None:
+		return response_json_error("状态无效.")
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+	isadmin = check_user_admin(userid)
+
+	_json = { "businessman":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	_sql = "select b.username,b.phone,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d') from 6s_user_business a left join 6s_user b on a.refid=b.id where a.status=%d and a.city='%s' limit %d offset %d;"%(status,city,pagesize,pagesize*(page-1))
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in xrange(count):
+			_json["businessman"].append( {"adminAccount":rets[i][0],"adminTel":rets[i][1],"applicationTime":rets[i][2]} )
+
+	_sql = "select count(b.id) from 6s_user_business a left join 6s_user b on a.refid=b.id where a.status=%d and a.city='%s';"%(status,city)
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1

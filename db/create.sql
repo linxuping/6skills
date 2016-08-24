@@ -193,8 +193,8 @@ delete from auth_user where username='test3';
 insert into auth_user(username,password) values ("test3","test3");
 insert into 6s_user(id,openid,refid,username,phone,img,createtime,status) values (1002,9903,1,"test3","12345612345","http://121.42.41.241:9900/static/img/head.jpg",now(),1);
 
-insert into 6s_user_business(refid,service_item,license_pic,company_tel,company_name,city,area,address,name,phone,email,qq,createtime) values(1001,"tech","blimg.png","12348","shopname","city","area","addr","name","15099991234","email","qq",now());
-insert into 6s_user_business(refid,service_item,license_pic,company_tel,company_name,city,area,address,name,phone,email,qq,createtime) values(1002,"tech2","blimg2.png","12349","shopname2","city2","area","addr","name2","15099991288","email2","qq2",now());
+insert into 6s_user_business(refid,service_item,license_pic,company_tel,company_name,city,area,address,name,phone,email,qq,createtime) values(1001,"tech","blimg.png","12348","shopname","广州市","area","addr","name","15099991234","email","qq",now());
+insert into 6s_user_business(refid,service_item,license_pic,company_tel,company_name,city,area,address,name,phone,email,qq,createtime,status) values(1002,"tech2","blimg2.png","12349","shopname2","广州市","area","addr","name2","15099991288","email2","qq2",now(),2);
 
 
 -- ----------------------------
@@ -214,7 +214,7 @@ CREATE TABLE `6s_preinfo` (
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `act_id` int(11) default 0 COMMENT '指派的活动',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
-  `status` tinyint(4) DEFAULT '2' COMMENT '状态.1-上线,0-下线,2-准备上线',
+  `status` tinyint(4) DEFAULT '2' COMMENT '状态.0-下线,1-上线,2-待审',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 insert into 6s_preinfo(id,price_child,time_from,time_to,quantities,quantities_remain,content,createtime) values(101,19,"2016-08-10","2016-08-14",12,12,"2周年活动优惠2折.",now());
