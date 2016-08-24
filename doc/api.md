@@ -789,7 +789,7 @@ discountPrice|string|Y|折后价
 
 ### 21. 审核认证 superadmin authorization
 **post**
-**url** /api/superadmin/authorization-list
+**url** /api/superadmin/businessman/unaudit
 **参数**
 ```json
 {
