@@ -423,7 +423,7 @@ desc|text|Y|商户简介
 
 ### 8. 活动上线
 **POST**
-** URL ** /api/admin/publish
+** URL ** /api/admin/activity/publish
 
 **参数**
 ```json
@@ -772,6 +772,42 @@ discountPrice|string|Y|折后价
         "page": 0,
         "total": 1
     },
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
+### 18.1.活动 superadmin-activity-offline
+**post**
+**url** /api/admin/activity/offline
+**参数**
+```json
+{
+    "actid":"actid",
+}
+```
+
+**返回**
+```json
+{
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
+### 18.2.活动 superadmin-activity-delete
+**post**
+**url** /api/admin/activity/delete
+**参数**
+```json
+{
+    "actid":"actid",
+}
+```
+
+**返回**
+```json
+{
     "errcode": 0,
     "errmsg": ""
 }

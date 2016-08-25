@@ -66,7 +66,7 @@ urlpatterns = patterns('',
 		#tbapi.
 		#0818.
 		url(r'^api/admin/activity-sign-user', tbapi.get_activity_sign_user),
-		url(r'^api/admin/publish', tbapi.get_activity_publish),
+		url(r'^api/admin/activity/publish', tbapi.activity_publish),
 		url(r'^api/admin/current-activities', tbapi.get_publish_activities),
 		url(r'^api/admin/unpublish-activities', tbapi.get_unpublish_activities),
 		url(r'^api/admin/auth', tbapi.tbauth),

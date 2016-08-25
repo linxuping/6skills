@@ -149,7 +149,7 @@ def get_export_activity_users(req):
 
 @csrf_exempt
 @req_print
-def get_activity_publish(req):
+def activity_publish(req):
 	args = req.POST
 	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
 	if not ret:
