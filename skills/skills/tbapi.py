@@ -665,6 +665,54 @@ def businessman_list(req):
 	return resp
 
 
+@req_print
+def signup_list(req):
+	args = req.GET
+	ret,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
+	if not ret:
+		return city
+	ret,time = check_mysql_arg_jsonobj("time", req.GET.get("time",None), "str")
+	if not ret:
+		return time
+	#ret,status = check_mysql_arg_jsonobj("status", req.GET.get("status",None), "str")
+	#if not ret:
+	#	return status
+	#status = mystatus.online if status=="已审" else (mystatus.unaudit if status=="待审" else None)
+	#if status == None:
+	#	return response_json_error("状态无效.")
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+
+	_json = { "signup":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	#TODO .....
+	_sql = "select c.title,b.wechat,b.username,b.phone,a.age_ch,if(a.gender='male','男','女') from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where c.position_id between (select id from 6s_position where name ='%s') and (select id+10000 from 6s_position where name ='%s') and a.createtime between '%s' and date_add('%s',interval 1 day) limit %d offset %d;"%(city,city,time,time,pagesize,pagesize*(page-1))
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		for i in xrange(count):
+			_json["signup"].append( {"title":rets[i][0],"wxchat":rets[i][1],"name":rets[i][2],"tel":rets[i][3],"childAge":rets[i][4],"childSex":rets[i][5]} )
+
+	_sql = "select count(c.id) from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where c.position_id between (select id from 6s_position where name ='%s') and (select id+10000 from 6s_position where name ='%s') and a.createtime between '%s' and date_add('%s',interval 1 day);"%(city,city,time,time)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
+		_json["pageable"]["page"] = page
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
 @csrf_exempt
 @req_print
 def account_set(req):
