@@ -823,7 +823,6 @@ discountPrice|string|Y|折后价
 {
     "signup": [
     	{
-		    "time":"时间",
 		    "title":"活动",
 		    "wechat":"用户微信号",
 		    "name":"用户姓名",
