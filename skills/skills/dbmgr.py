@@ -31,9 +31,10 @@ class DBOperation:
 	insert = "insert"
 
 
-@mo.time_calc
+#@mo.time_calc
 def db_exec(_sql, op=DBOperation.default):
 		global g_conn
+		starttime = time.time()
 		count,rets = -1,None
 		ret = None
 		for i in range(3):
@@ -53,7 +54,8 @@ def db_exec(_sql, op=DBOperation.default):
 								_cur.close()
 								g_conn.commit()
 		#mo.logger.info("[sql] %s %d %s. "%(_sql,count,str(rets) ))
-		mo.logger.info("[sql] %s, count:%d."%(_sql[:50]+"...",count ))
+		endtime = time.time()
+		mo.logger.info("[sql] %s, count:%d, time:%.03f."%(_sql,count,float(endtime - starttime) ))
 		if op == DBOperation.insert:
 			return count,rets,ret
 		return count,rets
