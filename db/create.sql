@@ -132,6 +132,7 @@ CREATE TABLE `6s_user` (
   `pwdmd5` varchar(127) NOT NULL default -1 COMMENT '密码md5',
   `phone` varchar(24) NOT NULL unique COMMENT '联系方式',
   `openid` varchar(24) DEFAULT '' COMMENT 'wx openid',
+  `wechat` varchar(24) DEFAULT '' COMMENT 'wx flag',
   -- `role` enum('admin','business','normal') COMMENT '角色',
   `img` varchar(255) default 'http://121.42.41.241:9900/static/img/head.jpg' COMMENT '图片',
   `description` varchar(24) COMMENT '',

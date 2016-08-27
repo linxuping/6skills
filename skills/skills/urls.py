@@ -66,7 +66,7 @@ urlpatterns = patterns('',
 		#tbapi.
 		#0818.
 		url(r'^api/admin/activity-sign-user', tbapi.get_activity_sign_user),
-		url(r'^api/admin/publish', tbapi.get_activity_publish),
+		url(r'^api/admin/activity/publish', tbapi.activity_publish),
 		url(r'^api/admin/current-activities', tbapi.get_publish_activities),
 		url(r'^api/admin/unpublish-activities', tbapi.get_unpublish_activities),
 		url(r'^api/admin/auth', tbapi.tbauth),
@@ -87,7 +87,7 @@ urlpatterns = patterns('',
 		url(r'^activities/get-cities', wxapi.activities_getcities),
 		#0824
 		url(r'^api/superadmin/businessman/list', tbapi.businessman_list),
-		#url(r'^api/superadmin/home', tbapi.super_home),
+		url(r'^api/superadmin/signup/list', tbapi.signup_list),
 		#url(r'^api/admin/replace-qr', tbapi.replace_qr),
 		#tbapi END.
 )
