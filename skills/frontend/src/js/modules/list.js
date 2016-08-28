@@ -130,7 +130,7 @@ var Selecter = React.createClass({
 		});
 
 		//获取用户信息,如果没有
-		if (sessionStorage.getItem("_profile") == undefined) {
+		if (sessionStorage.getItem("_profile")!==undefined  && sessionStorage.getItem("_profile")!= null) {
 			return;
 		}
 		$.ajax({
