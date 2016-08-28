@@ -427,6 +427,25 @@ desc|text|Y|商户简介
 }
 ```
 
+
+### 7.1.活动下线
+**post**
+**url** /api/admin/activity/offline
+**参数**
+```json
+{
+    "actid":"actid",
+}
+```
+
+**返回**
+```json
+{
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
 ### 8. 活动上线
 **POST**
 ** URL ** /api/admin/activity/publish
@@ -460,7 +479,7 @@ actid|number|Y|
 }
 ```
 
-### 9. 活动报名用户
+### 9. 查看报名信息
 **GET**
 ** URL ** /api/admin/activity-sign-user?actid=3
 
@@ -558,6 +577,36 @@ qrcode|url|Y|二维码url
 }
 ```
 
+### 12.1. 获取城市列表
+**GET**
+** URL ** /api/admin/get-cities?province=广东省
+
+**参数**
+```json
+{
+	"values": ["广州市","东莞市"],
+	"errcode": 0,
+	"errmsg": "errmsg"
+}
+```
+
+### 12.2. 获取一级活动分类
+**GET**
+** URL ** /api/admin/get-acttypes?level=1
+
+**参数**
+```json
+{
+	"values": ["t1","t2"],
+	"errcode": 0,
+	"errmsg": "errmsg"
+}
+```
+
+### 12.3. 获取一级活动分类
+**GET**
+** URL ** /api/admin/get-acttypes?level=2
+
 ### 12. 创建活动 newactivity
 **POST**
 ** URL ** /api/admin/activities/add
@@ -578,7 +627,7 @@ qrcode|url|Y|二维码url
 	"kidFee": 300,
 	"adultFee": 300,
 	"personNum": 33,
-	"ageGroup": "3-6岁",
+	"ageGroup": "3-6",
 	"qrcode":"http://url.jpg",
 	"details":"活动详情活动详情活动详情"
 }
@@ -783,23 +832,9 @@ discountPrice|string|Y|折后价
 }
 ```
 
-### 18.1.活动 superadmin-activity-offline
+### 18.1.活动下线
 **post**
-**url** /api/admin/activity/offline
-**参数**
-```json
-{
-    "actid":"actid",
-}
-```
-
-**返回**
-```json
-{
-    "errcode": 0,
-    "errmsg": ""
-}
-```
+**url** 重用/api/admin/activity/offline
 
 ### 18.2.活动 superadmin-activity-delete
 **post**
