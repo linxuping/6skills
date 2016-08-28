@@ -219,7 +219,9 @@
 {
 	"errcode": 0,
 	"errmsg": "",
-	"user_type": "登录用户类型"
+	"role": "用户角色",
+	"userid": "",
+	"permissions": ["has_perm1","has_perm2"]
 }
 ```
 
