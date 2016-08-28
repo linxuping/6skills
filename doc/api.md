@@ -263,11 +263,23 @@ password| string | Y |
 }
 ```
 
-**失败返回**
+### 2.1. 得到uploadtoken
+**POST**
+** URL ** /api/admin/uploadtoken/get
+
+**参数**
 ```
 {
-	"errcode": 1,
-	"errmsg": "errmsg"
+	key: "key"
+}
+```
+
+**成功返回**
+```json
+{
+	"token": "42kj34l2k55l2kj342lkj4342lj234lk2j3l",
+	"errcode": 0,
+	"errmsg": "",
 }
 ```
 
@@ -297,14 +309,6 @@ desc|text|Y|商户简介
 {
 	"errcode": 0,
 	"errmsg": "",
-}
-```
-
-**失败返回**
-```json
-{
-	"errcode": 1,
-	"errmsg": "errmsg"
 }
 ```
 
@@ -373,7 +377,6 @@ desc|text|Y|商户简介
 			"actid": 33,
 			"title": "上海迪斯尼",
 			"publish_time": 1471365349281,
-			"url": "http://6skills.com/activity/23.html",
 			"sign_num": 23
 		},
 		...
