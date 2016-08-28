@@ -428,13 +428,49 @@ desc|text|Y|商户简介
 ```
 
 
-### 7.1.活动下线
+### 7.1 活动下线
 **post**
 **url** /api/admin/activity/offline
 **参数**
 ```json
 {
     "actid":"actid",
+}
+```
+
+**返回**
+```json
+{
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
+### 7.2 活动删除
+**post**
+**url** /api/admin/activity/delete
+**参数**
+```json
+{
+    "actid":"actid",
+}
+```
+
+**返回**
+```json
+{
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
+### 7.3 活动编辑
+**post**
+**url** /api/admin/activity/update
+**参数**
+```json
+{
+    ......
 }
 ```
 
@@ -836,23 +872,9 @@ discountPrice|string|Y|折后价
 **post**
 **url** 重用/api/admin/activity/offline
 
-### 18.2.活动 superadmin-activity-delete
+### 18.2.活动删除
 **post**
-**url** /api/admin/activity/delete
-**参数**
-```json
-{
-    "actid":"actid",
-}
-```
-
-**返回**
-```json
-{
-    "errcode": 0,
-    "errmsg": ""
-}
-```
+**url** 重用/api/admin/activity/delete
 
 ### 19.添加优惠 superadmin addpreference
 **post**
