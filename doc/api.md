@@ -204,7 +204,7 @@
 ##后台管理
 ### 1. 商户登录
 **POST**
-** URL ** /api/admin/auth
+** URL ** /api/admin/login
 
 **参数**
 ```
