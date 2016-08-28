@@ -219,6 +219,7 @@
 {
 	"errcode": 0,
 	"errmsg": "",
+	"sessionid": "1234567890",
 	"role": "用户角色",
 	"userid": "",
 	"permissions": ["has_perm1","has_perm2"]
