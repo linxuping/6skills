@@ -93,6 +93,9 @@ body{
 	.ss-media-hd {
 		width: @ssMediaSize !important;
 		height: @ssMediaSize !important;
+		img{
+			height: 100%;
+		}
 	}
 	.ss-media-bd {
 		width: 100%;
@@ -321,4 +324,12 @@ body{
 			vertical-align: middle;
 		}
 	}
+}
+.ss-media-box .ss-media-bd .weui_media_title {
+	word-wrap: normal;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 22px;
 }
