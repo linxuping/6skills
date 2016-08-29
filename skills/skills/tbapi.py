@@ -516,6 +516,7 @@ def business_authorize(req):
 	ret,contactWechat = check_mysql_arg_jsonobj("contactWechat",args.get("contactWechat",None), "str")
 	if not ret:
 		return contactWechat
+	ret,reset = check_mysql_arg_jsonobj("reset",args.get("reset",NULL), "int")
 	ret,userid,sessionid = get_userinfo_from_cookie(req)
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
@@ -533,6 +534,15 @@ def business_authorize(req):
 	if count == 0:
 		mo.logger.error("6s_position: %s_%s is invalid. "%(city,area) )
 		return response_json_error("暂时不支持'%s:%s'这个地区的活动录入，请联系客服."%(city,area))
+
+	if reset == 1:
+		_sql = "delete from 6s_user_business where refid='%s';"%userid
+		count,rets=dbmgr.db_exec(_sql)
+		_sql = "select count(id) from 6s_user_business where refid='%s';"%userid
+		count,rets=dbmgr.db_exec(_sql)
+		if count > 0:
+			mo.logger.error("6s_user_business refid=%s delete but still exist. "%(userid) )
+			return response_json_error("商户信息已存在不能继续进行认证.")
 
 	_sql = "delete from 6s_user_business where refid=%s;"%userid
 	count,rets=dbmgr.db_exec(_sql)

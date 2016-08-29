@@ -610,6 +610,34 @@ def activities_reset_collection(req):
 	return resp
 
 
+@req_print
+def activities_getcollectionstatus(req):
+	args = req.GET
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	if not ret:
+		return actid
+
+	#exec  
+	_json = { "status":False,"errcode":0,"errmsg":"" }
+	_sql = "select id from 6s_collection where openid='%s' and act_id=%d;"%(openid,actid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 1 :
+		_json["status"] = True
+	else:
+		_json["status"] = False
+		#_json["errmsg"] = "未收藏."
+		#mo.logger.info("no sign activity openid:%s actid:%d. "%(openid,actid)+REQ_TAG(args))
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
 @csrf_exempt
 @req_print
 def activities_collect(req):
@@ -660,8 +688,12 @@ def activities_getsignupstatus(req):
 	if count == 1 :
 		_json["status"] = True
 		_json["qrcode"] = rets[0][1]
+		_sql = "select id from 6s_collection where openid='%s' and act_id=%d;"%(openid,actid)
+		count,rets=dbmgr.db_exec(_sql)
+		_json["coll_status"] = True if count>0 else False
 	else:
 		_json["status"] = False
+		_json["coll_status"] = False
 		#_json["errmsg"] = "未报名."
 		#mo.logger.info("no sign activity openid:%s actid:%d. "%(openid,actid)+REQ_TAG(args))
 
