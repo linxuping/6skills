@@ -851,6 +851,7 @@ discountPrice|string|Y|折后价
     "reset":"1",
     ... ... 
 }
+```
 
 ### 16.信息设置 account_setting
 **post**
