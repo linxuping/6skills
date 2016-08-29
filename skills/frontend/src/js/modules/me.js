@@ -285,8 +285,8 @@ var MyCollections = React.createClass({
 						console.log("delCollection complete");
 						React.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
 					});
-				}.bind(this)} title="取消收藏"
-				content="您确定要取消该活动的收藏吗？"/>,
+				}.bind(this)} title="删除收藏"
+				content="您确定要删除该活动的收藏吗？"/>,
 			document.getElementById("confirm-dialog-wrap")
 		);
 	},
