@@ -708,7 +708,7 @@ details|text|Y|活动详情
 
 ### 13. 添加优惠 addpreference
 **POST**
-** URL ** /api/admin/activities/preference/add
+** URL ** /api/admin/activities/preference/add TODO.discountPrice
 
 **参数**
 ```json
@@ -752,7 +752,7 @@ discountPrice|string|Y|折后价
 
 ### 14.优惠活动列表
 **get**
-**url** /api/admin/activities/preference/list?area=xxx&age=x&page=x&page_size=x
+**url** /api/admin/activities/preference/list?page=x&page_size=x
 
 **返回**
 ```json
@@ -782,7 +782,7 @@ discountPrice|string|Y|折后价
 **参数**
 ```json
 {
-	"item":"服务项目",
+    "item":"服务项目",
     "hasbusilicense":"是否有营业执照",
     "license":"营业执照号",
     "licensePic":"营业执照照片",
@@ -816,6 +816,29 @@ discountPrice|string|Y|折后价
 	"errmsg": "errmsg"
 }
 ```
+
+### 15.1. 商户状态-是否审核中
+**GET**
+** URL ** /api/admin/business/getstatus TODO
+
+**成功返回**
+```json
+{
+	"status": "输入，待审，成功",
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+### 15.2. 商户验证 - 重新申请
+**POST**
+** URL ** 重用 /api/admin/business/authorize 
+**参数**
+```json
+{
+    "reset":"1",
+    ... ... 
+}
 
 ### 16.信息设置 account_setting
 **post**
