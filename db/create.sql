@@ -175,7 +175,7 @@ CREATE TABLE `6s_user_business` (
   `wx` varchar(24),
   `createtime` datetime NOT NULL COMMENT '添加时间',
   `last_modification` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '上次更新时间',
-  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用, 1 可用',
+  `status` smallint(6) NOT NULL DEFAULT '1' COMMENT '0 停用,1 可用,2 待审,3 未通过',
   CONSTRAINT `fk_6s_user_business_uid` FOREIGN KEY (refid) REFERENCES 6s_user(id) ON UPDATE CASCADE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -280,6 +280,12 @@ insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (12,"亲子游攻略",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/gd/pics/hv1/123/187/2105/136925433.jpg","more than one week",now());
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (13,"还有各种亲子旅游特价产品",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/16/1698/169862/16986270_980x1200_0.jpg","more than one week",now());
 insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (14,"最低千元起!另外还有迪士尼乐园",DATE_ADD(NOW(), INTERVAL 4 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (15,"最低千元起!另外还有迪士尼乐园5",DATE_ADD(NOW(), INTERVAL 1 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (16,"最低千元起!另外还有迪士尼乐园6",DATE_ADD(NOW(), INTERVAL 1 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (17,"最低千元起!另外还有迪士尼乐园7",DATE_ADD(NOW(), INTERVAL 1 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010402,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (18,"最低千元起!另外还有迪士尼乐园8",DATE_ADD(NOW(), INTERVAL 1 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010105,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (19,"最低千元起!另外还有迪士尼乐园9",DATE_ADD(NOW(), INTERVAL 1 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010105,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
+insert into 6s_activity(id,title,time_from,time_to,quantities,quantities_remain,position_id,act_id,user_id,age_from,age_to,price_adult,img_cover,content,createtime) values (20,"最低千元起!另外还有迪士尼乐园0",DATE_ADD(NOW(), INTERVAL 1 WEEK),DATE_ADD(NOW(), INTERVAL 5 WEEK),6,6,101010105,104,1,2,7,90,"http://img1.gtimg.com/news/pics/hv1/84/186/2105/136925139.jpg","more than one week",now());
 
 
 -- ----------------------------
