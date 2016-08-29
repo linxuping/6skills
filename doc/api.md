@@ -720,7 +720,8 @@ details|text|Y|活动详情
 
 ### 13.1. 获取未优惠的活动列表
 **GET**
-** URL ** 重用 /api/admin/current-activities?nopref=1&page=1&pagesize=8
+** URL ** 重用 /api/admin/current-activities?nopref=1&page=1&pagesize=9999
+** desc ** nopref没有优惠、pagesize=9999加载全部
 
 ### 13. 添加优惠 addpreference
 **POST**
