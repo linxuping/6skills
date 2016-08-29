@@ -688,14 +688,15 @@ def activities_getsignupstatus(req):
 	if count == 1 :
 		_json["status"] = True
 		_json["qrcode"] = rets[0][1]
-		_sql = "select id from 6s_collection where openid='%s' and act_id=%d;"%(openid,actid)
-		count,rets=dbmgr.db_exec(_sql)
-		_json["coll_status"] = True if count>0 else False
 	else:
 		_json["status"] = False
 		_json["coll_status"] = False
 		#_json["errmsg"] = "未报名."
 		#mo.logger.info("no sign activity openid:%s actid:%d. "%(openid,actid)+REQ_TAG(args))
+	
+	_sql = "select id from 6s_collection where openid='%s' and act_id=%d and status=1;"%(openid,actid)
+	count,rets=dbmgr.db_exec(_sql)
+	_json["coll_status"] = True if count>0 else False
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')

@@ -58,6 +58,7 @@ var ActivityDetail = React.createClass({
 		.done(function(res) {
 			this.setState({
 				status: res.status,
+				coll_status: res.coll_status,
 				qrcode: res.qrcode,
 				loaded: true
 			});
@@ -127,7 +128,9 @@ var ActivityDetail = React.createClass({
 				</article>
 				<div className="sign-btn" style={{"cursor": "pointer"}}
 					onClick={this.collectPage}>
-					收藏
+					{
+						this.state.coll_status ? "已收藏" : "收藏"
+					}
 				</div>
 				<div className="sign-btn-right" style={{"cursor": "pointer"}}
 					onClick={this.openSignPage}>
