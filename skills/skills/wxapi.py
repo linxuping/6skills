@@ -683,7 +683,7 @@ def activities_getsignupstatus(req):
 
 	#exec  
 	_json = { "status":False,"errcode":0,"errmsg":"" }
-	_sql = "select a.id,b.img_qrcode from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_user c on a.user_id=c.id where c.openid='%s' and a.act_id=%d;"%(openid,actid)
+	_sql = "select a.id,b.img_qrcode from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_user c on a.user_id=c.id where c.openid='%s' and a.act_id=%d and a.status=1 and b.status=1;"%(openid,actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1 :
 		_json["status"] = True
