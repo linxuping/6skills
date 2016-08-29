@@ -200,6 +200,18 @@
 }
 ```
 
+### 10. 获取收藏状态
+**GET**
+**URL** /activities/collection/get_status?openid=9901&actid=1
+**返回**
+```json
+{
+	"status": true,
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
 
 ##后台管理
 ### 1. 商户登录
