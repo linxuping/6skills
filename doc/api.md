@@ -376,7 +376,7 @@ desc|text|Y|商户简介
 
 ### 6. 已发布活动
 **GET**
-** URL ** /api/admin/current-activities
+** URL ** /api/admin/current-activities?page=1&pagesize=8
 
 
 **成功返回**
@@ -410,7 +410,7 @@ desc|text|Y|商户简介
 
 ### 7. 未发布活动
 **GET**
-** URL ** /api/admin/unpublish-activities
+** URL ** /api/admin/unpublish-activities?page=1&pagesize=8
 
 **成功返回**
 ```json
@@ -718,6 +718,11 @@ details|text|Y|活动详情
 }
 ```
 
+### 13.1. 获取未优惠的活动列表
+**GET**
+** URL ** 重用 /api/admin/current-activities?nopref=1&page=1&pagesize=9999
+** desc ** nopref没有优惠、pagesize=9999加载全部
+
 ### 13. 添加优惠 addpreference
 **POST**
 ** URL ** /api/admin/activities/preference/add TODO.discountPrice
@@ -851,6 +856,7 @@ discountPrice|string|Y|折后价
     "reset":"1",
     ... ... 
 }
+```
 
 ### 16.信息设置 account_setting
 **post**
