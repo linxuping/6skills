@@ -470,7 +470,7 @@ desc|text|Y|商户简介
 **参数**
 ```json
 {
-    ......
+   ????哪个页面？
 }
 ```
 
@@ -628,7 +628,7 @@ qrcode|url|Y|二维码url
 
 ### 12.2. 获取一级活动分类
 **GET**
-** URL ** /api/admin/get-acttypes?level=1
+** URL ** /api/admin/get-acttypes?level=1 TODO
 
 **参数**
 ```json
@@ -639,13 +639,13 @@ qrcode|url|Y|二维码url
 }
 ```
 
-### 12.3. 获取一级活动分类
+### 12.3. 获取二级活动分类
 **GET**
-** URL ** /api/admin/get-acttypes?level=2
+** URL ** /api/admin/get-acttypes?level=2 TODO
 
 ### 12. 创建活动 newactivity
 **POST**
-** URL ** /api/admin/activities/add
+** URL ** /api/admin/activities/add TODO
 
 **参数**
 ```json
