@@ -264,6 +264,7 @@ var MyCollections = React.createClass({
 	},
 
 	delCollectionHandler: function (event) {
+		event.stopPropagation();
 		var collid = event.target.dataset.collid;
 		$.ajax({
 			url: ges('activities/reset_collection'),
