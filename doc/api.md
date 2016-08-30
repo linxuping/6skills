@@ -776,7 +776,8 @@ discountPrice|string|Y|折后价
 {
     "preferencelist": [
         {
-            "content": 33,
+            "activity": "act1",
+            "preinfo": "preinfo1",
             "beginTime": 1471535651971,
             "endTime": 1471535651971,
             "status": "状态",
