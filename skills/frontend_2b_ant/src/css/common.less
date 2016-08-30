@@ -1,0 +1,35 @@
+@import "variables.less";
+
+.generate-border(@n) when (@n <= 6) {
+	@i: @n * 5;
+	.pd@{i}{padding: 5px * @n;}
+	.pt@{i}{padding-top: 5px * @n;}
+	.pb@{i}{padding-bottom: 5px * @n;}
+	.pl@{i}{padding-left: 5px * @n;}
+	.pr@{i}{padding-right: 5px * @n;}
+
+	.mg@{i}{margin: 5px * @n;}
+	.mt@{i}{margin-top: 5px * @n;}
+	.mb@{i}{margin-bottom: 5px * @n;}
+	.ml@{i}{margin-left: 5px * @n;}
+	.mr@{i}{margin-right: 5px * @n;}
+	.generate-border(@n + 1);
+}
+.generate-border(0);
+.fl{
+	float: left;
+}
+.fr{
+	float: right;
+}
+.clearfix{
+	&:after{
+		content: "";
+		display: table;
+		clear: both;
+	}
+	&:before{
+		content: "";
+		display: table;
+	}
+}
