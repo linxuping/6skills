@@ -653,7 +653,7 @@ qrcode|url|Y|二维码url
 
 ### 12.3. 获取二级活动分类
 **GET**
-** URL ** /api/admin/get-acttypes?level=2 TODO
+** URL ** /api/admin/get-acttypes?level=2&type=tt TODO
 
 ### 12. 创建活动 newactivity
 **POST**
