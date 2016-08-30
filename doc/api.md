@@ -984,3 +984,8 @@ discountPrice|string|Y|折后价
 **get**
 ** URL ** 重用 /api/admin/activity-sign-user 不带actid参数 TODO
 
+
+### 24.导出所有报名信息
+**POST**
+** URL ** /api/admin/export-activity-users 不带actid参数 TODO
+
