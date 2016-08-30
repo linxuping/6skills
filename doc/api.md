@@ -356,13 +356,13 @@ desc|text|Y|商户简介
 **成功返回**
 ```json
 {
-	"errcode": 0,
-	"errmsg": "",
 	"info": {
 		"publish": 8,
 		"sign": 200,
 		"page_view": 1000
-	}
+	},
+	"errcode": 0,
+	"errmsg": ""
 }
 ```
 
@@ -529,7 +529,7 @@ actid|number|Y|
 
 ### 9. 查看报名信息
 **GET**
-** URL ** /api/admin/activity-sign-user?actid=3
+** URL ** /api/admin/activity-sign-user?actid=3&page=1&oagesize=10
 
 **参数说明**
 
@@ -776,7 +776,8 @@ discountPrice|string|Y|折后价
 {
     "preferencelist": [
         {
-            "content": 33,
+            "activity": "act1",
+            "preinfo": "preinfo1",
             "beginTime": 1471535651971,
             "endTime": 1471535651971,
             "status": "状态",
@@ -927,7 +928,7 @@ discountPrice|string|Y|折后价
 **url** 重用 /api/admin/activities/preference/list?area=xxx&age=x&page=x&page_size=x
 
 
-### 21. 审核认证 superadmin authorization
+### 21. 审核认证列表 superadmin authorization
 **get**
 **url** /api/superadmin/businessman/list?city=city&status=audit&page=1&pagesize=10
 **返回**
@@ -950,32 +951,41 @@ discountPrice|string|Y|折后价
 }
 ```
 
-### 22.认证 superadmin authorization
-**post**
-**url** 重用 /api/admin/business/authorize
-
-
-### 23.报名信息 superadmin-signup/list
-**post**
-**url** /api/superadmin/signup/list?city=city&time=time&page=1&pagesize=100
+### 22.获取认证信息
+**get**
+**url** /api/admin/business/authinfo/get TODO
 **返回**
 ```json
 {
-    "signup": [
-    	{
-		    "title":"活动",
-		    "wechat":"用户微信号",
-		    "name":"用户姓名",
-		    "tel":"用户的电话号码",
-		    "childAge":"儿童年龄",
-		    "childSex":"儿童性别"
-	    }
-    ],
-    "pageable": {
-        "page": 0,
-        "total": 1
-    },
-    errcode: 0,
-    errmsg: ""
+	"info": {
+	    "item":"服务项目",
+	    "hasbusilicense":"是否有营业执照",
+	    "license":"营业执照号",
+	    "licensePic":"营业执照照片",
+	    "identity":"身份证号"，
+	    "identityPic":"身份证图片",
+	    "companyTel":"公司客服电话",
+	    "companyName":"门店名称",
+	    "city":"城市",
+	    "area":"区域",
+	    "address":"详细地址",
+	    "contactName":"联系人姓名",
+	    "contactTel":"联系人电话",
+	    "contactEmail":"联系人邮箱",
+	    "contactQQ":"联系人QQ号",
+	    "contactWechat":"联系人微信号"
+	},
+	"errcode": 0,
+	"errmsg": ""
 }
 ```
+
+### 23.所有报名信息
+**get**
+** URL ** 重用 /api/admin/activity-sign-user?city=cc&time=tt&page=1&oagesize=10 不带actid参数
+
+
+### 24.导出所有报名信息
+**POST**
+** URL ** /api/admin/export-activity-users 不带actid参数
+
