@@ -829,6 +829,39 @@ def super_home(req):
 '''
 
 
+@req_print
+def get_acttypes(req):
+	ret,level = check_mysql_arg_jsonobj("level", req.GET.get("level",None), "int")
+	if not ret:
+		return level
+	ret,acttype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
+	if level==2 and not ret:
+		return acttype
+
+	#exec  
+	_json = { "values":[],"errcode":0,"errmsg":"" }
+	_sql = ""
+	if level == 2:
+		_sql = "select name from 6s_acttype where pid=(select id from 6s_acttype where name='%s');"%acttype
+	else:
+		_sql = "select name from 6s_acttype where pid=-1;"
+	count,rets=dbmgr.db_exec(_sql)
+	if count >0 :
+		for i in xrange(count):
+			_json["values"].append( rets[i][0] )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "活动类型不存在."
+		mo.logger.error("活动类型不存在. level:%d type:%s"%(level,str(acttype)) )
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+
+
 
 from qiniu import Auth
 '''
