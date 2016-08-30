@@ -980,27 +980,7 @@ discountPrice|string|Y|折后价
 }
 ```
 
-### 23.报名信息 superadmin-signup/list
-**post**
-**url** /api/superadmin/signup/list?city=city&time=time&page=1&pagesize=100
-**返回**
-```json
-{
-    "signup": [
-    	{
-		    "title":"活动",
-		    "wechat":"用户微信号",
-		    "name":"用户姓名",
-		    "tel":"用户的电话号码",
-		    "childAge":"儿童年龄",
-		    "childSex":"儿童性别"
-	    }
-    ],
-    "pageable": {
-        "page": 0,
-        "total": 1
-    },
-    errcode: 0,
-    errmsg: ""
-}
-```
+### 23.所有报名信息
+**get**
+** URL ** 重用 /api/admin/activity-sign-user 不带actid参数 TODO
+
