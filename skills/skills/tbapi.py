@@ -112,17 +112,32 @@ def get_activity_sign_user(req):
 	if not ret:
 		return pagesize
 	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	#if not ret:
+	#	return actid
+
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
 	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+	isadmin = check_user_admin(userid)
+	sql_filter = ""
+	if isadmin:
+		pass
+	elif not ret:
 		return actid
+	else:
+		sql_filter = " and a.act_id=%d"%actid
 
 	_json = { "users":[],"pageable":{"page":0,"total":1},"errcode":1,"errmsg":"" }
-	_sql = "select a.username_pa,a.username_ch,a.phone,a.age_ch,a.gender from 6s_signup a left join 6s_user b on a.user_id=b.id where a.status=1 and b.status=1 and a.act_id=%d limit %d offset %d;"%(actid,pagesize,pagesize*(page-1) )
+	_sql = "select a.username_pa,a.username_ch,a.phone,a.age_ch,a.gender,c.title,b.wechat from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where a.status=1 and b.status=1 %s limit %d offset %d;"%(sql_filter,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in xrange(count):
-			_json["users"].append( {"name":rets[i][1],"phone":rets[i][2],"kid_age":rets[i][3],"kid_gender":rets[i][4]} )
+			_json["users"].append( {"name":rets[i][1],"phone":rets[i][2],"kid_age":rets[i][3],"kid_gender":rets[i][4],"activity":rets[i][5],"wx_nickname":rets[i][6]} )
 
-	_sql = "select count(a.id) from 6s_signup a left join 6s_user b on a.user_id=b.id where a.status=1 and b.status=1 and a.act_id=%d;"%actid
+	_sql = "select count(a.id) from 6s_signup a left join 6s_user b on a.user_id=b.id where a.status=1 and b.status=1 %s;"%sql_filter
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
@@ -140,16 +155,31 @@ def get_export_activity_users(req):
 	print "cookies: ",req.COOKIES,req.COOKIES.get("userid",None)
 	#check.
 	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
-	if not ret:
-		return actid
+	#if not ret:
+	#	return actid
 
-	_sql = "select a.username_pa,a.username_ch,a.phone,a.age_ch,a.gender from 6s_signup a left join 6s_user b on a.user_id=b.id where a.status=1 and b.status=1 and a.act_id=%d;"%actid
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+	isadmin = check_user_admin(userid)
+	sql_filter = ""
+	if isadmin:
+		pass
+	elif not ret:
+		return actid
+	else:
+		sql_filter = " and a.act_id=%d"%actid
+
+	_sql = "select a.username_pa,a.username_ch,a.phone,a.age_ch,a.gender,c.title,b.wechat from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where a.status=1 and b.status=1 %s;"%sql_filter
 	count,rets=dbmgr.db_exec(_sql)
 	_stream = ""
 	if count > 0:
 		_stream += "name,phone,kid_age,kid_gender\r\n"
 		for i in xrange(count):
-			_stream += "%s,%s,%s,%s\r\n"%(rets[i][1],rets[i][2],rets[i][3],rets[i][4])
+			_stream += "%s,%s,%s,%s,%s,%s\r\n"%(rets[i][1],rets[i][2],rets[i][3],rets[i][4],rets[i][5],rets[i][6])
 		if _stream == "":	
 			return response_json_error("有报名用户但没有导出信息.")
 	else:
@@ -629,11 +659,11 @@ def get_preferencelist(req):
 	isadmin = check_user_admin(userid)
 
 	_json = { "preferencelist":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
-	_sql = "select a.content,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),if(a.status=1,\"在线\",if(a.status=2,\"未开始\",\"其他\")) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where (%d or c.id=%s) and a.status>0 limit %d offset %d;;"%(isadmin,userid,pagesize,pagesize*(page-1))
+	_sql = "select b.content,a.content,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),if(a.status=1,\"在线\",if(a.status=2,\"未开始\",\"其他\")) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where (%d or c.id=%s) and a.status>0 order by a.createtime desc limit %d offset %d;;"%(isadmin,userid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count > 0:
 		for i in xrange(count):
-			_json["preferencelist"].append( {"content":rets[i][0],"beginTime":rets[i][1],"endTime":rets[i][2],"status":rets[i][3]} )
+			_json["preferencelist"].append( {"activity":rets[i][0],"preinfo":rets[i][1],"beginTime":rets[i][2],"endTime":rets[i][3],"status":rets[i][4]} )
 
 	_sql = "select count(a.id) from 6s_preinfo a left join 6s_activity b on a.id=b.preinfo_id left join 6s_user c on b.user_id=c.id where (%d or c.id=%s) and a.status>0;"%(isadmin,userid)
 	count,rets=dbmgr.db_exec(_sql)
