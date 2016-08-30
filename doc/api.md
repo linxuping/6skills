@@ -529,7 +529,7 @@ actid|number|Y|
 
 ### 9. 查看报名信息
 **GET**
-** URL ** /api/admin/activity-sign-user?actid=3
+** URL ** /api/admin/activity-sign-user?actid=3&page=1&oagesize=10
 
 **参数说明**
 
@@ -982,7 +982,7 @@ discountPrice|string|Y|折后价
 
 ### 23.所有报名信息
 **get**
-** URL ** 重用 /api/admin/activity-sign-user 不带actid参数 TODO
+** URL ** 重用 /api/admin/activity-sign-user?city=cc&time=tt&page=1&oagesize=10 不带actid参数 TODO
 
 
 ### 24.导出所有报名信息
