@@ -356,13 +356,13 @@ desc|text|Y|商户简介
 **成功返回**
 ```json
 {
-	"errcode": 0,
-	"errmsg": "",
 	"info": {
 		"publish": 8,
 		"sign": 200,
 		"page_view": 1000
-	}
+	},
+	"errcode": 0,
+	"errmsg": ""
 }
 ```
 
@@ -928,7 +928,7 @@ discountPrice|string|Y|折后价
 **url** 重用 /api/admin/activities/preference/list?area=xxx&age=x&page=x&page_size=x
 
 
-### 21. 审核认证 superadmin authorization
+### 21. 审核认证列表 superadmin authorization
 **get**
 **url** /api/superadmin/businessman/list?city=city&status=audit&page=1&pagesize=10
 **返回**
@@ -951,10 +951,34 @@ discountPrice|string|Y|折后价
 }
 ```
 
-### 22.认证 superadmin authorization
-**post**
-**url** 重用 /api/admin/business/authorize
-
+### 22.获取认证信息
+**get**
+**url** /api/admin/business/authinfo/get TODO
+**返回**
+```json
+{
+	"info": {
+	    "item":"服务项目",
+	    "hasbusilicense":"是否有营业执照",
+	    "license":"营业执照号",
+	    "licensePic":"营业执照照片",
+	    "identity":"身份证号"，
+	    "identityPic":"身份证图片",
+	    "companyTel":"公司客服电话",
+	    "companyName":"门店名称",
+	    "city":"城市",
+	    "area":"区域",
+	    "address":"详细地址",
+	    "contactName":"联系人姓名",
+	    "contactTel":"联系人电话",
+	    "contactEmail":"联系人邮箱",
+	    "contactQQ":"联系人QQ号",
+	    "contactWechat":"联系人微信号"
+	},
+	"errcode": 0,
+	"errmsg": ""
+}
+```
 
 ### 23.报名信息 superadmin-signup/list
 **post**
