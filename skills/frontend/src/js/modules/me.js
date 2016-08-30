@@ -264,23 +264,31 @@ var MyCollections = React.createClass({
 	},
 
 	delCollectionHandler: function (event) {
+		event.stopPropagation();
 		var collid = event.target.dataset.collid;
-		$.ajax({
-			url: ges('activities/reset_collection'),
-			//url: '/test/sign.json',
-			type: 'post',
-			dataType: 'json',
-			data: { "openid":geopenid(),"collid": collid },
-		})
-		.done(function() {
-			this.pullFromServer();
-		}.bind(this))
-		.fail(function() {
-			console.log("delCollection error");
-		})
-		.always(function() {
-			console.log("delCollection complete");
-		});
+		ReactDOM.render(
+			<ConfirmDialog callback={function(){
+					$.ajax({
+						url: ges('activities/reset_collection'),
+						//url: '/test/sign.json',
+						type: 'post',
+						dataType: 'json',
+						data: { "openid":geopenid(),"collid": collid },
+					})
+					.done(function() {
+						this.pullFromServer();
+					}.bind(this))
+					.fail(function() {
+						console.log("delCollection error");
+					})
+					.always(function() {
+						console.log("delCollection complete");
+						React.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+					});
+				}.bind(this)} title="删除收藏"
+				content="您确定要删除这个收藏吗？"/>,
+			document.getElementById("confirm-dialog-wrap")
+		);
 	},
 
 	render: function() {

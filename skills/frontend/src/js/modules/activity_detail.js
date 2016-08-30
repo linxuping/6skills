@@ -25,7 +25,11 @@ var ActivityDetail = React.createClass({
 		}
 	},
 
-	collectPage: function(){
+	openCollectPage: function(){
+		if (this.state.coll_status) {
+			alert("已收藏该活动，请到我的收藏中查看！");
+			return;
+		}
 		//check if no Pay attention to the public number.
 		//turn to page 'attention'
 		$.ajax({
@@ -127,7 +131,7 @@ var ActivityDetail = React.createClass({
 					</div>
 				</article>
 				<div className="sign-btn" style={{"cursor": "pointer"}}
-					onClick={this.collectPage}>
+					onClick={this.openCollectPage}>
 					{
 						this.state.coll_status ? "已收藏" : "收藏"
 					}
