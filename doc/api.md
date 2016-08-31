@@ -663,21 +663,19 @@ qrcode|url|Y|二维码url
 ```json
 {
 	"title":"云南亲子一日游",
-	"coverImage":"http://www.xxx.jpg",
-	"beginTime":"20160602",
-	"endTime":"20160602",
+	"coverimage":"http://www.xxx.jpg",
+	"begintime":"20160602",
+	"endtime":"20160602",
 	"city":"广州",
 	"area":"越秀区",
 	"address":"越秀广场",
-	"firstClassification": 3333,
-	"secondClassification": 3333,
-	"isFree": false,
-	"kidFee": 300,
-	"adultFee": 300,
-	"personNum": 33,
-	"ageGroup": "3-6",
+	"firstacttype": "本地活动",
+	"secondacttype": “手工DIY”,
+	"cost": 0,
+	"personnum": 33,
+	"agerange": "3-6",
 	"qrcode":"http://url.jpg",
-	"details":"活动详情活动详情活动详情"
+	"content":"活动详情活动详情活动详情"
 }
 ```
 
