@@ -34,6 +34,7 @@ var distPath = "dist/static/";
 // 源码路径
 var src = {
 	css: srcPath + "less",
+	css2: srcPath + "css",
 	img: srcPath + "img",
 	js: srcPath + "js",
 	lib: srcPath + "lib",
@@ -71,6 +72,11 @@ gulp.task('styles', function(){
 	.pipe(notify({message: 'styles task complete'}))
 });
 
+
+gulp.task('styles2', function(){
+	return gulp.src([src.css2 + '/*.css'])
+	.pipe(gulp.dest(dist.css))
+});
 
 
 // 库样式
@@ -241,7 +247,7 @@ gulp.task("build", ['clean'], function(){
 	gulp.start(['lib_scripts', 'lib_other_files'])
 
 	// 用户数据
-	gulp.start(['styles', 'scripts', 'react', 'images']);
+	gulp.start(['styles', 'styles2', 'scripts', 'react', 'images']);
 
 	// jsp模板
 	gulp.start('templates');
