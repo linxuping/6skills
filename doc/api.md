@@ -1001,7 +1001,7 @@ discountPrice|string|Y|折后价
 
 ### 22.2 认证 不通过
 **post**
-**url**/api/admin/authorization/pass TODO
+**url**/api/admin/authorization/reject TODO
 
 **参数**
 ```json
