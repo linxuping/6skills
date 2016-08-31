@@ -673,7 +673,8 @@ qrcode|url|Y|二维码url
 	"secondacttype": “手工DIY”,
 	"cost": 0,
 	"personnum": 33,
-	"agerange": "3-6",
+	"agefrom": 3,
+	"ageto": 6,
 	"qrcode":"http://url.jpg",
 	"content":"活动详情活动详情活动详情"
 }
