@@ -657,7 +657,7 @@ qrcode|url|Y|二维码url
 
 ### 12. 创建活动 newactivity
 **POST**
-** URL ** /api/admin/activities/add TODO
+** URL ** /api/admin/activities/add
 
 **参数**
 ```json
