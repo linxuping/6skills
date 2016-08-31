@@ -980,6 +980,45 @@ discountPrice|string|Y|折后价
 }
 ```
 
+### 22.1 认证 通过
+**post**
+**url**/api/admin/authorization/pass TODO
+
+**参数**
+```json
+{
+    "business_id":2
+}
+```
+
+**返回**
+```json
+{
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
+### 22.2 认证 不通过
+**post**
+**url**/api/admin/authorization/pass TODO
+
+**参数**
+```json
+{
+    "business_id":2,
+    "description": "abc"
+}
+```
+
+**返回**
+```json
+{
+    "errcode": 0,
+    "errmsg": ""
+}
+```
+
 ### 23.所有报名信息
 **get**
 ** URL ** 重用 /api/admin/activity-sign-user?city=cc&time=tt&page=1&oagesize=10 不带actid参数
