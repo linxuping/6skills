@@ -21,8 +21,13 @@ class Signup extends React.Component {
     console.log(this.props.form.getFieldsValue())
   }
 
+  getCodeHandler(ev){
+
+  }
+
   render() {
-    const { getFieldProps } = this.props.form;
+    const {getFieldProps, getFieldError, isFieldValidating} = this.props.form;
+
     return (
       <Row>
         <Col span={8} offset={8}>
@@ -46,7 +51,7 @@ class Signup extends React.Component {
                     {...getFieldProps('code')}></Input>
                   </Col>
                   <Col span={8}>
-                    <Button htmlType="button" type="primary" size="large" className="fr">
+                    <Button htmlType="button" type="primary" size="large" className="fr" onClick={this.getCodeHandler.bind(this)}>
                       获取验证码
                     </Button>
                   </Col>
