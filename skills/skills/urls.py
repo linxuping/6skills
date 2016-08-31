@@ -89,6 +89,9 @@ urlpatterns = patterns('',
 		#0824
 		url(r'^api/superadmin/businessman/list', tbapi.businessman_list),
 		url(r'^api/superadmin/signup/list', tbapi.signup_list),
+		#0830
+		url(r'^api/admin/get-acttypes', tbapi.get_acttypes),
+		url(r'^api/admin/activities/add', tbapi.add_activity),
 		#url(r'^api/admin/replace-qr', tbapi.replace_qr),
 		#tbapi END.
 )

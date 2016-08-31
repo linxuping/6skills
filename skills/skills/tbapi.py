@@ -860,6 +860,91 @@ def get_acttypes(req):
 	return resp
 
 
+@csrf_exempt
+@req_print
+def add_activity(req):
+	args = req.POST
+	ret,title = check_mysql_arg_jsonobj("title", args.get("title",None), "str")
+	if not ret:
+		return title
+	ret,coverimage = check_mysql_arg_jsonobj("coverimage", args.get("coverimage",None), "str")
+	if not ret:
+		return coverimage
+	ret,begintime = check_mysql_arg_jsonobj("begintime", args.get("begintime",None), "str")
+	if not ret:
+		return begintime
+	ret,endtime = check_mysql_arg_jsonobj("endtime", args.get("endtime",None), "str")
+	if not ret:
+		return endtime
+	ret,city = check_mysql_arg_jsonobj("city", args.get("city",None), "str")
+	if not ret:
+		return city
+	ret,area = check_mysql_arg_jsonobj("area", args.get("area",None), "str")
+	if not ret:
+		return area
+	ret,address = check_mysql_arg_jsonobj("address", args.get("address",None), "str")
+	if not ret:
+		return str
+	ret,firstacttype = check_mysql_arg_jsonobj("firstacttype", args.get("firstacttype",None), "str")
+	if not ret:
+		return firstacttype
+	ret,secondacttype = check_mysql_arg_jsonobj("secondacttype", args.get("secondacttype",None), "str")
+	if not ret:
+		return secondacttype
+	ret,cost = check_mysql_arg_jsonobj("cost", args.get("cost",None), "int")
+	if not ret:
+		return cost
+	ret,personnum = check_mysql_arg_jsonobj("personnum", args.get("personnum",None), "int")
+	if not ret:
+		return personnum
+	ret,agefrom = check_mysql_arg_jsonobj("agefrom", args.get("agefrom",None), "int")
+	if not ret:
+		return agefrom
+	ret,ageto = check_mysql_arg_jsonobj("ageto", args.get("ageto",None), "int")
+	if not ret:
+		return ageto
+	ret,qrcode = check_mysql_arg_jsonobj("qrcode", args.get("qrcode",None), "str")
+	if not ret:
+		return qrcode
+	ret,content = check_mysql_arg_jsonobj("content", args.get("content",None), "str")
+	if not ret:
+		return content
+	ret,userid,sessionid = get_userinfo_from_cookie(req)
+	ret,userid,sessionid = True,"1","10101"
+	if not ret:
+		return response_json_error("必须上传用户基础信息.")
+	if not check_session_valid(userid,sessionid):
+		return response_json_error("session过期.")
+
+	_sql = "select id from 6s_position where name='%s' and pid=(select id from 6s_position where name='%s');"%(area,city)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		mo.logger.error("活动地点无效. %s_%s"%(city,area) )
+		return response_json_error("活动地点无效. ")
+	position_id = int(rets[0][0])
+	_sql = "select id from 6s_acttype where name='%s' and pid=(select id from 6s_acttype where name='%s');"%(secondacttype,firstacttype)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		mo.logger.error("活动类型无效. %s_%s"%(secondacttype,firstacttype) )
+		return response_json_error("活动类型无效. ")
+	act_id = int(rets[0][0])
+
+	_json = { "errcode":0,"errmsg":"" }
+	_sql = "insert into 6s_activity(title,img_cover,time_from,time_to,position_id,position_details,act_id,price_child,quantities,age_from,age_to,img_qrcode,content,user_id,createtime) values('%s','%s','%s','%s',%d,'%s',%d,%d,%d,%d,%d,'%s','%s',%s,now());"%(title,coverimage,begintime,endtime,position_id,address,act_id,cost,personnum,agefrom,ageto,qrcode,content,userid)
+	count,rets,insertid=dbmgr.db_exec(_sql,dbmgr.DBOperation.insert)
+	if count == 1:
+		mo.logger.info("添加活动 userid:%s actid:%d. "%(userid,insertid) )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "添加活动失败."
+		mo.logger.error("添加活动失败. "+REQ_TAG(args) )
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
 
 
 
