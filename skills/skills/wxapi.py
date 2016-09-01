@@ -529,7 +529,7 @@ def activities_getprofile(req):
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "找不到当前用户."
-		mo.logger.error("cannot find user:%s. "%openid+REQ_TAG(args))
+		mo.logger.error("cannot find user:%s. "%openid+REQ_TAG(req.GET))
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')

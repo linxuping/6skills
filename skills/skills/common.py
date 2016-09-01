@@ -33,6 +33,14 @@ def encode_md5(str):
 	m2.update(str)   
 	return m2.hexdigest()   
 
+
+def get_ip(request):
+	if request.META.has_key('HTTP_X_FORWARDED_FOR'):  
+		return str(request.META['HTTP_X_FORWARDED_FOR'])
+	else:  
+		return str(request.META['REMOTE_ADDR'])
+
+
 def get_errtag():
 		return "[errno:%s_%s]"%(socket.gethostname(),time.strftime('%m%d_%H%M%S'))
 
@@ -42,7 +50,7 @@ def REQ_TAG(args):
 def req_print(func):
 		def wrapper(*args):
 				req = args[0]
-				mo.logger.info("->%s POST:%s, GET:%s, USER:%s, args:%s"%(func.func_name,str(req.POST),str(req.GET),str(req.user),str(args[1:]) ))
+				mo.logger.info("->%s [%s] POST:%s, GET:%s, args:%s"%(func.func_name,get_ip(req),str(req.POST),str(req.GET),str(args[1:]) ))
 				starttime = time.time()
 				try:
 					ret = func(req)
@@ -126,11 +134,15 @@ def _check_mysql_arg_json(_name, _arg, _type):
 				return False,{ "errcode":1, "errmsg":"参数%s不能为空."%_name }
 		if _type == "int":
 				if not _arg.isdigit():
-						return False,{ "errcode":1, "errmsg":"非法参数(i-%s)"%str(_arg) }
+						mo.logger.error( "非法参数(%s-%s)"%(_name,str(_arg)) )
+						return False,{ "errcode":1, "errmsg":"非法参数(i-%s-%s)"%(_name,str(_arg)) }
 				return True,int(_arg)
+		elif _type == "sstr":
+				return True,str(_arg)
 		elif _type == "str":
-				if _arg.find('and')!=-1 and _arg.find('=')!=-1 and (_arg.find('\'')!=-1 or _arg.find('\"')!=-1):
-						return False,{ "errcode":1, "errmsg":"非法参数(s-%s)"%str(_arg) }
+				if not settings.check_marg_safe(_arg):
+						mo.logger.error( "非法参数(%s-%s)"%(_name,str(_arg)) )
+						return False,{ "errcode":1, "errmsg":"非法参数(s-%s-%s)"%(_name,str(_arg)) }
 				return True,_arg
 		return False,{ "errcode":1, "errmsg":"未知判断类型(%s)."%str(_type) }
 def check_mysql_arg_jsonobj(_name, _arg, _type):
@@ -145,9 +157,8 @@ def response_json(_dic):
 def response_json_error(_msg):
 		return HttpResponse(json.dumps({"errcode":1, "errmsg":_msg}), mimetype='application/json')
 
-BFE_URL = "http://121.42.41.241:9901"
 def makeup_headers_CORS(resp):
-		resp._headers["Access-Control-Allow-Origin"] = ("Access-Control-Allow-Origin", "%s"%BFE_URL)
+		resp._headers["Access-Control-Allow-Origin"] = ("Access-Control-Allow-Origin", "%s"%settings.BFE_URL)
 		resp._headers["Access-Control-Allow-Methods"] = ("Access-Control-Allow-Methods", "POST, PUT, DELETE, GET, OPTIONS")
 		resp._headers["Access-Control-Request-Method"] = ("Access-Control-Request-Method", "*")
 		resp._headers["Access-Control-Allow-Headers"] = ("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")

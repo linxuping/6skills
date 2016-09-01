@@ -5,18 +5,32 @@ import sys
 import traceback 
 import skills.settings as settings
 import modules as mo
-g_conn = None
+g_conn_w = None
+g_conn_r = None
 #lock
 
 
-def db_init():
-		global g_conn
+def db_init_w():
+		global g_conn_w
 		ret = None
 		for i in range(3):
 				try:
-						#g_conn=MySQLdb.connect(host='',user='',passwd='',db='',port=)
 						mo.logger.info( "%s_%s_%s_%s %d."%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME,i) )
-						g_conn=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=settings.DB_NAME,port=settings.DB_PORT,charset='utf8')
+						g_conn_w=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=settings.DB_NAME,port=settings.DB_PORT,charset='utf8')
+						return True,None
+				except:
+						ret = str(sys.exc_info()) + "; " + str(traceback.format_exc()) 
+						mo.logger.error( ret )
+						#time.sleep(1)
+		return False,ret
+
+def db_init_r():
+		global g_conn_r
+		ret = None
+		for i in range(3):
+				try:
+						mo.logger.info( "%s_%s_%s_%s %d."%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME,i) )
+						g_conn_r=MySQLdb.connect(host=settings.DB_HOST2,user=settings.DB_USERNAME2,passwd=settings.DB_PASSWORD2,db=settings.DB_NAME2,port=settings.DB_PORT2,charset='utf8')
 						return True,None
 				except:
 						ret = str(sys.exc_info()) + "; " + str(traceback.format_exc()) 
@@ -33,26 +47,33 @@ class DBOperation:
 
 #@mo.time_calc
 def db_exec(_sql, op=DBOperation.default):
-		global g_conn
+		global g_conn_w,g_conn_r
 		starttime = time.time()
 		count,rets = -1,None
 		ret = None
+		is_w = _sql.find("select ")!=0
 		for i in range(3):
 				_cur = None
 				try:
-						_cur=g_conn.cursor()
+						if is_w:
+							_cur = g_conn_w.cursor()
+						else:
+							_cur = g_conn_r.cursor()
 						count=_cur.execute(_sql) 
 						rets = _cur.fetchall()
 						break
 				except:
 						rets = "[sql error] retry.%d, %s, %s. [%s]"%(i,str(sys.exc_info()),str(traceback.format_exc()),_sql  )
 						mo.logger.error( rets )
-						db_init()
+						db_init_w()
 				finally:
 						if _cur != None:
 								ret = _cur.lastrowid
 								_cur.close()
-								g_conn.commit()
+								if is_w:
+									g_conn_w.commit()
+								else:
+									g_conn_r.commit()
 		#mo.logger.info("[sql] %s %d %s. "%(_sql,count,str(rets) ))
 		endtime = time.time()
 		mo.logger.info("[sql] %s, count:%d, time:%.03f."%(_sql,count,float(endtime - starttime) ))
@@ -61,8 +82,8 @@ def db_exec(_sql, op=DBOperation.default):
 		return count,rets
 
 def db_select_test():		#cur.execute('select * from user')
-		global g_conn
-		_cur=g_conn.cursor()
+		global g_conn_w
+		_cur=g_conn_w.cursor()
 		count=_cur.execute('select * from 6s_acttype')
 		print "test_db_insert: ",count
 		rets = _cur.fetchall()
@@ -70,12 +91,13 @@ def db_select_test():		#cur.execute('select * from user')
 			print ret
 
 
-db_init()
+db_init_w()
+db_init_r()
 #print db_exec("select * from 6s_user where username='test';")
 #print db_exec("delete from 6s_user where username='test';")
 #print db_exec("insert into 6s_user(refid,username,phone,role,img,createtime) values(1,'test','','normal','',now());")
 #db_select_test()
 		#cur.close()
-		#g_conn.close()
+		#g_conn_w.close()
 
 
