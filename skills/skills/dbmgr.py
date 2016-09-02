@@ -15,7 +15,7 @@ def db_init_w():
 		ret = None
 		for i in range(3):
 				try:
-						mo.logger.info( "%s_%s_%s_%s %d."%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME,i) )
+						mo.logger.info( "[conn_w]%s_%s_%s_%s %d."%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME,i) )
 						g_conn_w=MySQLdb.connect(host=settings.DB_HOST,user=settings.DB_USERNAME,passwd=settings.DB_PASSWORD,db=settings.DB_NAME,port=settings.DB_PORT,charset='utf8')
 						return True,None
 				except:
@@ -29,7 +29,7 @@ def db_init_r():
 		ret = None
 		for i in range(3):
 				try:
-						mo.logger.info( "%s_%s_%s_%s %d."%(settings.DB_HOST,settings.DB_USERNAME,settings.DB_PASSWORD,settings.DB_NAME,i) )
+						mo.logger.info( "[conn_r]%s_%s_%s_%s %d."%(settings.DB_HOST2,settings.DB_USERNAME2,settings.DB_PASSWORD2,settings.DB_NAME2,i) )
 						g_conn_r=MySQLdb.connect(host=settings.DB_HOST2,user=settings.DB_USERNAME2,passwd=settings.DB_PASSWORD2,db=settings.DB_NAME2,port=settings.DB_PORT2,charset='utf8')
 						return True,None
 				except:
@@ -65,7 +65,10 @@ def db_exec(_sql, op=DBOperation.default):
 				except:
 						rets = "[sql error] retry.%d, %s, %s. [%s]"%(i,str(sys.exc_info()),str(traceback.format_exc()),_sql  )
 						mo.logger.error( rets )
-						db_init_w()
+						if is_w:
+							db_init_w()
+						else:
+							db_init_r()
 				finally:
 						if _cur != None:
 								ret = _cur.lastrowid
@@ -76,7 +79,11 @@ def db_exec(_sql, op=DBOperation.default):
 									g_conn_r.commit()
 		#mo.logger.info("[sql] %s %d %s. "%(_sql,count,str(rets) ))
 		endtime = time.time()
-		mo.logger.info("[sql] %s, count:%d, time:%.03f."%(_sql,count,float(endtime - starttime) ))
+		if " 6s_trace" in _sql:
+			if is_w:
+				mo.logger.info("[sql_w] %s, count:%d, time:%.03f."%(_sql,count,float(endtime - starttime) ))
+			else:
+				mo.logger.info("[sql_r] %s, count:%d, time:%.03f."%(_sql,count,float(endtime - starttime) ))
 		if op == DBOperation.insert:
 			return count,rets,ret
 		return count,rets
