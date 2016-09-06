@@ -51,7 +51,7 @@ def db_exec(_sql, op=DBOperation.default):
 		starttime = time.time()
 		count,rets = -1,None
 		ret = None
-		is_w = _sql.find("select ")!=0
+		is_w = (_sql.find("select ")!=0  or _sql.find("6s_trace")!=0)
 		for i in range(3):
 				_cur = None
 				try:

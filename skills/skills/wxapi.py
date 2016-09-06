@@ -11,6 +11,7 @@ import time
 import os
 import sys
 import modules as mo
+import urllib2
 import dbmgr
 import datetime
 from common import *
@@ -45,9 +46,11 @@ def activities_special_offers(req):
 	#1 weekend.
 	#1 weekend - 1 month.
 	if pagetype == "preview":
-		sql_datefilter = "a.time_from>DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+		#sql_datefilter = "a.time_from>DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+		sql_datefilter = "a.preinfo_id is null and "
 	else:
-		sql_datefilter = "a.time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+		#sql_datefilter = "a.time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+		sql_datefilter = "a.preinfo_id>0 and "
 
 	#exec 
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
@@ -139,13 +142,13 @@ def activities_details(req):
 
 	#exec 
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "select a.id,imgs_act,title,a.content,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,imgs_act,preinfo,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),a2.price_child,a2.price_adult,a2.content from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
+	_sql = "select a.id,imgs_act,title,a.content,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,imgs_act,preinfo,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),a2.price_child,a2.price_adult,a2.content,a.position_details from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_child":lis[8],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"time_from":lis[14],"time_to":lis[15],"price_child_pre":lis[16],"preinfo":lis[18]} ) 
+			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_child":lis[8],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"time_from":lis[14],"time_to":lis[15],"price_child_pre":lis[16],"preinfo":lis[18],"position_details":lis[19]} ) 
 	elif count == 0:
 		_json["errcode"] = 1
 		_json["errmsg"] = "activity:%d not exist."%actid
@@ -697,6 +700,188 @@ def activities_getsignupstatus(req):
 	_sql = "select id from 6s_collection where openid='%s' and act_id=%d and status=1;"%(openid,actid)
 	count,rets=dbmgr.db_exec(_sql)
 	_json["coll_status"] = True if count>0 else False
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+def get_pos():
+	pass
+
+
+@req_print
+def get_access_token(req):
+	args = req.GET
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+
+	_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"%(settings.appid,settings.appsecret)
+	import urllib2
+	req = urllib2.Request(_url)
+	resp = urllib2.urlopen(req)
+	ret = resp.read()
+	tmpdic = json.loads(ret)
+	print "tmpdic: ",tmpdic
+	_json = { "access_token":tmpdic.get("access_token",""),"errcode":0,"errmsg":"" }
+
+	if True:
+		_url = "http://apis.map.qq.com/ws/geocoder/v1/?location=23.127191,113.355747&key=%s&get_poi=0"%(settings.txgeokey)
+		req = urllib2.Request(_url)
+		resp = urllib2.urlopen(req)
+		ret = resp.read()
+		tmpdic = json.loads(ret)
+		print "tmpdic: ",tmpdic
+
+	_jsonobj = json.dumps(tmpdic)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+'''
+def get_wx_user_info():
+	ss = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=WjpTHedNlMh8k7xQ0UR1Tpy6iHE-GdtW0lDtfyHDfXJzddqZzln4HBNrZ3v2RDCP9X8r8isOK9cb-q-IYEUOxjdNuNXfeRhq7vht3iXTnM4DICeABAUZT&openid=oaLbrwTDwNXtyv7YtWhe9wSQXolA"
+	import urllib2
+	req = urllib2.Request(ss)
+	resp = urllib2.urlopen(req)
+	ret = resp.read()
+	tmpdic = json.loads(ret)
+	print "tmpdic: ",tmpdic
+	pass
+'''
+
+
+#thn_update_access_token
+
+'''
+{"subscribe": 1,
+    "openid": "o7Lp5t6n59DeX3U0C7Kric9qEx-Q",
+    "nickname": "方倍",
+    "sex": 1,
+    "language": "zh_CN",
+    "city": "深圳",
+    "province": "广东",
+    "country": "中国",
+    "headimgurl": "http://wx.qlogo.cn/mmopen/Kkv3HV30gbEZmoo1rTrP4UjRRqzsibUjT9JClPJy3gzo0NkEqzQ9yTSJzErnsRqoLIct5NdLJgcDMicTEBiaibzLn34JLwficVvl6/0",
+    "subscribe_time": 1389684286
+}
+'''
+#@req_print
+#def save_user_info_wx(req):
+def save_user_info_wx(access_token, openid):
+	print "----------debug---------"
+	#access_token = "eZceuhFEvdrsxtSvt-b5HIYP4l_mQe7I5_B3M5KMuZdVa91sSbIKpMJfyX2fg0LpthmTtkuva4Etd0Uz1fBcWyyQLoCT--h5BkRAECbB9OhhP3ot8c9Pnex4l8y_hOS7IMCeADAQUK"
+	#openid = "oaLbrwTDwNXtyv7YtWhe9wSQXolA"
+	_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN"%(access_token,openid)
+	print _url
+	status,ret = get_url_resp( _url )	
+	if not status:
+		mo.logger.error( ret )
+		return False,ret
+	tmpdic = json.loads(ret)
+	print tmpdic
+
+	if not tmpdic.has_key("openid"):
+		mo.logger.error("/usr/info has no openid: %s."%ret)
+		return False,"no openid"
+
+	#get pos id
+	if tmpdic.has_key("city"):
+		city = tmpdic["city"] if "市" in tmpdic["city"] else tmpdic["city"]+"市"
+		pos_id = "null"
+		_sql = "select id from 6s_position where name='%s';"%city
+		count,rets=dbmgr.db_exec(_sql)
+		if count > 0:
+			pos_id = str(int(rets[0][0])+1)
+	#update 6s_user
+	openid,nickname,sex,headimg = tmpdic["openid"],tmpdic.get("nickname",""),tmpdic.get("sex","1"),tmpdic.get("headimgurl","")
+	sex = "male" if sex==1 else "female"
+	_sql = "select id from 6s_user where openid='%s';"%(openid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		_sql = "insert into 6s_user(wechat,gender,img,openid) values('%s','%s','%s','%s');"%(nickname,sex,headimg,openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 0:
+			mo.logger.error("save_user_info_wx insert 6s_user fail. ret:%s"%ret)
+	else:
+		_sql = "update 6s_user set wechat='%s',gender='%s',img='%s' where openid='%s';"%(nickname,sex,headimg,openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 0:
+			mo.logger.warn("save_user_info_wx return 0. openid:%s %s"%(openid,ret))
+	#save headimg
+	if headimg != "":
+		status,buf = get_url_resp( headimg )
+		if status:
+			f = open(settings.headimg_path+r"/"+openid, "wb+")
+			f.write(buf)
+			f.close()
+		else:
+			mo.logger.error( buf )
+	return True,None
+
+
+@csrf_exempt
+@req_print
+def default_process(req):
+	args = req.GET
+	print "------------------->"
+	get_wx_user_info()
+	_json = { "status":False,"errcode":0,"errmsg":"" }
+	#print "GET: ",args
+	#print "data: ",req.body
+	#print "req: ",req
+	if "echostr" in args and "nonce" in args and "timestamp" in args and "signature" in args:
+		signature=args["signature"]
+		timestamp=args["timestamp"]
+		nonce=args["nonce"]
+		echostr=args["echostr"]
+		#自己的token
+		token="12345678" #这里改写你在微信公众平台里输入的token
+		#字典序排序
+		list=[token,timestamp,nonce]
+		list.sort()
+		import hashlib
+		sha1=hashlib.sha1()
+		map(sha1.update,list)
+		hashcode=sha1.hexdigest()
+		#sha1加密算法        
+		#如果是来自微信的请求，则回复echostr
+		if hashcode == signature:
+			mo.logger.info("wx join ok, hashcode == signature")
+			resp = HttpResponse(echostr, mimetype='text/plain')
+			return resp
+		else:
+			mo.logger.error("wx join fail, echostr:%s,nonce:%s,timestamp:%s,signature:%s"%(echostr,nonce,timestamp,signature) )
+
+	body = req.body
+	import xml.etree.ElementTree as Etree
+	notify_data_tree = Etree.fromstring(body)
+	fnode = notify_data_tree.find("FromUserName")
+	if fnode == None:
+		mo.logger.error( "no openid: %s"%body )
+		return HttpResponse("41009", mimetype='text/plain')
+	openid = fnode.text
+	print "openid: ",openid
+	fnode = notify_data_tree.find("Event")
+	if fnode != None:
+		if "subscribe" == fnode.text:
+			access_token = "" #get
+			save_user_info_wx(access_token, openid)
+			pass
+		elif "unsubscribe" == fnode.text:
+			pass
+		elif "LOCATION" == fnode.text:
+			#save_pos_wx
+			pass
+		elif "CLICK" == fnode.text:
+			pass
+		elif "VIEW" == fnode.text:
+			pass
+		else:
+			#unknown event.
+			pass
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')

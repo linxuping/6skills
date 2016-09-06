@@ -60,6 +60,7 @@ def redis_get(key):
 
 
 redis_init()
+'''
 print "set aa" 
 redis_set("aa","123")
 print "set bb, timeout=2" 
@@ -71,5 +72,6 @@ print "aa", redis_get("aa")
 print "get bb" 
 print "bb", redis_get("bb")
 print "test fin." 
+'''
 
 

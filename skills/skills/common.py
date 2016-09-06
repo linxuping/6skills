@@ -14,6 +14,7 @@ import modules as mo
 import dbmgr
 import datetime
 import socket
+import urllib2
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -41,6 +42,20 @@ def get_ip(request):
 		return str(request.META['REMOTE_ADDR'])
 
 
+def _get_url_resp(_url):
+	req = urllib2.Request(_url)
+	resp = urllib2.urlopen(req)
+	return resp.read()
+def get_url_resp(_url):
+	ret = None
+	for i in xrange(2):
+		try:
+			return True,_get_url_resp(_url)
+		except:
+			ret = "[get_url_resp %s, %s."%(str(sys.exc_info()),str(traceback.format_exc())  )
+	return False,ret
+
+
 def get_errtag():
 		return "[errno:%s_%s]"%(socket.gethostname(),time.strftime('%m%d_%H%M%S'))
 
@@ -58,7 +73,8 @@ def req_print(func):
 					rets = "[func error] %s, %s."%(str(sys.exc_info()),str(traceback.format_exc())  )
 					mo.logger.error( rets )
 				endtime = time.time()
-				_sql = "insert into 6s_trace values('%s','%s',%.03f,now());"%(req.GET.get("openid",req.COOKIES.get("6suserid",'-1')), func.func_name,float(endtime-starttime) );
+				uid = req.GET.get("openid",req.COOKIES.get("6suserid",'-1')).replace("'"," ").replace("\""," ")
+				_sql = "insert into 6s_trace values('%s','%s',%.03f,now());"%(uid, func.func_name,float(endtime-starttime) );
 				count,rets=dbmgr.db_exec(_sql)
 				return ret
 		return wrapper
@@ -187,7 +203,6 @@ def ajax_process(req):
 	_jsonobj = json.dumps(_json)
 	return HttpResponse(_jsonobj, mimetype='application/json')
 	#return HttpResponseRedirect('/test2') 
-
 
 
 #--------------------- GLOBAL -----------------------
