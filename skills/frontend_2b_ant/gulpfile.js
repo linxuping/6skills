@@ -22,6 +22,13 @@ gulp.task('default', function(callback){
           cached: false,
           exclude: excludeFromStats,
           colors: true,
+      },
+      proxy: {
+        "/api/admin/*": {
+          target: "http://121.42.41.241:9900",
+          secure: false,
+          changeOrigin: true
+        }
       }
 
     }).listen(3000, '127.0.0.1', function(err){
