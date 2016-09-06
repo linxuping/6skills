@@ -707,7 +707,30 @@ def activities_getsignupstatus(req):
 	return resp
 
 
-def get_pos():
+@req_print
+def save_pos_wx(req):
+	lat,lon = "23.127191","113.355747"
+	openid = "oaLbrwTDwNXtyv7YtWhe9wSQXolA"
+	status,ret = get_url_resp( "http://apis.map.qq.com/ws/geocoder/v1/?location=%s,%s&key=%s&get_poi=0"%(lat,lon,settings.txgeokey) )
+	province,city,area,street = "","","",""
+	try:
+		tmpdic = json.loads(ret)
+		addr = tmpdic["result"]["address_component"]
+		province,city,area,street,num = addr["province"],addr["city"],addr["district"],addr["street"],addr["street_number"]
+		street = street if num=="" else (street+num+"号")
+	except:
+		mo.logger.error( str(sys.exc_info())+"; "+str(traceback.format_exc()) )
+	if area != "":
+		_sql = "select id from 6s_position where name='%s';"%area
+		count,rets=dbmgr.db_exec(_sql)
+		if count > 0:
+			pos_id = rets[0][0] #to district
+			_sql = "update 6s_user set position_id=%s,position_details='%s' where openid='%s';"%(pos_id,street,openid)
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 0:
+				mo.logger.warn("save_pos_wx update posid return 0. openid:%s %s"%(openid,pos_id))
+		else:
+			mo.logger.error("openid:%s city:%s area:%s cannot be found."%(openid,city,area) )
 	pass
 
 
@@ -788,28 +811,28 @@ def save_user_info_wx(access_token, openid):
 		return False,"no openid"
 
 	#get pos id
+	pos_id = "null"
 	if tmpdic.has_key("city"):
 		city = tmpdic["city"] if "市" in tmpdic["city"] else tmpdic["city"]+"市"
-		pos_id = "null"
 		_sql = "select id from 6s_position where name='%s';"%city
 		count,rets=dbmgr.db_exec(_sql)
 		if count > 0:
-			pos_id = str(int(rets[0][0])+1)
+			pos_id = str(int(rets[0][0])+1) #to district
 	#update 6s_user
 	openid,nickname,sex,headimg = tmpdic["openid"],tmpdic.get("nickname",""),tmpdic.get("sex","1"),tmpdic.get("headimgurl","")
 	sex = "male" if sex==1 else "female"
 	_sql = "select id from 6s_user where openid='%s';"%(openid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 0:
-		_sql = "insert into 6s_user(wechat,gender,img,openid) values('%s','%s','%s','%s');"%(nickname,sex,headimg,openid)
+		_sql = "insert into 6s_user(wechat,gender,img,position_id,openid) values('%s','%s','%s','%s','%s');"%(nickname,sex,headimg,pos_id,openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 0:
 			mo.logger.error("save_user_info_wx insert 6s_user fail. ret:%s"%ret)
 	else:
-		_sql = "update 6s_user set wechat='%s',gender='%s',img='%s' where openid='%s';"%(nickname,sex,headimg,openid)
+		_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 0:
-			mo.logger.warn("save_user_info_wx return 0. openid:%s %s"%(openid,ret))
+			mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
 	#save headimg
 	if headimg != "":
 		status,buf = get_url_resp( headimg )
@@ -829,14 +852,8 @@ def default_process(req):
 	print "------------------->"
 	get_wx_user_info()
 	_json = { "status":False,"errcode":0,"errmsg":"" }
-	#print "GET: ",args
-	#print "data: ",req.body
-	#print "req: ",req
 	if "echostr" in args and "nonce" in args and "timestamp" in args and "signature" in args:
-		signature=args["signature"]
-		timestamp=args["timestamp"]
-		nonce=args["nonce"]
-		echostr=args["echostr"]
+		signature,timestamp,nonce,echostr = args["signature"],args["timestamp"],args["nonce"],args["echostr"]
 		#自己的token
 		token="12345678" #这里改写你在微信公众平台里输入的token
 		#字典序排序
@@ -857,22 +874,30 @@ def default_process(req):
 
 	body = req.body
 	import xml.etree.ElementTree as Etree
-	notify_data_tree = Etree.fromstring(body)
-	fnode = notify_data_tree.find("FromUserName")
+	msgxml = Etree.fromstring(body)
+	fnode = msgxml.find("FromUserName")
 	if fnode == None:
 		mo.logger.error( "no openid: %s"%body )
 		return HttpResponse("41009", mimetype='text/plain')
 	openid = fnode.text
 	print "openid: ",openid
-	fnode = notify_data_tree.find("Event")
+	fnode = msgxml.find("Event")
 	if fnode != None:
 		if "subscribe" == fnode.text:
 			access_token = "" #get
 			save_user_info_wx(access_token, openid)
-			pass
+			#event log
 		elif "unsubscribe" == fnode.text:
-			pass
+			_sql = "update 6s_user set status=-1 where openid='%s';"%(openid)
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 0:
+				mo.logger.error("openid:%s unsubscribe status to -1 fail."%openid)
+			#event log
 		elif "LOCATION" == fnode.text:
+			if msgxml.find("Latitude")==None or msgxml.find("Longitude")==None:
+				return HttpResponse("-1", mimetype='text/plain')
+			lat = msgxml.find("Latitude").text
+			lon = msgxml.find("Longitude").text
 			#save_pos_wx
 			pass
 		elif "CLICK" == fnode.text:
