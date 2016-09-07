@@ -1,1 +1,19 @@
-{"price_adult_pre": null, "price_child_pre": null, "time_from": "2016-06-03", "ages": "2-4", "area": "\u957f\u5174", "price_adult": 90, "preinfo": null, "imgs": [""], "time_to": "2016-06-30", "quantities_remain": 1, "content": null, "title": "\u4eb2\u5b50\u6e38 \u5927\u6674\u5929\u65c5\u884c\u7f51 \u4eb2\u5b50\u6e38 \u5b8c\u5168\u81ea\u7531\u7684\u65c5\u884c", "tags": "\u7f8e\u672f\u9986", "errcode": 0, "img_cover": "http://file.fwjia.com:88/d/file/2010-09-14/03c041e9a7df37d515fcf3dcc8af8861.jpg", "actid": 3, "price_child": -1, "errmsg": "", "imgs_act": ""}
+{
+    "tags": "\u624b\u5de5DIY",
+    "price_child_pre": 19.0,
+    "time_from": "2016-06-01",
+    "ages": "3-5",
+    "imgs_act": "a.jpg b.jpg c.png",
+    "preinfo": "2\u5468\u5e74\u6d3b\u52a8\u4f18\u60e02\u6298.",
+    "imgs": ["a.jpg", "b.jpg", "c.png"],
+    "time_to": "2016-06-03",
+    "quantities_remain": 4,
+    "content": "actcontentactcontentactcontentactcontentactcontentactcontentactcontentactcontentactcontentactcontent actcontentactcontentactcontentactcontentactcontentactcontent actcontentactcontentactcontentactcontent actcontentactcontentactcontentactcontent",
+    "area": "\u5b9d\u5c97",
+    "title": "\u4eb2\u5b50\u6e38 \u9a74\u5988\u5988\u300c\u9a74\u60a6\u4eb2\u5b50\u6e38\u300d",
+    "errcode": 0,
+    "img_cover": "http://img1.imgtn.bdimg.com/it/u=4294957488,731282903&fm=21&gp=0.jpg",
+    "actid": 1,
+    "price_child": 100.0,
+    "errmsg": ""
+}

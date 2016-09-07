@@ -130,7 +130,7 @@ var Selecter = React.createClass({displayName: "Selecter",
 		});
 
 		//获取用户信息,如果没有
-		if (sessionStorage.getItem("_profile") == undefined) {
+		if (sessionStorage.getItem("_profile")!==undefined  && sessionStorage.getItem("_profile")!= null) {
 			return;
 		}
 		$.ajax({
@@ -138,7 +138,7 @@ var Selecter = React.createClass({displayName: "Selecter",
 			//url: "/test/get_profile.json",
 			type: 'get',
 			dataType: 'json',
-			data: { "openid":geopenid() },
+			data: { "openid": geopenid() }
 		})
 		.done(function(res) {
 			console.log("success");

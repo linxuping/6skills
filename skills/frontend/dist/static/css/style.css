@@ -95,6 +95,9 @@ body {
   width: 120px !important;
   height: 120px !important;
 }
+.ss-media-box .ss-media-hd img {
+  height: 100%;
+}
 .ss-media-box .ss-media-bd {
   width: 100%;
   display: block;
@@ -146,7 +149,6 @@ body {
   color: #e00;
 }
 .media .media-bd p.detail-content {
-  text-indent: 2em;
   padding-top: 0.5rem;
 }
 .activity-detail {
@@ -317,4 +319,12 @@ body {
   width: 25px;
   height: 25px;
   vertical-align: middle;
+}
+.ss-media-box .ss-media-bd .weui_media_title {
+  word-wrap: normal;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 22px;
 }

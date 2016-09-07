@@ -129,7 +129,7 @@ var Feedback = React.createClass({
 				<h3>转载文章</h3>
 				<p>转载文章请在文中附下图，即视为有效制授权，无需再联系我们</p>
 				<p className="qr">
-					<img src="http://news.5hb.org/uploads/weichat/3d874197c1d119f80890747b67d21b34.jpg" alt=""/>
+					<img src="/static/img/qrcode_for_gh_1f700e3515dc_258.jpg" alt=""/>
 				</p>
 				<h3>在线客服</h3>
 				<p className="ol-serv">

@@ -129,7 +129,7 @@ var Feedback = React.createClass({displayName: "Feedback",
 				React.createElement("h3", null, "转载文章"), 
 				React.createElement("p", null, "转载文章请在文中附下图，即视为有效制授权，无需再联系我们"), 
 				React.createElement("p", {className: "qr"}, 
-					React.createElement("img", {src: "http://news.5hb.org/uploads/weichat/3d874197c1d119f80890747b67d21b34.jpg", alt: ""})
+					React.createElement("img", {src: "/static/img/qrcode_for_gh_1f700e3515dc_258.jpg", alt: ""})
 				), 
 				React.createElement("h3", null, "在线客服"), 
 				React.createElement("p", {className: "ol-serv"}, 
@@ -264,23 +264,31 @@ var MyCollections = React.createClass({displayName: "MyCollections",
 	},
 
 	delCollectionHandler: function (event) {
+		event.stopPropagation();
 		var collid = event.target.dataset.collid;
-		$.ajax({
-			url: ges('activities/reset_collection'),
-			//url: '/test/sign.json',
-			type: 'post',
-			dataType: 'json',
-			data: { "openid":geopenid(),"collid": collid },
-		})
-		.done(function() {
-			this.pullFromServer();
-		}.bind(this))
-		.fail(function() {
-			console.log("delCollection error");
-		})
-		.always(function() {
-			console.log("delCollection complete");
-		});
+		ReactDOM.render(
+			React.createElement(ConfirmDialog, {callback: function(){
+					$.ajax({
+						url: ges('activities/reset_collection'),
+						//url: '/test/sign.json',
+						type: 'post',
+						dataType: 'json',
+						data: { "openid":geopenid(),"collid": collid },
+					})
+					.done(function() {
+						this.pullFromServer();
+					}.bind(this))
+					.fail(function() {
+						console.log("delCollection error");
+					})
+					.always(function() {
+						console.log("delCollection complete");
+						React.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+					});
+				}.bind(this), title: "删除收藏", 
+				content: "您确定要删除这个收藏吗？"}),
+			document.getElementById("confirm-dialog-wrap")
+		);
 	},
 
 	render: function() {

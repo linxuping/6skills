@@ -138,7 +138,7 @@ var Selecter = React.createClass({
 			//url: "/test/get_profile.json",
 			type: 'get',
 			dataType: 'json',
-			data: { "openid":geopenid() },
+			data: { "openid": geopenid() }
 		})
 		.done(function(res) {
 			console.log("success");

@@ -25,7 +25,11 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 		}
 	},
 
-	collectPage: function(){
+	openCollectPage: function(){
+		if (this.state.coll_status) {
+			alert("已收藏该活动，请到我的收藏中查看！");
+			return;
+		}
 		//check if no Pay attention to the public number.
 		//turn to page 'attention'
 		$.ajax({
@@ -58,6 +62,7 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 		.done(function(res) {
 			this.setState({
 				status: res.status,
+				coll_status: res.coll_status,
 				qrcode: res.qrcode,
 				loaded: true
 			});
@@ -126,8 +131,10 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 					)
 				), 
 				React.createElement("div", {className: "sign-btn", style: {"cursor": "pointer"}, 
-					onClick: this.collectPage}, 
-					"收藏"
+					onClick: this.openCollectPage}, 
+					
+						this.state.coll_status ? "已收藏" : "收藏"
+					
 				), 
 				React.createElement("div", {className: "sign-btn-right", style: {"cursor": "pointer"}, 
 					onClick: this.openSignPage}, 
