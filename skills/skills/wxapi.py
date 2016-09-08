@@ -13,6 +13,7 @@ import sys
 import modules as mo
 import urllib2
 import dbmgr
+import nosqlmgr
 import datetime
 from common import *
 reload(sys)
@@ -191,12 +192,11 @@ def get_authcode(req):
 		import top
 		top.setDefaultAppInfo(settings.sms_id, settings.sms_secret)
 		req = top.api.AlibabaAliqinFcSmsNumSendRequest()
-
-		req.sms_type = "normal"
-		req.sms_free_sign_name = "测试"
+		req.sms_type = settings.sms_type
+		req.sms_free_sign_name = "六艺互动"
 		req.sms_param = "{\"number\":\"%s\"}" % (code)
 		req.rec_num = "%s" % (phone)
-		req.sms_template_code = "SMS_13250672"
+		req.sms_template_code = settings.sms_temp_code
 		try:
 			resp = req.getResponse()
 			if resp["alibaba_aliqin_fc_sms_num_send_response"]["result"]["err_code"] == "0":
@@ -707,10 +707,11 @@ def activities_getsignupstatus(req):
 	return resp
 
 
-@req_print
-def save_pos_wx(req):
-	lat,lon = "23.127191","113.355747"
-	openid = "oaLbrwTDwNXtyv7YtWhe9wSQXolA"
+#@req_print
+#def save_pos_wx(req):
+#	lat,lon = "23.127191","113.355747"
+#	openid = "oaLbrwTDwNXtyv7YtWhe9wSQXolA"
+def save_pos_wx(lat,lon,openid):
 	status,ret = get_url_resp( "http://apis.map.qq.com/ws/geocoder/v1/?location=%s,%s&key=%s&get_poi=0"%(lat,lon,settings.txgeokey) )
 	province,city,area,street = "","","",""
 	try:
@@ -776,7 +777,34 @@ def get_wx_user_info():
 '''
 
 
-#thn_update_access_token
+
+import thread
+def _update_access_token():
+	_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"%(settings.appid,settings.appsecret)
+	status,ret = get_url_resp( _url )
+	if not status:
+		mo.logger.error( ret )
+		return False
+	tmpdic = json.loads(ret)
+	access_token = tmpdic.get("access_token","")
+	if access_token == "":
+		mo.logger.error("upload access_token fail: %s"%_url)
+	else:
+		mo.logger.info("upload access_token:%s"%access_token)
+		nosqlmgr.redis_set( "access_token",access_token,6000 ) 
+		return True
+	return False
+def update_access_token():
+	while True:
+		for i in xrange(3):
+			if int(nosqlmgr.redis_conn.ttl("access_token")) > 60:
+				break
+			if _update_access_token():
+				break
+		time.sleep(15) #1.5
+if settings.check_access_token:
+	thread.start_new_thread( update_access_token,() )
+
 
 '''
 {"subscribe": 1,
@@ -829,7 +857,7 @@ def save_user_info_wx(access_token, openid):
 		if count == 0:
 			mo.logger.error("save_user_info_wx insert 6s_user fail. ret:%s"%ret)
 	else:
-		_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+		_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 0:
 			mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
@@ -850,14 +878,12 @@ def save_user_info_wx(access_token, openid):
 def default_process(req):
 	args = req.GET
 	print "------------------->"
-	get_wx_user_info()
+	#get_wx_user_info()
 	_json = { "status":False,"errcode":0,"errmsg":"" }
 	if "echostr" in args and "nonce" in args and "timestamp" in args and "signature" in args:
 		signature,timestamp,nonce,echostr = args["signature"],args["timestamp"],args["nonce"],args["echostr"]
-		#自己的token
-		token="12345678" #这里改写你在微信公众平台里输入的token
 		#字典序排序
-		list=[token,timestamp,nonce]
+		list=[settings.token,timestamp,nonce]
 		list.sort()
 		import hashlib
 		sha1=hashlib.sha1()
@@ -867,46 +893,67 @@ def default_process(req):
 		#如果是来自微信的请求，则回复echostr
 		if hashcode == signature:
 			mo.logger.info("wx join ok, hashcode == signature")
-			resp = HttpResponse(echostr, mimetype='text/plain')
-			return resp
+			return HttpResponse(echostr, mimetype='text/plain')
 		else:
 			mo.logger.error("wx join fail, echostr:%s,nonce:%s,timestamp:%s,signature:%s"%(echostr,nonce,timestamp,signature) )
+			return HttpResponse("-1", mimetype='text/plain')
 
 	body = req.body
+	print "body len: ",len(body)
 	import xml.etree.ElementTree as Etree
 	msgxml = Etree.fromstring(body)
+
 	fnode = msgxml.find("FromUserName")
 	if fnode == None:
 		mo.logger.error( "no openid: %s"%body )
 		return HttpResponse("41009", mimetype='text/plain')
 	openid = fnode.text
 	print "openid: ",openid
-	fnode = msgxml.find("Event")
-	if fnode != None:
-		if "subscribe" == fnode.text:
-			access_token = "" #get
+	node_msgtype = msgxml.find("MsgType")
+	if node_msgtype == None:
+		mo.logger.error( "no msgtype. openid:%s msg:%s"%(openid,body) )
+		return HttpResponse("40008", mimetype='text/plain')
+
+	_sql = "insert into 6s_wx_msg(openid,type,msg) values('%s','%s','%s');"%(openid,node_msgtype.text,body)
+	count,rets=dbmgr.db_exec(_sql)
+	if count == 0:
+		mo.logger.error("insert 6s_wx_msg fail. openid:%s msg:%s"%(openid,body) )
+
+	node_ev = msgxml.find("Event")
+	if node_msgtype.text=="event" and node_ev!=None:
+		if "subscribe" == node_ev.text:
+			access_token = nosqlmgr.redis_get("access_token") #get
 			save_user_info_wx(access_token, openid)
 			#event log
-		elif "unsubscribe" == fnode.text:
+		elif "unsubscribe" == node_ev.text:
 			_sql = "update 6s_user set status=-1 where openid='%s';"%(openid)
 			count,rets=dbmgr.db_exec(_sql)
 			if count == 0:
 				mo.logger.error("openid:%s unsubscribe status to -1 fail."%openid)
 			#event log
-		elif "LOCATION" == fnode.text:
+		elif "LOCATION" == node_ev.text:
 			if msgxml.find("Latitude")==None or msgxml.find("Longitude")==None:
 				return HttpResponse("-1", mimetype='text/plain')
 			lat = msgxml.find("Latitude").text
 			lon = msgxml.find("Longitude").text
-			#save_pos_wx
+			save_pos_wx(lat,lon,openid)
 			pass
-		elif "CLICK" == fnode.text:
+		elif "CLICK" == node_ev.text:
+			node_key = msgxml.find("EventKey")
+			if node_key != None:
+				pass
+			else:
+				return HttpResponse("40019", mimetype='text/plain')
 			pass
-		elif "VIEW" == fnode.text:
+		elif "VIEW" == node_ev.text:
 			pass
 		else:
 			#unknown event.
 			pass
+	elif node_msgtype.text == "text":
+		pass
+	else:
+		pass
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
