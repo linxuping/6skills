@@ -722,7 +722,7 @@ def save_pos_wx(lat,lon,openid):
 		addr = tmpdic["result"]["address_component"]
 		print addr
 		province,city,area,street,num = addr["province"],addr["city"],addr["district"],addr["street"],addr["street_number"]
-		street = street if num=="" else (street+num+"号")
+		street = street if num=="" else (street+num) #+"号"
 	except:
 		mo.logger.error( str(sys.exc_info())+"; "+str(traceback.format_exc()) )
 	if area != "":
@@ -730,7 +730,6 @@ def save_pos_wx(lat,lon,openid):
 		count,rets=dbmgr.db_exec(_sql)
 		if count > 0:
 			pos_id = rets[0][0] #to district
-			#TODO. if no user just add.
 			count,rets=dbmgr.db_exec("select id from 6s_user where openid='%s';"%openid)
 			if count == 0:
 				count,rets=dbmgr.db_exec("insert into 6s_user(openid,position_id,position_details) values('%s','%s','%s');"%(openid,pos_id,street) )
@@ -887,12 +886,12 @@ def save_user_info_wx(access_token, openid):
 		_sql = "insert into 6s_user(wechat,gender,img,position_id,openid) values('%s','%s','%s','%s','%s');"%(nickname,sex,headimg,pos_id,openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 0:
-			mo.logger.error("save_user_info_wx insert 6s_user fail. ret:%s"%ret)
+			mo.logger.error("insert 6s_user fail. ret:%s"%rets)
 	else:
 		_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 0:
-			mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
+			mo.logger.warn("update posid return 0. openid:%s %s"%(openid,ret))
 	#save headimg
 	if headimg != "":
 		status,buf = get_url_resp( headimg )
@@ -931,7 +930,7 @@ def default_process(req):
 			return HttpResponse("-1", mimetype='text/plain')
 
 	body = req.body
-	mo.logger.info("body len: %d"%len(body) )
+	mo.logger.info("openid:%s, bodylen: %d"%(openid,len(body)) )
 	import xml.etree.ElementTree as Etree
 	msgxml = Etree.fromstring(body)
 
@@ -945,12 +944,20 @@ def default_process(req):
 		mo.logger.error( "no msgtype. openid:%s msg:%s"%(openid,body) )
 		return HttpResponse("40008", mimetype='text/plain')
 
-	_sql = "insert into 6s_wx_msg(openid,type,msg) values('%s','%s','%s');"%(openid,node_msgtype.text,body.replace("\r\n","").replace("\n","")[:500]) 
-	count,rets=dbmgr.db_exec(_sql)
-	if count == 0:
-		mo.logger.error("insert 6s_wx_msg fail. openid:%s msg:%s"%(openid,body) )
-
 	node_ev = msgxml.find("Event")
+	if node_ev!=None:
+		mo.logger.info("openid:%s, msg:%s_%s, bodylen:%d"%(openid,node_msgtype.text,node_ev.text,len(body)) )
+	else:
+		mo.logger.info("openid:%s, msg:%s, bodylen:%d"%(openid,node_msgtype.text,len(body)) )
+
+	if node_msgtype.text=="event" and node_ev!=None and node_ev.text=="LOCATION":
+		pass
+	else:
+		_sql = "insert into 6s_wx_msg(openid,type,msg) values('%s','%s','%s');"%(openid,node_msgtype.text,body.replace("\r\n","").replace("\n","")[:500]) 
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 0:
+			mo.logger.error("insert 6s_wx_msg fail. openid:%s msg:%s"%(openid,body) )
+
 	if node_msgtype.text=="event" and node_ev!=None:
 		if "subscribe" == node_ev.text:
 			access_token = nosqlmgr.redis_get("base_access_token") #get
@@ -1010,32 +1017,44 @@ def get_openid(req):
 		return response_json_error( "get access_token return false." )
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("errcode") and tmpdic.has_key("errmsg"):
-		redis_get( "refresh_token_%s"%tmpdic["openid"] )
-		#refresh token
-		_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid,"")
-		status,ret = get_url_resp( _url )	
-		if status:
-			#re get token
-			pass
-		else:
-			pass
-		pass
+		mo.logger.error("web_access_token fail. refresh_token invalid? %s"%code)
+		#redis_get( "refresh_token_%s"%tmpdic["openid"] )
+		#_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid,"")
+		#status,ret = get_url_resp( _url )	
+		#if status:
+		#	pass
+		#else:
+		#	pass
 	
-	if tmpdic.has_key("refresh_token") and tmpdic.has_key("openid"):
+	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("openid"):
+		redis_set("access_token_%s"%tmpdic["openid"], tmpdic["access_token"])
 		redis_set("refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"])
 	else:
-		pass
+		mo.logger.error("no ***_token: %s"%ret)
+		return response_json_error( "no ***_token." )
 
-
+	pos_id = 0
+	openid = tmpdic["openid"]
 	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%city
 	count,rets=dbmgr.db_exec(_sql)
 	if count >0 :
-		for i in xrange(count):
-			_json["values"].append( rets[i][0] )
+		pos_id = rets[0][0]
+		_sql = "select id from 6s_user where openid='%s';"%(openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 0:
+			_sql = "insert into 6s_user(wechat,gender,img,position_id,openid) values('%s','%s','%s','%s','%s');"%(nickname,sex,headimg,pos_id,openid)
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 0:
+				mo.logger.error("insert 6s_user fail. ret:%s"%rets)
+		else:
+			_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 0:
+				mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
 	else:
 		_json["errcode"] = 1
-		_json["errmsg"] = "该城市区域未入库."
-		mo.logger.error("该城市区域未入库. city:%s"%city )
+		_json["errmsg"] = "invalid city."
+		mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
