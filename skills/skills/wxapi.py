@@ -200,7 +200,7 @@ def get_authcode(req):
 		try:
 			resp = req.getResponse()
 			if resp["alibaba_aliqin_fc_sms_num_send_response"]["result"]["err_code"] == "0":
-				mo.logger.error("send sms to %s:%s. "%(phone,code) )
+				mo.logger.info("send sms to %s:%s. "%(phone,code) )
 				pass
 			else:
 				_json["errcode"] = 1
@@ -716,7 +716,11 @@ def save_pos_wx(lat,lon,openid):
 	province,city,area,street = "","","",""
 	try:
 		tmpdic = json.loads(ret)
+		if not tmpdic.has_key("result") or not tmpdic["result"].has_key("address_component") or not tmpdic["result"]["address_component"].has_key("city"):
+			mo.logger.error("no pos: %s"%ret)
+			return False
 		addr = tmpdic["result"]["address_component"]
+		print addr
 		province,city,area,street,num = addr["province"],addr["city"],addr["district"],addr["street"],addr["street_number"]
 		street = street if num=="" else (street+num+"号")
 	except:
@@ -726,10 +730,15 @@ def save_pos_wx(lat,lon,openid):
 		count,rets=dbmgr.db_exec(_sql)
 		if count > 0:
 			pos_id = rets[0][0] #to district
-			_sql = "update 6s_user set position_id=%s,position_details='%s' where openid='%s';"%(pos_id,street,openid)
-			count,rets=dbmgr.db_exec(_sql)
+			#TODO. if no user just add.
+			count,rets=dbmgr.db_exec("select id from 6s_user where openid='%s';"%openid)
 			if count == 0:
-				mo.logger.warn("save_pos_wx update posid return 0. openid:%s %s"%(openid,pos_id))
+				count,rets=dbmgr.db_exec("insert into 6s_user(openid,position_id,position_details) values('%s','%s','%s');"%(openid,pos_id,street) )
+			else:
+				_sql = "update 6s_user set position_id=%s,position_details='%s' where openid='%s';"%(pos_id,street,openid)
+				count,rets=dbmgr.db_exec(_sql)
+				if count == 0:
+					mo.logger.warn("save_pos_wx update posid return 0. openid:%s %s"%(openid,pos_id))
 		else:
 			mo.logger.error("openid:%s city:%s area:%s cannot be found."%(openid,city,area) )
 	pass
@@ -779,28 +788,53 @@ def get_wx_user_info():
 
 
 import thread
-def _update_access_token():
+def _update_base_access_token():
 	_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"%(settings.appid,settings.appsecret)
 	status,ret = get_url_resp( _url )
 	if not status:
 		mo.logger.error( ret )
 		return False
 	tmpdic = json.loads(ret)
-	access_token = tmpdic.get("access_token","")
-	if access_token == "":
-		mo.logger.error("upload access_token fail: %s"%_url)
-	else:
-		mo.logger.info("upload access_token:%s"%access_token)
-		nosqlmgr.redis_set( "access_token",access_token,6000 ) 
+	if tmpdic.has_key("access_token") and tmpdic.has_key("expires_in"):
+		mo.logger.info("update base_access_token:%s"%tmpdic["access_token"] )
+		nosqlmgr.redis_set( "base_access_token",tmpdic["access_token"],tmpdic["expires_in"] ) 
 		return True
+	else:
+		mo.logger.error("no access_token or refresh_token: %s"%_url)
 	return False
+
+def _update_web_access_token(actoken_key, actoken_val):
+	_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid, actoken_val)
+	status,ret = get_url_resp( _url )
+	if not status:
+		mo.logger.error( ret )
+		return False
+	tmpdic = json.loads(ret)
+	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("expires_in"):
+		mo.logger.info("update access_token:%s"%tmpdic["access_token"] )
+		nosqlmgr.redis_set( "web_access_token_%s",tmpdic["access_token"], tmpdic["expires_in"] ) 
+		mo.logger.info("upload refresh_token:%s"%tmpdic["refresh_token"] )
+		nosqlmgr.redis_set( "web_refresh_token_%s",tmpdic["refresh_token"] ) 
+		return True
+	else:
+		mo.logger.error("no access_token or refresh_token: %s"%_url)
+	return False
+
 def update_access_token():
 	while True:
 		for i in xrange(3):
-			if int(nosqlmgr.redis_conn.ttl("access_token")) > 60:
+			if int(nosqlmgr.redis_conn.ttl("base_access_token")) > 60:
 				break
-			if _update_access_token():
+			if _update_base_access_token():
 				break
+		#TODO.
+		for _token in nosqlmgr.redis_conn.keys("web_access_token_*"): #keys web_refresh_token_*: 1234
+			_key = "web_access_token_" + _token.split("web_refresh_token_")[1]
+			for i in xrange(3):
+				if int(nosqlmgr.redis_conn.ttl(_key)) > 60:
+					break
+				if _update_web_access_token():
+					break
 		time.sleep(15) #1.5
 if settings.check_access_token:
 	thread.start_new_thread( update_access_token,() )
@@ -822,11 +856,9 @@ if settings.check_access_token:
 #@req_print
 #def save_user_info_wx(req):
 def save_user_info_wx(access_token, openid):
-	print "----------debug---------"
 	#access_token = "eZceuhFEvdrsxtSvt-b5HIYP4l_mQe7I5_B3M5KMuZdVa91sSbIKpMJfyX2fg0LpthmTtkuva4Etd0Uz1fBcWyyQLoCT--h5BkRAECbB9OhhP3ot8c9Pnex4l8y_hOS7IMCeADAQUK"
 	#openid = "oaLbrwTDwNXtyv7YtWhe9wSQXolA"
 	_url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN"%(access_token,openid)
-	print _url
 	status,ret = get_url_resp( _url )	
 	if not status:
 		mo.logger.error( ret )
@@ -835,7 +867,7 @@ def save_user_info_wx(access_token, openid):
 	print tmpdic
 
 	if not tmpdic.has_key("openid"):
-		mo.logger.error("/usr/info has no openid: %s."%ret)
+		mo.logger.error("/usr/info has no openid: %s. %s"%(ret,_url) )
 		return False,"no openid"
 
 	#get pos id
@@ -877,7 +909,7 @@ def save_user_info_wx(access_token, openid):
 @req_print
 def default_process(req):
 	args = req.GET
-	print "------------------->"
+	print "------------------->"#,req.body
 	#get_wx_user_info()
 	_json = { "status":False,"errcode":0,"errmsg":"" }
 	if "echostr" in args and "nonce" in args and "timestamp" in args and "signature" in args:
@@ -899,7 +931,7 @@ def default_process(req):
 			return HttpResponse("-1", mimetype='text/plain')
 
 	body = req.body
-	print "body len: ",len(body)
+	mo.logger.info("body len: %d"%len(body) )
 	import xml.etree.ElementTree as Etree
 	msgxml = Etree.fromstring(body)
 
@@ -908,13 +940,12 @@ def default_process(req):
 		mo.logger.error( "no openid: %s"%body )
 		return HttpResponse("41009", mimetype='text/plain')
 	openid = fnode.text
-	print "openid: ",openid
 	node_msgtype = msgxml.find("MsgType")
 	if node_msgtype == None:
 		mo.logger.error( "no msgtype. openid:%s msg:%s"%(openid,body) )
 		return HttpResponse("40008", mimetype='text/plain')
 
-	_sql = "insert into 6s_wx_msg(openid,type,msg) values('%s','%s','%s');"%(openid,node_msgtype.text,body)
+	_sql = "insert into 6s_wx_msg(openid,type,msg) values('%s','%s','%s');"%(openid,node_msgtype.text,body.replace("\r\n","").replace("\n","")[:500]) 
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 0:
 		mo.logger.error("insert 6s_wx_msg fail. openid:%s msg:%s"%(openid,body) )
@@ -922,7 +953,7 @@ def default_process(req):
 	node_ev = msgxml.find("Event")
 	if node_msgtype.text=="event" and node_ev!=None:
 		if "subscribe" == node_ev.text:
-			access_token = nosqlmgr.redis_get("access_token") #get
+			access_token = nosqlmgr.redis_get("base_access_token") #get
 			save_user_info_wx(access_token, openid)
 			#event log
 		elif "unsubscribe" == node_ev.text:
@@ -936,7 +967,10 @@ def default_process(req):
 				return HttpResponse("-1", mimetype='text/plain')
 			lat = msgxml.find("Latitude").text
 			lon = msgxml.find("Longitude").text
-			save_pos_wx(lat,lon,openid)
+			#if in redis and not the same just update.
+			if nosqlmgr.redis_conn.get("position_%s"%openid) != "%s_%s"%(lat,lon):
+				nosqlmgr.redis_conn.set("position_%s"%openid, "%s_%s"%(lat,lon) )
+				save_pos_wx(lat,lon,openid)
 			pass
 		elif "CLICK" == node_ev.text:
 			node_key = msgxml.find("EventKey")
@@ -954,6 +988,54 @@ def default_process(req):
 		pass
 	else:
 		pass
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def get_openid(req):
+	#check.
+	ret,code = check_mysql_arg_jsonobj("code", req.GET.get("code",None), "str")
+	if not ret:
+		return code
+
+	_json = { "values":[],"errcode":0,"errmsg":"" }
+	_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=SECRET&code=%s&grant_type=authorization_code"%(settings.appid,code)
+	status,ret = get_url_resp( _url )	
+	if not status:
+		mo.logger.error("get access_token return false: %s"%_url)
+		return response_json_error( "get access_token return false." )
+	tmpdic = json.loads(ret)
+	if tmpdic.has_key("errcode") and tmpdic.has_key("errmsg"):
+		redis_get( "refresh_token_%s"%tmpdic["openid"] )
+		#refresh token
+		_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid,"")
+		status,ret = get_url_resp( _url )	
+		if status:
+			#re get token
+			pass
+		else:
+			pass
+		pass
+	
+	if tmpdic.has_key("refresh_token") and tmpdic.has_key("openid"):
+		redis_set("refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"])
+	else:
+		pass
+
+
+	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%city
+	count,rets=dbmgr.db_exec(_sql)
+	if count >0 :
+		for i in xrange(count):
+			_json["values"].append( rets[i][0] )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "该城市区域未入库."
+		mo.logger.error("该城市区域未入库. city:%s"%city )
 
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')

@@ -50,7 +50,10 @@ def redis_get(key):
 		ret = None
 		for i in range(2):
 			try:
-				return redis_conn.get(key)  
+				ret = redis_conn.get(key)  
+				if ret == None:
+					mo.logger.error( "redis_get return null: %s"%key )
+				return ret
 			except:
 				ret = "[redis_get error] retry.%d, %s, %s. [%s]"%(i,str(sys.exc_info()),str(traceback.format_exc()),key  )
 				#print ret
