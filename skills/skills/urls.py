@@ -97,6 +97,6 @@ urlpatterns = patterns('',
 		url(r'^$', wxapi.default_process),
 		url(r'^get_access_token$', wxapi.get_access_token),
 		url(r'^wx_test$', wxapi.save_pos_wx),
-		url(r'^get_openid$', wxapi.get_openid),
+		url(r'^get_6sid$', wxapi.get_openid),
 )
 
