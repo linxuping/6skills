@@ -33,10 +33,17 @@ function de(a, b) {
   return enc_a;
 }
 function ges(controller) {
-	return de("60abe982cd02ddf2236ea5779e24842eb3d38d11574bab5b0568b047","aXi7$kj0l3@W")+controller;
+	return de("6073d8ef25fdfe74a1104961c30a99f7fa35dd0054cc61","aXi7$kj0l3@W")+controller;
 }
 function geopenid(){
-	return de("31e6adc301ded919","aXi7$kj0l3@X");
+	//return de("31e6adc301ded919","aXi7$kj0l3@X");
+	if (sessionStorage.getItem("6soid") == null){
+		load_6soid();
+		if (sessionStorage.getItem("6soid") == null){
+			location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIyOTU1MTI1MA==&scene=110#wechat_redirect";
+		}
+	}
+	return sessionStorage.getItem("6soid");
 }
 
 

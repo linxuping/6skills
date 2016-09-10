@@ -22,10 +22,29 @@ function validateForm() {
 								title: "验证成功",
 								msg: "恭喜您验证成功！",
 								callback: function(){
-									location.href = ges("template/me.html");
+									//location.href = ges("template/me.html");
 									//try{
 									//	WeixinJSBridge.call('closeWindow');
 									//} catch (e){ }
+									//update profile.
+									$.ajax({
+										url: ges('activities/get_profile'),
+										//url: "/test/get_profile.json",
+										type: 'get',
+										async: false,
+										dataType: 'json',
+										data: { "openid": geopenid() }
+									})
+									.done(function(res) {
+										console.log("success");
+										if (res.errcode == 0) {
+											sessionStorage.setItem("_profile", JSON.stringify(res.profile));
+										}
+									}.bind(this))
+									.fail(function() {
+										console.log("error");
+									});
+									history.back();
 								}
 							}),
 							document.getElementById("alert-wrap")

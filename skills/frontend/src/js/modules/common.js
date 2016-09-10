@@ -41,3 +41,26 @@ function get_area() {
 	return "天河区";
 }
 
+function load_6soid() {
+	if (sessionStorage.getItem("6soid")){
+		return;
+	}
+	if (getUrlParam("code")!=null && getUrlParam("state")!=null){
+		$.ajax({
+			url: ges("get_6sid"),
+			type: 'get',
+			dataType: 'json',
+			async: false,
+			data: { "code":getUrlParam("code") },
+			success: function(res) {
+				sessionStorage.setItem("6soid",res.openid);
+			},
+			error: function() {
+				alert("请稍后再试-6id.");
+			},
+		});
+	}
+}
+window.onload = load_6soid;
+
+

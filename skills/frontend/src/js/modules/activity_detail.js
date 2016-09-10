@@ -17,6 +17,19 @@ var ActivityDetail = React.createClass({
 				alert("活动人数已满，无法报名");
 				return;
 			}
+			
+			profile = sessionStorage.getItem("_profile");
+			verify = true;
+			if (profile) {$
+				profile = JSON.parse(profile);$
+				if (profile.phone==null || profile.phone=="")
+					verify = false;
+			} else { verify=false; }$
+			if (!verify) {
+				location.href=ges("template/verify_phone.html");
+				return;
+			}
+			
 			document.title = "活动报名";
 			ReactDOM.render(
 				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus}),
@@ -119,7 +132,7 @@ var ActivityDetail = React.createClass({
 						<p className="privilage"><b>{this.state.activity.preinfo}</b></p>
 						<p className="age">{this.state.activity.ages}岁</p>
 						<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
-						<p className="area">活动地点：{this.state.activity.area}</p>
+						<p className="area">活动地点：{this.state.activity.area} {this.state.activity.position_details}</p>
 						<p className="detail-content" dangerouslySetInnerHTML={{__html: this.state.activity.content}}>
 						</p>
 
