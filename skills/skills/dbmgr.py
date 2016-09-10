@@ -51,7 +51,7 @@ def db_exec(_sql, op=DBOperation.default):
 		starttime = time.time()
 		count,rets = -1,None
 		ret = None
-		is_w = (_sql.find("select ")!=0  or _sql.find("6s_trace")!=0)
+		is_w = (_sql.find("select ")!=0 or _sql.find("6s_trace")!=0 or _sql.find("6s_wx_msg")!=0)
 		for i in range(3):
 				_cur = None
 				try:
@@ -79,7 +79,7 @@ def db_exec(_sql, op=DBOperation.default):
 									g_conn_r.commit()
 		#mo.logger.info("[sql] %s %d %s. "%(_sql,count,str(rets) ))
 		endtime = time.time()
-		if " 6s_trace" in _sql:
+		if not " 6s_trace" in _sql and not " 6s_wx_msg" in _sql:
 			if is_w:
 				mo.logger.info("[sql_w] %s, count:%d, time:%.03f."%(_sql,count,float(endtime - starttime) ))
 			else:

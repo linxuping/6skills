@@ -65,7 +65,7 @@ def REQ_TAG(args):
 def req_print(func):
 		def wrapper(*args):
 				req = args[0]
-				mo.logger.info("->%s [%s] POST:%s, GET:%s, args:%s"%(func.func_name,get_ip(req),str(req.POST),str(req.GET),str(args[1:]) ))
+				mo.logger.info(">>>%s<<< [%s] POST:%s, GET:%s, args:%s"%(func.func_name,get_ip(req),str(req.POST),str(req.GET),str(args[1:]) ))
 				starttime = time.time()
 				try:
 					ret = func(req)

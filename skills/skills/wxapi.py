@@ -252,6 +252,9 @@ def wxauth_idencode(req):
 				#else:
 				#	_json["errcode"] = 1
 				#	_json["errmsg"] = get_errtag()+"Add user failed."
+		else:
+			_sql = "update 6s_user set phone='%s' where openid='%s';"%(phone,openid)
+			count,rets=dbmgr.db_exec(_sql)
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "验证码错误."
@@ -525,7 +528,7 @@ def activities_getprofile(req):
 
 	#exec  
 	_json = { "profile":{},"errcode":0,"errmsg":"" }
-	_sql = "select username,phone,img from 6s_user where openid='%s';"%openid
+	_sql = "select wechat,phone,img from 6s_user where openid='%s';"%openid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1 :
 		_json["profile"] = { "username":rets[0][0],"phone":rets[0][1],"img":rets[0][2] }
@@ -795,15 +798,27 @@ def _update_base_access_token():
 		return False
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("access_token") and tmpdic.has_key("expires_in"):
-		mo.logger.info("update base_access_token:%s"%tmpdic["access_token"] )
+		mo.logger.info("update base_access_token: %s"%(tmpdic["access_token"]) )
 		nosqlmgr.redis_set( "base_access_token",tmpdic["access_token"],tmpdic["expires_in"] ) 
 		return True
 	else:
 		mo.logger.error("no access_token or refresh_token: %s"%_url)
 	return False
 
-def _update_web_access_token(actoken_key, actoken_val):
-	_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid, actoken_val)
+def _check_access_token_valid(token, openid, hint):
+	_url = "https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s"%(token, openid)
+	status,ret = get_url_resp( _url )
+	if not status:
+		mo.logger.error( "%s %s"%(hint,ret) )
+		return False
+	tmpdic = json.loads(ret)
+	if tmpdic.has_key("errcode") and tmpdic["errcode"]==0:
+		return True
+	mo.logger.error("token invalid: %s  %s"%(_url,hint))
+	return False
+
+def _update_web_access_token(openid, retoken):
+	_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid, retoken)
 	status,ret = get_url_resp( _url )
 	if not status:
 		mo.logger.error( ret )
@@ -811,9 +826,9 @@ def _update_web_access_token(actoken_key, actoken_val):
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("expires_in"):
 		mo.logger.info("update access_token:%s"%tmpdic["access_token"] )
-		nosqlmgr.redis_set( "web_access_token_%s",tmpdic["access_token"], tmpdic["expires_in"] ) 
+		nosqlmgr.redis_set( "web_access_token_%s"%openid,tmpdic["access_token"], tmpdic["expires_in"] ) 
 		mo.logger.info("upload refresh_token:%s"%tmpdic["refresh_token"] )
-		nosqlmgr.redis_set( "web_refresh_token_%s",tmpdic["refresh_token"] ) 
+		nosqlmgr.redis_set( "web_refresh_token_%s"%openid,tmpdic["refresh_token"] ) 
 		return True
 	else:
 		mo.logger.error("no access_token or refresh_token: %s"%_url)
@@ -822,20 +837,24 @@ def _update_web_access_token(actoken_key, actoken_val):
 def update_access_token():
 	while True:
 		for i in xrange(3):
-			if int(nosqlmgr.redis_conn.ttl("base_access_token")) > 60:
+			_ttl = int(nosqlmgr.redis_conn.ttl("base_access_token"))
+			#_check = _check_access_token_valid(nosqlmgr.redis_get("base_access_token"),settings.mopenid,"base")
+			if _ttl>60:
 				break
 			if _update_base_access_token():
 				break
 		#TODO.
 		for _token in nosqlmgr.redis_conn.keys("web_access_token_*"): #keys web_refresh_token_*: 1234
-			_key = "web_access_token_" + _token.split("web_refresh_token_")[1]
+			_openid = _token.split("web_refresh_token_")[1]
+			_key = "web_access_token_" + _openid
 			for i in xrange(3):
-				if int(nosqlmgr.redis_conn.ttl(_key)) > 60:
+				if int(nosqlmgr.redis_conn.ttl(_key))>60:  #and _check_access_token_valid(_openid,settings.mopenid,"web"):
 					break
 				if _update_web_access_token():
 					break
-		time.sleep(15) #1.5
+		time.sleep(5) #1.5
 if settings.check_access_token:
+	mo.logger.info("start new thread.")
 	thread.start_new_thread( update_access_token,() )
 
 
@@ -908,7 +927,9 @@ def save_user_info_wx(access_token, openid):
 @req_print
 def default_process(req):
 	args = req.GET
-	print "------------------->"#,req.body
+	print "------------------->"
+	#print "------------------->",req.body
+	#print req
 	#get_wx_user_info()
 	_json = { "status":False,"errcode":0,"errmsg":"" }
 	if "echostr" in args and "nonce" in args and "timestamp" in args and "signature" in args:
@@ -930,7 +951,8 @@ def default_process(req):
 			return HttpResponse("-1", mimetype='text/plain')
 
 	body = req.body
-	mo.logger.info("openid:%s, bodylen: %d"%(openid,len(body)) )
+	if len(body) == 0:
+			return HttpResponse("-1", mimetype='text/plain')
 	import xml.etree.ElementTree as Etree
 	msgxml = Etree.fromstring(body)
 
@@ -987,6 +1009,8 @@ def default_process(req):
 				return HttpResponse("40019", mimetype='text/plain')
 			pass
 		elif "VIEW" == node_ev.text:
+			print "goto pass >>>> .>>>>>>."
+			return HttpResponse("0", mimetype='text/plain')
 			pass
 		else:
 			#unknown event.
@@ -1009,8 +1033,16 @@ def get_openid(req):
 	if not ret:
 		return code
 
-	_json = { "values":[],"errcode":0,"errmsg":"" }
-	_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=SECRET&code=%s&grant_type=authorization_code"%(settings.appid,code)
+	_json = { "errcode":0,"errmsg":"" }
+	if False:
+		_json["openid"] = "okgp_wNtQVsu20gRMpJRX50bTJKs"
+		_jsonobj = json.dumps(_json)
+		resp = HttpResponse(_jsonobj, mimetype='application/json')
+		makeup_headers_CORS(resp)
+		mo.logger.info("return openid ------------------>")
+		return resp
+
+	_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code"%(settings.appid,settings.appsecret,code)
 	status,ret = get_url_resp( _url )	
 	if not status:
 		mo.logger.error("get access_token return false: %s"%_url)
@@ -1018,44 +1050,50 @@ def get_openid(req):
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("errcode") and tmpdic.has_key("errmsg"):
 		mo.logger.error("web_access_token fail. refresh_token invalid? %s"%code)
-		#redis_get( "refresh_token_%s"%tmpdic["openid"] )
-		#_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid,"")
-		#status,ret = get_url_resp( _url )	
-		#if status:
-		#	pass
-		#else:
-		#	pass
 	
 	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("openid"):
-		redis_set("access_token_%s"%tmpdic["openid"], tmpdic["access_token"])
-		redis_set("refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"])
+		nosqlmgr.redis_set("access_token_%s"%tmpdic["openid"], tmpdic["access_token"])
+		nosqlmgr.redis_set("refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"])
+		openid = tmpdic["openid"]
+		_json["openid"] = openid
+		nickname,sex,headimg = "","male","/static/img/head.jpg"
+		_url = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN"%(tmpdic["access_token"],openid)
+		status,ret = get_url_resp( _url )	
+		if not status:
+			mo.logger.error("sns/userinfo fail. openid:%s "%openid)
+		else:
+			tmpdic2 = json.loads(ret)
+			if tmpdic2.has_key("nickname") and tmpdic2.has_key("sex") and tmpdic2.has_key("city") and tmpdic2.has_key("headimgurl"):
+				nickname,sex,headimg,city = tmpdic2["nickname"],tmpdic2["sex"],tmpdic2["headimgurl"],tmpdic2["city"]
+				sex = "male" if sex==1 else "female"
+				city = city if city.find("市")!=-1 else city+"市"
+				_sql = "select id from 6s_position where name='%s';"%city
+				count,rets=dbmgr.db_exec(_sql)
+				if count >0 :
+					pos_id = str(int(rets[0][0])+1)
+					_sql = "select id from 6s_user where openid='%s';"%(openid)
+					count,rets=dbmgr.db_exec(_sql)
+					if count == 0:
+						_sql = "insert into 6s_user(wechat,gender,img,position_id,openid) values('%s','%s','%s','%s','%s');"%(nickname,sex,headimg,pos_id,openid)
+						count,rets=dbmgr.db_exec(_sql)
+						if count == 0:
+							mo.logger.error("insert 6s_user fail. ret:%s"%rets)
+					else:
+						_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+						count,rets=dbmgr.db_exec(_sql)
+						if count == 0:
+							mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
+				else:
+					_json["errcode"] = 1
+					_json["errmsg"] = "invalid city."
+					mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
+			else:
+				mo.logger.error("attrs error. %s  %s  %s"%(openid,_url,ret))
 	else:
-		mo.logger.error("no ***_token: %s"%ret)
+		mo.logger.error("no ***_token: %s. %s"%(ret,_url) )
 		return response_json_error( "no ***_token." )
 
-	pos_id = 0
-	openid = tmpdic["openid"]
-	_sql = "select name from 6s_position where pid=(select id from 6s_position where name='%s');"%city
-	count,rets=dbmgr.db_exec(_sql)
-	if count >0 :
-		pos_id = rets[0][0]
-		_sql = "select id from 6s_user where openid='%s';"%(openid)
-		count,rets=dbmgr.db_exec(_sql)
-		if count == 0:
-			_sql = "insert into 6s_user(wechat,gender,img,position_id,openid) values('%s','%s','%s','%s','%s');"%(nickname,sex,headimg,pos_id,openid)
-			count,rets=dbmgr.db_exec(_sql)
-			if count == 0:
-				mo.logger.error("insert 6s_user fail. ret:%s"%rets)
-		else:
-			_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
-			count,rets=dbmgr.db_exec(_sql)
-			if count == 0:
-				mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
-	else:
-		_json["errcode"] = 1
-		_json["errmsg"] = "invalid city."
-		mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
-
+	mo.logger.info("return openid. %s -> %s"%(code,str(_json)) )
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
