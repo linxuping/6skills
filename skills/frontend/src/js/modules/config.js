@@ -33,7 +33,8 @@ function de(a, b) {
   return enc_a;
 }
 function ges(controller) {
-	return de("6073d8ef25fdfe74a1104961c30a99f7fa35dd0054cc61","aXi7$kj0l3@W")+controller;
+	//return de("6073d8ef25fdfe74a1104961c30a99f7fa35dd0054cc61","aXi7$kj0l3@W")+controller;
+	return "http://www.6skills.com/"+controller;
 }
 function geopenid(){
 	//return de("31e6adc301ded919","aXi7$kj0l3@X");

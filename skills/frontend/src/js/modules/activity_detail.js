@@ -52,8 +52,12 @@ var ActivityDetail = React.createClass({
 			dataType: 'json',
 			data: { "openid":geopenid(),"actid": this.props.actid },
 		})
-		.done(function() {
-			$(".sign-btn")[0].innerHTML = "已收藏";$
+		.done(function(res) {
+			if (res.errcode != 0){
+				alert(res.errmsg);
+				return;
+			}
+			$(".sign-btn")[0].innerHTML = "已收藏";
 		}.bind(this))
 		.fail(function() {
 			console.log("collect error");

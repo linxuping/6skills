@@ -26,7 +26,7 @@ var App = React.createClass({ //
 
 		//console.log(area);
 		//console.log(age);
-		var args = {"area":area,"age":age,"page": this.state.pageable.page || 1,"pagesize":10,"city":"","district":"天河区"};
+		var args = {"area":area,"age":age,"page": this.state.pageable.page || 1,"pagesize":10,"city":"","district":"天河区","openid":geopenid()};
 		if (this.props.type == "preview")
 			args["type"] = "preview";
 		$.ajax({

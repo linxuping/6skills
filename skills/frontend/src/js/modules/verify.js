@@ -27,24 +27,16 @@ function validateForm() {
 									//	WeixinJSBridge.call('closeWindow');
 									//} catch (e){ }
 									//update profile.
-									$.ajax({
-										url: ges('activities/get_profile'),
-										//url: "/test/get_profile.json",
-										type: 'get',
-										async: false,
-										dataType: 'json',
-										data: { "openid": geopenid() }
-									})
-									.done(function(res) {
-										console.log("success");
-										if (res.errcode == 0) {
-											sessionStorage.setItem("_profile", JSON.stringify(res.profile));
-										}
-									}.bind(this))
-									.fail(function() {
-										console.log("error");
-									});
-									history.back();
+									prostr = sessionStorage.getItem("_profile");
+									if (prostr == null) {
+										alert("从服务器获取用户信息失败.");
+									}
+									else{
+										var _profile = JSON.parse(prostr);
+										_profile["phone"] = $("#phone").val();
+										sessionStorage.setItem("_profile", JSON.stringify(_profile));
+										history.back();
+									}
 								}
 							}),
 							document.getElementById("alert-wrap")
