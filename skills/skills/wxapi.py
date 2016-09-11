@@ -27,9 +27,9 @@ def activities_special_offers(req):
 	ret,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
 	if not ret:
 		return city
-	ret,district = check_mysql_arg_jsonobj("district", req.GET.get("district",None), "str")
-	if not ret:
-		return district
+	#ret,district = check_mysql_arg_jsonobj("district", req.GET.get("district",None), "str")
+	#if not ret:
+	#	return district
 	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "str")
 	tmps = age.split("-")
 	if (not ret) or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
@@ -53,12 +53,22 @@ def activities_special_offers(req):
 		#sql_datefilter = "a.time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
 		sql_datefilter = "a.preinfo_id>0 and "
 
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	position_id = 0
+	if ret:
+		_sql = "select position_id from 6s_user where openid='%s'"%openid
+		count,rets=dbmgr.db_exec(_sql)
+		if count>0 and rets[0][0]!=None:
+			position_id = int(rets[0][0])
+		if position_id == 0:
+			position_id = 101010100;
+
 	#exec 
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
-	if district == "": #by date
+	if not ret: #by date
 		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1 order by a.createtime desc limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	else: #by distr and date
-		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 6 MONTH),a2.price_child as sortdate from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid<>(select id from 6s_position where name='%s') and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,district,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,district,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 6 MONTH),a2.price_child as sortdate from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
@@ -212,7 +222,10 @@ def get_authcode(req):
 			_json["errmsg"] = "验证码发送失败(2)."
 			mo.logger.error("send sms fail: %s"%ret )
 	_jsonobj = json.dumps(_json)
-	return HttpResponse(_jsonobj, mimetype='application/json')
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+	#return HttpResponse(_jsonobj, mimetype='application/json')
 
 
 @csrf_exempt
@@ -276,6 +289,9 @@ def activities_sign(req):
 	ret,openid = check_mysql_arg_jsonobj("openid", args.get("openid",None), "str")
 	if not ret:
 		return openid
+	if openid == "":
+		mo.logger.error("openid is empty. "+REQ_TAG(args))
+		return response_json_error( "6sid不能为空.")
 	ret,name = check_mysql_arg_jsonobj("name", args.get("name",None), "str")
 	if not ret:
 		return name
@@ -652,6 +668,9 @@ def activities_collect(req):
 	ret,openid = check_mysql_arg_jsonobj("openid", args.get("openid",None), "str")
 	if not ret:
 		return openid
+	if openid == "":
+		mo.logger.error("openid is empty. "+REQ_TAG(args))
+		return response_json_error( "6sid不能为空.")
 	ret,actid = check_mysql_arg_jsonobj("actid", args.get("actid",None), "int")
 	if not ret:
 		return actid
@@ -895,7 +914,7 @@ def save_user_info_wx(access_token, openid):
 		_sql = "select id from 6s_position where name='%s';"%city
 		count,rets=dbmgr.db_exec(_sql)
 		if count > 0:
-			pos_id = str(int(rets[0][0])+1) #to district
+			pos_id = str(int(rets[0][0])+100) #to district
 	#update 6s_user
 	openid,nickname,sex,headimg = tmpdic["openid"],tmpdic.get("nickname",""),tmpdic.get("sex","1"),tmpdic.get("headimgurl","")
 	sex = "male" if sex==1 else "female"
@@ -952,9 +971,13 @@ def default_process(req):
 
 	body = req.body
 	if len(body) == 0:
-			return HttpResponse("-1", mimetype='text/plain')
+		return HttpResponse("-1", mimetype='text/plain')
 	import xml.etree.ElementTree as Etree
-	msgxml = Etree.fromstring(body)
+	msgxml = None
+	try:
+		msgxml = Etree.fromstring(body)
+	except:
+		return HttpResponse("req.body invalid: %s"%str(body), mimetype='text/plain')
 
 	fnode = msgxml.find("FromUserName")
 	if fnode == None:
@@ -1070,7 +1093,7 @@ def get_openid(req):
 				_sql = "select id from 6s_position where name='%s';"%city
 				count,rets=dbmgr.db_exec(_sql)
 				if count >0 :
-					pos_id = str(int(rets[0][0])+1)
+					pos_id = str(int(rets[0][0])+100)
 					_sql = "select id from 6s_user where openid='%s';"%(openid)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 0:
