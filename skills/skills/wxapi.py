@@ -31,7 +31,9 @@ def activities_special_offers(req):
 	#if not ret:
 	#	return district
 	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "str")
-	tmps = age.split("-")
+	tmps = ["0","100"]
+	if age != "*":
+		tmps = age.split("-")
 	if (not ret) or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
 		return response_json_error( "age invalid! must be *-*" )
 	_age_from = int(str(tmps[0]))
@@ -66,9 +68,9 @@ def activities_special_offers(req):
 	#exec 
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
 	if not ret: #by date
-		_sql = "select a.id,imgs_act,title,content,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1 order by a.createtime desc limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select a.id,imgs_act,title,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,a.createtime,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1 order by a.createtime desc limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	else: #by distr and date
-		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 6 MONTH),a2.price_child as sortdate from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 12 MONTH) as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
@@ -813,44 +815,44 @@ def _update_base_access_token():
 	_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"%(settings.appid,settings.appsecret)
 	status,ret = get_url_resp( _url )
 	if not status:
-		mo.logger.error( ret )
+		mo.logger.error( "[THREAD]%s"%ret )
 		return False
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("access_token") and tmpdic.has_key("expires_in"):
-		mo.logger.info("update base_access_token: %s"%(tmpdic["access_token"]) )
+		mo.logger.info("[THREAD]update base_access_token: %s"%(tmpdic["access_token"]) )
 		nosqlmgr.redis_set( "base_access_token",tmpdic["access_token"],tmpdic["expires_in"] ) 
 		return True
 	else:
-		mo.logger.error("no access_token or refresh_token: %s"%_url)
+		mo.logger.error("[THREAD]no access_token or refresh_token: %s"%_url)
 	return False
 
 def _check_access_token_valid(token, openid, hint):
 	_url = "https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s"%(token, openid)
 	status,ret = get_url_resp( _url )
 	if not status:
-		mo.logger.error( "%s %s"%(hint,ret) )
+		mo.logger.error( "[THREAD]%s %s %s"%(hint,openid,ret) )
 		return False
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("errcode") and tmpdic["errcode"]==0:
 		return True
-	mo.logger.error("token invalid: %s  %s"%(_url,hint))
+	mo.logger.error("[THREAD]token invalid: %s %s %s"%(_url,openid,hint))
 	return False
 
 def _update_web_access_token(openid, retoken):
 	_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid, retoken)
 	status,ret = get_url_resp( _url )
 	if not status:
-		mo.logger.error( ret )
+		mo.logger.error( "[THREAD]%s"%ret )
 		return False
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("expires_in"):
-		mo.logger.info("update access_token:%s"%tmpdic["access_token"] )
+		mo.logger.info("[THREAD]update web_ access_token:%s"%tmpdic["access_token"] )
 		nosqlmgr.redis_set( "web_access_token_%s"%openid,tmpdic["access_token"], tmpdic["expires_in"] ) 
-		mo.logger.info("upload refresh_token:%s"%tmpdic["refresh_token"] )
+		mo.logger.info("[THREAD]upload web_ refresh_token:%s"%tmpdic["refresh_token"] )
 		nosqlmgr.redis_set( "web_refresh_token_%s"%openid,tmpdic["refresh_token"] ) 
 		return True
 	else:
-		mo.logger.error("no access_token or refresh_token: %s"%_url)
+		mo.logger.error("[THREAD]no access_token or refresh_token: %s"%_url)
 	return False
 
 def update_access_token():
@@ -865,15 +867,24 @@ def update_access_token():
 		#TODO.
 		for _token in nosqlmgr.redis_conn.keys("web_access_token_*"): #keys web_refresh_token_*: 1234
 			_openid = _token.split("web_refresh_token_")[1]
-			_key = "web_access_token_" + _openid
+			_ackey = "web_access_token_" + _openid
+			_actoken = nosqlmgr.redis_get(_ackey)
+			_rekey = "web_refresh_token_" + _openid
+			_retoken = nosqlmgr.redis_get(_rekey)
+			if _actoken == None:
+				mo.logger.error("[THREAD]can't find %s in redis."%_ackey)
+				continue
+			if _retoken == None:
+				mo.logger.error("[THREAD]can't find %s in redis."%_rekey)
+				continue
 			for i in xrange(3):
-				if int(nosqlmgr.redis_conn.ttl(_key))>60:  #and _check_access_token_valid(_openid,settings.mopenid,"web"):
+				if int(nosqlmgr.redis_conn.ttl(_ackey))>60 and _check_access_token_valid(_openid,settings.mopenid,"web"):
 					break
-				if _update_web_access_token():
+				if _update_web_access_token(_openid, _retoken):
 					break
 		time.sleep(5) #1.5
 if settings.check_access_token:
-	mo.logger.info("start new thread.")
+	mo.logger.info("[THREAD]start new thread.")
 	thread.start_new_thread( update_access_token,() )
 
 
@@ -926,7 +937,8 @@ def save_user_info_wx(access_token, openid):
 		if count == 0:
 			mo.logger.error("insert 6s_user fail. ret:%s"%rets)
 	else:
-		_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+		#_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+		_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',status=1 where openid='%s';"%(nickname,sex,headimg,openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 0:
 			mo.logger.warn("update posid return 0. openid:%s %s"%(openid,ret))
@@ -1032,7 +1044,6 @@ def default_process(req):
 				return HttpResponse("40019", mimetype='text/plain')
 			pass
 		elif "VIEW" == node_ev.text:
-			print "goto pass >>>> .>>>>>>."
 			return HttpResponse("0", mimetype='text/plain')
 			pass
 		else:
@@ -1102,7 +1113,8 @@ def get_openid(req):
 						if count == 0:
 							mo.logger.error("insert 6s_user fail. ret:%s"%rets)
 					else:
-						_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+						#_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+						_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',status=1 where openid='%s';"%(nickname,sex,headimg,openid)
 						count,rets=dbmgr.db_exec(_sql)
 						if count == 0:
 							mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
