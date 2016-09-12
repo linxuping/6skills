@@ -882,7 +882,7 @@ def update_access_token():
 					break
 				if _update_web_access_token(_openid, _retoken):
 					break
-		time.sleep(5) #1.5
+		time.sleep(55) #1.5
 if settings.check_access_token:
 	mo.logger.info("[THREAD]start new thread.")
 	thread.start_new_thread( update_access_token,() )
@@ -1085,9 +1085,11 @@ def get_openid(req):
 	if tmpdic.has_key("errcode") and tmpdic.has_key("errmsg"):
 		mo.logger.error("web_access_token fail. refresh_token invalid? %s"%code)
 	
-	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("openid"):
-		nosqlmgr.redis_set("access_token_%s"%tmpdic["openid"], tmpdic["access_token"])
-		nosqlmgr.redis_set("refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"])
+	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("expires_in") and tmpdic.has_key("openid"):
+		nosqlmgr.redis_set("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"])
+		mo.logger.info("[THREAD]set %s: %s %s"%("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"]))
+		nosqlmgr.redis_set("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"], 8640000) #100 days
+		mo.logger.info("[THREAD]set %s: %s 8640000"%("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"]))
 		openid = tmpdic["openid"]
 		_json["openid"] = openid
 		nickname,sex,headimg = "","male","/static/img/head.jpg"
