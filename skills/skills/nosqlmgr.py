@@ -14,7 +14,7 @@ def redis_init():
 		for i in range(2):
 			try:  
 				#mo.logger.info( "[conn_redis]%s_%d %d."%(settings.redis_serer,settings.redis_port,i) )
-				redis_conn = redis.StrictRedis(host=settings.redis_server, port=settings.redis_port, db=0)  
+				redis_conn = redis.StrictRedis(host=settings.redis_server, port=settings.redis_port, db=0, password=settings.redis_pwd)  
 				#redis_conn = redis.StrictRedis(host="127.0.0.1", port=6378, db=0)  
 			except Exception, e:  
 				ret = str(sys.exc_info()) + "; " + str(traceback.format_exc()) 
