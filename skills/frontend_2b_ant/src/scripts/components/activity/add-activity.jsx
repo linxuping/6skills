@@ -300,8 +300,9 @@ let AddActivity = React.createClass({
             <TinyMCE
               content=""
               config={{
-                plugins: 'link image code',
-                toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | link image | code',
+                menubar: false,
+                plugins: 'link image',
+                toolbar: 'fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify removeformat | link image | undo redo ',
                 height: 300
               }}
               onChange={this.handleEditorChange}/>

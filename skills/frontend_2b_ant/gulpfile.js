@@ -25,7 +25,7 @@ gulp.task('default', function(callback){
       },
       proxy: {
         "/api/admin/*": {
-          target: "http://121.42.41.241:9900",
+          target: "http://121.42.41.241",
           secure: false,
           changeOrigin: true
         }

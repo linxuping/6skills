@@ -20,7 +20,9 @@ export default function(options){
     uptoken_func: function(){
       //var key = new Date().getTime();
       var ajax = new XMLHttpRequest();
-      ajax.open('GET', '/api/admin/uploadtoken/get?key=' + key, false);
+      //url
+      var url = 'http://img.6skills.com/api/admin/uploadtoken/get?key=' + key;
+      ajax.open('GET', url, false);
       ajax.setRequestHeader("If-Modified-Since", "0");
       ajax.send();
       if (ajax.status === 200) {

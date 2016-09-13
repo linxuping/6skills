@@ -109,7 +109,7 @@ function makeConf(options) {
         config.module.loaders.push(sassLoader);
         config.module.loaders.push(lessLoader);
     } else {
-
+        console.log("build")
         // 编译阶段，css分离出来单独引入
         var cssLoader = {
             test: /\.css$/,
@@ -139,6 +139,14 @@ function makeConf(options) {
                 allChunks: false
             })
         );
+
+        config.plugins.push(
+            new webpack.DefinePlugin({
+               'process.env': {
+                   NODE_ENV: JSON.stringify("production"),
+                },
+            })
+        )
 
         config.plugins.push(new UglifyJsPlugin());
     }

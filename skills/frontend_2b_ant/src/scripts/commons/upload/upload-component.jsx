@@ -24,9 +24,6 @@ class Upload extends Component {
     super(props);
   }
 
-  componentWillMount() {
-
-  }
   componentDidMount() {
     let qiniu = new QiniuJsSDK()
     qiniu.uploader(uploadConfig({
