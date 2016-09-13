@@ -31,8 +31,9 @@ def activities_special_offers(req):
 	#if not ret:
 	#	return district
 	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "str")
-	tmps = ["0","100"]
-	if age != "*":
+	tmps = []
+	if ret:
+		age = "0-100" if age=="*" else age
 		tmps = age.split("-")
 	if (not ret) or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
 		return response_json_error( "age invalid! must be *-*" )
@@ -796,6 +797,30 @@ def get_access_token(req):
 	makeup_headers_CORS(resp)
 	return resp
 
+
+@req_print
+def get_js_signature(req):
+	#ret,_url = check_mysql_arg_jsonobj("url", req.GET.get("url",None), "str")
+	#if not ret:
+	if not req.GET.has_key("url"):
+		return response_json_error( "invalid args." )
+	_url = req.GET["url"]
+	print "sig url: ", _url
+
+	if nosqlmgr.redis_get("js_signature") == None:
+		return response_json_error( "[TOKEN] get js_signature null." )
+	import hashlib
+	settings.js_timestamp = int(time.time())
+	_str = "jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s"%(nosqlmgr.redis_get("js_signature"),settings.js_noncestr,settings.js_timestamp,_url)
+	_sig = hashlib.sha1(_str).hexdigest()
+
+	_json = { "appid":settings.appid,"signature":_sig,"noncestr":settings.js_noncestr,"timestamp":settings.js_timestamp,"errcode":0,"errmsg":"" }
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
 '''
 def get_wx_user_info():
 	ss = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=WjpTHedNlMh8k7xQ0UR1Tpy6iHE-GdtW0lDtfyHDfXJzddqZzln4HBNrZ3v2RDCP9X8r8isOK9cb-q-IYEUOxjdNuNXfeRhq7vht3iXTnM4DICeABAUZT&openid=oaLbrwTDwNXtyv7YtWhe9wSQXolA"
@@ -815,44 +840,61 @@ def _update_base_access_token():
 	_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s"%(settings.appid,settings.appsecret)
 	status,ret = get_url_resp( _url )
 	if not status:
-		mo.logger.error( "[THREAD]%s"%ret )
+		mo.logger.error( "[TOKEN] %s"%ret )
 		return False
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("access_token") and tmpdic.has_key("expires_in"):
-		mo.logger.info("[THREAD]update base_access_token: %s"%(tmpdic["access_token"]) )
+		mo.logger.info("[TOKEN] update base_access_token: %s"%(tmpdic["access_token"]) )
 		nosqlmgr.redis_set( "base_access_token",tmpdic["access_token"],tmpdic["expires_in"] ) 
 		return True
 	else:
-		mo.logger.error("[THREAD]no access_token or refresh_token: %s"%_url)
+		mo.logger.error("[TOKEN] no access_token or refresh_token: %s"%_url)
 	return False
 
 def _check_access_token_valid(token, openid, hint):
 	_url = "https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s"%(token, openid)
 	status,ret = get_url_resp( _url )
 	if not status:
-		mo.logger.error( "[THREAD]%s %s %s"%(hint,openid,ret) )
+		mo.logger.error( "[TOKEN] %s %s %s"%(hint,openid,ret) )
 		return False
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("errcode") and tmpdic["errcode"]==0:
 		return True
-	mo.logger.error("[THREAD]token invalid: %s %s %s"%(_url,openid,hint))
+	mo.logger.error("[TOKEN] token invalid: %s %s %s"%(_url,openid,hint))
 	return False
 
 def _update_web_access_token(openid, retoken):
 	_url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"%(settings.appid, retoken)
 	status,ret = get_url_resp( _url )
 	if not status:
-		mo.logger.error( "[THREAD]%s"%ret )
+		mo.logger.error( "[TOKEN] %s"%ret )
 		return False
 	tmpdic = json.loads(ret)
 	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("expires_in"):
-		mo.logger.info("[THREAD]update web_ access_token:%s"%tmpdic["access_token"] )
+		mo.logger.info("[TOKEN] update web_ access_token:%s"%tmpdic["access_token"] )
 		nosqlmgr.redis_set( "web_access_token_%s"%openid,tmpdic["access_token"], tmpdic["expires_in"] ) 
-		mo.logger.info("[THREAD]upload web_ refresh_token:%s"%tmpdic["refresh_token"] )
+		mo.logger.info("[TOKEN] upload web_ refresh_token:%s"%tmpdic["refresh_token"] )
 		nosqlmgr.redis_set( "web_refresh_token_%s"%openid,tmpdic["refresh_token"] ) 
 		return True
 	else:
-		mo.logger.error("[THREAD]no access_token or refresh_token: %s"%_url)
+		mo.logger.error("[TOKEN] no access_token or refresh_token: %s"%_url)
+	return False
+
+def _update_js_signature():
+	actoken = nosqlmgr.redis_get("base_access_token")
+	if actoken == None:
+		mo.logger.error( "[TOKEN] base_access_token is null." )
+	else:
+		_url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi"%actoken
+		status,ret = get_url_resp( _url )
+		if not status:
+			mo.logger.error( "[TOKEN] %s"%ret )
+			return False
+		tmpdic = json.loads(ret)
+		if tmpdic.has_key("ticket") and tmpdic.has_key("expires_in"):
+			mo.logger.info("[TOKEN] update js_signature:%s %s"%(tmpdic["ticket"],tmpdic["expires_in"]) )
+			nosqlmgr.redis_set( "js_signature",tmpdic["ticket"],tmpdic["expires_in"]  ) 
+			return True
 	return False
 
 def update_access_token():
@@ -866,25 +908,32 @@ def update_access_token():
 				break
 		#TODO.
 		for _token in nosqlmgr.redis_conn.keys("web_access_token_*"): #keys web_refresh_token_*: 1234
-			_openid = _token.split("web_refresh_token_")[1]
+			_openid = _token.split("web_access_token_")[1]
 			_ackey = "web_access_token_" + _openid
 			_actoken = nosqlmgr.redis_get(_ackey)
 			_rekey = "web_refresh_token_" + _openid
 			_retoken = nosqlmgr.redis_get(_rekey)
 			if _actoken == None:
-				mo.logger.error("[THREAD]can't find %s in redis."%_ackey)
+				mo.logger.error("[TOKEN] can't find %s in redis."%_ackey)
 				continue
 			if _retoken == None:
-				mo.logger.error("[THREAD]can't find %s in redis."%_rekey)
+				mo.logger.error("[TOKEN] can't find %s in redis."%_rekey)
 				continue
 			for i in xrange(3):
-				if int(nosqlmgr.redis_conn.ttl(_ackey))>60 and _check_access_token_valid(_openid,settings.mopenid,"web"):
+				print ">>> ",int(nosqlmgr.redis_conn.ttl(_ackey))>60, _check_access_token_valid(_actoken, _openid, "web")
+				if int(nosqlmgr.redis_conn.ttl(_ackey))>60 and _check_access_token_valid(_actoken, _openid, "web"):
 					break
 				if _update_web_access_token(_openid, _retoken):
 					break
+		for i in xrange(3):
+			_ttl = int(nosqlmgr.redis_conn.ttl("js_signature"))
+			if _ttl>60:
+				break
+			if _update_js_signature():
+				break
 		time.sleep(55) #1.5
 if settings.check_access_token:
-	mo.logger.info("[THREAD]start new thread.")
+	mo.logger.info("[TOKEN] start new thread.")
 	thread.start_new_thread( update_access_token,() )
 
 
@@ -1087,9 +1136,9 @@ def get_openid(req):
 	
 	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("expires_in") and tmpdic.has_key("openid"):
 		nosqlmgr.redis_set("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"])
-		mo.logger.info("[THREAD]set %s: %s %s"%("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"]))
+		mo.logger.info("[TOKEN] set %s: %s %s"%("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"]))
 		nosqlmgr.redis_set("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"], 8640000) #100 days
-		mo.logger.info("[THREAD]set %s: %s 8640000"%("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"]))
+		mo.logger.info("[TOKEN] set %s: %s 8640000"%("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"]))
 		openid = tmpdic["openid"]
 		_json["openid"] = openid
 		nickname,sex,headimg = "","male","/static/img/head.jpg"

@@ -74,8 +74,11 @@ def req_print(func):
 					mo.logger.error( rets )
 				endtime = time.time()
 				uid = req.GET.get("openid",req.COOKIES.get("6suserid",'-1')).replace("'"," ").replace("\""," ")
-				_sql = "insert into 6s_trace values('%s','%s',%.03f,now());"%(uid, func.func_name,float(endtime-starttime) );
-				count,rets=dbmgr.db_exec(_sql)
+				if settings.check_marg_safe(uid):
+					_sql = "insert into 6s_trace values('%s','%s',%.03f,now());"%(uid, func.func_name,float(endtime-starttime) );
+					count,rets=dbmgr.db_exec(_sql)
+				else:
+					mo.logger.error("invalid arg:%s into 6s_trace."%uid)
 				return ret
 		return wrapper
 
