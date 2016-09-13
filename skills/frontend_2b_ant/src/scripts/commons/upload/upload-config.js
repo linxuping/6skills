@@ -1,4 +1,9 @@
 export default function(options){
+  if (options == undefined || options.key == undefined) {
+    alert("upload key cannot be null");
+    return null;
+  }
+  var key = options.key + "-" + new Date().getTime() + (options.type || ".jpg");
   options = options || {};
   var config = {
 
@@ -11,9 +16,9 @@ export default function(options){
     dragdrop: true,
     chunk_size: '4mb',
     multi_selection: false,//!(mOxie.Env.OS.toLowerCase()==="ios"),
-    //uptoken_url: $('#uptoken_url').val(),
+    uptoken_url: $('#uptoken_url').val(),
     uptoken_func: function(){
-      var key = new Date().getTime();
+      //var key = new Date().getTime();
       var ajax = new XMLHttpRequest();
       ajax.open('GET', '/api/admin/uploadtoken/get?key=' + key, false);
       ajax.setRequestHeader("If-Modified-Since", "0");
@@ -27,11 +32,11 @@ export default function(options){
           return '';
       }
     },
-    domain: "http://sixskills.qunuicdn.com",
+    domain: "http://img.6skills.com/",
     get_new_uptoken: false,
     // downtoken_url: '/downtoken',
-    unique_names: true,
-    save_key: true,
+    unique_names: false,
+    save_key: false,
     // x_vars: {
     //     'id': '1234',
     //     'time': function(up, file) {
@@ -41,52 +46,50 @@ export default function(options){
     //     },
     // },
     auto_start: true,
-    log_level: 5,
+    log_level: 1,
     init: {
-        'FilesAdded': function(up, files) {
-          plupload.each(files, function(file) {
-              // 文件添加进队列后,处理相关的事情
-          });
-            // $('table').show();
-            // $('#success').hide();
-            // plupload.each(files, function(file) {
-            //     var progress = new FileProgress(file, 'fsUploadProgress');
-            //     progress.setStatus("绛夊緟...");
-            //     progress.bindUploadCancel(up);
-            // });
-        },
-        'BeforeUpload': function(up, file) {
-            // var progress = new FileProgress(file, 'fsUploadProgress');
-            // var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
-            // if (up.runtime === 'html5' && chunk_size) {
-            //     progress.setChunkProgess(chunk_size);
-            // }
-        },
-        'UploadProgress': function(up, file) {
-            // var progress = new FileProgress(file, 'fsUploadProgress');
-            // var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
-            // progress.setProgress(file.percent + "%", file.speed, chunk_size);
-        },
-        'UploadComplete': function() {
-            // $('#success').show();
-        },
-        'FileUploaded': function(up, file, info) {
-            // var progress = new FileProgress(file, 'fsUploadProgress');
-            // progress.setComplete(up, info);
-        },
-        'Error': function(up, err, errTip) {
-            console.log(errTip)
-            // $('table').show();
-            // var progress = new FileProgress(err.file, 'fsUploadProgress');
-            // progress.setError();
-            // progress.setStatus(errTip);
-        }
-            // ,
-            // 'Key': function(up, file) {
-            //     var key = "";
-            //     // do something with key
-            //     return key
-            // }
+      'FilesAdded': function(up, files) {
+        plupload.each(files, function(file) {
+            // 文件添加进队列后,处理相关的事情
+        });
+          // $('table').show();
+          // $('#success').hide();
+          // plupload.each(files, function(file) {
+          //     var progress = new FileProgress(file, 'fsUploadProgress');
+          //     progress.setStatus("绛夊緟...");
+          //     progress.bindUploadCancel(up);
+          // });
+      },
+      'BeforeUpload': function(up, file) {
+          // var progress = new FileProgress(file, 'fsUploadProgress');
+          // var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
+          // if (up.runtime === 'html5' && chunk_size) {
+          //     progress.setChunkProgess(chunk_size);
+          // }
+      },
+      'UploadProgress': function(up, file) {
+          // var progress = new FileProgress(file, 'fsUploadProgress');
+          // var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
+          // progress.setProgress(file.percent + "%", file.speed, chunk_size);
+      },
+      'UploadComplete': function(res) {
+          // $('#success').show();
+        //console.log(res)
+      },
+      'FileUploaded': function(up, file, info) {
+          // var progress = new FileProgress(file, 'fsUploadProgress');
+          // progress.setComplete(up, info);
+          options.successCallBack && options.successCallBack(info, config.domain);
+      },
+      'Error': function(up, err, errTip) {
+          console.log(errTip)
+      }
+      ,
+      'Key': function(up, file) {
+          //var key = "";
+          // do something with key
+          return key
+      }
     }
   }
   return config;
