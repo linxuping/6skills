@@ -104,7 +104,39 @@ var ActivityDetail = React.createClass({
 			dataType: 'json',
 			data: { "actid":actid,"openid":geopenid() },
 			success: function(res) {
-				console.log(res);
+				$.ajax({
+					url: ges("get_js_signature"),
+					type: 'get',
+					dataType: 'json',
+					data: { "url":ges("template/activity_detail.html?actid="+res.actid) },
+					success: function(res2) {
+						if (res2.appid != null){
+							wx.config({
+								debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+								appId: res2.appid, // 必填，公众号的唯一标识
+								timestamp: res2.timestamp, // 必填，生成签名的时间戳
+								nonceStr: res2.noncestr, // 必填，生成签名的随机串
+								signature: res2.signature,// 必填，签名，见附录1
+								jsApiList: ["onMenuShareTimeline","onMenuShareAppMessage","onMenuShareQQ","onMenuShareWeibo","onMenuShareQZone"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+							});
+							String.prototype.stripHTML = function() {  
+								var reTag = /<(?:.|\s)*?>/g;  
+								return this.replace(reTag,"");  
+							}  
+							var _content = res.content.substring(0, 100).stripHTML();
+							wx.ready(function(){
+								make_share("all",res.title,_content,ges("template/activity_detail.html?actid="+res.actid),res.img_cover,null);
+							});
+							wx.error(function(res2){
+								alert('微信错误提示: '+JSON.stringify(res2));
+							});
+						}
+					},
+					error: function() {
+						alert("请稍后重试获取签名.");
+					},
+				});
+				
 				this.setState({
 					activity: res,
 					imgs: res.imgs,
@@ -180,3 +212,5 @@ var QrCode = React.createClass({
 		);
 	}
 });
+
+
