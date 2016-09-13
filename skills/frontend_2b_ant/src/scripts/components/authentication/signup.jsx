@@ -19,15 +19,47 @@ class Signup extends React.Component {
   onSubmitHandler(e){
     e.preventDefault()
     console.log(this.props.form.getFieldsValue())
+    this.props.form.validateFields((errors, values) => {
+      console.log(errors);
+    })
   }
 
   getCodeHandler(ev){
 
   }
 
+  checkPassComfirm(rule, value, callback) {
+    const {getFieldValue} = this.props.form;
+    if (value && value !== getFieldValue('password')) {
+      callback('两次密码不相同');
+    } else {
+      callback();
+    }
+  }
+
   render() {
     const {getFieldProps, getFieldError, isFieldValidating} = this.props.form;
-
+    const phonePorps = getFieldProps("phone", {
+      rules: [
+        {required: true,  message: "请输入手机", pattern: /^[1][0-9]{10}$/}
+      ]
+    });
+    const codeProps = getFieldProps("code", {
+      rules: [
+        {required: true, message: "请输入验证码"}
+      ]
+    });
+    const passwordProps = getFieldProps("password", {
+      rules: [
+        {required: true, message: "请输入密码"}
+      ]
+    });
+    const passwordConfirmProps = getFieldProps("passwordConform", {
+      rules: [
+        {required: true, message: "请输入确认密码"},
+        {validator: this.checkPassComfirm.bind(this)}
+      ]
+    })
     return (
       <Row>
         <Col span={8} offset={8}>
@@ -41,32 +73,31 @@ class Signup extends React.Component {
             <Form horizontal onSubmit={this.onSubmitHandler.bind(this)}>
               <FormItem>
                 <Input placeholder="账户(手机)" size="large"
-                  {...getFieldProps('phone')}></Input>
+                  {...phonePorps}></Input>
               </FormItem>
 
-              <FormItem>
-                <Row>
-                  <Col span={16}>
+              <Row>
+                <Col span={16}>
+                <FormItem>
                   <Input placeholder="验证码" size="large"
-                    {...getFieldProps('code')}></Input>
-                  </Col>
-                  <Col span={8}>
-                    <Button htmlType="button" type="primary" size="large" className="fr" onClick={this.getCodeHandler.bind(this)}>
-                      获取验证码
-                    </Button>
-                  </Col>
-                </Row>
-
-              </FormItem>
+                  {...codeProps} style={{"with": "66.6666%"}}></Input>
+                </FormItem>
+                </Col>
+                <Col span={8}>
+                  <Button htmlType="button" type="primary" size="large" className="fr" onClick={this.getCodeHandler.bind(this)}>
+                    获取验证码
+                  </Button>
+                </Col>
+              </Row>
 
               <FormItem className="">
                 <Input type="password" placeholder="密码" size="large"
-                  {...getFieldProps('password')} />
+                  {...passwordProps} />
               </FormItem>
 
               <FormItem className="">
                 <Input type="password" placeholder="确认密码" size="large"
-                  {...getFieldProps('password_comfirm')} />
+                  {...passwordConfirmProps} />
               </FormItem>
 
               <Button htmlType="submit" type="primary" size="large"
