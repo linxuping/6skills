@@ -1179,7 +1179,6 @@ def get_openid(req):
 			else:
 				mo.logger.error("attrs error. %s  %s  %s"%(openid,_url,ret))
 	else:
-		_json["openid"] = "token_expire"
 		mo.logger.error("no ***_token: %s. %s"%(ret,_url) )
 		return response_json_error( "no ***_token." )
 
