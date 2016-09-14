@@ -152,7 +152,7 @@ var Verify = React.createClass({
 							</div>
 						</div>
 					</div>
-					<div className="weui_cells_tips">注意事项注意事项注意事项</div>
+					<div className="weui_cells_tips"></div>
 					<div className="weui_btn_area">
 						<button type="submit" className="weui_btn weui_btn_primary">
 							提交

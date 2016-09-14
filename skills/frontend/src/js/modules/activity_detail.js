@@ -8,6 +8,8 @@ var ActivityDetail = React.createClass({
 	},
 
 	openSignPage: function(){
+		if (try_jump_pubnum())
+			return;
 		if (this.state.status) {
 			window.location = "#qrcode";
 			alert("您已经报过名了，请到已报名活动中查看！")
@@ -19,7 +21,27 @@ var ActivityDetail = React.createClass({
 			}
 			
 			profile = sessionStorage.getItem("_profile");
+			if (profile == null){
+				$.ajax({
+					url: ges('activities/get_profile'),
+					//url: "/test/get_profile.json",
+					type: 'get',
+					dataType: 'json',
+					async: false,
+					data: { "openid": geopenid() }
+				})
+				.done(function(res) {
+					console.log("success");
+					if (res.errcode == 0) {
+						sessionStorage.setItem("_profile", JSON.stringify(res.profile));
+					}
+				}.bind(this))
+				.fail(function() {
+					console.log("error");
+				});
+			}
 			verify = true;
+			profile = sessionStorage.getItem("_profile");
 			if (profile) {$
 				profile = JSON.parse(profile);$
 				if (profile.phone==null || profile.phone=="")
@@ -39,6 +61,8 @@ var ActivityDetail = React.createClass({
 	},
 
 	openCollectPage: function(){
+		if (try_jump_pubnum())
+			return;
 		if (this.state.coll_status) {
 			alert("已收藏该活动，请到我的收藏中查看！");
 			return;
@@ -74,7 +98,7 @@ var ActivityDetail = React.createClass({
 			url: url,
 			type: 'get',
 			dataType: 'json',
-			data: {openid: geopenid(), actid: actid},
+			data: {openid: geopenid("ignore"), actid: actid},
 		})
 		.done(function(res) {
 			this.setState({
@@ -98,17 +122,18 @@ var ActivityDetail = React.createClass({
 			alert("actid must be number.");
 			return;
 		}
+		_encodeurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx1cdf2c4bb014681e&redirect_uri="+encodeURIComponent(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect"
 		$.ajax({
 			url: this.props.url,
 			type: 'get',
 			dataType: 'json',
-			data: { "actid":actid,"openid":geopenid() },
+			data: { "actid":actid,"openid":geopenid("ignore") },
 			success: function(res) {
 				$.ajax({
 					url: ges("get_js_signature"),
 					type: 'get',
 					dataType: 'json',
-					data: { "url":ges("template/activity_detail.html?actid="+res.actid) },
+					data: { "url":window.location.href },//ges("template/activity_detail.html?actid="+res.actid)
 					success: function(res2) {
 						if (res2.appid != null){
 							wx.config({
@@ -121,14 +146,17 @@ var ActivityDetail = React.createClass({
 							});
 							String.prototype.stripHTML = function() {  
 								var reTag = /<(?:.|\s)*?>/g;  
-								return this.replace(reTag,"");  
+								var reTag2 = /&nbsp/g;  
+								var reTag3 = / /g;  
+								return this.replace(reTag,"").replace(reTag2,"").replace(reTag3,"");  
 							}  
 							var _content = res.content.substring(0, 100).stripHTML();
 							wx.ready(function(){
-								make_share("all",res.title,_content,ges("template/activity_detail.html?actid="+res.actid),res.img_cover,null);
+								make_share("all",res.title,_content,_encodeurl,res.img_cover,null);
 							});
 							wx.error(function(res2){
-								alert('微信错误提示: '+JSON.stringify(res2));
+								if (sessionStorage.getItem("6soid") != null)
+									alert('微信错误提示: '+JSON.stringify(res2));
 							});
 						}
 					},
