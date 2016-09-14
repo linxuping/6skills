@@ -757,7 +757,7 @@ def save_pos_wx(lat,lon,openid):
 			pos_id = rets[0][0] #to district
 			count,rets=dbmgr.db_exec("select id from 6s_user where openid='%s';"%openid)
 			if count == 0:
-				count,rets=dbmgr.db_exec("insert into 6s_user(openid,position_id,position_details) values('%s','%s','%s');"%(openid,pos_id,street) )
+				count,rets=dbmgr.db_exec("insert into 6s_user(openid,position_id,position_details,createtime) values('%s','%s','%s',now());"%(openid,pos_id,street) )
 			else:
 				_sql = "update 6s_user set position_id=%s,position_details='%s' where openid='%s';"%(pos_id,street,openid)
 				count,rets=dbmgr.db_exec(_sql)
@@ -981,7 +981,7 @@ def save_user_info_wx(access_token, openid):
 	_sql = "select id from 6s_user where openid='%s';"%(openid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 0:
-		_sql = "insert into 6s_user(wechat,gender,img,position_id,openid) values('%s','%s','%s','%s','%s');"%(nickname,sex,headimg,pos_id,openid)
+		_sql = "insert into 6s_user(wechat,gender,img,position_id,openid,createtime) values('%s','%s','%s','%s','%s',now());"%(nickname,sex,headimg,pos_id,openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 0:
 			mo.logger.error("insert 6s_user fail. ret:%s"%rets)
@@ -1159,7 +1159,7 @@ def get_openid(req):
 					_sql = "select id from 6s_user where openid='%s';"%(openid)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 0:
-						_sql = "insert into 6s_user(wechat,gender,img,position_id,openid) values('%s','%s','%s','%s','%s');"%(nickname,sex,headimg,pos_id,openid)
+						_sql = "insert into 6s_user(wechat,gender,img,position_id,openid,createtime) values('%s','%s','%s','%s','%s',now());"%(nickname,sex,headimg,pos_id,openid)
 						count,rets=dbmgr.db_exec(_sql)
 						if count == 0:
 							mo.logger.error("insert 6s_user fail. ret:%s"%rets)
