@@ -2,10 +2,16 @@ import {notification} from 'antd';
 
 export default class BaseController {
 
-  get(url, params, success, fail, error, always){
+  constructor(props) {
+    this.domain = "http://6skills.com";
+  }
+
+  get(url, params, success, fail, error, always, async = true){
+    url = this.preRequest(url);
     $.ajax({
       url: url,
       type: 'get',
+      async: async,
       dataType: 'json',
       data: params,
     })
@@ -36,7 +42,7 @@ export default class BaseController {
   }
 
   post(url, params, success, fail, error, always) {
-    console.log(params);
+    url = this.preRequest(url);
     $.ajax({
       url: url,
       type: 'post',
@@ -67,6 +73,10 @@ export default class BaseController {
       console.log("complete");
       always && always();
     });
+  }
+
+  preRequest(url) {
+    return this.domain + url;
   }
 
 }

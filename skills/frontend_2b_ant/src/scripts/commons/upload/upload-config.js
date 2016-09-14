@@ -1,3 +1,7 @@
+import BaseController from '../../controller/base-controller.js';
+
+let controller = new BaseController();
+
 export default function(options){
   if (options == undefined || options.key == undefined) {
     alert("upload key cannot be null");
@@ -16,23 +20,30 @@ export default function(options){
     dragdrop: true,
     chunk_size: '4mb',
     multi_selection: false,//!(mOxie.Env.OS.toLowerCase()==="ios"),
-    uptoken_url: $('#uptoken_url').val(),
+    //uptoken_url: $('#uptoken_url').val(),
     uptoken_func: function(){
+      let token;
+      controller.get("/api/admin/uploadtoken/get", {key: key}, function(res){
+        token = res.token;
+      }, function () {}, null, null, false);
+      return token;
       //var key = new Date().getTime();
-      var ajax = new XMLHttpRequest();
-      //url
-      var url = 'http://img.6skills.com/api/admin/uploadtoken/get?key=' + key;
-      ajax.open('GET', url, false);
-      ajax.setRequestHeader("If-Modified-Since", "0");
-      ajax.send();
-      if (ajax.status === 200) {
-          var res = JSON.parse(ajax.responseText);
-          console.log('custom uptoken_func:' + res.uptoken);
-          return res.token;
-      } else {
-          console.log('custom uptoken_func err');
-          return '';
-      }
+      // var ajax = new XMLHttpRequest();
+      // //url
+      // //let tokenDomain = "http://6skills.com";
+      // let tokenDomain = "";
+      // var url = tokenDomain + '/api/admin/uploadtoken/get?key=' + key;
+      // ajax.open('GET', url, false);
+      // ajax.setRequestHeader("If-Modified-Since", "0");
+      // ajax.send();
+      // if (ajax.status === 200) {
+      //     var res = JSON.parse(ajax.responseText);
+      //     console.log('custom uptoken_func:' + res.uptoken);
+      //     return res.token;
+      // } else {
+      //     console.log('custom uptoken_func err');
+      //     return '';
+      // }
     },
     domain: "http://img.6skills.com/",
     get_new_uptoken: false,
