@@ -913,8 +913,8 @@ def add_activity(req):
 	ret,userid,sessionid = True,"1","10101"
 	if not ret:
 		return response_json_error("必须上传用户基础信息.")
-	if not check_session_valid(userid,sessionid):
-		return response_json_error("session过期.")
+	#if not check_session_valid(userid,sessionid):
+	#	return response_json_error("session过期.")
 
 	_sql = "select id from 6s_position where name='%s' and pid=(select id from 6s_position where name='%s');"%(area,city)
 	count,rets=dbmgr.db_exec(_sql)
@@ -930,7 +930,7 @@ def add_activity(req):
 	act_id = int(rets[0][0])
 
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "insert into 6s_activity(title,img_cover,time_from,time_to,position_id,position_details,act_id,price_child,quantities,age_from,age_to,img_qrcode,content,user_id,createtime) values('%s','%s','%s','%s',%d,'%s',%d,%d,%d,%d,%d,'%s','%s',%s,now());"%(title,coverimage,begintime,endtime,position_id,address,act_id,cost,personnum,agefrom,ageto,qrcode,content,userid)
+	_sql = "insert into 6s_activity(title,img_cover,time_from,time_to,position_id,position_details,act_id,price_child,quantities,age_from,age_to,img_qrcode,content,user_id,status,createtime) values('%s','%s','%s','%s',%d,'%s',%d,%d,%d,%d,%d,'%s','%s',%s,2,now());"%(title,coverimage,begintime,endtime,position_id,address,act_id,cost,personnum,agefrom,ageto,qrcode,content,userid)
 	count,rets,insertid=dbmgr.db_exec(_sql,dbmgr.DBOperation.insert)
 	if count == 1:
 		mo.logger.info("添加活动 userid:%s actid:%d. "%(userid,insertid) )
