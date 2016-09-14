@@ -37,8 +37,8 @@ let AddActivity = React.createClass({
       //submit the form
       if (errors == null) {
         //reduced params
-        values.firstacttype = values.classes[0];
-        values.secondacttype = values.classes[1];
+        // values.firstacttype = values.classes[0];
+        // values.secondacttype = values.classes[1];
         values.begintime = values.times[0];
         values.endtime = values.times[1];
         activityAction.addActivityHandler(this, values, e.target);
@@ -52,12 +52,21 @@ let AddActivity = React.createClass({
 
   componentDidMount() {
 
-    // let Qiniu2 = new QiniuJsSDK();
-    // let uploader2 = Qiniu2.uploader(uploadConfig({
-    //   id: "pickfiles2",
-    //   "key":"qrcode",
-    //   successCallBack: this.qrcodeCallBackHandler
-    // }));
+    //get cities
+    activityAction.fatchCityHandler(this);
+    //get first act_type
+    activityAction.fatchActTypesHandler(this, {level: 1});
+  },
+
+  cityChangeHandler(value){
+    this.props.form.setFieldsValue({"area": undefined});
+    activityAction.fatchAreaHandler(this, {city: value});
+  },
+
+  firstacttypeChangeHandler(value){
+    //get second type
+    this.props.form.setFieldsValue({"secondacttype": undefined})
+    activityAction.fatchActTypesHandler(this, {level: 2, type: value})
   },
 
   coverSuccess(fileObj, domain){
@@ -134,12 +143,13 @@ let AddActivity = React.createClass({
     });
     const cityProps = getFieldProps("city", {
       rules: [
-        {required: true, message: "请输入城市"}
-      ]
+        {required: true, message: "请选择城市"}
+      ],
+      onChange: this.cityChangeHandler
     });
     const areaProps = getFieldProps("area", {
       rules: [
-        {required: true, message: "请输入区域"}
+        {required: true, message: "请选择区域"}
       ]
     });
     const addressProps = getFieldProps("address", {
@@ -147,9 +157,15 @@ let AddActivity = React.createClass({
         {required: true, message: "请输入详细活动集合地点"}
       ]
     });
-    const classesProps = getFieldProps("classes", {
+    const firstActTypeProps = getFieldProps("firstacttype", {
       rules: [
-        {required: true, message: "请选择活动分类", type: "array"}
+        {required: true, message: "请选择活动分类大类"}
+      ],
+      onChange: this.firstacttypeChangeHandler
+    });
+    const secondActTypeProps = getFieldProps("secondacttype", {
+      rules: [
+        {required: true, message: "请选择活动分类小类"}
       ]
     });
     const agefromProps = getFieldProps("agefrom", {
@@ -162,7 +178,7 @@ let AddActivity = React.createClass({
       rules: [
         {type: 'integer', required: true, message: "请选择合适的年龄段"}
       ],
-      initialValue: 1
+      initialValue: 2
     });
     const costProps = getFieldProps("cost", {
       initialValue: "0"
@@ -176,6 +192,7 @@ let AddActivity = React.createClass({
         {required: true, message: "请输入活动详情"}
       ]
     });
+    console.log(this.state.cities)
     return (
       <Form horizontal form={this.props.form} onSubmit={this.handleSubmit}>
         <FormItem id="title" {...itemLayout} label="活动标题">
@@ -194,28 +211,87 @@ let AddActivity = React.createClass({
           <RangePicker showTime format="yyyy-MM-dd HH:mm" {...timeProps}/>
         </FormItem>
 
-        <FormItem {...itemLayout} label="活动集合地点" required={true}>
-          <Row>
-            <Col span={4} className="tc">
-              城市
-            </Col>
-            <Col span={4}>
-              <Input id="city" placeholder="城市" {...cityProps}></Input>
-            </Col>
-            <Col span={4} className="tc">区域</Col>
-            <Col span={4}>
-              <Input id="area" placeholder="区域" {...areaProps}></Input>
-            </Col>
-            <Col span={7} offset={1}>
-              <Input id="address" placeholder="详细地址" {...addressProps}></Input>
-            </Col>
-          </Row>
-        </FormItem>
+        <Row>
+          <Col span={4}>
+            <FormItem label="活动集合地点" required={true}  {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
+          </Col>
+          <Col span={8}>
+            <Row>
+              <Col span={5}>
+                <FormItem>
+                  <Select allowClear {...cityProps} placeholder="城市">
+                    {
+                      this.state.cities
+                        && this.state.cities.map(function(elem) {
+                        return (
+                          <Option key={elem} value={elem}>{elem}</Option>
+                        );
+                      })
+                    }
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col span={6} offset={1}>
+                <FormItem>
+                  <Select allowClear {...areaProps} placeholder="区域">
+                    {
+                      this.state.areas
+                        && this.state.areas.map(function(elem) {
+                        return (
+                          <Option key={elem} value={elem}>{elem}</Option>
+                        );
+                      })
+                    }
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col span={11} offset={1}>
+                <FormItem>
+                  <Input id="address" placeholder="详细地址" {...addressProps}></Input>
+                </FormItem>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
 
-        <FormItem id="classes" label="活动分类" {...itemLayout}>
-          <Cascader options={classOption} placeholder="请选择活动类型"
-            {...classesProps}></Cascader>
-        </FormItem>
+        <Row>
+          <Col span={4}>
+            <FormItem label="活动分类" required={true}  {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
+          </Col>
+          <Col span={8}>
+            <Row>
+              <Col span={11}>
+                <FormItem>
+                  <Select allowClear {...firstActTypeProps} placeholder="活动大类">
+                    {
+                      this.state.firstacttype &&
+                        this.state.firstacttype.map(function(elem, idx) {
+                          return (
+                            <Option key={elem} value={elem}>{elem}</Option>
+                          );
+                        })
+                    }
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col span={11} offset={2}>
+                <FormItem>
+                  <Select allowClear {...secondActTypeProps} placeholder="活动小类">
+                    {
+                      this.state.secondacttype &&
+                        this.state.secondacttype.map(function(elem) {
+                          return (
+                            <Option key={elem} value={elem}>{elem}</Option>
+                          );
+                        })
+                    }
+                  </Select>
+                </FormItem>
+              </Col>
+            </Row>
+
+          </Col>
+        </Row>
 
         <FormItem id="cost" label="活动费用" {...itemLayout}
           required={true}>
@@ -254,39 +330,46 @@ let AddActivity = React.createClass({
           </Row>
         </FormItem>
 
-        <FormItem id="age" label="适合年龄段" {...itemLayout}
-          required={true}>
-          <Row>
-            <Col span={11}>
-              <Select allowClear {...agefromProps}>
-                {
-                  ageList.map(function(elem) {
-                    return (
-                      <Option key={elem} value={elem}>{elem}</Option>
-                    );
-                  })
-                }
-              </Select>
-            </Col>
-            <Col span={2}>
-              <span className="pl10 pr10">至</span>
-            </Col>
-            <Col span={11}>
-              <Select allowClear {...agetoProps}>
-                {
-                  ageList.map(function(elem) {
-                    return (
-                      <Option key={elem} value={elem}>{elem}</Option>
-                    );
-                  })
-                }
-              </Select>
-            </Col>
-          </Row>
+        <Row>
+          <Col span={4}>
+            <FormItem label="适合年龄段" required={true}  {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
+          </Col>
+          <Col span={8}>
+            <Row>
+              <Col span={11}>
+                <FormItem>
+                  <Select allowClear {...agefromProps}>
+                    {
+                      ageList.map(function(elem) {
+                        return (
+                          <Option key={elem} value={elem}>{elem}</Option>
+                        );
+                      })
+                    }
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col span={2}>
+                <span className="pl10 pr10" style={{lineHeight: "35px"}}>至</span>
+              </Col>
+              <Col span={11}>
+                <FormItem>
+                  <Select allowClear {...agetoProps}>
+                    {
+                      ageList.map(function(elem) {
+                        return (
+                          <Option key={elem} value={elem}>{elem}</Option>
+                        );
+                      })
+                    }
+                  </Select>
+                </FormItem>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
 
-        </FormItem>
-
-        <FormItem label="活动微信群二维码" {...itemLayout}>
+        <FormItem label="活动微信群二维码" {...itemLayout} required={true}>
           <Upload uploadKey="qrcode"
                   id="qrcode-pickfiles"
                   imgProps={qrcodeProps}

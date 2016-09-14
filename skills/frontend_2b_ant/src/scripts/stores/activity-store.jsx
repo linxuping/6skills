@@ -12,7 +12,7 @@ export default Reflux.createStore({
 
   listenables: [ActivityAction],
 
-  onAddActivityHandler: function(_this, values, target) {
+  onAddActivityHandler(_this, values, target) {
     target.disabled = true;
     activityController.add(values, function(res){
       notification['success']({
@@ -26,6 +26,53 @@ export default Reflux.createStore({
     }, null, null, function(){
       target.disabled = false;
     });
-  }
+  },
+
+  /**
+   * 获取城市列表
+   * @param  {component} _this
+   * @return
+   */
+  onFatchCityHandler(_this){
+    activityController.fatchCity({province: "广东省"}, function(res){
+      _this.setState({
+        cities: res.values
+      })
+    })
+  },
+
+  /**
+   * 获取区域列表
+   * @param  {component} _this
+   * @param  {object} params
+   * @return
+   */
+  onFatchAreaHandler(_this, params) {
+    activityController.fatchArea(params, function(res){
+      _this.setState({
+        areas: res.values
+      })
+    })
+  },
+
+  /**
+   * 获取活动类型
+   * @param  {component} _this
+   * @param  {object} params
+   * @return
+   */
+  onFatchActTypesHandler(_this, params){
+    activityController.fatchActTypes(params, function (res) {
+      if (params.level === 1) {
+        _this.setState({
+          firstacttype: res.values
+        })
+      } else if (params.level === 2) {
+        _this.setState({
+          secondacttype: res.values
+        })
+      }
+    })
+  },
 
 })
