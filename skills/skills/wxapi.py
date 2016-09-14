@@ -326,11 +326,13 @@ def activities_sign(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: #try more.
 					count,rets=dbmgr.db_exec(_sql)
-
-			_sql = "select id from 6s_user where openid='%s' and status=1;"%openid
+			
+			_wxname = ""
+			_sql = "select id,wechat from 6s_user where openid='%s' and status=1;"%openid
 			count,rets=dbmgr.db_exec(_sql)
 			if count == 1:
 				uid = int(rets[0][0])
+				_wxname = rets[0][1]
 				_sql = "select id from 6s_signup where user_id=%d and act_id=%d and status=1;"%(uid,actid)
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: 
@@ -341,6 +343,7 @@ def activities_sign(req):
 						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)
 						count,rets=dbmgr.db_exec(_sql)
 						if count == 1:
+							_json["wechat"] = _wxname
 							pass
 						else:
 							_json["errcode"] = 1
@@ -1176,6 +1179,7 @@ def get_openid(req):
 			else:
 				mo.logger.error("attrs error. %s  %s  %s"%(openid,_url,ret))
 	else:
+		_json["openid"] = "token_expire"
 		mo.logger.error("no ***_token: %s. %s"%(ret,_url) )
 		return response_json_error( "no ***_token." )
 
