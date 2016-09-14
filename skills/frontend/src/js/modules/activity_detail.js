@@ -8,8 +8,13 @@ var ActivityDetail = React.createClass({
 	},
 
 	openSignPage: function(){
-		if (try_jump_pubnum())
+		var _oid = geopenid();
+		if ("undefined" == _oid || null == _oid){
+			var r = confirm("该分享已经过期，转到六艺互动公众号查看?");
+			if (r)
+				jump_pubnum();
 			return;
+		}
 		if (this.state.status) {
 			window.location = "#qrcode";
 			alert("您已经报过名了，请到已报名活动中查看！")
@@ -61,8 +66,13 @@ var ActivityDetail = React.createClass({
 	},
 
 	openCollectPage: function(){
-		if (try_jump_pubnum())
+		var _oid = geopenid();
+		if ("undefined" == _oid || null == _oid){
+			var r = confirm("该分享已经过期，转到六艺互动公众号查看?");
+			if (r)
+				jump_pubnum();
 			return;
+		}
 		if (this.state.coll_status) {
 			alert("已收藏该活动，请到我的收藏中查看！");
 			return;

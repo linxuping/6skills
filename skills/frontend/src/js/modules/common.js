@@ -53,7 +53,8 @@ function load_6soid() {
 			async: false,
 			data: { "code":getUrlParam("code") },
 			success: function(res) {
-				sessionStorage.setItem("6soid",res.openid);
+				if (res.errcode == 0)
+					sessionStorage.setItem("6soid",res.openid);
 			},
 			error: function() {
 				alert("请稍后再试-6id.");
