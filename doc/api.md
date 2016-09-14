@@ -638,6 +638,19 @@ qrcode|url|Y|二维码url
 }
 ```
 
+### 12.1.1. 获取市区列表
+**GET**
+** URL ** /api/admin/get-areas?city=广州市
+
+**参数**
+```json
+{
+	"values": ["天河区",],
+	"errcode": 0,
+	"errmsg": "errmsg"
+}
+```
+
 ### 12.2. 获取一级活动分类
 **GET**
 ** URL ** /api/admin/get-acttypes?level=1
