@@ -8,6 +8,13 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 	},
 
 	openSignPage: function(){
+		var _oid = geopenid();
+		if ("undefined" == _oid || null == _oid){
+			var r = confirm("该分享已经过期，转到六艺互动公众号查看?");
+			if (r)
+				jump_pubnum();
+			return;
+		}
 		if (this.state.status) {
 			window.location = "#qrcode";
 			alert("您已经报过名了，请到已报名活动中查看！")
@@ -17,6 +24,39 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 				alert("活动人数已满，无法报名");
 				return;
 			}
+			
+			profile = sessionStorage.getItem("_profile");
+			if (profile == null){
+				$.ajax({
+					url: ges('activities/get_profile'),
+					//url: "/test/get_profile.json",
+					type: 'get',
+					dataType: 'json',
+					async: false,
+					data: { "openid": geopenid() }
+				})
+				.done(function(res) {
+					console.log("success");
+					if (res.errcode == 0) {
+						sessionStorage.setItem("_profile", JSON.stringify(res.profile));
+					}
+				}.bind(this))
+				.fail(function() {
+					console.log("error");
+				});
+			}
+			verify = true;
+			profile = sessionStorage.getItem("_profile");
+			if (profile) {$
+				profile = JSON.parse(profile);$
+				if (profile.phone==null || profile.phone=="")
+					verify = false;
+			} else { verify=false; }$
+			if (!verify) {
+				location.href=ges("template/verify_phone.html");
+				return;
+			}
+			
 			document.title = "活动报名";
 			ReactDOM.render(
 				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus}),
@@ -26,6 +66,13 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 	},
 
 	openCollectPage: function(){
+		var _oid = geopenid();
+		if ("undefined" == _oid || null == _oid){
+			var r = confirm("该分享已经过期，转到六艺互动公众号查看?");
+			if (r)
+				jump_pubnum();
+			return;
+		}
 		if (this.state.coll_status) {
 			alert("已收藏该活动，请到我的收藏中查看！");
 			return;
@@ -39,8 +86,12 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			dataType: 'json',
 			data: { "openid":geopenid(),"actid": this.props.actid },
 		})
-		.done(function() {
-			$(".sign-btn")[0].innerHTML = "已收藏";$
+		.done(function(res) {
+			if (res.errcode != 0){
+				alert(res.errmsg);
+				return;
+			}
+			$(".sign-btn")[0].innerHTML = "已收藏";
 		}.bind(this))
 		.fail(function() {
 			console.log("collect error");
@@ -57,7 +108,7 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			url: url,
 			type: 'get',
 			dataType: 'json',
-			data: {openid: geopenid(), actid: actid},
+			data: {openid: geopenid("ignore"), actid: actid},
 		})
 		.done(function(res) {
 			this.setState({
@@ -81,13 +132,49 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			alert("actid must be number.");
 			return;
 		}
+		_encodeurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx1cdf2c4bb014681e&redirect_uri="+encodeURIComponent(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect"
 		$.ajax({
 			url: this.props.url,
 			type: 'get',
 			dataType: 'json',
-			data: { "actid":actid,"openid":geopenid() },
+			data: { "actid":actid,"openid":geopenid("ignore") },
 			success: function(res) {
-				console.log(res);
+				$.ajax({
+					url: ges("get_js_signature"),
+					type: 'get',
+					dataType: 'json',
+					data: { "url":window.location.href },//ges("template/activity_detail.html?actid="+res.actid)
+					success: function(res2) {
+						if (res2.appid != null){
+							wx.config({
+								debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+								appId: res2.appid, // 必填，公众号的唯一标识
+								timestamp: res2.timestamp, // 必填，生成签名的时间戳
+								nonceStr: res2.noncestr, // 必填，生成签名的随机串
+								signature: res2.signature,// 必填，签名，见附录1
+								jsApiList: ["onMenuShareTimeline","onMenuShareAppMessage","onMenuShareQQ","onMenuShareWeibo","onMenuShareQZone"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+							});
+							String.prototype.stripHTML = function() {  
+								var reTag = /<(?:.|\s)*?>/g;  
+								var reTag2 = /&nbsp/g;  
+								var reTag3 = / /g;  
+								return this.replace(reTag,"").replace(reTag2,"").replace(reTag3,"");  
+							}  
+							var _content = res.content.substring(0, 100).stripHTML();
+							wx.ready(function(){
+								make_share("all",res.title,_content,_encodeurl,res.img_cover,null);
+							});
+							wx.error(function(res2){
+								if (sessionStorage.getItem("6soid") != null)
+									alert('微信错误提示: '+JSON.stringify(res2));
+							});
+						}
+					},
+					error: function() {
+						alert("请稍后重试获取签名.");
+					},
+				});
+				
 				this.setState({
 					activity: res,
 					imgs: res.imgs,
@@ -119,7 +206,7 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 						React.createElement("p", {className: "privilage"}, React.createElement("b", null, this.state.activity.preinfo)), 
 						React.createElement("p", {className: "age"}, this.state.activity.ages, "岁"), 
 						React.createElement("p", {className: "time"}, "活动时间: ", this.state.activity.time_from, " ~ ", this.state.activity.time_to), 
-						React.createElement("p", {className: "area"}, "活动地点：", this.state.activity.area), 
+						React.createElement("p", {className: "area"}, "活动地点：", this.state.activity.area, " ", this.state.activity.position_details), 
 						React.createElement("p", {className: "detail-content", dangerouslySetInnerHTML: {__html: this.state.activity.content}}
 						), 
 
@@ -163,3 +250,5 @@ var QrCode = React.createClass({displayName: "QrCode",
 		);
 	}
 });
+
+

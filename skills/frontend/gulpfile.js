@@ -54,17 +54,18 @@ var flag = false;         //- 是否生产部署
 
 // 用户样式
 gulp.task('styles', function(){
-	return gulp.src(src.css + '/**/*.less')
+	return gulp.src([src.css + '/**/*.less', src.css + '/**/*.css'])
 	.pipe(plumber())
 	.pipe(less())
 	//.pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
-	.pipe(gulp.dest(dist.css))
-	.pipe(rename({suffix: '.min'}))
+	//.pipe(gulp.dest(dist.css))
+	//.pipe(gulpif(flag, rename({suffix: '.min'})))
 
 	.pipe(gulpif(flag, minifycss()))
 	.pipe(gulpif(flag, rev()))                                      //- md5后缀
 
 	.pipe(gulp.dest(dist.css))
+
 
 	.pipe(gulpif(flag, rev.manifest()))                            //- 生成md5映射文件
 	.pipe(gulpif(flag, gulp.dest(distPath + 'rev/styles')))         //- 替换映射文件保存路径
@@ -73,10 +74,10 @@ gulp.task('styles', function(){
 });
 
 
-gulp.task('styles2', function(){
-	return gulp.src([src.css2 + '/*.css'])
-	.pipe(gulp.dest(dist.css))
-});
+// gulp.task('styles2', function(){
+// 	return gulp.src([src.css2 + '/*.css'])
+// 	.pipe(gulp.dest(dist.css))
+// });
 
 
 // 库样式
@@ -120,30 +121,28 @@ gulp.task('react', function(){
 	.pipe(gulp.dest(dist.js + '/modules'))
 	// .pipe(rename({suffix: '.min'}))
 
-	// .pipe(gulpif(flag, uglify()))
-	// .pipe(gulpif(flag, rev()))
+	.pipe(gulpif(flag, uglify()))
+	.pipe(gulpif(flag, rev()))
 
-	// .pipe(gulp.dest(dist.js))
+	.pipe(gulp.dest(dist.js + '/modules'))
 
-	// .pipe(gulpif(flag, rev.manifest()))
-	// .pipe(gulpif(flag, gulp.dest(distPath + "rev/lib_scripts_modules")))
+	.pipe(gulpif(flag, rev.manifest()))
+	.pipe(gulpif(flag, gulp.dest(distPath + "rev/react_modules")))
 
 	.pipe(notify({message: "user scripts complete"}))
 })
 
 // 库脚本
 gulp.task('lib_scripts', function(){
-	return gulp.src([src.js+'/jquery.js', src.lib+'/amazeui/js/amazeui.js',
-		   src.lib+'/react/build/react.js', src.lib+'/react/build/react-dom.js',
-		   src.lib+'/amazeui/js/app.js'])
+	return gulp.src([src.js+'/jquery-3.0.0.min.js', src.js+'/react/react.js', src.js+'/react/react-dom.js'])
 	.pipe(concat('lib.js'))
-	.pipe(gulp.dest(dist.js))
-	.pipe(rename({suffix: '.min'}))
+	.pipe(gulp.dest(dist.js + "/lib"))
+	//.pipe(rename({suffix: '.min'}))
 
 	.pipe(gulpif(flag, uglify()))
 	.pipe(gulpif(flag, rev()))
 
-	.pipe(gulp.dest(dist.js))
+	.pipe(gulp.dest(dist.js + "/lib"))
 
 	.pipe(gulpif(flag, rev.manifest()))
 	.pipe(gulpif(flag, gulp.dest(distPath + "rev/lib_scripts")))
@@ -155,7 +154,7 @@ gulp.task('lib_scripts', function(){
 // 图片压缩
 gulp.task('images', function(){
 	return gulp.src(src.img + '/**/*')
-	.pipe(gulpif(flag, cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))))
+	// .pipe(gulpif(flag, cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))))
 	.pipe(gulp.dest(dist.img))
 	.pipe(notify({message: "images complete"}))
 })
@@ -176,13 +175,14 @@ gulp.task('clean', function(){
 
 
 // 模板
-gulp.task('templates', ['styles', 'scripts', 'react'], function(){
-	gulp.src([distPath + '/rev/**/*.json', src.tpl + '/**/*'])
+gulp.task('templates', ['scripts', 'styles', 'react'], function(){
+	gulp.src([distPath + '/rev/**/*.json', src.tpl + '/**/*.html'])
 	.pipe(gulpif(flag, revCollector({
         replaceReved: true,
         dirReplacements: {
-            'css': "/css",
-            'js': "/js",
+            'css': "css",
+            '/static/js/modules': "/static/js/modules",
+            '/static/js/lib': '/static/js/lib'
             //'lib': '/static/lib'
             // 'cdn/': function(manifest_value) {
             //     return '//cdn' + (Math.floor(Math.random() * 9) + 1) + '.' + 'exsample.dot' + '/img/' + manifest_value;
@@ -247,7 +247,7 @@ gulp.task("build", ['clean'], function(){
 	gulp.start(['lib_scripts', 'lib_other_files'])
 
 	// 用户数据
-	gulp.start(['styles', 'styles2', 'scripts', 'react', 'images']);
+	gulp.start(['styles', 'scripts', 'react', 'images']);
 
 	// jsp模板
 	gulp.start('templates');

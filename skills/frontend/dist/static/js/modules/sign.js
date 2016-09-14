@@ -66,6 +66,12 @@ function validateForm(actid, formConponent) {
 								msg: "恭喜您报名成功！",
 								callback: function(){
 									formConponent.back();
+									if (obj.wxchat == ""){
+										var r = confirm("现在关注六艺互动的公众号，可以查看更多活动和您的报名情况！");
+										if (r){
+											try_jump_pubnum();
+										}
+									}
 									//try{
 									//	WeixinJSBridge.call('closeWindow');
 									//} catch (e){ }
@@ -187,7 +193,7 @@ var SignForm = React.createClass({displayName: "SignForm",
 							)
 						)
 					), 
-					React.createElement("div", {className: "weui_cells_tips"}, "注意事项注意事项注意事项注意事项"), 
+					React.createElement("div", {className: "weui_cells_tips"}), 
 					React.createElement("div", {className: "weui_btn_area"}, 
 
 							React.createElement("button", {type: "submit", className: "weui_btn weui_btn_primary"}, "确定")

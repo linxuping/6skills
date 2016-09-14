@@ -22,10 +22,21 @@ function validateForm() {
 								title: "验证成功",
 								msg: "恭喜您验证成功！",
 								callback: function(){
-									location.href = ges("template/me.html");
+									//location.href = ges("template/me.html");
 									//try{
 									//	WeixinJSBridge.call('closeWindow');
 									//} catch (e){ }
+									//update profile.
+									prostr = sessionStorage.getItem("_profile");
+									if (prostr == null) {
+										alert("从服务器获取用户信息失败.");
+									}
+									else{
+										var _profile = JSON.parse(prostr);
+										_profile["phone"] = $("#phone").val();
+										sessionStorage.setItem("_profile", JSON.stringify(_profile));
+										history.back();
+									}
 								}
 							}),
 							document.getElementById("alert-wrap")
@@ -141,7 +152,7 @@ var Verify = React.createClass({displayName: "Verify",
 							)
 						)
 					), 
-					React.createElement("div", {className: "weui_cells_tips"}, "注意事项注意事项注意事项"), 
+					React.createElement("div", {className: "weui_cells_tips"}), 
 					React.createElement("div", {className: "weui_btn_area"}, 
 						React.createElement("button", {type: "submit", className: "weui_btn weui_btn_primary"}, 
 							"提交"
