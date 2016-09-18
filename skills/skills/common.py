@@ -59,6 +59,13 @@ def get_url_resp(_url):
 def get_errtag():
 		return "[errno:%s_%s]"%(socket.gethostname(),time.strftime('%m%d_%H%M%S'))
 
+
+def get_date():
+		return time.strftime('%Y-%m-%d')
+def get_time():
+		return time.strftime('%Y-%m-%d %H:%M:%S')
+
+
 def REQ_TAG(args):
 		return "[openid:%s actid:%s]"%(args.get("openid","null"), args.get("actid","null"))
 
@@ -168,6 +175,8 @@ def check_mysql_arg_jsonobj(_name, _arg, _type):
 	ret,output = _check_mysql_arg_json(_name, _arg, _type)
 	if ret:
 		return ret,output
+	elif "openid"==_name and _arg=="":
+		return False,{ "errcode":1, "errmsg":"openid can't be empty." }
 	_jsonobj = json.dumps(output)
 	return ret,HttpResponse(_jsonobj, mimetype='application/json')
 

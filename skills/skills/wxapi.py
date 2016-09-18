@@ -77,7 +77,7 @@ def activities_special_offers(req):
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"tags":lis[3],"area":lis[4],"ages":"%s-%s"%(lis[5],lis[6]),"price_child":(lis[7] if lis[12]==None else lis[12]),"quantities_remain":lis[9],"img_cover":lis[10]} )#,"price_child_pre":lis[11],"preinfo":lis[13]
+			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"tags":lis[3],"area":lis[4],"ages":"%s-%s"%(lis[5],lis[6]),"price_child":(lis[7] if lis[12]==None else lis[12]),"quantities_remain":lis[9],"img_cover":lis[10]+"?imageMogr2/thumbnail/300x300|imageMogr2/gravity/Center/crop/250x250"} )#,"price_child_pre":lis[11],"preinfo":lis[13]
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "数据操作异常."
@@ -1072,6 +1072,11 @@ def default_process(req):
 			access_token = nosqlmgr.redis_get("base_access_token") #get
 			save_user_info_wx(access_token, openid)
 			#event log
+			_rspxml = "<xml><ToUserName><![CDATA[$fromUser]]></ToUserName><FromUserName><![CDATA[$toUser]]></FromUserName><CreateTime>$createTime</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[$content]]></Content><FuncFlag>$funcFlag</FuncFlag></xml>"
+			fname = msgxml.find("FromUserName").text
+			tname = msgxml.find("ToUserName").text
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"欢迎关注六艺亲子互动平台，这里将为您推荐各种好玩有意义的各种亲子活动。")
+			return HttpResponse(_rspxml, mimetype='text/plain')
 		elif "unsubscribe" == node_ev.text:
 			_sql = "update 6s_user set status=-1 where openid='%s';"%(openid)
 			count,rets=dbmgr.db_exec(_sql)
@@ -1129,15 +1134,21 @@ def get_openid(req):
 		return resp
 
 	_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code"%(settings.appid,settings.appsecret,code)
-	status,ret = get_url_resp( _url )	
-	if not status:
-		mo.logger.error("get access_token return false: %s"%_url)
-		return response_json_error( "get access_token return false." )
-	tmpdic = json.loads(ret)
-	if tmpdic.has_key("errcode") and tmpdic.has_key("errmsg"):
-		mo.logger.error("web_access_token fail. refresh_token invalid? %s"%code)
+	tmpdic = None
+	validresp = False
+	for i in xrange(2):
+		status,ret = get_url_resp( _url )	
+		if not status:
+			mo.logger.error("get access_token return false: %s"%_url)
+			return response_json_error( "get access_token return false." )
+		tmpdic = json.loads(ret)
+		if tmpdic.has_key("errcode") and tmpdic.has_key("errmsg"):
+			mo.logger.error("web_access_token fail. refresh_token invalid? %s"%code)
+		elif tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("expires_in") and tmpdic.has_key("openid"):
+			validresp = True
+			break
 	
-	if tmpdic.has_key("access_token") and tmpdic.has_key("refresh_token") and tmpdic.has_key("expires_in") and tmpdic.has_key("openid"):
+	if validresp:
 		nosqlmgr.redis_set("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"])
 		mo.logger.info("[TOKEN] set %s: %s %s"%("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"]))
 		nosqlmgr.redis_set("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"], 8640000) #100 days
@@ -1154,7 +1165,10 @@ def get_openid(req):
 			if tmpdic2.has_key("nickname") and tmpdic2.has_key("sex") and tmpdic2.has_key("city") and tmpdic2.has_key("headimgurl"):
 				nickname,sex,headimg,city = tmpdic2["nickname"],tmpdic2["sex"],tmpdic2["headimgurl"],tmpdic2["city"]
 				sex = "male" if sex==1 else "female"
-				city = city if city.find("市")!=-1 else city+"市"
+				if city == "":
+					city = "广州市"
+				else:
+					city = city if city.find("市")!=-1 else city+"市"
 				_sql = "select id from 6s_position where name='%s';"%city
 				count,rets=dbmgr.db_exec(_sql)
 				if count >0 :
