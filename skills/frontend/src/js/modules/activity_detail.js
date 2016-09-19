@@ -157,8 +157,9 @@ var ActivityDetail = React.createClass({
 							String.prototype.stripHTML = function() {  
 								var reTag = /<(?:.|\s)*?>/g;  
 								var reTag2 = /&nbsp/g;  
-								var reTag3 = / /g;  
-								return this.replace(reTag,"").replace(reTag2,"").replace(reTag3,"");  
+								var reTag3 = /&.*;/g;  
+								var reTag4 = / /g;  
+								return this.replace(reTag,"").replace(reTag2,"").replace(reTag3,",").replace(reTag4,"");  
 							}  
 							var _content = res.content.substring(0, 100).stripHTML();
 							wx.ready(function(){
