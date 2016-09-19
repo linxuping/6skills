@@ -132,10 +132,7 @@ let AddActivity = React.createClass({
         {required: true, message: "请上传活动封面(海报)"}
       ]
     });
-    const qrcodeProps = getFieldProps("qrcode", {rules:[
-        {required: true, message: "请上传活动群二维码"}
-      ]
-    });
+    const qrcodeProps = getFieldProps("qrcode");
     const timeProps = getFieldProps("times", {
       rules: [
         {required: true, message: "请选择活动时间",type: "array"}
@@ -369,7 +366,7 @@ let AddActivity = React.createClass({
           </Col>
         </Row>
 
-        <FormItem label="活动微信群二维码" {...itemLayout} required={true}>
+        <FormItem label="活动微信群二维码" {...itemLayout}>
           <Upload uploadKey="qrcode"
                   id="qrcode-pickfiles"
                   imgProps={qrcodeProps}
@@ -383,12 +380,27 @@ let AddActivity = React.createClass({
             <TinyMCE
               content=""
               config={{
-                menubar: false,
-                plugins: 'link image',
-                toolbar: 'fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify removeformat | link image | undo redo ',
-                height: 300
+                language: "zh_CN",
+                theme: "modern",
+                //menubar: false,
+                plugins: ["advlist autolink lists link image charmap preview",
+                          "searchreplace visualblocks fullscreen",
+                          "insertdatetime media table contextmenu paste",
+                          "emoticons textcolor"],
+                toolbar: 'fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify removeformat | link image mybutton | undo redo ',
+                height: 300,
+                imagetools_cors_hosts: ['http://img.6skills.com'],
+                setup: function(editor) {
+                  editor.addButton("mybutton", {
+                    text: '上传',
+                    icon: false,
+                    onClick: function(e){
+                      console.log(e)
+                    }
+                  })
+                }
               }}
-              onChange={this.handleEditorChange}/>
+              onBlur={this.handleEditorChange}/>
           </div>
         </FormItem>
 

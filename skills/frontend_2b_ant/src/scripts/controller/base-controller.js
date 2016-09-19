@@ -3,7 +3,7 @@ import {notification} from 'antd';
 export default class BaseController {
 
   constructor(props) {
-    this.domain = "http://6skills.com";
+    this.domain = "";
   }
 
   get(url, params, success, fail, error, always, async = true){
