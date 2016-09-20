@@ -190,7 +190,10 @@ var Selecter = React.createClass({
 });
 
 var Activities = React.createClass({
-	openSignupPage: function(actid, remains){
+	openSignupPage: function(event){
+		event.stopPropagation();
+		var actid = event.target.dataset.actid;
+		var remains = event.target.dataset.quantitiesremain;
 		//console.log(event)
 		//location.href='/template/activity_detail.html?actid='+actid;
 		if (remains == 0) {
@@ -229,7 +232,7 @@ var Activities = React.createClass({
 							<h4 className="weui_media_title">
 								{elem.title}
 							</h4>
-							<p className="weui_media_desc">活动剩余名额：{elem.quantities_remain}名</p>
+							<p className="weui_media_desc">活动剩余名额：{ (elem.quantities_remain>1000)? "不限": <font>{elem.quantities_remain}名</font> }</p>
 							<p className="weui_media_desc">类型：{elem.tags}</p>
 							<p className="weui_media_desc">集合地点：{elem.area}</p>
 							<p className="weui_media_desc">{elem.ages}岁</p>
@@ -238,7 +241,7 @@ var Activities = React.createClass({
 					<div className="ss-join-bd clearfix">
 						<div className="money-box fl">￥{elem.price_child}</div>
 							<button className={(elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr"}
-								onClick={this.openSignupPage.bind(this,elem.actid, elem.quantities_remain)} >
+								onClick={this.openSignupPage} data-actid={elem.actid}  data-quantitiesremain={elem.quantities_remain}>
 								{this.props.type == "preview" ? "我要报名" : "限时报名"}
 							</button>
 					</div>

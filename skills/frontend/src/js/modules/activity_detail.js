@@ -15,7 +15,10 @@ var ActivityDetail = React.createClass({
 				jump_pubnum();
 			return;
 		}
-		if (this.state.status) {
+		if (this.state.expire) {
+			alert("该活动已经过期！")
+		}
+		else if (this.state.status) {
 			window.location = "#qrcode";
 			alert("您已经报过名了，请到已报名活动中查看！")
 		} else {
@@ -113,6 +116,7 @@ var ActivityDetail = React.createClass({
 		.done(function(res) {
 			this.setState({
 				status: res.status,
+				expire: res.errmsg=="过期",
 				coll_status: res.coll_status,
 				qrcode: res.qrcode,
 				loaded: true
@@ -208,6 +212,7 @@ var ActivityDetail = React.createClass({
 						<p className="age">{this.state.activity.ages}岁</p>
 						<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
 						<p className="area">活动地点：{this.state.activity.area} {this.state.activity.position_details}</p>
+						<a href="http://weixin.qq.com/g/A9vt3M-8Ig-IJU53?from=message&isappinstalled=0">testlink.</a>
 						<p className="detail-content" dangerouslySetInnerHTML={{__html: this.state.activity.content}}>
 						</p>
 
@@ -227,7 +232,7 @@ var ActivityDetail = React.createClass({
 				<div className="sign-btn-right" style={{"cursor": "pointer"}}
 					onClick={this.openSignPage}>
 					{
-						this.state.status ? "已报名" : "我要报名"
+						this.state.expire ? "已过期" : (this.state.status ? "已报名" : "我要报名")
 					}
 
 				</div>
