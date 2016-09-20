@@ -59,6 +59,7 @@ def check_user_admin(userid):
 
 
 def check_session_valid(uid, session_id):
+	return True
 	_sql = "select DATE_ADD(start, INTERVAL 3 DAY)>NOW() from 6s_session where user_id='%s' and session_id='%s';"%(uid,session_id)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 0:
@@ -905,7 +906,7 @@ def add_activity(req):
 		return ageto
 	ret,qrcode = check_mysql_arg_jsonobj("qrcode", args.get("qrcode",None), "str")
 	if not ret:
-		return qrcode
+		qrcode = ""
 	ret,content = check_mysql_arg_jsonobj("content", args.get("content",None), "str")
 	if not ret:
 		return content
