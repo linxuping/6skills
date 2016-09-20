@@ -232,7 +232,7 @@ var Activities = React.createClass({
 							<h4 className="weui_media_title">
 								{elem.title}
 							</h4>
-							<p className="weui_media_desc">活动剩余名额：{ (elem.quantities_remain>1000)? "不限": <font>{elem.quantities_remain}名</font> }</p>
+							<p className="weui_media_desc">活动剩余名额：{ (elem.quantities_remain>1000000)? "不限": <font>{elem.quantities_remain}名</font> }</p>
 							<p className="weui_media_desc">类型：{elem.tags}</p>
 							<p className="weui_media_desc">集合地点：{elem.area}</p>
 							<p className="weui_media_desc">{elem.ages}岁</p>
