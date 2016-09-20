@@ -310,6 +310,16 @@ def activities_sign(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
+	_sql = "select time_to>now() from 6s_activity where id=%d;"%(actid)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		if str(rets[0][0]) == "0":
+			mo.logger.error("activity expire. openid:%s actid:%d"%(openid,actid))
+			return response_json_error( "活动已经过期不能报名.")
+	else:
+		mo.logger.error("activity invalid: %d"%(openid,actid))
+		return response_json_error( "活动不存在或下线.")
+	
 	_sql = "select quantities_remain,img_qrcode from 6s_activity where id=%d and status=1;"%(actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
@@ -714,12 +724,19 @@ def activities_getsignupstatus(req):
 
 	#exec  
 	_json = { "status":False,"errcode":0,"errmsg":"" }
-	_sql = "select a.id,b.img_qrcode from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_user c on a.user_id=c.id where c.openid='%s' and a.act_id=%d and a.status=1 and b.status=1;"%(openid,actid)
+	_sql = "select a.id,b.img_qrcode,b.time_to>now() from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_user c on a.user_id=c.id where c.openid='%s' and a.act_id=%d and a.status=1 and b.status=1;"%(openid,actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1 :
-		_json["status"] = True
+		if str(rets[0][2]) == "1":
+			_json["status"] = True
+		else:
+			_json["errmsg"] = "过期"
 		_json["qrcode"] = rets[0][1]
 	else:
+		_sql = "select time_to>now() from 6s_activity where id=%d;"%(actid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count>0 and str(rets[0][0])=="0":
+			_json["errmsg"] = "过期"
 		_json["status"] = False
 		_json["coll_status"] = False
 		#_json["errmsg"] = "未报名."
@@ -1075,7 +1092,7 @@ def default_process(req):
 			_rspxml = "<xml><ToUserName><![CDATA[$fromUser]]></ToUserName><FromUserName><![CDATA[$toUser]]></FromUserName><CreateTime>$createTime</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[$content]]></Content><FuncFlag>$funcFlag</FuncFlag></xml>"
 			fname = msgxml.find("FromUserName").text
 			tname = msgxml.find("ToUserName").text
-			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"欢迎关注六艺亲子互动平台，这里将为您推荐各种好玩有意义的各种亲子活动。")
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"欢迎关注六艺互动，这里将为您推荐附近好玩有创意的亲子活动。")
 			return HttpResponse(_rspxml, mimetype='text/plain')
 		elif "unsubscribe" == node_ev.text:
 			_sql = "update 6s_user set status=-1 where openid='%s';"%(openid)
