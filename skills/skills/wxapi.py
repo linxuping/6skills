@@ -868,7 +868,7 @@ def _update_base_access_token():
 		nosqlmgr.redis_set( "base_access_token",tmpdic["access_token"],tmpdic["expires_in"] ) 
 		return True
 	else:
-		mo.logger.error("[TOKEN] no access_token or refresh_token: %s"%_url)
+		mo.logger.error("[TOKEN] no base_***_token return: %s"%str(ret))
 	return False
 
 def _check_access_token_valid(token, openid, hint):
@@ -897,7 +897,7 @@ def _update_web_access_token(openid, retoken):
 		nosqlmgr.redis_set( "web_refresh_token_%s"%openid,tmpdic["refresh_token"] ) 
 		return True
 	else:
-		mo.logger.error("[TOKEN] no access_token or refresh_token: %s"%_url)
+		mo.logger.error("[TOKEN] no web_***_token return: %s"%str(ret))
 	return False
 
 def _update_js_signature():
@@ -1156,7 +1156,7 @@ def get_openid(req):
 	for i in xrange(2):
 		status,ret = get_url_resp( _url )	
 		if not status:
-			mo.logger.error("get access_token return false: %s"%_url)
+			mo.logger.error("get access_token return false: %s"%str(ret))
 			return response_json_error( "get access_token return false." )
 		tmpdic = json.loads(ret)
 		if tmpdic.has_key("errcode") and tmpdic.has_key("errmsg"):
@@ -1167,9 +1167,9 @@ def get_openid(req):
 	
 	if validresp:
 		nosqlmgr.redis_set("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"])
-		mo.logger.info("[TOKEN] set %s: %s %s"%("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"]))
+		mo.logger.info("[TOKEN] getopenid set %s: %s %s"%("web_access_token_%s"%tmpdic["openid"], tmpdic["access_token"], tmpdic["expires_in"]))
 		nosqlmgr.redis_set("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"], 8640000) #100 days
-		mo.logger.info("[TOKEN] set %s: %s 8640000"%("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"]))
+		mo.logger.info("[TOKEN] getopenid set %s: %s 8640000"%("web_refresh_token_%s"%tmpdic["openid"], tmpdic["refresh_token"]))
 		openid = tmpdic["openid"]
 		_json["openid"] = openid
 		nickname,sex,headimg = "","male","/static/img/head.jpg"
@@ -1210,7 +1210,7 @@ def get_openid(req):
 			else:
 				mo.logger.error("attrs error. %s  %s  %s"%(openid,_url,ret))
 	else:
-		mo.logger.error("no ***_token: %s. %s"%(ret,_url) )
+		mo.logger.error("sns/oauth2/access_token return fail: %s. %s"%(ret,_url) )
 		return response_json_error( "no ***_token." )
 
 	mo.logger.info("return openid. %s -> %s"%(code,str(_json)) )
