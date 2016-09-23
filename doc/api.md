@@ -1,11 +1,55 @@
 ## 公众号接口api
 
-### 1. 限时优惠
+### 0.1 滚动栏活动
 **GET**
-**URL** /activities/special-offers?area=xxx&age=x&page=x&page_size=x
+**URL** /activities/hot/get
 
 **返回**
+```json
+{
+	"activities": [
+		{
+			"id": 1,
+			"img": "http://xxx.jpg",
+		},
+		...
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
 
+### 0.2 wx端活动分类列表 - 运营展示数据，与实际类型有细微差别
+**GET**
+**URL** /wx/acttypes/get
+
+**返回**
+```json
+{
+	"acttypes": ["11","22",...],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.3 获得我所在的城市de区域列表
+**GET**
+** URL ** /areas/get?openid=***
+
+**参数**
+```json
+{
+	"values": ["天河区","海珠区"],
+	"errcode": 0,
+	"errmsg": "errmsg"
+}
+```
+
+### 1. 限时优惠
+**GET**
+**URL** /activities/special-offers?area=xxx&age=x&type=***&city=***&page=x&page_size=x
+
+**返回**
 ```json
 {
 	"activities": [
