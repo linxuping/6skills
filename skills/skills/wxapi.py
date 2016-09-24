@@ -1137,7 +1137,7 @@ def default_process(req):
 @req_print
 def get_openid(req):
 	#check.
-	ret,code = check_mysql_arg_jsonobj("code", req.GET.get("code",None), "str")
+	ret,code = check_mysql_arg_jsonobj("code", dict(req.GET).get("code",[None])[0], "str")
 	if not ret:
 		return code
 
