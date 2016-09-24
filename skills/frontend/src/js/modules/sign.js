@@ -166,30 +166,30 @@ var SignForm = React.createClass({
 
 						<div className="weui_cell">
 							<div className="weui_cell_hd">
-								<label htmlFor="phone" className="weui_label">所在城市</label>
+								<label htmlFor="city" className="weui_label">所在城市</label>
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
-								<input type="text" name="city" id="phone" className="weui_input"
+								<input type="text" name="city" id="city" className="weui_input"
 									placeholder="请输入所在城市" defaultValue={profile.city}/>
 							</div>
 						</div>
 
 						<div className="weui_cell">
 							<div className="weui_cell_hd">
-								<label htmlFor="phone" className="weui_label">儿童姓名</label>
+								<label htmlFor="kids_name" className="weui_label">儿童姓名</label>
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
-								<input type="text" name="kids_name" id="phone" className="weui_input"
+								<input type="text" name="kids_name" id="kids_name" className="weui_input"
 									placeholder="请输入儿童姓名" defaultValue={profile.kids_name}/>
 							</div>
 						</div>
 
 						<div className="weui_cell">
 							<div className="weui_cell_hd">
-								<label htmlFor="phone" className="weui_label">儿童出生日期</label>
+								<label htmlFor="birthdate" className="weui_label">儿童出生日期</label>
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
-								<input type="text" name="birthdate" id="phone" className="weui_input"
+								<input type="text" name="birthdate" id="birthdate" className="weui_input"
 									placeholder="请输入儿童出生日期" defaultValue={profile.birthdate}/>
 							</div>
 						</div>
@@ -208,7 +208,7 @@ var SignForm = React.createClass({
 					</div>
 					<div className="weui_cells_title">儿童性别</div>
 					<div className="weui_cells weui_cells_radio">
-						<label className="weui_cell weui_check_label" htmlFor="x11">
+						<label className="weui_cell weui_check_label" for="x11">
 							<div className="weui_cell_bd weui_cell_primary">
 									<p>男</p>
 							</div>
@@ -218,7 +218,7 @@ var SignForm = React.createClass({
 								<span className="weui_icon_checked"></span>
 							</div>
 						</label>
-						<label className="weui_cell weui_check_label" htmlFor="x11">
+						<label className="weui_cell weui_check_label" for="x11">
 							<div className="weui_cell_bd weui_cell_primary">
 								<p>女</p>
 							</div>
