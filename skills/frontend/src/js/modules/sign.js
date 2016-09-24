@@ -43,13 +43,19 @@ function validateForm(actid, formConponent) {
 			"name": {required: true},
 			"phone": {required: true, digits: true, rangelength:[11, 11]},
 			"age": {required: true, min: 0, max: 99},
-			"gender": {required: true}
+			"gender": {required: true},
+			"city": {required: true},
+			"birthdate": {required: true},
+			"kids_name": {required: true}
 		},
 		messages: {
 			name: {required: "必填"},
 			phone: {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
 			age: {required: "请输入年龄", min: "", max: ""},
-			gender: {required: "请选择性别"}
+			gender: {required: "请选择性别"},
+			city: {required: "请输入所在城市"},
+			kids_name: {required: "请输入儿童姓名"},
+			birthdate: {required: "请输入儿童出生日期(例:20100101)"}
 		},
 		submitHandler: function(form){
 			$(form).find(":submit").attr("disabled", true);
@@ -133,7 +139,6 @@ var SignForm = React.createClass({
 			profile = JSON.parse(profile);
 		} else {profile = {}}
 		var sign_url = ges("activities/sign");
-		//var sign_url = "/test/sign.json";
 		return (
 			<div className="SignForm">
 				<form action={sign_url} method="post" id="sign-form">
@@ -158,6 +163,37 @@ var SignForm = React.createClass({
 									placeholder="请输入手机号码" defaultValue={profile.phone}/>
 							</div>
 						</div>
+
+						<div className="weui_cell">
+							<div className="weui_cell_hd">
+								<label htmlFor="phone" className="weui_label">所在城市</label>
+							</div>
+							<div className="weui_cell_bd weui_cell_primary">
+								<input type="text" name="city" id="phone" className="weui_input"
+									placeholder="请输入所在城市" defaultValue={profile.city}/>
+							</div>
+						</div>
+
+						<div className="weui_cell">
+							<div className="weui_cell_hd">
+								<label htmlFor="phone" className="weui_label">儿童姓名</label>
+							</div>
+							<div className="weui_cell_bd weui_cell_primary">
+								<input type="text" name="kids_name" id="phone" className="weui_input"
+									placeholder="请输入儿童姓名" defaultValue={profile.kids_name}/>
+							</div>
+						</div>
+
+						<div className="weui_cell">
+							<div className="weui_cell_hd">
+								<label htmlFor="phone" className="weui_label">儿童出生日期</label>
+							</div>
+							<div className="weui_cell_bd weui_cell_primary">
+								<input type="text" name="birthdate" id="phone" className="weui_input"
+									placeholder="请输入儿童出生日期" defaultValue={profile.birthdate}/>
+							</div>
+						</div>
+
 						<div className="weui_cell weui_cell_select weui_select_after">
 							<div className="weui_cell_hd">
 								<label htmlFor="age" className="weui_label">儿童年龄</label>
@@ -172,7 +208,7 @@ var SignForm = React.createClass({
 					</div>
 					<div className="weui_cells_title">儿童性别</div>
 					<div className="weui_cells weui_cells_radio">
-						<label className="weui_cell weui_check_label" for="x11">
+						<label className="weui_cell weui_check_label" htmlFor="x11">
 							<div className="weui_cell_bd weui_cell_primary">
 									<p>男</p>
 							</div>
@@ -182,7 +218,7 @@ var SignForm = React.createClass({
 								<span className="weui_icon_checked"></span>
 							</div>
 						</label>
-						<label className="weui_cell weui_check_label" for="x11">
+						<label className="weui_cell weui_check_label" htmlFor="x11">
 							<div className="weui_cell_bd weui_cell_primary">
 								<p>女</p>
 							</div>

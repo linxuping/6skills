@@ -139,13 +139,13 @@ gulp.task('lib_scripts', function(){
 	.pipe(gulp.dest(dist.js + "/lib"))
 	//.pipe(rename({suffix: '.min'}))
 
-	.pipe(gulpif(flag, uglify()))
-	.pipe(gulpif(flag, rev()))
+	.pipe(uglify())
+	.pipe(rev())
 
 	.pipe(gulp.dest(dist.js + "/lib"))
 
-	.pipe(gulpif(flag, rev.manifest()))
-	.pipe(gulpif(flag, gulp.dest(distPath + "rev/lib_scripts")))
+	.pipe(rev.manifest())
+	.pipe(gulp.dest(distPath + "rev/lib_scripts"))
 
 	.pipe(notify({message: 'lib scripts complete'}))
 })

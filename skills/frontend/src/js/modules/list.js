@@ -180,8 +180,8 @@ var Selecter = React.createClass({
 				<label forHtml={this.props.name}>{this.props.text}:</label>
 				<select name={this.props.name} className="weui_select ss-select" onChange={this.selectChanged}>
 					<option value="不限">不限</option>
-					{ this.state.values.map(function(elem) {
-							return (<option value={elem}>{elem}岁</option>);
+					{ this.state.values.map(function(elem, index) {
+							return (<option key={index} value={elem}>{elem}岁</option>);
 					}) }
 				</select>
 			</div>
@@ -222,7 +222,7 @@ var Activities = React.createClass({
 		var liStr = this.props.activities &&
 					this.props.activities.map(function(elem, index) {
 			return (
-				<li className="ss-media-box"
+				<li className="ss-media-box" key={index}
 					onClick={this.openDetailPage.bind(this, elem.actid, elem.quantities_remain)}>
 					<div className="weui_media_box weui_media_appmsg">
 						<div className="weui_media_hd ss-media-hd">

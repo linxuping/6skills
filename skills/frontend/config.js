@@ -1,3 +1,6 @@
+var url = require('url');
+var proxy = require('proxy-middleware');
+
 var src               = 'src';
 var build             = 'dist';
 // var development       = 'dist/development';
@@ -6,11 +9,15 @@ var srcAssets         = 'src';
 var developmentAssets = 'dist/static';
 // var productionAssets  = 'dist/production/assets';
 
+var proxyOptions = url.parse('http://www.6skills.com/activities');
+proxyOptions.route = '/activities';
+
 module.exports = {
   browsersync: {
     development: {
       server: {
-        baseDir: [build]
+        baseDir: [build],
+        middleware: [proxy(proxyOptions)]
       },
       port: 3000,
       files: [
