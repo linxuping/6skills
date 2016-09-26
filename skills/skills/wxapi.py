@@ -307,6 +307,16 @@ def activities_sign(req):
 	ret,gender = check_mysql_arg_jsonobj("gender", args.get("gender",None), "str")
 	if not ret:
 		return gender
+	ret,city = check_mysql_arg_jsonobj("city", args.get("city",None), "str")
+	if not ret:
+		return city
+	city = city if "市" in city else city+"市"
+	ret,kids_name = check_mysql_arg_jsonobj("kids_name", args.get("kids_name",None), "str")
+	if not ret:
+		return kids_name
+	ret,birthdate = check_mysql_arg_jsonobj("birthdate", args.get("birthdate",None), "str")
+	if not ret:
+		return birthdate
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
@@ -347,7 +357,7 @@ def activities_sign(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: 
 					#save to 6s_user.
-					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime) values(%d,%d,'%s',%d,'%s','%s',now());"%(uid,actid,name,age,phone,gender)
+					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime,city,name_ch,birthdate) values(%d,%d,'%s',%d,'%s','%s',now(),'%s','%s','%s');"%(uid,actid,name,age,phone,gender,city,kids_name,birthdate)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 1:
 						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)
@@ -560,10 +570,12 @@ def activities_getprofile(req):
 
 	#exec  
 	_json = { "profile":{},"errcode":0,"errmsg":"" }
-	_sql = "select wechat,phone,img from 6s_user where openid='%s';"%openid
+	#_sql = "select a.wechat,a.phone,a.img,c.name from 6s_user a left join 6s_position b on a.position_id=b.id left join 6s_position c on b.pid=c.id where a.openid='%s';"%openid
+	_sql = "select a.wechat,a.phone,a.img,a.position_details from 6s_user a where a.openid='%s';"%openid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1 :
-		_json["profile"] = { "username":rets[0][0],"phone":rets[0][1],"img":rets[0][2] }
+		#_json["profile"] = { "username":rets[0][0],"phone":rets[0][1],"img":rets[0][2],"city":"" if rets[0][3]=="null" else rets[0][3] }
+		_json["profile"] = { "username":rets[0][0],"phone":rets[0][1],"img":rets[0][2],"city": rets[0][3].split(" ")[0] }
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "找不到当前用户."
@@ -775,16 +787,17 @@ def save_pos_wx(lat,lon,openid):
 		count,rets=dbmgr.db_exec(_sql)
 		if count > 0:
 			pos_id = rets[0][0] #to district
-			count,rets=dbmgr.db_exec("select id from 6s_user where openid='%s';"%openid)
-			if count == 0:
-				count,rets=dbmgr.db_exec("insert into 6s_user(openid,position_id,position_details,createtime) values('%s','%s','%s',now());"%(openid,pos_id,street) )
-			else:
-				_sql = "update 6s_user set position_id=%s,position_details='%s' where openid='%s';"%(pos_id,street,openid)
-				count,rets=dbmgr.db_exec(_sql)
-				if count == 0:
-					mo.logger.warn("save_pos_wx update posid return 0. openid:%s %s"%(openid,pos_id))
 		else:
 			mo.logger.error("openid:%s city:%s area:%s cannot be found."%(openid,city,area) )
+			pos_id = "0"
+		count,rets=dbmgr.db_exec("select id from 6s_user where openid='%s';"%openid)
+		if count == 0:
+			count,rets=dbmgr.db_exec("insert into 6s_user(openid,position_id,position_details,createtime) values('%s','%s','%s %s %s',now());"%(openid,pos_id,city,area,street) )
+		else:
+			_sql = "update 6s_user set position_id=%s,position_details='%s %s %s' where openid='%s';"%(pos_id,city,area,street,openid)
+			count,rets=dbmgr.db_exec(_sql)
+			if count == 0:
+				mo.logger.warn("save_pos_wx update posid return 0. openid:%s %s"%(openid,pos_id))
 	pass
 
 
