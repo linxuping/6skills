@@ -16,7 +16,7 @@ var Upload = React.createClass({
 	},
 
 	successCallBack: function (file, domain) {
-		let fileObj = JSON.parse(file);
+		var fileObj = JSON.parse(file);
 		this.setState({
 			file: domain + fileObj.key + "?" + new Date().getTime()
 		});

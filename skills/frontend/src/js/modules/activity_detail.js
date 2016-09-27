@@ -10,7 +10,7 @@ var ActivityDetail = React.createClass({
 	openSignPage: function(){
 		var _oid = geopenid();
 		if ("undefined" == _oid || null == _oid){
-			var r = confirm("该分享已经过期，转到六艺互动公众号查看?");
+			var r = confirm("请先关注公众号再查看.");
 			if (r)
 				jump_pubnum();
 			return;
@@ -71,7 +71,7 @@ var ActivityDetail = React.createClass({
 	openCollectPage: function(){
 		var _oid = geopenid();
 		if ("undefined" == _oid || null == _oid){
-			var r = confirm("该分享已经过期，转到六艺互动公众号查看?");
+			var r = confirm("请先关注公众号再查看.");
 			if (r)
 				jump_pubnum();
 			return;
@@ -212,7 +212,6 @@ var ActivityDetail = React.createClass({
 						<p className="age">{this.state.activity.ages}岁</p>
 						<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
 						<p className="area">活动地点：{this.state.activity.area} {this.state.activity.position_details}</p>
-						<a href="http://weixin.qq.com/g/A9vt3M-8Ig-IJU53?from=message&isappinstalled=0">testlink.</a>
 						<p className="detail-content" dangerouslySetInnerHTML={{__html: this.state.activity.content}}>
 						</p>
 

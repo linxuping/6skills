@@ -189,7 +189,7 @@ var SignForm = React.createClass({
 								<label htmlFor="birthdate" className="weui_label">儿童出生日期</label>
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
-								<input type="text" name="birthdate" id="birthdate" className="weui_input"
+								<input type="date" name="birthdate" id="birthdate" className="weui_input"
 									placeholder="请输入儿童出生日期" defaultValue={profile.birthdate}/>
 							</div>
 						</div>
