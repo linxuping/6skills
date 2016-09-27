@@ -136,7 +136,7 @@ var ActivityDetail = React.createClass({
 			alert("actid must be number.");
 			return;
 		}
-		_encodeurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx1cdf2c4bb014681e&redirect_uri="+encodeURIComponent(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect"
+		_encodeurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri="+encodeURIComponent(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect"
 		$.ajax({
 			url: this.props.url,
 			type: 'get',
