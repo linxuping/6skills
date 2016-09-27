@@ -6,6 +6,9 @@ var Upload = React.createClass({
 		};
 	},
 	componentDidMount: function() {
+		try{
+
+
 		var qiniu1 = new QiniuJsSDK()
     qiniu1.uploader(uploadConfig({
       key: this.props.uploadKey,
@@ -13,6 +16,9 @@ var Upload = React.createClass({
       name: this.props.name || "images",
       successCallBack: this.successCallBack
     }));
+  } catch(e){
+  	alert(e)
+  }
 	},
 
 	successCallBack: function (file, domain) {

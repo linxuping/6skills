@@ -33,6 +33,7 @@ var Sign = React.createClass({
 });
 
 function validateForm(actid, formConponent) {
+
 	var actid = getUrlParam("actid") || String(actid);
 	if (!isNum(actid)){
 		alert("actid must be number.");
@@ -53,12 +54,12 @@ function validateForm(actid, formConponent) {
 			"teacher_phone": {required: true, digits: true, rangelength:[11, 11]}
 		},
 		messages: {
-			name: {required: "必填"},
-			phone: {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
-			age: {required: "请输入年龄", min: "", max: ""},
+			"name": {required: "必填"},
+			"phone": {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
+			"age": {required: "请输入年龄", min: "", max: ""},
 			gender: {required: "请选择性别"},
-			city: {required: "请输入所在城市"},
-			kids_name: {required: "请输入儿童姓名"},
+			"city": {required: "请输入所在城市"},
+			"kids_name": {required: "请输入儿童姓名"},
 			"identity_card": {required: "请输入身份证号"},
 			"program": {required: "请输入节目名称"},
 			"company": {required: "请输入选送单位"},
@@ -148,11 +149,11 @@ var SignForm = React.createClass({
 		} else {profile = {}}
 		var sign_url = ges("activities/sign");
 
-		var matchClasses = ["幼儿组（学龄前）", "小学甲组（1—2年级）", "小学乙组（3—4年级）", "小学丙组（5—6年级）", "初中组（初中1—3年级）", "高中组（高中1—3年级，包括中职）", "大学组（大学、研究生在读，包括大专、留学生等）"];
+		var matchClasses = ["幼儿组（学龄前）", "小学甲组（1—2年级）", "小学乙组（3—4年级）", "小学丙组（5—6年级）"];
 		matchClasses = matchClasses.map(function(elem, index){
 			return <option key={index} value={elem}>{elem}</option>
 		});
-		var majors = ["声乐", "舞蹈", "器乐", "戏剧", "书画"];
+		var majors = ["声乐", "舞蹈", "器乐", "语言", "书画"];
 		majors = majors.map(function(elem, index) {
 			return (
 				<option key={index} value={elem}>{elem}</option>
@@ -235,7 +236,7 @@ var SignForm = React.createClass({
 
 					<div className="weui_cells weui_cells_form">
 
-						<Upload uploadKey="custom-sign"></Upload>
+						{<Upload uploadKey="custom-sign"></Upload>}
 
 						<div className="weui_cell">
 							<div className="weui_cell_hd">
@@ -288,25 +289,25 @@ var SignForm = React.createClass({
 						</div>
 
 						<div className="weui_cell weui_cell_select weui_select_after">
-							<div className="weui_cell_hd">
-								<label htmlFor="match_class" className="weui_label">参赛组别</label>
-							</div>
-							<div className="weui_cell_bd weui_cell_primary">
-								<select name="match_class" id="match_class" className="weui_select" defautVlaue="1">
-									{matchClasses}
-								</select>
-							</div>
-						</div>
-						<div className="weui_cell weui_cell_select weui_select_after">
-							<div className="weui_cell_hd">
-								<label htmlFor="major" className="weui_label">参赛专业</label>
-							</div>
-							<div className="weui_cell_bd weui_cell_primary">
-								<select name="major" id="major" className="weui_select" defautVlaue="1">
-									{majors}
-								</select>
-							</div>
-						</div>
+													<div className="weui_cell_hd">
+														<label htmlFor="match_class" className="weui_label">参赛组别</label>
+													</div>
+													<div className="weui_cell_bd weui_cell_primary">
+														<select name="match_class" id="match_class" className="weui_select" defautVlaue="1">
+															{matchClasses}
+														</select>
+													</div>
+												</div>
+												<div className="weui_cell weui_cell_select weui_select_after">
+													<div className="weui_cell_hd">
+														<label htmlFor="major" className="weui_label">参赛专业</label>
+													</div>
+													<div className="weui_cell_bd weui_cell_primary">
+														<select name="major" id="major" className="weui_select" defautVlaue="1">
+															{majors}
+														</select>
+													</div>
+												</div>
 					</div>
 
 					<div className="weui_cells_title">获奖经历</div>

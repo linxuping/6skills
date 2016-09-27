@@ -1,4 +1,5 @@
 function uploadConfig(options){
+
   if (options == undefined || options.key == undefined) {
     alert("upload key cannot be null");
     return null;
@@ -18,24 +19,23 @@ function uploadConfig(options){
     multi_selection: false,//!(mOxie.Env.OS.toLowerCase()==="ios"),
     //uptoken_url: $('#uptoken_url').val(),
     uptoken_func: function(){
-      //console.log("token fun")
-      //var key = new Date().getTime();
+
       var ajax = new XMLHttpRequest();
-      //url
-      //let tokenDomain = "http://6skills.com";
-      let tokenDomain = "";
-      var url = tokenDomain + '/api/admin/uploadtoken/get?key=' + key;
+
+      var url = '/api/admin/uploadtoken/get?key=' + key;
       ajax.open('GET', url, false);
       ajax.setRequestHeader("If-Modified-Since", "0");
       ajax.send();
       if (ajax.status === 200) {
           var res = JSON.parse(ajax.responseText);
-          console.log('custom uptoken_func:' + res.uptoken);
+          console.log('custom uptoken_func:' + res.token);
+
           return res.token;
       } else {
           console.log('custom uptoken_func err');
           return '';
       }
+
     },
     domain: "http://img.6skills.com/",
     get_new_uptoken: false,
@@ -98,4 +98,5 @@ function uploadConfig(options){
     }
   }
   return config;
+
 }
