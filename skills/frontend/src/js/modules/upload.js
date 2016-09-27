@@ -36,7 +36,7 @@ var Upload = React.createClass({
 						<input type="hidden" name={this.state.name} value={this.state.file}/>
 						<div className="weui_uploader">
 							<div className="weui_uploader_hd fl">
-								<p className="weui_uploader_title" style={{width: 105}}>照片</p>
+								<p className="weui_uploader_title" style={{width: 105}}>宝宝照片</p>
 							</div>
 							<div className="weui_uploader_bd fl">
 								<div className="weui_uploader_input_wrp" id={this.props.id || "pickfile"}></div>
