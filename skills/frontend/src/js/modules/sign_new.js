@@ -289,31 +289,31 @@ var SignForm = React.createClass({
 						</div>
 
 						<div className="weui_cell weui_cell_select weui_select_after">
-													<div className="weui_cell_hd">
-														<label htmlFor="match_class" className="weui_label">参赛组别</label>
-													</div>
-													<div className="weui_cell_bd weui_cell_primary">
-														<select name="match_class" id="match_class" className="weui_select" defautVlaue="1">
-															{matchClasses}
-														</select>
-													</div>
-												</div>
-												<div className="weui_cell weui_cell_select weui_select_after">
-													<div className="weui_cell_hd">
-														<label htmlFor="major" className="weui_label">参赛专业</label>
-													</div>
-													<div className="weui_cell_bd weui_cell_primary">
-														<select name="major" id="major" className="weui_select" defautVlaue="1">
-															{majors}
-														</select>
-													</div>
-												</div>
+							<div className="weui_cell_hd">
+								<label htmlFor="match_class" className="weui_label">参赛组别</label>
+							</div>
+							<div className="weui_cell_bd weui_cell_primary">
+								<select name="match_class" id="match_class" className="weui_select" defautVlaue="1">
+									{matchClasses}
+								</select>
+							</div>
+						</div>
+						<div className="weui_cell weui_cell_select weui_select_after">
+							<div className="weui_cell_hd">
+								<label htmlFor="major" className="weui_label">参赛专业</label>
+							</div>
+							<div className="weui_cell_bd weui_cell_primary">
+								<select name="major" id="major" className="weui_select" defautVlaue="1">
+									{majors}
+								</select>
+							</div>
+						</div>
 					</div>
 
 					<div className="weui_cells_title">获奖经历</div>
 					<div className="weui_cells weui_cells_form">
 						<div className="weui_cell">
-							<div className="weui_cell_bd">
+							<div className="weui_cell_bd" style={{width: "100%"}}>
 								<textarea name="awards" id="awards" rows="3" className="weui_textarea"
 									placeholder="获奖经历"></textarea>
 							</div>

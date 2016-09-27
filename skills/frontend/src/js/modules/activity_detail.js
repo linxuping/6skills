@@ -27,7 +27,7 @@ var ActivityDetail = React.createClass({
 				alert("活动人数已满，无法报名");
 				return;
 			}
-			
+
 			profile = sessionStorage.getItem("_profile");
 			if (profile == null){
 				$.ajax({
@@ -59,7 +59,7 @@ var ActivityDetail = React.createClass({
 				location.href=ges("template/verify_phone.html");
 				return;
 			}
-			
+
 			document.title = "活动报名";
 			ReactDOM.render(
 				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus}),
@@ -158,13 +158,13 @@ var ActivityDetail = React.createClass({
 								signature: res2.signature,// 必填，签名，见附录1
 								jsApiList: ["onMenuShareTimeline","onMenuShareAppMessage","onMenuShareQQ","onMenuShareWeibo","onMenuShareQZone"] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
 							});
-							String.prototype.stripHTML = function() {  
-								var reTag = /<(?:.|\s)*?>/g;  
-								var reTag2 = /&nbsp/g;  
-								var reTag3 = /&.*;/g;  
-								var reTag4 = / /g;  
-								return this.replace(reTag,"").replace(reTag2,"").replace(reTag3,",").replace(reTag4,"");  
-							}  
+							String.prototype.stripHTML = function() {
+								var reTag = /<(?:.|\s)*?>/g;
+								var reTag2 = /&nbsp/g;
+								var reTag3 = /&.*;/g;
+								var reTag4 = / /g;
+								return this.replace(reTag,"").replace(reTag2,"").replace(reTag3,",").replace(reTag4,"");
+							}
 							var _content = res.content.substring(0, 100).stripHTML();
 							wx.ready(function(){
 								make_share("all",res.title,_content,_encodeurl,res.img_cover,null);
@@ -179,7 +179,7 @@ var ActivityDetail = React.createClass({
 						alert("请稍后重试获取签名.");
 					},
 				});
-				
+
 				this.setState({
 					activity: res,
 					imgs: res.imgs,
@@ -194,33 +194,67 @@ var ActivityDetail = React.createClass({
 		});
 
 		this.getSignupStatus();
+		this.calculatCoverHeight();
 	},
+
+	/**
+	 * 根据宽度计算面板高度
+	 * @return
+	 */
+	calculatCoverHeight: function(){
+		var windowWidth = document.body.offsetWidth;
+		var height = windowWidth / 2.2;
+		console.log(height)
+		$(ReactDOM.findDOMNode(this.refs.coverBox)).css("max-height", height + "px");
+	},
+
+	backHandler: function(){
+		history.back();
+	},
+
 	render: function() {
+		console.log(this.state.activity)
 		return (
 			<div className="activity-detail">
+				<div className="back-btn" onClick={this.backHandler}>活动详情</div>
 				<article className="media">
-					<div className="media-hd">
+					<div className="media-hd" ref="coverBox">
 						<img src={this.state.activity.img_cover} alt=""/>
 					</div>
-					<h4 className="title">{this.state.activity.title}</h4>
-					<div className="media-bd">
-						<p className="money clearfix">
-							{(this.state.activity.price_child_pre==null)? "":<span className="now fl">现价￥{this.state.activity.price_child_pre}</span>}
-							<span className="original fr">￥{this.state.activity.price_child}</span>
-						</p>
-						<p className="privilage"><b>{this.state.activity.preinfo}</b></p>
-						<p className="age">{this.state.activity.ages}岁</p>
-						<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
-						<p className="area">活动地点：{this.state.activity.area} {this.state.activity.position_details}</p>
-						<p className="detail-content" dangerouslySetInnerHTML={{__html: this.state.activity.content}}>
-						</p>
+					<div className="weui_panel header-msg">
+						<div className="weui_panel_bd " >
+							<h4 className="title">{this.state.activity.title}</h4>
+
+							<p className="money clearfix">
+								{
+									(this.state.activity.price_child_pre==null)? ""
+										:
+										<span className="now fl">现价：<span className="cost">￥{this.state.activity.price_child_pre}元</span></span>
+									}
+								<span className="original fr">原价：<span className="cost">￥{this.state.activity.price_child}元</span></span>
+							</p>
+
+							{/*<p className="privilage"><b>{this.state.activity.preinfo}</b></p>*/}
+							<p className="age">年龄：{this.state.activity.ages}岁</p>
+							<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
+							<p className="area">活动地点：{this.state.activity.area} {this.state.activity.position_details}</p>
+							<p>剩余名额：{this.state.activity.quantities_remain}</p>
+						</div>
+					</div>
+
+					<div className="weui_panel" style={{marginTop: "10px", padding:"20px 10px"}}>
+						<div className="weui_panel_bd detail-content" dangerouslySetInnerHTML={{__html: this.state.activity.content}}>
+						</div>
+					</div>
+
+
 
 						{
 							this.state.status && this.state.qrcode ?
 								<QrCode qrcode={this.state.qrcode}/> : ""
 						}
 
-					</div>
+
 				</article>
 				<div className="sign-btn" style={{"cursor": "pointer"}}
 					onClick={this.openCollectPage}>

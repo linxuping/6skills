@@ -1,4 +1,9 @@
-@themeColor: #fff;
+@themeColor: #ff8db3;
+@secondColor: #ffd052;
+@fontColor: #222;
+
+@backHeaderHeight: 55px;
+
 *{
 	box-sizing: border-box;
 }
@@ -10,6 +15,8 @@ html{
 body{
 	width: auto;
 	height: 100%;
+	font-family: "MicroSoft YaHei", "微软雅黑", Georgia, 'Times New Roman', serif;
+	color: @fontColor;
 }
 .fl{
 	float: left !important;
@@ -118,96 +125,113 @@ body{
 .media{
 	.media-hd {
 		width: 100%;
-		max-height: 200px;
 		overflow: hidden;
-		@media screen and (min-width:480px){
-		    max-height: 220px;
-		}
-		@media screen and (min-width:767px){
-		    max-height: 250px;
-		}
 		img{
 			width: 100%;
 		}
 	}
 	.title{
-		line-height: 1em;
 		font-size: 2.4rem;
-		padding-top: 1.5rem;
-		padding-bottom: 1.5rem;
-		text-align: center;
+		line-height: 32px;
+		padding-top: 15px;
+		padding-bottom: 15px;
 	}
 	.media-bd{
 		font-size: 1.6rem;
-		padding-left: 1.5rem;
-		padding-right: 1.5rem;
 		p{
 			line-height: 2.2rem;
-			&.money{
-				color:#e00;
-			}
-			&.detail-content{
-				padding-top: 0.5rem;
-			}
 		}
 	}
 }
 .activity-detail{
-	@btnHeight: 4.5rem;
+	@btnHeight: 60px;
+	margin-top: @backHeaderHeight;
 	position: absolute;
 	top: 0;
 	bottom: 0;
 	width: 100%;
-	padding-bottom: @btnHeight;
+	margin-bottom: @btnHeight;
 	overflow: auto;
+	.weui_panel{
+		margin: 0 -10px;
+		padding: 0 10px;
+	}
+	.header-msg{
+		p{
+			font-size: 16px;
+			margin-bottom: 5px;
+			&:last-child{
+				margin-bottom: 15px;
+			}
+		}
+	}
+	.money{
+		.cost{
+			color: #ff4444;
+			font-size: 24px;
+		}
+	}
+	.media{
+		padding: 0 10px;
+		background-color: #f1f1f1;
+		padding-bottom: 20px;
+	}
+	.detail-content{
+		font-size: 14px;
+	}
 	.sign-btn{
 		position:fixed;
-		background-color: #FFF;
+		background-color: #fed152;
 		color: #000;
-		border: 1px solid #ccc;
 		bottom: 0px;
 		width: 50%;
-		height: @btnHeight - 0.4rem;
-		line-height: @btnHeight - 0.4rem;
+		height: @btnHeight;
+		line-height: @btnHeight;
 		text-align: center;
-		font-size: 1.8rem;
+		font-size: 18px;
 	}
 	.sign-btn-right{
-		.sign-btn;
+		.sign-btn();
 		margin-left: 50%;
+		background-color: #fd8db3;
 	}
 }
-
+.back-btn{
+	font-size: 1.8rem;
+	height: @backHeaderHeight;
+	line-height: @backHeaderHeight;
+	padding-left: 3rem;
+	cursor: pointer;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: #FFF;
+	z-index: 999;
+	width: 100%;
+	&:before{
+		position: absolute;
+		content: "";
+		width: 12px;
+		height: 12px;
+		top: 50%;
+		left: 1rem;
+		margin-top: -6px;
+		-webkit-transform: rotate(135deg);
+		transform: rotate(315deg);
+		border-top: 1px solid @fontColor;
+		border-left: 1px solid @fontColor;
+	}
+}
 .sign-page{
 	z-index: 99;
 	position: fixed;
-	top: 0px;
+	top: @backHeaderHeight;
 	bottom: 0px;
 	width: 100%;
 	left: 0px;
 	background-color: #fff;
 	.back-btn{
-		font-size: 1.8rem;
-		height: 3.5rem;
-		border-bottom: 1px solid #ccc;
-		line-height: 3.5rem;
-		padding-left: 1.8rem;
-		cursor: pointer;
-		position: relative;
-		&:before{
-			@borderColor: #ccc;
-			position: absolute;
-			content: "";
-			width: 5px;
-			height: 5px;
-			top: 50%;
-			left: 1rem;
-			margin-top: -3px;
-			-webkit-transform: rotate(135deg);
-			transform: rotate(315deg);
-			border-top: 2px solid @borderColor;
-			border-left: 2px solid @borderColor;
-		}
+		border-bottom: 1px solid #ddd;
 	}
 }
 .get-btn{
@@ -263,7 +287,6 @@ body{
 
 }
 .myActivities{
-	padding-top: 3.5rem;
 	.back-btn{
 		position: fixed;
 		background-color: #fff;
@@ -331,4 +354,18 @@ body{
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     line-height: 22px;
+}
+
+.weui_btn_primary{
+	background-color: @themeColor;
+}
+.weui_cells_radio .weui_check:checked + .weui_icon_checked:before {
+	color: @themeColor;
+}
+.weui_btn_primary:not(.weui_btn_disabled):active {
+	background-color: lighten(@themeColor, 10%);
+}
+.weui_btn_plain_primary{
+	color: @themeColor;
+	border-color: @themeColor;
 }
