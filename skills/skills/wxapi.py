@@ -1251,3 +1251,48 @@ def get_wx_acttypes(req):
 	return resp
 
 
+@req_print
+def get_hot_activities(req):
+	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	_sql = "select b.id,b.img_cover from 6s_hot_activities a left join 6s_activity b on a.refid=b.id order by a.sequence;"
+	count,rets=dbmgr.db_exec(_sql)
+	if count >= 0:
+		for i in xrange(count):
+			_json["activities"].append( {"id":rets[i][0],"img":rets[i][1]} )
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("db fail. "+rets)
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+	
+
+
+@req_print
+def get_nearbyareas(req):
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+
+	_json = { "values":[],"errcode":0,"errmsg":"" }
+	_sql = "select name from 6s_position where pid=(((select position_id from 6s_user where openid='%s') div 10000)*10000);"%openid
+	count,rets=dbmgr.db_exec(_sql)
+	#exec  
+	if count >= 0:
+		for i in xrange(count):
+			_json["values"].append(rets[i][0])
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("db fail. "+rets)
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+

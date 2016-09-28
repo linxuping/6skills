@@ -101,5 +101,8 @@ urlpatterns = patterns('',
 		url(r'^get_js_signature$', wxapi.get_js_signature),
 		#0926
 		url(r'^wx/acttypes/list$', wxapi.get_wx_acttypes),
+		#0928
+		url(r'^activities/hot/list$', wxapi.get_hot_activities),
+		url(r'^wx/nearbyareas/list$', wxapi.get_nearbyareas),
 )
 
