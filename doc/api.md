@@ -2,7 +2,7 @@
 
 ### 0.1 滚动栏活动
 **GET**
-**URL** /activities/hot/get
+**URL** /activities/hot/list
 
 **返回**
 ```json
@@ -21,7 +21,7 @@
 
 ### 0.2 wx端活动分类列表 - 运营展示数据，与实际类型有细微差别
 **GET**
-**URL** /wx/acttypes/get
+**URL** /wx/acttypes/list
 
 **返回**
 ```json
