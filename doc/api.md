@@ -34,7 +34,7 @@
 
 ### 0.3 获得我所在的城市de区域列表
 **GET**
-** URL ** /areas/get?openid=***
+** URL ** /areas/list?openid=***
 
 **参数**
 ```json
