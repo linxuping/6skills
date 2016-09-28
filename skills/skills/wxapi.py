@@ -71,7 +71,7 @@ def activities_special_offers(req):
 	if not ret: #by date
 		_sql = "select a.id,imgs_act,title,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,a.createtime,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1 order by a.createtime desc limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	else: #by distr and date
-		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 12 MONTH) as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 12 MONTH) as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s b.status=1 and c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s b.status=1 and c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
@@ -206,7 +206,8 @@ def get_authcode(req):
 		top.setDefaultAppInfo(settings.sms_id, settings.sms_secret)
 		req = top.api.AlibabaAliqinFcSmsNumSendRequest()
 		req.sms_type = settings.sms_type
-		req.sms_free_sign_name = "六艺互动"
+		#req.sms_free_sign_name = "六艺互动"
+		req.sms_free_sign_name = "爱试课"
 		req.sms_param = "{\"number\":\"%s\"}" % (code)
 		req.rec_num = "%s" % (phone)
 		req.sms_template_code = settings.sms_temp_code
@@ -307,16 +308,23 @@ def activities_sign(req):
 	ret,gender = check_mysql_arg_jsonobj("gender", args.get("gender",None), "str")
 	if not ret:
 		return gender
-	ret,city = check_mysql_arg_jsonobj("city", args.get("city",None), "str")
-	if not ret:
-		return city
-	city = city if "市" in city else city+"市"
-	ret,kids_name = check_mysql_arg_jsonobj("kids_name", args.get("kids_name",None), "str")
-	if not ret:
-		return kids_name
-	ret,birthdate = check_mysql_arg_jsonobj("birthdate", args.get("birthdate",None), "str")
-	if not ret:
-		return birthdate
+	ret,city = check_mysql_arg_jsonobj("city", args.get("city",None), "str", '')
+	if city=="":
+		city = "广州市"
+	else:
+		city = (city if "市" in city else city+"市")
+	ret,kids_name = check_mysql_arg_jsonobj("kids_name", args.get("kids_name",None), "str", '')
+	ret,birthdate = check_mysql_arg_jsonobj("birthdate", args.get("birthdate",None), "str", '')
+	#img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience
+	ret,img = check_mysql_arg_jsonobj("images", args.get("images",None), "str", '')
+	ret,identity = check_mysql_arg_jsonobj("identity_card", args.get("identity_card",None), "str", '')
+	ret,program_name = check_mysql_arg_jsonobj("program", args.get("program",None), "str", '')
+	ret,organization = check_mysql_arg_jsonobj("company", args.get("company",None), "str", '')
+	ret,teacher = check_mysql_arg_jsonobj("teacher", args.get("teacher",None), "str", '')
+	ret,teacher_phone = check_mysql_arg_jsonobj("teacher_phone", args.get("teacher_phone",None), "str", '')
+	ret,part_group = check_mysql_arg_jsonobj("match_class", args.get("match_class",None), "str", '')
+	ret,part_profession = check_mysql_arg_jsonobj("major", args.get("major",None), "str", '')
+	ret,win_experience = check_mysql_arg_jsonobj("awards", args.get("awards",None), "str", '')
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
@@ -357,7 +365,7 @@ def activities_sign(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: 
 					#save to 6s_user.
-					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime,city,name_ch,birthdate) values(%d,%d,'%s',%d,'%s','%s',now(),'%s','%s','%s');"%(uid,actid,name,age,phone,gender,city,kids_name,birthdate)
+					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime,city,name_ch,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience) values(%d,%d,'%s',%d,'%s','%s',now(),'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');"%(uid,actid,name,age,phone,gender,city,kids_name,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 1:
 						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)
@@ -1227,6 +1235,16 @@ def get_openid(req):
 		return response_json_error( "no ***_token." )
 
 	mo.logger.info("return openid. %s -> %s"%(code,str(_json)) )
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def get_wx_acttypes(req):
+	#exec  
+	_json = { "values":["声乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)

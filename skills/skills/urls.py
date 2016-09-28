@@ -99,5 +99,7 @@ urlpatterns = patterns('',
 		url(r'^wx_test$', wxapi.save_pos_wx),
 		url(r'^get_6sid$', wxapi.get_openid),
 		url(r'^get_js_signature$', wxapi.get_js_signature),
+		#0926
+		url(r'^wx/acttypes/list$', wxapi.get_wx_acttypes),
 )
 

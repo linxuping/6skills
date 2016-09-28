@@ -171,10 +171,12 @@ def _check_mysql_arg_json(_name, _arg, _type):
 						return False,{ "errcode":1, "errmsg":"非法参数(s-%s-%s)"%(_name,str(_arg)) }
 				return True,_arg
 		return False,{ "errcode":1, "errmsg":"未知判断类型(%s)."%str(_type) }
-def check_mysql_arg_jsonobj(_name, _arg, _type):
+def check_mysql_arg_jsonobj(_name, _arg, _type, defval=None):
 	ret,output = _check_mysql_arg_json(_name, _arg, _type)
 	if ret:
 		return ret,output
+	if defval != None:
+		return ret,defval
 	elif "openid"==_name and _arg=="":
 		return False,{ "errcode":1, "errmsg":"openid can't be empty." }
 	_jsonobj = json.dumps(output)
