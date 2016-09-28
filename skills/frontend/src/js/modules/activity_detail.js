@@ -231,14 +231,14 @@ var ActivityDetail = React.createClass({
 										:
 										<span className="now fl">现价：<span className="cost">￥{this.state.activity.price_child_pre}元</span></span>
 									}
-								<span className="original fr">原价：<span className="cost">￥{this.state.activity.price_child}元</span></span>
+								<span className="original fr">价格：<span className="cost">￥{this.state.activity.price_child}元</span></span>
 							</p>
 
 							{/*<p className="privilage"><b>{this.state.activity.preinfo}</b></p>*/}
 							<p className="age">年龄：{this.state.activity.ages}岁</p>
 							<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
 							<p className="area">活动地点：{this.state.activity.area} {this.state.activity.position_details}</p>
-							<p>剩余名额：{this.state.activity.quantities_remain}</p>
+							<p>剩余名额：{(this.state.activity.quantities_remain>1000000) ? "不限":<font>{this.state.activity.quantities_remain}</font>}</p>
 						</div>
 					</div>
 
