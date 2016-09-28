@@ -3,6 +3,7 @@
 @fontColor: #222;
 
 @backHeaderHeight: 55px;
+@bg: #f1f1f1;
 
 *{
 	box-sizing: border-box;
@@ -11,6 +12,7 @@ html{
 	font-size: 62.5%;
 	font-size: 63%\9;
 	min-height: 100%;
+	background-color: @bg;
 }
 body{
 	width: auto;
@@ -34,6 +36,16 @@ body{
 	&:after{
 		clear: both;
 	}
+}
+.ss-flex {
+    display: -webkit-box;
+  	display: -webkit-flex;
+  	display: flex;
+}
+.ss-flex-item {
+    -webkit-box-flex: 1;
+  -webkit-flex: 1;
+          flex: 1;
 }
 .select-header{
 	@height: 45px;
@@ -86,7 +98,10 @@ body{
 	}
 }
 .activities-list{
-	margin-top: 45px;
+	margin-bottom: 10px;
+	.activity-item{
+		margin-top: 10px;
+	}
 	.more-btn{
 		height: 3.5rem;
 		text-align: center;
@@ -369,3 +384,80 @@ body{
 	color: @themeColor;
 	border-color: @themeColor;
 }
+
+//carousel
+@carousel-indicator-border-color: #fff;
+@carousel-indicator-active-bg: @themeColor;
+@carousel-title-h: 40px;
+.carousel{
+	.slick-track{
+		height: 200px;
+		overflow: hidden;
+	}
+	.item{
+		img{
+			width: 100%;
+		}
+		.title-box{
+			position: absolute;
+			bottom: 0;
+			height: @carousel-title-h;
+			line-height: @carousel-title-h;
+			background-color: rgba(0, 0, 0, .6);
+			color: #FFF;
+			width: 100%;
+			padding-left: 15px;
+			font-size: 17px;
+		}
+	}
+}
+.slick-dots {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  z-index: 15;
+  width: 40%;
+  padding-left: 0;
+  list-style: none;
+  text-align: right;
+
+  li {
+    display: inline-block;
+    width:  10px;
+    height: 10px;
+    margin: 1px;
+    text-indent: -999px;
+    border: 1px solid @carousel-indicator-border-color;
+    border-radius: 10px;
+    cursor: pointer;
+
+    background-color: #000 \9; // IE8
+    background-color: rgba(0,0,0,0); // IE9
+    button{
+      height: 100%;
+      width: 100%;
+      display: block;
+      color: transparent;
+    }
+  }
+  .slick-active {
+    width:  10px;
+    height: 10px;
+    background-color: @carousel-indicator-active-bg;
+    border-color: @carousel-indicator-active-bg;
+  }
+}
+
+//navication
+.nav-item{
+	padding: 20px 0;
+	text-align: center;
+	img{
+		width: 75%;
+	}
+	a{
+		color: @fontColor;
+		font-size: 14px;
+	}
+}
+

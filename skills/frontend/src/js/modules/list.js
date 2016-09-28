@@ -218,7 +218,7 @@ var Activities = React.createClass({
 	},
 
 	render: function() {
-		//console.log(this.props.activities)
+		console.log(this.props.activities)
 		var liStr = this.props.activities &&
 					this.props.activities.map(function(elem, index) {
 			return (
@@ -256,14 +256,45 @@ var Activities = React.createClass({
 		}
 
 		return (
-			<div className="activities-list weui_panel_access" id="wrapper">
-				<div id="scroller">
-					<ul className="weui_panel_bd">
-						{liStr}
-					</ul>
-					{moreBtn}
-					<div id="sign-page-wrap"></div>
-				</div>
+			<div className="activities" id="wrapper">
+				<ul className="activities-list">
+					{
+						this.props.activities &&
+						this.props.activities.map(function(elem, index) {
+							return (
+								<li className="activity-item" key={index}
+									onClick={this.openDetailPage.bind(this, elem.actid, elem.quantities_remain)}>
+									<div className="weui_panel">
+
+									<div className="weui_media_box weui_media_appmsg">
+										<div className="weui_media_hd ss-media-hd">
+											<img className="weui_media_appmsg_thumb" src={elem.img_cover} alt=""/>
+										</div>
+										<div className="weui_media_bd ss-media-bd">
+											<h4 className="weui_media_title">
+												{elem.title}
+											</h4>
+											<p className="weui_media_desc">活动剩余名额：{ (elem.quantities_remain>1000000)? "不限": <font>{elem.quantities_remain}名</font> }</p>
+											<p className="weui_media_desc">类型：{elem.tags}</p>
+											<p className="weui_media_desc">集合地点：{elem.area}</p>
+											<p className="weui_media_desc">{elem.ages}岁</p>
+										</div>
+									</div>
+									<div className="ss-join-bd clearfix">
+										<div className="money-box fl">￥{elem.price_child}</div>
+											<button className={(elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr"}
+												onClick={this.openSignupPage} data-actid={elem.actid}  data-quantitiesremain={elem.quantities_remain}>
+												{this.props.type == "preview" ? "我要报名" : "限时报名"}
+											</button>
+									</div>
+									</div>
+								</li>
+							);
+						}.bind(this))
+					}
+				</ul>
+				{moreBtn}
+				<div id="sign-page-wrap"></div>
 			</div>
 		);
 	}
