@@ -41,6 +41,7 @@ import hashlib
 import threading  
 from urllib import quote  
 import xml.etree.ElementTree as ET  
+import skills.settings as settings
   
 try:  
     import pycurl  
@@ -54,13 +55,13 @@ class WxPayConf_pub(object):
   
     #=======【基本信息设置】=====================================  
     #微信公众号身份的唯一标识。审核通过后，在微信发送的邮件中查看  
-    APPID = "wxe6d40d1e6b8d010e"  
+    APPID = settings.appid  
     #JSAPI接口中获取openid，审核后在公众平台开启开发模式后可查看  
-    APPSECRET = "9560d101dc228aa5aab838312cbb0287"  
+    APPSECRET = settings.appsecret  
     #受理商ID，身份标识  
-    MCHID = "1395115702"  
+    MCHID = settings.pay_mchid
     #商户支付密钥Key。审核通过后，在微信发送的邮件中查看  
-    KEY = "oi8enva8asidhfazlixucyv98w3l83nb"  
+    KEY = settings.pay_key  
      
   
     #=======【异步通知url设置】===================================  
@@ -649,7 +650,7 @@ def test():
     assert id(c) == id(c2)  
   
 #{'return_code': 'FAIL', 'return_msg': 'invalid total_fee'}
-#{'trade_type': 'JSAPI', 'prepay_id': 'wx201609292017139574245b040727161518', 'nonce_str': 'JC8dtLjMbPeMaSiX', 'return_code': 'SUCCESS', 'return_msg': 'OK', 'sign': 'BAF9957FA3468E33DFDA08C048BD03A7', 'mch_id': '1395115702', 'appid': 'wxe6d40d1e6b8d010e', 'result_code': 'SUCCESS'} 
+#{'trade_type': 'JSAPI', 'prepay_id': 'wx2018', 'nonce_str': 'JX', 'return_code': 'SUCCESS', 'return_msg': 'OK', 'sign': 'BAF9957FA3468E33DFDA08C048', 'mch_id': '02', 'appid': '0e', 'result_code': 'SUCCESS'} 
 def get_prepay_info(out_trade_no, body, total_fee, notify_url, trade_type, openid):
 	pub = UnifiedOrder_pub()
 	pub.setParameter("out_trade_no", out_trade_no)
@@ -660,5 +661,4 @@ def get_prepay_info(out_trade_no, body, total_fee, notify_url, trade_type, openi
 	pub.setParameter("openid", openid)
 	return pub.getPrepayInfo()
 
-print "ret: ", get_prepay_info("1234", "abc", "1", "http://www.6skills.com/wxpay/", "JSAPI", "oYgYJwX75E_sQR8AQfkzoa94E5rM")
 
