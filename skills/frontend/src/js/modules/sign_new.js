@@ -165,7 +165,7 @@ var SignForm = React.createClass({
 			<div className="SignForm">
 				<form action={sign_url} method="post" id="sign-form">
 					<div className="back-btn" onClick={this.props.back}>报名</div>
-					<div className="weui_cells_title">填写报名信息</div>
+					<div className="weui_cells_title" style={{marginTop: 0}}>填写报名信息</div>
 					<div className="weui_cells weui_cells_form">
 						<div className="weui_cell">
 							<div className="weui_cell_hd">

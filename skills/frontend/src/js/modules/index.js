@@ -119,7 +119,7 @@ var Navigation = React.createClass({
 		];
 		return (
 			<div className="weui_panel" style={{marginTop: 0}}>
-				<div className="weui_panel_bd">
+				<div className="weui_panel_bd" style={{padding: "0 10px"}}>
 					<div className="ss-flex">
 						{
 							btns.map(function(elem, index) {

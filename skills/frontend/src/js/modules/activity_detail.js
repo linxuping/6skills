@@ -194,18 +194,6 @@ var ActivityDetail = React.createClass({
 		});
 
 		this.getSignupStatus();
-		this.calculatCoverHeight();
-	},
-
-	/**
-	 * 根据宽度计算面板高度
-	 * @return
-	 */
-	calculatCoverHeight: function(){
-		var windowWidth = document.body.offsetWidth;
-		var height = windowWidth / 2.2;
-		console.log(height)
-		$(ReactDOM.findDOMNode(this.refs.coverBox)).css("max-height", height + "px");
 	},
 
 	backHandler: function(){
@@ -225,20 +213,26 @@ var ActivityDetail = React.createClass({
 						<div className="weui_panel_bd " >
 							<h4 className="title">{this.state.activity.title}</h4>
 
-							<p className="money clearfix">
+							<div className="money clearfix ot-msg">
 								{
 									(this.state.activity.price_child_pre==null)? ""
 										:
 										<span className="now fl">现价：<span className="cost">￥{this.state.activity.price_child_pre}元</span></span>
 									}
-								<span className="original fr">价格：<span className="cost">￥{this.state.activity.price_child}元</span></span>
-							</p>
+								<span className={(!this.state.activity.price_child_pre==null) ? "original fr has-pre" : "original"}>
+									价格：
+									<span className="cost">
+										{this.state.activity.price_child == 0 ? "免费" :
+											<span>￥{this.state.activity.price_child}元</span>}
+									</span>
+								</span>
+							</div>
 
 							{/*<p className="privilage"><b>{this.state.activity.preinfo}</b></p>*/}
-							<p className="age">年龄：{this.state.activity.ages}岁</p>
-							<p className="time">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</p>
-							<p className="area">活动地点：{this.state.activity.area} {this.state.activity.position_details}</p>
-							<p>剩余名额：{(this.state.activity.quantities_remain>1000000) ? "不限":<font>{this.state.activity.quantities_remain}</font>}</p>
+							<div className="ot-msg"><span>年龄：{this.state.activity.ages}岁</span></div>
+							<div className="ot-msg">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</div>
+							<div className="ot-msg">活动地点：{this.state.activity.area} {this.state.activity.position_details}</div>
+							<div className="ot-msg">剩余名额：{(this.state.activity.quantities_remain>1000000) ? "不限":<font>{this.state.activity.quantities_remain}</font>}</div>
 						</div>
 					</div>
 
