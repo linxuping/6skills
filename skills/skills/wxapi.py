@@ -1332,11 +1332,11 @@ def get_wx_acttypes(req):
 @req_print
 def get_hot_activities(req):
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
-	_sql = "select b.id,b.img_cover from 6s_hot_activities a left join 6s_activity b on a.refid=b.id order by a.sequence;"
+	_sql = "select b.id,b.img_cover,b.title from 6s_hot_activities a left join 6s_activity b on a.refid=b.id order by a.sequence;"
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in xrange(count):
-			_json["activities"].append( {"id":rets[i][0],"img":rets[i][1]} )
+			_json["activities"].append( {"id":rets[i][0],"img":rets[i][1],"act_name":rets[i][2]} )
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "数据操作异常."

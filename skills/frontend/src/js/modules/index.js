@@ -97,7 +97,7 @@ var Carousel = React.createClass({
 								<div className="item" key={idx}>
 									<img src={elem.img} />
 									<div className="title-box">
-										<h3 className="title">{elem.act_name || "标题标题标题标题"}</h3>
+										<h3 className="title">{elem.act_name || "标题"}</h3>
 									</div>
 								</div>
 							);

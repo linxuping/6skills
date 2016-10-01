@@ -84,20 +84,29 @@ var App = React.createClass({displayName: "App", //
 		return (
 			React.createElement("div", {className: "app"}, 
 				React.createElement(SelectHeader, null), 
+				React.createElement("div", {style: {marginTop: 90}}, 
 				React.createElement(Activities, {activities: this.state.activities, pageable: this.state.pageable, 
 					moreClick: this.moreClickHandler, type: this.props.type})
+				)
 			)
 		);
 	}
 });
 
-//				<Selecter name="area" text="地区选择" url={get_areas_url}/>
+//<Selecter name="area" text="地区选择" url={get_areas_url}/>
 var SelectHeader = React.createClass({displayName: "SelectHeader",
+
 	render: function() {
-		var get_agesel_url = ges("activities/get-agesel");
+		var ages = [];
+		for (var i = 1; i < 13; i++) {
+			ages.push(i + "岁");
+		}
+		//var get_agesel_url = ges("activities/get-agesel");
 		return (
 			React.createElement("div", {className: "select-header"}, 
-				React.createElement(Selecter, {name: "age", text: "年龄选择", url: get_agesel_url})
+			React.createElement(Selecter, {name: "acttype", text: "声乐", url: "/wx/acttypes/list"}), 
+				React.createElement(Selecter, {name: "area", text: "天河区", url: "/wx/nearbyareas/list"}), 
+				React.createElement(Selecter, {name: "age", text: "8岁", menus: ages})
 			)
 		);
 	}
@@ -111,23 +120,30 @@ var Selecter = React.createClass({displayName: "Selecter",
 		};
 	},
 	componentDidMount: function() {
-		$.ajax({
-			url: this.props.url,
-			type: 'get',
-			dataType: 'json',
-			data: {},
-			success: function(res) {
-				this.setState({
-					values: res.values
-				});
-			}.bind(this),
-			error: function() {
-				console.log("Selecter error: "+this.props.url);
-			}.bind(this),
-			complete: function() {
-				//console.log("Selecter complete");
-			}.bind(this)
-		});
+		if (this.props.url) {
+			$.ajax({
+				url: this.props.url,
+				type: 'get',
+				dataType: 'json',
+				data: {openid: geopenid()},
+				success: function(res) {
+					this.setState({
+						menus: res.values
+					});
+				}.bind(this),
+				error: function() {
+					console.log("Selecter error: "+this.props.url);
+				}.bind(this),
+				complete: function() {
+					//console.log("Selecter complete");
+				}.bind(this)
+			});
+		} else {
+			this.setState({
+				menus: this.props.menus
+			});
+		}
+
 
 		//获取用户信息,如果没有
 		if (sessionStorage.getItem("_profile")!==undefined  && sessionStorage.getItem("_profile")!= null) {
@@ -174,15 +190,52 @@ var Selecter = React.createClass({displayName: "Selecter",
 			document.getElementById('content')
 		).setState({activities: [1,2,3,4,5,6]});*/
 	},
+
+	labelClick: function(){
+		this.setState({
+			showSheet: true
+		});
+	},
+
+	hideSheet: function(){
+		this.setState({
+			showSheet: false
+		});
+	},
+
 	render: function() {
 		return (
 			React.createElement("div", {className: "selecter"}, 
-				React.createElement("label", {forHtml: this.props.name}, this.props.text, ":"), 
-				React.createElement("select", {name: this.props.name, className: "weui_select ss-select", onChange: this.selectChanged}, 
-					React.createElement("option", {value: "不限"}, "不限"), 
-					 this.state.values.map(function(elem, index) {
-							return (React.createElement("option", {key: index, value: elem}, elem, "岁"));
-					}) 
+				React.createElement("div", {className: "tt", onClick: this.labelClick}, 
+					React.createElement("div", {className: "txt"}, this.props.text), 
+					React.createElement("div", {className: "tri"})
+				), 
+				React.createElement("div", {className: "actionsheet-wrap"}, 
+					React.createElement("div", {className: this.state.showSheet ? "weui_mask_transition show" : "weui_mask_transition ", onClick: this.hideSheet}, 
+						React.createElement("div", {className: this.state.showSheet ? "weui_actionsheet weui_actionsheet_toggle" : "weui_actionsheet"}, 
+							React.createElement("div", {className: "weui_actionsheet_menu"}, 
+								
+									this.state.menus && this.state.menus.length > 0 ?
+									this.state.menus.map(function(elem, index) {
+										return (
+											React.createElement("div", {className: "weui_actionsheet_cell", key: index, value: elem}, 
+												elem
+											)
+										);
+									})
+									:
+									React.createElement("div", {className: "weui_actionsheet_cell", value: "none"}, 
+										"暂无数据"
+									)
+								
+							), 
+							React.createElement("div", {className: "weui_actionsheet_action"}, 
+								React.createElement("div", {className: "weui_actionsheet_cell", value: "none", onClick: this.hideSheet}, 
+									"取消"
+								)
+							)
+						)
+					)
 				)
 			)
 		);
@@ -218,52 +271,60 @@ var Activities = React.createClass({displayName: "Activities",
 	},
 
 	render: function() {
-		//console.log(this.props.activities)
-		var liStr = this.props.activities &&
-					this.props.activities.map(function(elem, index) {
-			return (
-				React.createElement("li", {className: "ss-media-box", key: index, 
-					onClick: this.openDetailPage.bind(this, elem.actid, elem.quantities_remain)}, 
-					React.createElement("div", {className: "weui_media_box weui_media_appmsg"}, 
-						React.createElement("div", {className: "weui_media_hd ss-media-hd"}, 
-							React.createElement("img", {className: "weui_media_appmsg_thumb", src: elem.img_cover, alt: ""})
-						), 
-						React.createElement("div", {className: "weui_media_bd ss-media-bd"}, 
-							React.createElement("h4", {className: "weui_media_title"}, 
-								elem.title
-							), 
-							React.createElement("p", {className: "weui_media_desc"}, "活动剩余名额：",  (elem.quantities_remain>1000000)? "不限": React.createElement("font", null, elem.quantities_remain, "名")), 
-							React.createElement("p", {className: "weui_media_desc"}, "类型：", elem.tags), 
-							React.createElement("p", {className: "weui_media_desc"}, "集合地点：", elem.area), 
-							React.createElement("p", {className: "weui_media_desc"}, elem.ages, "岁")
-						)
-					), 
-					React.createElement("div", {className: "ss-join-bd clearfix"}, 
-						React.createElement("div", {className: "money-box fl"}, "￥", elem.price_child), 
-							React.createElement("button", {className: (elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr", 
-								onClick: this.openSignupPage, "data-actid": elem.actid, "data-quantitiesremain": elem.quantities_remain}, 
-								this.props.type == "preview" ? "我要报名" : "限时报名"
-							)
-					)
-				)
-			);
-		}.bind(this));
 		var moreBtn
 		if (this.props.pageable.total>1 && this.props.pageable.total > this.props.pageable.page) {
 			moreBtn = React.createElement("div", {className: "more-btn", onClick: this.props.moreClick}, 
 									"点击加载更多..."
 								)
 		}
-
 		return (
-			React.createElement("div", {className: "activities-list weui_panel_access", id: "wrapper"}, 
-				React.createElement("div", {id: "scroller"}, 
-					React.createElement("ul", {className: "weui_panel_bd"}, 
-						liStr
-					), 
-					moreBtn, 
-					React.createElement("div", {id: "sign-page-wrap"})
-				)
+			React.createElement("div", {className: "activities", id: "wrapper"}, 
+				React.createElement("ul", {className: "activities-list"}, 
+					
+						this.props.activities &&
+						this.props.activities.map(function(elem, index) {
+							return (
+								React.createElement("li", {className: "activity-item", key: index, 
+									onClick: this.openDetailPage.bind(this, elem.actid, elem.quantities_remain)}, 
+									React.createElement("div", {className: "weui_panel"}, 
+										React.createElement("div", {className: "weui_panel_bd"}, 
+											React.createElement("div", {className: "weui_media_box weui_media_appmsg"}, 
+												React.createElement("div", {className: "weui_media_hd ss-media-hd"}, 
+													React.createElement("img", {className: "weui_media_appmsg_thumb", src: elem.img_cover, alt: ""}), 
+													React.createElement("div", {className: "money"}, "￥", Number(elem.price_child).toFixed(2))
+												), 
+												React.createElement("div", {className: "weui_media_bd ss-media-bd"}, 
+													React.createElement("h4", {className: "title"}, 
+														elem.title
+													), 
+													/*<p className="weui_media_desc">活动剩余名额：{ (elem.quantities_remain>1000000)? "不限": <font>{elem.quantities_remain}名</font> }</p>*/
+													React.createElement("p", {className: "fl ot"}, elem.tags), 
+													React.createElement("p", {className: "fl ot"}, elem.area), 
+													React.createElement("p", {className: "fl ot"}, elem.ages, "岁")
+												)
+											)
+										), 
+										React.createElement("div", {className: "weui_panel_bd"}, 
+											React.createElement("ul", {className: "ttt"}, 
+												React.createElement("li", {className: "tt clearfix"}, 
+													React.createElement("span", {className: "pp red"}, "限时"), 
+													React.createElement("span", {className: "txt"}, "限时优惠，每周六晚上17:00-19:00")
+												), 
+												React.createElement("li", {className: "tt clearfix"}, 
+													React.createElement("span", {className: "pp yellow"}, "保障"), 
+													React.createElement("span", {className: "txt"}, "宝爸全程跟课，满意才收费。")
+												)
+											)
+										)
+
+									)
+								)
+							);
+						}.bind(this))
+					
+				), 
+				moreBtn, 
+				React.createElement("div", {id: "sign-page-wrap"})
 			)
 		);
 	}
