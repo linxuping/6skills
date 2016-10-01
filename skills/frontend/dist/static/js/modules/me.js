@@ -46,11 +46,8 @@ var Me = React.createClass({displayName: "Me",
 		var href = window.location.href.split("#")[0];
 		history.replaceState("myActivities", null, href);
 	},
-	gotoActivityDetail: function(){
-		var target = event.target.toLowerCase == "li" ? $(event.target) : $(event.target).parents("li");
-		var actid = target.attr('data-actid');
-		if (actid == undefined) {return false};
-		window.location = "activity_detail.html?actid=" + actid
+	gotoActivityDetail: function(activity){
+		window.location = "activity_detail.html?actid=" + activity.actid
 	},
 	gotoFeedback: function(){
 		document.title = "联系我们";
@@ -207,7 +204,7 @@ var MyActivities = React.createClass({displayName: "MyActivities",
 		var myActivitiesStr = this.state.activities &&
 			this.state.activities.map(function(elem, index) {
 				return (
-					React.createElement("li", {onClick: this.props.gotoActivityDetail, 
+					React.createElement("li", {onClick: this.props.gotoActivityDetail.bind(this, elem), 
 						style: {"cursor": "pointer"}, "data-actid": elem.actid}, 
 						React.createElement("header", {className: "ss-hd"}, elem.title), 
 						React.createElement("p", {className: "time clearfix"}, 
@@ -295,7 +292,7 @@ var MyCollections = React.createClass({displayName: "MyCollections",
 		var myActivitiesStr = this.state.activities &&
 			this.state.activities.map(function(elem, index) {
 				return (
-					React.createElement("li", {onClick: this.props.gotoActivityDetail, 
+					React.createElement("li", {onClick: this.props.gotoActivityDetail.bind(this, elem), 
 						style: {"cursor": "pointer"}, "data-actid": elem.actid}, 
 						React.createElement("header", {className: "ss-hd"}, elem.title), 
 						React.createElement("p", {className: "time clearfix"}, 

@@ -19,7 +19,7 @@ module.exports = {
         baseDir: [build],
         middleware: [proxy(proxyOptions)]
       },
-      port: 3000,
+      port: 9901,
       files: [
         developmentAssets + '/css/**',
         developmentAssets + '/js/**',

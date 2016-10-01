@@ -1,9 +1,11 @@
 {
-  "activity_detail.js": "activity_detail-5ace5f7b75.js",
+  "activity_detail.js": "activity_detail-62bf440144.js",
   "common.js": "common-7cf45fa76f.js",
-  "config.js": "config-fa62f6f166.js",
-  "list.js": "list-b2dd8ec5b4.js",
-  "me.js": "me-2cf82276bd.js",
-  "sign.js": "sign-330644bd72.js",
+  "config.js": "config-8edb964fe5.js",
+  "list.js": "list-46be1e7785.js",
+  "me.js": "me-502c02bfc5.js",
+  "sign.js": "sign-a2eafd2c78.js",
+  "sign_new.js": "sign_new-591708970f.js",
+  "upload.js": "upload-05866515e9.js",
   "verify.js": "verify-cda6e77f3b.js"
 }

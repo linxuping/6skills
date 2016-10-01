@@ -285,6 +285,7 @@ class JsApi_pub(Common_util_pub):
         jsApiObj = {}  
         jsApiObj["appId"] = WxPayConf_pub.APPID  
         timeStamp = int(time.time())  
+        print "gen ts: ",timeStamp
         jsApiObj["timeStamp"] = "{0}".format(timeStamp)  
         jsApiObj["nonceStr"] = self.createNoncestr()  
         jsApiObj["package"] = "prepay_id={0}".format(self.prepay_id)  
@@ -659,6 +660,6 @@ def get_prepay_info(out_trade_no, body, total_fee, notify_url, trade_type, openi
 	pub.setParameter("notify_url", notify_url)
 	pub.setParameter("trade_type", trade_type)
 	pub.setParameter("openid", openid)
-	return pub.getPrepayInfo()
+	return pub.getPrepayInfo()#,pub.getParameters()["timeStamp"]
 
 

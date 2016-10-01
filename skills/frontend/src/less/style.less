@@ -2,15 +2,15 @@
 @secondColor: #ffd052;
 @fontColor: #222;
 
-@backHeaderHeight: 55px;
+@backHeaderHeight: 90px;
+@bg: #f1f1f1;
 
 *{
 	box-sizing: border-box;
 }
 html{
-	font-size: 62.5%;
-	font-size: 63%\9;
 	min-height: 100%;
+	background-color: @bg;
 }
 body{
 	width: auto;
@@ -35,48 +35,54 @@ body{
 		clear: both;
 	}
 }
+.ss-flex {
+    display: -webkit-box;
+  	display: -webkit-flex;
+  	display: flex;
+}
+.ss-flex-item {
+    -webkit-box-flex: 1;
+  -webkit-flex: 1;
+          flex: 1;
+}
 .select-header{
-	@height: 45px;
+	@height: 90px;
 	height: @height;
 	border-bottom: #ccc 1px solid;
 	position: fixed;
 	top: 0px;
 	background-color: #fff;
 	z-index: 99;
+	font-size: 24px;
 	.selecter{
 		display: table-cell;
 		width: 1%;
-		label{
+		.tt{
 			display: block;
+			width: 100%;
 			line-height: @height;
-			padding-left: 5px;
+			text-align: center;
 			float: left;
 			overflow: visible;
 			white-space: nowrap;
-			&:after{
-				position: absolute;
-				display: block;
-				content: " ";
-				border: 6px solid #fff;
-				border-top: 6px solid transparent;
-				left: 120px;
-				top: 20px;
+			padding-right: 10px;
+			.txt{
+				display: inline-block;
+				margin-right: 5px;
 			}
-			&:before{
-				position: absolute;
-				display: block;
-				content: " ";
-				border: 6px solid #ccc;
-				border-top: 6px solid transparent;
-				left: 120px;
-				top: 18px;
+			.tri{
+				display: inline-block;
+				position: relative;
+				top: -5px;
+				left: 5px;
+				width: 15px;
+				height: 15px;
+				margin-top: -5px;
+				background-color: #FFF;
+				border-left: 2px solid #ccc;
+				border-bottom: 2px solid #ccc;
+				transform: rotate(-45deg)
 			}
-		}
-		.ss-select{
-			float: left;
-			width: 75%;
-			position: relative;
-			display: block;
 		}
 	}
 	&:after{
@@ -85,66 +91,141 @@ body{
 		content: "";
 	}
 }
-.activities-list{
-	margin-top: 45px;
-	.more-btn{
-		height: 3.5rem;
-		text-align: center;
-		font-size: 1.6rem;
-		line-height: 3.5rem;
-		cursor: pointer;
-	}
-}
-.ss-media-box{
-	@ssMediaSize: 120px;
-	.ss-media-hd {
-		width: @ssMediaSize !important;
-		height: @ssMediaSize !important;
-		img{
-			height: 100%;
-		}
-	}
-	.ss-media-bd {
-		width: 100%;
+.weui_mask_transition{
+	top: 90px;
+	&.show{
 		display: block;
-		float: left;
+		background: rgba(0,0,0,.6);
 	}
-	.ss-join-bd{
-		padding-left: 15px;
-		padding-right: 15px;
-		margin-top: -7px;
-		.money-box{
-			color: #d00;
-			font-size: 1.6rem;
+}
+.weui_actionsheet{
+	top: 90px;
+	bottom: auto !important;
+}
+.weui_actionsheet_cell{
+	height: 84px;
+	background-color: rgba(255, 255, 255, 0.75);
+	font-size: 24px;
+	line-height: 64px;
+}
+.activities-list{
+	margin-bottom: 10px;
+	.activity-item{
+		margin-top: 10px;
+
+	}
+	.weui_media_box{
+		padding: 10px;
+		padding-top: 20px;
+		-webkit-box-align: start;
+		-webkit-align-items: flex-start;
+		align-items: flex-start;
+		border-bottom: 1px solid #e4e8d1;
+		.weui_media_hd{
+			width: 236px;
+			height: 150px;
+			margin-right: 23px;
+			position: relative;
+			.money{
+				position: absolute;
+				bottom: 0;
+				line-height: 26px;
+				font-size: 26px;
+				color: #fb4381;
+				background-color: rgba(255, 255, 255, .6);
+				padding: 10px 15px;
+			}
+		}
+		.title{
+			height: 80px;
+			font-size: 26px;
+			word-break: break-all;
+		    text-overflow: ellipsis;
+		    display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+		    -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+		    -webkit-line-clamp: 2; /** 显示的行数 **/
+		    overflow: hidden;  /** 隐藏超出的内容 **/
+		    margin-bottom: 30px;
+		}
+		.ot{
+			padding-right: 25px;
+			font-size: 20px;
+			color:#999;
 		}
 	}
-	border-bottom: 1px solid #ccc;
-	padding-bottom: 10px;
 }
-
+.more-btn{
+	height: 100px;
+	text-align: center;
+	font-size: 26px;
+	line-height: 100px;
+	cursor: pointer;
+}
+.ttt{
+	padding: 20px 10px 10px;
+	font-size: 20px;
+	line-height: 30px;
+	.tt{
+		margin-bottom: 10px;
+		.pp{
+			display: block;
+			color: #FFF;
+			padding: 5px 10px;
+			height: 33px;
+			margin-right: 10px;
+			float: left;
+			line-height: 20px;
+			&.red{
+				background-color: @themeColor;
+			}
+			&.yellow{
+				background-color: #ffd052;
+			}
+		}
+		.txt{
+			display: block;
+			float: left;
+		}
+	}
+}
 .media{
 	.media-hd {
 		width: 100%;
 		overflow: hidden;
+		max-height: 271px;
 		img{
 			width: 100%;
 		}
 	}
 	.title{
-		font-size: 2.4rem;
-		line-height: 32px;
-		padding-top: 15px;
-		padding-bottom: 15px;
+		font-size: 32px;
+		line-height: 46px;
+		padding-top: 30px;
+		padding-bottom: 35px;
 	}
-	.media-bd{
-		font-size: 1.6rem;
-		p{
-			line-height: 2.2rem;
+	.has-pre{
+		position: relative;
+		&:after{
+			content: " ";
+			position: absolute;
+			width: 100%;
+			height: 3px;
+			top: 50%;
+			left: 0;
+			background-color: #222;
 		}
 	}
 }
+.ot-msg{
+	margin-bottom: 24px;
+	span{
+		display: inline-block;
+	}
+	font-size: 24px;
+	line-height: 32px;
+}
 .activity-detail{
-	@btnHeight: 60px;
+	@btnHeight: 110px;
 	margin-top: @backHeaderHeight;
 	position: absolute;
 	top: 0;
@@ -158,8 +239,8 @@ body{
 	}
 	.header-msg{
 		p{
-			font-size: 16px;
-			margin-bottom: 5px;
+			font-size: 24px;
+			margin-bottom: 24px;
 			&:last-child{
 				margin-bottom: 15px;
 			}
@@ -168,7 +249,7 @@ body{
 	.money{
 		.cost{
 			color: #ff4444;
-			font-size: 24px;
+			font-size: 32px;
 		}
 	}
 	.media{
@@ -188,7 +269,7 @@ body{
 		height: @btnHeight;
 		line-height: @btnHeight;
 		text-align: center;
-		font-size: 18px;
+		font-size: 26px;
 	}
 	.sign-btn-right{
 		.sign-btn();
@@ -197,7 +278,7 @@ body{
 	}
 }
 .back-btn{
-	font-size: 1.8rem;
+	font-size: 26px;
 	height: @backHeaderHeight;
 	line-height: @backHeaderHeight;
 	padding-left: 3rem;
@@ -251,7 +332,7 @@ body{
 .me{
 	margin-top: 3rem;
 	font-size: 2rem;
-	@imgSize: 75px;
+	@imgSize: 120px;
 	img{
 		width: @imgSize;
 		height: @imgSize;
@@ -347,14 +428,6 @@ body{
 		}
 	}
 }
-.ss-media-box .ss-media-bd .weui_media_title {
-	word-wrap: normal;
-    white-space: normal;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    line-height: 22px;
-}
 
 .weui_btn_primary{
 	background-color: @themeColor;
@@ -368,4 +441,109 @@ body{
 .weui_btn_plain_primary{
 	color: @themeColor;
 	border-color: @themeColor;
+}
+
+//carousel
+@carousel-indicator-border-color: #fff;
+@carousel-indicator-active-bg: @themeColor;
+@carousel-title-h: 54px;
+@dotWidth: 16px;
+.carousel{
+	.slick-track{
+		height: 330px;
+		overflow: hidden;
+	}
+	.item{
+		img{
+			width: 100%;
+		}
+		.title-box{
+			position: absolute;
+			bottom: 0;
+			height: @carousel-title-h;
+			line-height: @carousel-title-h;
+			background-color: rgba(0, 0, 0, .6);
+			color: #FFF;
+			width: 100%;
+			padding-left: 15px;
+			font-size: 26px;
+		}
+	}
+}
+.slick-dots {
+  position: absolute;
+  bottom: 13px;
+  right: 10px;
+  z-index: 15;
+  width: 40%;
+  padding-left: 0;
+  list-style: none;
+  text-align: right;
+
+  li {
+    display: inline-block;
+    width:  @dotWidth;
+    height: @dotWidth;
+    margin: 1px;
+    text-indent: -999px;
+    border: 1px solid @carousel-indicator-border-color;
+    border-radius: @dotWidth;
+    cursor: pointer;
+
+    background-color: #000 \9; // IE8
+    background-color: rgba(0,0,0,0); // IE9
+    button{
+      height: 100%;
+      width: 100%;
+      display: block;
+      color: transparent;
+    }
+  }
+  .slick-active {
+    width:  @dotWidth;
+    height: @dotWidth;
+    background-color: @carousel-indicator-active-bg;
+    border-color: @carousel-indicator-active-bg;
+  }
+}
+
+//navication
+.nav-item{
+	padding: 33px 0;
+	text-align: center;
+	img{
+		width: 118px;
+	}
+	.text{
+		color: @fontColor;
+		font-size: 24px;
+	}
+}
+.weui_cells_title{
+	font-size: 24px;
+}
+.weui_cells{
+	font-size: 24px;
+	.weui_cell{
+		padding: 20px 30px;
+	}
+}
+.weui_btn{
+	font-size: 26px;
+	&.weui_btn_mini{
+		font-size: 18px;
+	}
+}
+.weui_uploader_input_wrp, .weui_uploader_file{
+	width: 120px;
+	height: 120px;
+	margin-right: 15px;
+	margin-bottom: 15px;
+}
+.weui_cells_radio .weui_check:checked + .weui_icon_checked:before{
+	font-size: 24px;
+}
+.weui_cell_select .weui_cell_bd:after{
+	width: 12px;
+	height: 12px;
 }

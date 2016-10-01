@@ -100,6 +100,84 @@ def activities_special_offers(req):
 
 
 @req_print
+def activities_special_offers2(req):
+	#check.
+	ret,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
+	if not ret:
+		return city
+	#ret,district = check_mysql_arg_jsonobj("district", req.GET.get("district",None), "str")
+	#if not ret:
+	#	return district
+	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "str")
+	tmps = []
+	if ret:
+		age = "0-100" if age=="*" else age
+		tmps = age.split("-")
+	if (not ret) or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
+		return response_json_error( "age invalid! must be *-*" )
+	_age_from = int(str(tmps[0]))
+	_age_to = int(str(tmps[1]))
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
+	ret,pagetype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
+	sql_datefilter = ""
+	#1 weekend.
+	#1 weekend - 1 month.
+	if pagetype == "preview":
+		#sql_datefilter = "a.time_from>DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+		sql_datefilter = "a.preinfo_id is null and "
+	else:
+		#sql_datefilter = "a.time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+		sql_datefilter = "a.preinfo_id>0 and "
+
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	position_id = 0
+	if ret:
+		_sql = "select position_id from 6s_user where openid='%s'"%openid
+		count,rets=dbmgr.db_exec(_sql)
+		if count>0 and rets[0][0]!=None:
+			position_id = int(rets[0][0])
+		if position_id == 0:
+			position_id = 101010100;
+
+	#exec 
+	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	if not ret: #by date
+		_sql = "select a.id,imgs_act,title,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,a.createtime,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1 order by a.createtime desc limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	else: #by distr and date
+		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 12 MONTH) as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s b.status=1 and c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s b.status=1 and c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	count,rets=dbmgr.db_exec(_sql)
+	if count >= 0:
+		for i in range(count):
+			lis = rets[i]
+			imgs = lis[1].strip("\r\n ").split(" ")
+			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"tags":lis[3],"area":lis[4],"ages":"%s-%s"%(lis[5],lis[6]),"price_child":(lis[7] if lis[12]==None else lis[12]),"quantities_remain":lis[9],"img_cover":lis[10]+"?imageMogr2/thumbnail/300x300|imageMogr2/gravity/Center/crop/250x250"} )#,"price_child_pre":lis[11],"preinfo":lis[13]
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("db fail. ")
+
+	#if district == "":
+	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,_age_from,_age_to,_age_from,_age_to)
+	#else:
+	#	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,area,_age_from,_age_to,_age_from,_age_to)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
+		_json["pageable"]["page"] = page
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+	#return HttpResponseRedirect('/test2')
+
+
+@req_print
 def activities_preview(req):
 	area = req.GET.get("area",None)
 	area2 = req.GET.get("area2",None)
@@ -961,7 +1039,7 @@ def update_access_token():
 				mo.logger.error("[TOKEN] can't find %s in redis."%_rekey)
 				continue
 			for i in xrange(3):
-				print ">>> ",int(nosqlmgr.redis_conn.ttl(_ackey))>60, _check_access_token_valid(_actoken, _openid, "web")
+				#print ">>> ",int(nosqlmgr.redis_conn.ttl(_ackey))>60, _check_access_token_valid(_actoken, _openid, "web")
 				if int(nosqlmgr.redis_conn.ttl(_ackey))>60 and _check_access_token_valid(_actoken, _openid, "web"):
 					break
 				if _update_web_access_token(_openid, _retoken):
@@ -1290,6 +1368,84 @@ def get_nearbyareas(req):
 		_json["errmsg"] = "数据操作异常."
 		mo.logger.error("db fail. "+rets)
 
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+@csrf_exempt
+@req_print
+def wxpay(req):
+	body = req.body
+	if len(body) == 0:
+		mo.logger.info( "wxpay body 0." )
+		return HttpResponse("-1", mimetype='text/plain')
+	print body
+	import xml.etree.ElementTree as Etree
+	msgxml = None
+	try:
+		msgxml = Etree.fromstring(body)
+	except:
+		mo.logger.error( str(sys.exc_info())+"; "+str(traceback.format_exc()) )
+		return HttpResponse("req.body invalid: %s"%str(body), mimetype='text/plain')
+	
+	bank_type,cash_fee,fee_type,is_subscribe,result_code,return_code,nonce_str,openid,total_fee,out_trade_no,trade_type,transaction_id = msgxml.find("bank_type").text, msgxml.find("cash_fee").text, msgxml.find("fee_type").text, msgxml.find("is_subscribe").text, msgxml.find("result_code").text, msgxml.find("return_code").text, msgxml.find("nonce_str").text, msgxml.find("openid").text, msgxml.find("total_fee").text, msgxml.find("out_trade_no").text, msgxml.find("trade_type").text, msgxml.find("transaction_id").text
+	_sql = "insert into 6s_wxpay(bank_type,cash_fee,fee_type,is_subscribe,result_code,return_code,nonce_str,openid,total_fee,out_trade_no,trade_type,transaction_id) values ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(bank_type,cash_fee,fee_type,is_subscribe,result_code,return_code,nonce_str,openid,total_fee,out_trade_no,trade_type,transaction_id)
+	count,rets=dbmgr.db_exec(_sql)
+	if count <= 0:
+		mo.logger.error("save wxpay fail. %s"%body)
+	else:
+		mo.logger.info("save wxpay OK. %s: %s"%(openid,total_fee))
+
+	resp = HttpResponse("success", mimetype='text/plain')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@csrf_exempt
+@req_print
+def testwxpay(req):
+	mo.logger.info("testwxpay......");
+	_json = { "values":["声乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def get_wx_payinfo(req):
+	mo.logger.info("pay info......");
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	if not ret:
+		return actid
+
+	import wxpay
+	#ret = wxpay.get_prepay_info("1234", "abc", "1", "http://www.6skills.com/wxpay/", "JSAPI", "oYgYJwX75E_sQR8AQfkzoa94E5rM")
+	out_trade_no = str(int(time.time()))
+	body = "test pay body"
+	total_fee = "1"
+	trade_type = "JSAPI"
+	ret = wxpay.get_prepay_info(out_trade_no, body, total_fee, "http://www.6skills.com/wxpay/", trade_type, openid)
+	mo.logger.info("wxpay: trade_no:%s, openid:%s, ret:%s"%(out_trade_no,openid, str(ret)) )
+	_json = { "errcode":0,"errmsg":"" }
+	if "prepay_id" in ret:
+		_json["prepay_id"] = ret["prepay_id"] 
+		_json["appid"] = ret["appid"] 
+		_json["timestamp"] = str(int(time.time())) 
+		_json["noncestr"] = ret["nonce_str"] 
+		_json["sign"] = ret["sign"] 
+		_json["paysign"] = encode_md5("appId="+ret["appid"]+"&nonceStr="+ret["nonce_str"]+"&package=prepay_id="+ret["prepay_id"]+"&signType=MD5&timeStamp="+_json["timestamp"]+'&key='+settings.pay_key)
+		_sql = "insert into 6s_prepay_info(act_id,out_trade_no,body,total_fee,trade_type,openid,prepay_id) values ('%d','%s','%s','%s','%s','%s','%s')"%(actid,out_trade_no,body,total_fee, trade_type, openid,ret["prepay_id"])
+		count,rets=dbmgr.db_exec(_sql)
+		if count <= 0:
+			mo.logger.error("save prepay_info fail. %s"%str(ret))
+		else:
+			mo.logger.error("save prepay_info OK. %s"%openid)
+	print _json
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)

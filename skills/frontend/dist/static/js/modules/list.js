@@ -180,8 +180,8 @@ var Selecter = React.createClass({displayName: "Selecter",
 				React.createElement("label", {forHtml: this.props.name}, this.props.text, ":"), 
 				React.createElement("select", {name: this.props.name, className: "weui_select ss-select", onChange: this.selectChanged}, 
 					React.createElement("option", {value: "不限"}, "不限"), 
-					 this.state.values.map(function(elem) {
-							return (React.createElement("option", {value: elem}, elem, "岁"));
+					 this.state.values.map(function(elem, index) {
+							return (React.createElement("option", {key: index, value: elem}, elem, "岁"));
 					}) 
 				)
 			)
@@ -190,7 +190,10 @@ var Selecter = React.createClass({displayName: "Selecter",
 });
 
 var Activities = React.createClass({displayName: "Activities",
-	openSignupPage: function(actid, remains){
+	openSignupPage: function(event){
+		event.stopPropagation();
+		var actid = event.target.dataset.actid;
+		var remains = event.target.dataset.quantitiesremain;
 		//console.log(event)
 		//location.href='/template/activity_detail.html?actid='+actid;
 		if (remains == 0) {
@@ -219,7 +222,7 @@ var Activities = React.createClass({displayName: "Activities",
 		var liStr = this.props.activities &&
 					this.props.activities.map(function(elem, index) {
 			return (
-				React.createElement("li", {className: "ss-media-box", 
+				React.createElement("li", {className: "ss-media-box", key: index, 
 					onClick: this.openDetailPage.bind(this, elem.actid, elem.quantities_remain)}, 
 					React.createElement("div", {className: "weui_media_box weui_media_appmsg"}, 
 						React.createElement("div", {className: "weui_media_hd ss-media-hd"}, 
@@ -229,7 +232,7 @@ var Activities = React.createClass({displayName: "Activities",
 							React.createElement("h4", {className: "weui_media_title"}, 
 								elem.title
 							), 
-							React.createElement("p", {className: "weui_media_desc"}, "活动剩余名额：", elem.quantities_remain, "名"), 
+							React.createElement("p", {className: "weui_media_desc"}, "活动剩余名额：",  (elem.quantities_remain>1000000)? "不限": React.createElement("font", null, elem.quantities_remain, "名")), 
 							React.createElement("p", {className: "weui_media_desc"}, "类型：", elem.tags), 
 							React.createElement("p", {className: "weui_media_desc"}, "集合地点：", elem.area), 
 							React.createElement("p", {className: "weui_media_desc"}, elem.ages, "岁")
@@ -238,7 +241,7 @@ var Activities = React.createClass({displayName: "Activities",
 					React.createElement("div", {className: "ss-join-bd clearfix"}, 
 						React.createElement("div", {className: "money-box fl"}, "￥", elem.price_child), 
 							React.createElement("button", {className: (elem.quantities_remain == 0) ? "weui_btn weui_btn_mini weui_btn_default weui_btn_disabled fr" : "weui_btn weui_btn_mini weui_btn_primary fr", 
-								onClick: this.openSignupPage.bind(this,elem.actid, elem.quantities_remain)}, 
+								onClick: this.openSignupPage, "data-actid": elem.actid, "data-quantitiesremain": elem.quantities_remain}, 
 								this.props.type == "preview" ? "我要报名" : "限时报名"
 							)
 					)

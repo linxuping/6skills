@@ -25,7 +25,7 @@ function makeConf(options) {
     var entries = genEntries();
     var chunks = Object.keys(entries);
     entries.common = [
-        'webpack-dev-server/client?http://127.0.0.1:3000', // WebpackDevServer host and port
+        'webpack-dev-server/client?http://0.0.0.0:3000', // WebpackDevServer host and port
         'webpack/hot/only-dev-server',
     ];
     var config = {

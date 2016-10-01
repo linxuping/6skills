@@ -34,14 +34,15 @@ function de(a, b) {
 }
 function ges(controller) {
 	//return de("6073d8ef25fdfe74a1104961c30a99f7fa35dd0054cc61","aXi7$kj0l3@W")+controller;
-	return "http://www.6skills.com/"+controller;
+	//return "http://www.6skills.com/"+controller;
+  return "/" + controller;
 }
 function jump_pubnum(){
-	location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIyOTU1MTI1MA==&scene=110#wechat_redirect";
+	location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIzODU5NDE0Ng==&scene=123#wechat_redirect";
 }
 function try_jump_pubnum(){
 	if (sessionStorage.getItem("6soid") == null){
-		location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIyOTU1MTI1MA==&scene=110#wechat_redirect";
+		location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIzODU5NDE0Ng==&scene=123#wechat_redirect";
 		return true;
 	}
 	return false;
