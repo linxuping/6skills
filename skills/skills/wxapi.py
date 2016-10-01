@@ -46,16 +46,22 @@ def activities_special_offers(req):
 	if not ret:
 		return pagesize
 	ret,pagetype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
+	ret,acttype = check_mysql_arg_jsonobj("acttype", req.GET.get("acttype",None), "str", "")
+	ret,area = check_mysql_arg_jsonobj("area", req.GET.get("area",None), "str", "")
 	sql_datefilter = ""
 	#1 weekend.
 	#1 weekend - 1 month.
-	if pagetype == "preview":
-		#sql_datefilter = "a.time_from>DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
-		sql_datefilter = "a.preinfo_id is null and "
-	else:
-		#sql_datefilter = "a.time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
-		sql_datefilter = "a.preinfo_id>0 and "
-
+	#if pagetype == "preview":
+	#	#sql_datefilter = "a.time_from>DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+	#	sql_datefilter = "a.preinfo_id is null and "
+	#else:
+	#	#sql_datefilter = "a.time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+	#	sql_datefilter = "a.preinfo_id>0 and "
+	if acttype != "" and acttype != "全部" and acttype != "*":
+		sql_datefilter += "a.name = '%s' and "%acttype
+	if area != "" and area != "全城" and area != "*":
+		sql_datefilter += "c.name = '%s' and "%area
+		
 	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
 	position_id = 0
 	if ret:
@@ -1415,7 +1421,6 @@ def testwxpay(req):
 
 @req_print
 def get_wx_payinfo(req):
-	mo.logger.info("pay info......");
 	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
 	if not ret:
 		return openid
@@ -1423,11 +1428,26 @@ def get_wx_payinfo(req):
 	if not ret:
 		return actid
 
+	_sql = "select a.title,a.price_child,b.price_child from 6s_activity a left join 6s_preinfo b on a.preinfo_id=b.id where a.id=%d;"%actid
+	count,rets=dbmgr.db_exec(_sql)
+	if count <= 0:
+		mo.logger.error("can't find activity: %d"%actid)
+		return response_json_error( "activity not exist." )
+	body = rets[0][0]
+	total_fee = rets[0][1] if rets[0][2] is None else rets[0][2]
+	try:
+		_total_fee = int(float(total_fee)*100)
+		if _total_fee <= 0:
+			mo.logger.error("total_fee must be larger than 0: %s"%openid)
+			return response_json_error( "total_fee invalid: %d. %s"%(_total_fee,openid) )
+		total_fee = str(_total_fee)
+	except:
+		mo.logger.error("total_fee is't float: %s"%total_fee)
+		return response_json_error( "total_fee invalid." )
+	
 	import wxpay
-	#ret = wxpay.get_prepay_info("1234", "abc", "1", "http://www.6skills.com/wxpay/", "JSAPI", "oYgYJwX75E_sQR8AQfkzoa94E5rM")
 	out_trade_no = str(int(time.time()))
-	body = "test pay body"
-	total_fee = "1"
+	#total_fee = "1"
 	trade_type = "JSAPI"
 	ret = wxpay.get_prepay_info(out_trade_no, body, total_fee, "http://www.6skills.com/wxpay/", trade_type, openid)
 	mo.logger.info("wxpay: trade_no:%s, openid:%s, ret:%s"%(out_trade_no,openid, str(ret)) )
