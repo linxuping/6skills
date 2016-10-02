@@ -58,7 +58,7 @@ var Me = React.createClass({
 	},
 
 	gotoMyActivities: function(){
-		document.title = "已报名活动";
+		document.title = "已报名课程";
 		var href = window.location.href.split("#")[0];
 		history.replaceState("myActivities", null, href + "#myactivities");
 		ReactDOM.render(
@@ -88,7 +88,7 @@ var Me = React.createClass({
 							<a href="javascript:void(0);" className="weui_cell"
 								 onClick={this.gotoMyActivities}>
 								<div className="weui_cell_bd weui_cell_primary">
-									<p>已报名活动</p>
+									<p>已报名课程</p>
 								</div>
 								<div className="weui_cell_ft"></div>
 							</a>
@@ -100,14 +100,6 @@ var Me = React.createClass({
 								</div>
 								<div className="weui_cell_ft"></div>
 							</a>
-
-							<a href="javascript:void(0);" className="weui_cell"
-								 onClick={this.gotoFeedback}>
-								<div className="weui_cell_bd weui_cell_primary">
-									<p>联系我们</p>
-								</div>
-								<div className="weui_cell_ft"></div>
-							</a>
 						</div>
 					</div>
 				</div>
@@ -116,13 +108,23 @@ var Me = React.createClass({
 		);
 	}
 });
+/*
+							<a href="javascript:void(0);" className="weui_cell"
+								 onClick={this.gotoFeedback}>
+								<div className="weui_cell_bd weui_cell_primary">
+									<p>联系我们</p>
+								</div>
+								<div className="weui_cell_ft"></div>
+							</a>
+			<div className="feedback sign-page">
+*/
 
 //FIXED ME
 var Feedback = React.createClass({
 	render: function() {
 		return (
-			<div className="feedback sign-page">
-				<div className="back-btn" onClick={this.props.back}>返回</div>
+			<div className="feedback">
+				{(this.props.onlyContact=="1") ? <div ></div>:<div className="back-btn" onClick={this.props.back}>返回</div>}
 				<h3>转载文章</h3>
 				<p>转载文章请在文中附下图，即视为有效制授权，无需再联系我们</p>
 				<p className="qr">
@@ -155,7 +157,7 @@ var MyActivities = React.createClass({
 		});
 		ReactDOM.render(
 			<ConfirmDialog callback={this.confirmReset} title="取消报名"
-				content="您确定要取消该活动的报名吗？"/>,
+				content="您确定要取消该课程的报名吗？"/>,
 			document.getElementById("confirm-dialog-wrap")
 		);
 	},
@@ -208,7 +210,7 @@ var MyActivities = React.createClass({
 						style={{"cursor": "pointer"}} data-actid={elem.actid}>
 						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
-							<span>活动时间</span><time>{elem.time_act}</time>
+							<span>课程时间</span><time>{elem.time_act}</time>
 						</p>
 						<div className="time clearfix">
 							<span>报名时间</span><time>{elem.time_signup}</time>
@@ -296,7 +298,7 @@ var MyCollections = React.createClass({
 						style={{"cursor": "pointer"}} data-actid={elem.actid}>
 						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
-							<span>活动时间</span><time>{elem.time_act}</time>
+							<span>课程时间</span><time>{elem.time_act}</time>
 						</p>
 						<button type="button" onClick={this.delCollectionHandler}
 							data-uid={index} data-collid={elem.collid} className="weui_btn weui_btn_mini weui_btn_default">
