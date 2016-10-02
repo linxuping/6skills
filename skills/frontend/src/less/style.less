@@ -92,14 +92,14 @@ body{
 	}
 }
 .weui_mask_transition{
-	top: 90px;
+	top: 0px;
 	&.show{
 		display: block;
 		background: rgba(0,0,0,.6);
 	}
 }
 .weui_actionsheet{
-	top: 90px;
+	position: relative;
 	bottom: auto !important;
 }
 .weui_actionsheet_cell{
@@ -546,4 +546,9 @@ body{
 .weui_cell_select .weui_cell_bd:after{
 	width: 12px;
 	height: 12px;
+}
+.weui_mask_transition{
+	bottom: 0;
+	height: auto;
+	overflow: auto;
 }
