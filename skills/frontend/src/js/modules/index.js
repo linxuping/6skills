@@ -11,7 +11,7 @@ var Index = React.createClass({
 	},
 
 	fatchActivities: function(){
-		var url =  '/activities/special-offers?area=*&age=0-100&page=1&pagesize=5&city&district=天河区';
+		var url =  '/activities/special-offers?area=*&age=0-100&page=1&pagesize=5&city&district=*';
 		$.ajax({
 			url: url,
 			type: 'get',
@@ -79,6 +79,10 @@ var Carousel = React.createClass({
 
 	},
 
+	clickHandler: function(activity) {
+	  location.href = "activity_detail.html?actid=" + activity.id;
+	},
+
 	render: function() {
 		var settings = {
 			dots: true,
@@ -94,14 +98,14 @@ var Carousel = React.createClass({
 					{
 						this.state.activities.map(function(elem, idx) {
 							return (
-								<div className="item" key={idx}>
+								<div className="item" key={idx} onClick={this.clickHandler.bind(this, elem)}>
 									<img src={elem.img} />
 									<div className="title-box">
 										<h3 className="title">{elem.act_name || "标题"}</h3>
 									</div>
 								</div>
 							);
-						})
+						}.bind(this))
 					}
 				</Slider>
 			</div>

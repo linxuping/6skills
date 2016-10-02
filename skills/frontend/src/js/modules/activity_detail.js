@@ -9,19 +9,19 @@ var ActivityDetail = React.createClass({
 
 	openSignPage: function(){
 		var _oid = geopenid();
-		if ("undefined" == _oid || null == _oid){
-			var r = confirm("请先关注公众号再查看.");
-			if (r)
-				jump_pubnum();
-			return;
-		}
-		if (this.state.expire) {
-			alert("该活动已经过期！")
-		}
-		else if (this.state.status) {
-			window.location = "#qrcode";
-			alert("您已经报过名了，请到已报名活动中查看！")
-		} else {
+		// if ("undefined" == _oid || null == _oid){
+		// 	var r = confirm("请先关注公众号再查看.");
+		// 	if (r)
+		// 		jump_pubnum();
+		// 	return;
+		// }
+		// if (this.state.expire) {
+		// 	alert("该活动已经过期！")
+		// }
+		// else if (this.state.status) {
+		// 	window.location = "#qrcode";
+		// 	alert("您已经报过名了，请到已报名活动中查看！")
+		// } else {
 			var actid = getUrlParam("actid");
 			if (sessionStorage.getItem("_remains_" + actid) == 0) {
 				alert("活动人数已满，无法报名");
@@ -55,17 +55,17 @@ var ActivityDetail = React.createClass({
 				if (profile.phone==null || profile.phone=="")
 					verify = false;
 			} else { verify=false; }$
-			if (!verify) {
-				location.href=ges("template/verify_phone.html");
-				return;
-			}
+			// if (!verify) {
+			// 	location.href=ges("template/verify_phone.html");
+			// 	return;
+			// }
 
 			document.title = "活动报名";
 			ReactDOM.render(
 				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus}),
 				document.getElementById('sign-page-wrap')
 			);
-		}
+		//}
 	},
 
 	openCollectPage: function(){
@@ -219,8 +219,8 @@ var ActivityDetail = React.createClass({
 										:
 										<span className="now fl">现价：<span className="cost">￥{this.state.activity.price_child_pre}元</span></span>
 									}
-								<span className={(!this.state.activity.price_child_pre==null) ? "original fr has-pre" : "original"}>
-									价格：
+								<span className={(!this.state.activity.price_child_pre!=null) ? "original fr has-pre" : "original"}>
+									原价：
 									<span className="cost">
 										{this.state.activity.price_child == 0 ? "免费" :
 											<span>￥{this.state.activity.price_child}元</span>}

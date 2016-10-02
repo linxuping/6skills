@@ -47,10 +47,11 @@ function validateForm(actid, formConponent) {
 			"gender": {required: true},
 			"city": {required: true},
 			"kids_name": {required: true},
-			"identity_card": {required: true},
+			"identity_card": {required: true, rangelength: [18, 18]},
 			"program": {required: true},
 			"company": {required: true},
 			"teacher": {required: true},
+			"company_tel": {required: true},
 			"teacher_phone": {required: true, digits: true, rangelength:[11, 11]}
 		},
 		messages: {
@@ -60,10 +61,11 @@ function validateForm(actid, formConponent) {
 			gender: {required: "请选择宝宝性别"},
 			"city": {required: "请输入所在城市"},
 			"kids_name": {required: "请输入宝宝姓名"},
-			"identity_card": {required: "请输入身份证号"},
+			"identity_card": {required: "请输入身份证号", rangelength: "18位身份证"},
 			"program": {required: "请输入节目名称"},
 			"company": {required: "请输入选送单位"},
 			"teacher": {required: "请输入指导老师"},
+			"company_tel": {required: "请输入单位电话"},
 			"teacher_phone": {required: "请输入老师电话", digits: "11位手机号码", rangelength:"11位手机号码"}
 		},
 		submitHandler: function(form){
@@ -265,6 +267,16 @@ var SignForm = React.createClass({
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="text" name="company" id="company" className="weui_input"
 									placeholder="请输入选送单位" defaultValue={profile.company}/>
+							</div>
+						</div>
+
+						<div className="weui_cell">
+							<div className="weui_cell_hd">
+								<label htmlFor="company_tel" className="weui_label">单位电话</label>
+							</div>
+							<div className="weui_cell_bd weui_cell_primary">
+								<input type="text" name="company_tel" id="company_tel" className="weui_input"
+									placeholder="请输入单位电话" defaultValue={profile.company_tel}/>
 							</div>
 						</div>
 
