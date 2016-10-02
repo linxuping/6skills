@@ -114,6 +114,35 @@ var Carousel = React.createClass({
 });
 
 var Navigation = React.createClass({
+
+	getInitialState: function() {
+		return {
+			btns: []
+		};
+	},
+	
+	componentDidMount: function() {
+		$.ajax({
+			url: '/wx/acttypes/list',
+			type: 'get',
+			dataType: 'json'
+		})
+		.done(function(res) {
+			console.log("success");
+			if (res.errcode == 0) {
+				this.setState({
+					btns: res.values
+				});
+			}
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	},
+
 	render: function() {
 		var btns = [
 			{url: "#", name: "声乐"},
@@ -126,13 +155,13 @@ var Navigation = React.createClass({
 				<div className="weui_panel_bd" style={{padding: "0 10px"}}>
 					<div className="ss-flex">
 						{
-							btns.map(function(elem, index) {
+							this.state.btns && this.state.btns.map(function(elem, index) {
 								return (
 									<div className="ss-flex-item nav-item" key={index}>
-										<a href={"activities.html" + elem.url}>
+										<a href={encodeURIComponent("activities.html?acttype=" + elem)}>
 											<img src={"/static/img/icon_0" + (index + 1) + ".gif"} alt=""/>
 											<div className="clear"></div>
-											<span className="text">{elem.name}</span>
+											<span className="text">{elem}</span>
 										</a>
 									</div>
 								);

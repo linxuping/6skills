@@ -24,8 +24,7 @@ var App = React.createClass({ //
 			area = "*";
 		else
 			area = this.state.area;
-
-		if (this.state.acttype == null || this.state.area == undefined) {
+		if (this.state.acttype == null || this.state.acttype == undefined) {
 			acttype = "全部";
 		} else {
 			acttype = this.state.acttype;
@@ -79,6 +78,13 @@ var App = React.createClass({ //
 	},
 
 	componentDidMount: function() {
+		var reg = new RegExp("(^|&)acttype=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+		if (r !== null) {
+			this.setState({
+				acttype: decodeURIComponent(r[2])
+			});
+		}
 		this.updateActivities();
 	},
 
@@ -103,6 +109,27 @@ var App = React.createClass({ //
 //<Selecter name="area" text="地区选择" url={get_areas_url}/>
 var SelectHeader = React.createClass({
 
+	getInitialState: function() {
+		return {
+			acttype: ""
+		};
+	},
+
+	componentDidMount: function() {
+		//var acttype = getUrlParam("acttype");
+		var reg = new RegExp("(^|&)acttype=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+		var acttype;
+		if (r !== null) {
+			acttype = r[2];
+		}
+		if (acttype) {
+			this.setState({
+				acttype: decodeURIComponent(acttype)
+			});
+		}
+	},
+
 	render: function() {
 		var ages = [];
 		for (var i = 1; i < 13; i++) {
@@ -111,7 +138,8 @@ var SelectHeader = React.createClass({
 		//var get_agesel_url = ges("activities/get-agesel");
 		return (
 			<div className="select-header">
-				<Selecter name="acttype" selectHandler={this.selectHandler} url="/wx/acttypes/list"/>
+				<Selecter name="acttype" selectHandler={this.selectHandler} text={this.state.acttype}
+					url="/wx/acttypes/list"/>
 				<Selecter name="area" selectHandler={this.selectHandler} text="区域" url="/wx/nearbyareas/list"/>
 				<Selecter name="age" selectHandler={this.selectHandler} text="年龄" menus={ages}/>
 			</div>
