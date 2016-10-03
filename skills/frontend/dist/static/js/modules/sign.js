@@ -73,7 +73,7 @@ function validateForm(actid, formConponent) {
 								callback: function(){
 									formConponent.back();
 									if (obj.wxchat == ""){
-										var r = confirm("现在关注六艺互动的公众号，可以查看更多活动和您的报名情况！");
+										var r = confirm("现在关注爱试课的公众号，可以查看更多活动和您的报名情况！");
 										if (r){
 											try_jump_pubnum();
 										}

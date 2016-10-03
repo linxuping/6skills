@@ -2,7 +2,8 @@ var Index = React.createClass({
 
 	getInitialState: function() {
 		return {
-			activities: []
+			activities: [],
+			pageable: {}
 		};
 	},
 
@@ -10,18 +11,33 @@ var Index = React.createClass({
 		this.fatchActivities();
 	},
 
+	moreClick: function() {
+	  var pageable = this.state.pageable;
+		pageable.page += 1;
+		this.setState({
+			pageable: pageable
+		});
+		this.fatchActivities();
+	},
+
 	fatchActivities: function(){
-		var url =  '/activities/special-offers?area=*&age=0-100&page=1&pagesize=5&city&district=*';
+		var page = this.state.pageable.page || 1;
+		var url =  '/activities/special-offers?area=*&age=0-100&pagesize=5&city&district=*';
 		$.ajax({
 			url: url,
 			type: 'get',
 			dataType: 'json',
-			data: {openid: geopenid()},
+			data: {openid: geopenid(), page: page}
 		})
 		.done(function(res) {
 			if (res.errcode == 0) {
+				if (res.pageable.page == 1)
+					activities = res.activities;
+				else
+					activities = this.state.activities.concat(res.activities);
 				this.setState({
-					activities: res.activities
+					activities: activities,
+					pageable: res.pageable
 				});
 			}
 		}.bind(this))
@@ -39,7 +55,8 @@ var Index = React.createClass({
 			<div className="Index">
 				<Carousel url="/activities/hot/list"></Carousel>
 				<Navigation></Navigation>
-				<Activities activities={this.state.activities} pageable="no"></Activities>
+				<Activities activities={this.state.activities} pageable={this.state.pageable}
+					moreClick={this.moreClick}></Activities>
 			</div>
 		);
 	}
@@ -158,7 +175,7 @@ var Navigation = React.createClass({
 							this.state.btns && this.state.btns.map(function(elem, index) {
 								return (
 									<div className="ss-flex-item nav-item" key={index}>
-										<a href={encodeURIComponent("activities.html?acttype=" + elem)}>
+										<a href={"activities.html?acttype=" + encodeURIComponent(elem)}>
 											<img src={"/static/img/icon_0" + (index + 1) + ".gif"} alt=""/>
 											<div className="clear"></div>
 											<span className="text">{elem}</span>

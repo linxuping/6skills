@@ -58,7 +58,7 @@ def activities_special_offers(req):
 	#	#sql_datefilter = "a.time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
 	#	sql_datefilter = "a.preinfo_id>0 and "
 	if acttype != "" and acttype != "全部" and acttype != "*":
-		sql_datefilter += "a.name = '%s' and "%acttype
+		sql_datefilter += "b.name = '%s' and "%acttype
 	if area != "" and area != "全城" and area != "*":
 		sql_datefilter += "c.name = '%s' and "%area
 		
@@ -240,13 +240,13 @@ def activities_details(req):
 
 	#exec 
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "select a.id,imgs_act,title,a.content,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,imgs_act,preinfo,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),a2.price_child,a2.price_adult,a2.content,a.position_details from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
+	_sql = "select a.id,imgs_act,title,a.content,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,imgs_act,preinfo,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),a2.price_child,a2.price_adult,a2.content,a.position_details,a.sign_type from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_child":lis[8],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"time_from":lis[14],"time_to":lis[15],"price_child_pre":lis[16],"preinfo":lis[18],"position_details":lis[19]} ) 
+			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_child":lis[8],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"time_from":lis[14],"time_to":lis[15],"price_child_pre":lis[16],"preinfo":lis[18],"position_details":lis[19],"sign_type":lis[20]} ) 
 	elif count == 0:
 		_json["errcode"] = 1
 		_json["errmsg"] = "activity:%d not exist."%actid

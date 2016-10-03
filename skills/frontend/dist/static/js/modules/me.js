@@ -58,7 +58,7 @@ var Me = React.createClass({displayName: "Me",
 	},
 
 	gotoMyActivities: function(){
-		document.title = "已报名活动";
+		document.title = "已报名课程";
 		var href = window.location.href.split("#")[0];
 		history.replaceState("myActivities", null, href + "#myactivities");
 		ReactDOM.render(
@@ -88,7 +88,7 @@ var Me = React.createClass({displayName: "Me",
 							React.createElement("a", {href: "javascript:void(0);", className: "weui_cell", 
 								 onClick: this.gotoMyActivities}, 
 								React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-									React.createElement("p", null, "已报名活动")
+									React.createElement("p", null, "已报名课程")
 								), 
 								React.createElement("div", {className: "weui_cell_ft"})
 							), 
@@ -97,14 +97,6 @@ var Me = React.createClass({displayName: "Me",
 								 onClick: this.gotoMyCollections}, 
 								React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
 									React.createElement("p", null, "我的收藏")
-								), 
-								React.createElement("div", {className: "weui_cell_ft"})
-							), 
-
-							React.createElement("a", {href: "javascript:void(0);", className: "weui_cell", 
-								 onClick: this.gotoFeedback}, 
-								React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-									React.createElement("p", null, "联系我们")
 								), 
 								React.createElement("div", {className: "weui_cell_ft"})
 							)
@@ -116,13 +108,23 @@ var Me = React.createClass({displayName: "Me",
 		);
 	}
 });
+/*
+							<a href="javascript:void(0);" className="weui_cell"
+								 onClick={this.gotoFeedback}>
+								<div className="weui_cell_bd weui_cell_primary">
+									<p>联系我们</p>
+								</div>
+								<div className="weui_cell_ft"></div>
+							</a>
+			<div className="feedback sign-page">
+*/
 
 //FIXED ME
 var Feedback = React.createClass({displayName: "Feedback",
 	render: function() {
 		return (
-			React.createElement("div", {className: "feedback sign-page"}, 
-				React.createElement("div", {className: "back-btn", onClick: this.props.back}, "返回"), 
+			React.createElement("div", {className: "feedback"}, 
+				(this.props.onlyContact=="1") ? React.createElement("div", null):React.createElement("div", {className: "back-btn", onClick: this.props.back}, "返回"), 
 				React.createElement("h3", null, "转载文章"), 
 				React.createElement("p", null, "转载文章请在文中附下图，即视为有效制授权，无需再联系我们"), 
 				React.createElement("p", {className: "qr"}, 
@@ -155,7 +157,7 @@ var MyActivities = React.createClass({displayName: "MyActivities",
 		});
 		ReactDOM.render(
 			React.createElement(ConfirmDialog, {callback: this.confirmReset, title: "取消报名", 
-				content: "您确定要取消该活动的报名吗？"}),
+				content: "您确定要取消该课程的报名吗？"}),
 			document.getElementById("confirm-dialog-wrap")
 		);
 	},
@@ -208,7 +210,7 @@ var MyActivities = React.createClass({displayName: "MyActivities",
 						style: {"cursor": "pointer"}, "data-actid": elem.actid}, 
 						React.createElement("header", {className: "ss-hd"}, elem.title), 
 						React.createElement("p", {className: "time clearfix"}, 
-							React.createElement("span", null, "活动时间"), React.createElement("time", null, elem.time_act)
+							React.createElement("span", null, "课程时间"), React.createElement("time", null, elem.time_act)
 						), 
 						React.createElement("div", {className: "time clearfix"}, 
 							React.createElement("span", null, "报名时间"), React.createElement("time", null, elem.time_signup)
@@ -296,7 +298,7 @@ var MyCollections = React.createClass({displayName: "MyCollections",
 						style: {"cursor": "pointer"}, "data-actid": elem.actid}, 
 						React.createElement("header", {className: "ss-hd"}, elem.title), 
 						React.createElement("p", {className: "time clearfix"}, 
-							React.createElement("span", null, "活动时间"), React.createElement("time", null, elem.time_act)
+							React.createElement("span", null, "课程时间"), React.createElement("time", null, elem.time_act)
 						), 
 						React.createElement("button", {type: "button", onClick: this.delCollectionHandler, 
 							"data-uid": index, "data-collid": elem.collid, className: "weui_btn weui_btn_mini weui_btn_default"}, 

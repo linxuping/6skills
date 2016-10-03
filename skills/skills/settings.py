@@ -138,7 +138,8 @@ js_noncestr = "zhongqiu@home88"
 js_timestamp = "1414587457"
 pay_key = "oi8enva8asidhfazlixucyv98w3l83nb" 
 pay_mchid = "1395115702"
-pay_path = "http://www.6skills.com/template/"
+pay_cb = "http://www.6skills.com/wxpay/"
+pay_st = "MD5"
 
 
 #save func
