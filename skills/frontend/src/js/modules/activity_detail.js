@@ -219,8 +219,8 @@ var ActivityDetail = React.createClass({
 										:
 										<span className="now fl">现价：<span className="cost">￥{this.state.activity.price_child_pre}元</span></span>
 									}
-								<span className={(!this.state.activity.price_child_pre!=null) ? "original fr has-pre" : "original"}>
-									原价：
+								<span className={(this.state.activity.price_child_pre!=null) ? "original fr has-pre" : "original"}>
+									{this.state.activity.price_child_pre != null ? "原价" : "价格"}：
 									<span className="cost">
 										{this.state.activity.price_child == 0 ? "免费" :
 											<span>￥{this.state.activity.price_child}元</span>}

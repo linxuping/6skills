@@ -85,7 +85,9 @@ var App = React.createClass({ //
 				acttype: decodeURIComponent(r[2])
 			});
 		}
-		this.updateActivities();
+		setTimeout(function(){
+			this.updateActivities();
+		}.bind(this), 200)
 	},
 
 	render: function() {
@@ -308,7 +310,9 @@ var Activities = React.createClass({
 
 	render: function() {
 		var moreBtn
-		if (this.props.pageable.total>1 && this.props.pageable.total > this.props.pageable.page) {
+		if (this.props.pageable && 
+				this.props.pageable.total > 1 &&
+			  this.props.pageable.total > this.props.pageable.page) {
 			moreBtn = <div className="more-btn" onClick={this.props.moreClick}>
 									点击加载更多...
 								</div>
