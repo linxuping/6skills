@@ -50,9 +50,9 @@ var App = React.createClass({ //
 					activities: activities,
 					pageable: res.pageable
 				});
-				console.log("[updateActivities.]");
-				console.log(res.activities);
-				console.log(this.state.activities);
+				// console.log("[updateActivities.]");
+				// console.log(res.activities);
+				// console.log(this.state.activities);
 				// myScroll = new IScroll('#wrapper', { mouseWheel: true });
 				// myScroll.on('scrollEnd', function(){
 				// 	console.log(event);
@@ -133,17 +133,17 @@ var SelectHeader = React.createClass({
 	},
 
 	render: function() {
-		var ages = [];
+		var ages = ["不限"];
 		for (var i = 1; i < 13; i++) {
-			ages.push(i);
+			ages.push(i + "岁");
 		}
 		//var get_agesel_url = ges("activities/get-agesel");
 		return (
 			<div className="select-header">
 				<Selecter name="acttype" selectHandler={this.selectHandler} text={this.state.acttype}
 					url="/wx/acttypes/list"/>
-				<Selecter name="area" selectHandler={this.selectHandler} text="区域" url="/wx/nearbyareas/list"/>
-				<Selecter name="age" selectHandler={this.selectHandler} text="年龄" menus={ages}/>
+				<Selecter name="area" selectHandler={this.selectHandler} text="全城" url="/wx/nearbyareas/list"/>
+				<Selecter name="age" selectHandler={this.selectHandler} text="不限" menus={ages}/>
 			</div>
 		);
 	}
@@ -220,7 +220,7 @@ var Selecter = React.createClass({
 	selectHandler: function(e) {
   	var value = e.target.dataset.menu;
     this.setState({
-    	label: this.props.name == "age" ? value + "岁" : value
+    	label: value
     });
     if (this.props.name == "area"){
 			Appobj.state.area = value;
@@ -228,7 +228,7 @@ var Selecter = React.createClass({
 			if (value == "不限")
 				Appobj.state.age = "0-100";
 			else
-				Appobj.state.age = value + "-100";
+				Appobj.state.age = parseInt(value) + "-" + parseInt(value);
 		} else if (this.props.name == "acttype") {
 			Appobj.state.acttype = value;
 		}
@@ -257,7 +257,7 @@ var Selecter = React.createClass({
 										return (
 											<div className="weui_actionsheet_cell" key={index} data-menu={elem}
 												onClick={this.selectHandler} data-name={this.props.name}>
-												{ this.props.name == "age" ? elem + "岁" : elem}
+												{elem}
 											</div>
 										);
 									}.bind(this))
