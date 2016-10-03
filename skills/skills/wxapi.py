@@ -60,7 +60,7 @@ def activities_special_offers(req):
 	if acttype != "" and acttype != "全部" and acttype != "*":
 		sql_datefilter += "b.name = '%s' and "%acttype
 	if area != "" and area != "全城" and area != "*":
-		sql_datefilter += "c.name = '%s' and "%area
+		sql_datefilter += "d.name = '%s' and "%area
 		
 	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
 	position_id = 0
@@ -77,20 +77,20 @@ def activities_special_offers(req):
 	if not ret: #by date
 		_sql = "select a.id,imgs_act,title,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,a.createtime,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1 order by a.createtime desc limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	else: #by distr and date
-		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 12 MONTH) as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s b.status=1 and c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s b.status=1 and c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 12 MONTH) as sortdate,a2.price_child,a2.content from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id left join 6s_position d on c.pid=d.id where %s b.status=1 and c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child,a2.content from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id left join 6s_position d on c.pid=d.id where %s b.status=1 and c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"tags":lis[3],"area":lis[4],"ages":"%s-%s"%(lis[5],lis[6]),"price_child":(lis[7] if lis[12]==None else lis[12]),"quantities_remain":lis[9],"img_cover":lis[10]+"?imageMogr2/thumbnail/300x300|imageMogr2/gravity/Center/crop/250x250"} )#,"price_child_pre":lis[11],"preinfo":lis[13]
+			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"tags":lis[3],"area":lis[4],"ages":"%s-%s"%(lis[5],lis[6]),"price_child":(lis[7] if lis[12]==None else lis[12]),"quantities_remain":lis[9],"img_cover":lis[10]+"?imageMogr2/thumbnail/300x300|imageMogr2/gravity/Center/crop/250x250","preinfo":lis[13]} )#,"price_child_pre":lis[11],"preinfo":lis[13]
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "数据操作异常."
 		mo.logger.error("db fail. ")
 
 	#if district == "":
-	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,_age_from,_age_to,_age_from,_age_to)
+	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id left join 6s_position d on c.pid=d.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,_age_from,_age_to,_age_from,_age_to)
 	#else:
 	#	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,area,_age_from,_age_to,_age_from,_age_to)
 	count,rets=dbmgr.db_exec(_sql)
@@ -1333,7 +1333,7 @@ def get_openid(req):
 @req_print
 def get_wx_acttypes(req):
 	#exec  
-	_json = { "values":["音乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
+	_json = { "values":["音乐","舞蹈","书画","全部"],"errcode":0,"errmsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
