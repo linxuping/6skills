@@ -164,7 +164,7 @@ var Navigation = React.createClass({
 		var btns = [
 			{url: "#", name: "音乐"},
 			{url: "#", name: "舞蹈"},
-			{url: "#", name: "美术"},
+			{url: "#", name: "书画"},
 			{url: "#", name: "全部"}
 		];
 		return (
