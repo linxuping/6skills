@@ -394,7 +394,12 @@ def activities_sign(req):
 		return gender
 	ret,city = check_mysql_arg_jsonobj("city", args.get("city",None), "str", '')
 	if city=="":
-		city = "广州市"
+		_sql = "select position_details from 6s_user where openid='%s';"%(openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 0:
+			pass #city = "广州市"
+		else:
+			city = rets[0][0].split(" ")[0]
 	else:
 		city = (city if "市" in city else city+"市")
 	ret,kids_name = check_mysql_arg_jsonobj("kids_name", args.get("kids_name",None), "str", '')
@@ -1197,7 +1202,7 @@ def default_process(req):
 			_rspxml = "<xml><ToUserName><![CDATA[$fromUser]]></ToUserName><FromUserName><![CDATA[$toUser]]></FromUserName><CreateTime>$createTime</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[$content]]></Content><FuncFlag>$funcFlag</FuncFlag></xml>"
 			fname = msgxml.find("FromUserName").text
 			tname = msgxml.find("ToUserName").text
-			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"欢迎关注六艺互动，这里将为您推荐附近好玩有创意的亲子活动。")
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"欢迎关注爱试课，这里将为您推荐附近的音乐、舞蹈、美术、体育等兴趣体验课。")
 			return HttpResponse(_rspxml, mimetype='text/plain')
 		elif "unsubscribe" == node_ev.text:
 			_sql = "update 6s_user set status=-1 where openid='%s';"%(openid)
@@ -1305,13 +1310,13 @@ def get_openid(req):
 					else:
 						#_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
 						_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',status=1 where openid='%s';"%(nickname,sex,headimg,openid)
-						count,rets=dbmgr.db_exec(_sql)
+						cunt,rets=dbmgr.db_exec(_sql)
 						if count == 0:
 							mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
 				else:
 					_json["errcode"] = 1
 					_json["errmsg"] = "invalid city."
-					mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
+					mo.ogger.error("invalid city. openid:%s,city:%s"%(openid,city) )
 			else:
 				mo.logger.error("attrs error. %s  %s  %s"%(openid,_url,ret))
 	else:
@@ -1328,7 +1333,7 @@ def get_openid(req):
 @req_print
 def get_wx_acttypes(req):
 	#exec  
-	_json = { "values":["声乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
+	_json = { "values":["音乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
@@ -1447,9 +1452,9 @@ def get_wx_payinfo(req):
 	
 	import wxpay
 	out_trade_no = str(int(time.time()))
-	#total_fee = "1"
+	total_fee = "1"
 	trade_type = "JSAPI"
-	ret = wxpay.get_prepay_info(out_trade_no, body, total_fee, "http://www.6skills.com/wxpay/", trade_type, openid)
+	ret = wxpay.get_prepay_info(out_trade_no, body, total_fee, settings.pay_cb, trade_type, openid)
 	mo.logger.info("wxpay: trade_no:%s, openid:%s, ret:%s"%(out_trade_no,openid, str(ret)) )
 	_json = { "errcode":0,"errmsg":"" }
 	if "prepay_id" in ret:
@@ -1458,7 +1463,7 @@ def get_wx_payinfo(req):
 		_json["timestamp"] = str(int(time.time())) 
 		_json["noncestr"] = ret["nonce_str"] 
 		_json["sign"] = ret["sign"] 
-		_json["paysign"] = encode_md5("appId="+ret["appid"]+"&nonceStr="+ret["nonce_str"]+"&package=prepay_id="+ret["prepay_id"]+"&signType=MD5&timeStamp="+_json["timestamp"]+'&key='+settings.pay_key)
+		_json["paysign"] = encode_md5("appId="+ret["appid"]+"&nonceStr="+ret["nonce_str"]+"&package=prepay_id="+ret["prepay_id"]+"&signType="+settings.pay_st+"&timeStamp="+_json["timestamp"]+'&key='+settings.pay_key)
 		_sql = "insert into 6s_prepay_info(act_id,out_trade_no,body,total_fee,trade_type,openid,prepay_id) values ('%d','%s','%s','%s','%s','%s','%s')"%(actid,out_trade_no,body,total_fee, trade_type, openid,ret["prepay_id"])
 		count,rets=dbmgr.db_exec(_sql)
 		if count <= 0:
