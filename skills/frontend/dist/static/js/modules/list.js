@@ -13,20 +13,26 @@ var App = React.createClass({displayName: "App", //
 
 	updateActivities: function() {
 		console.log("componentDidMount");
+		console.log(this.state);
 		var area = this.props.area;
 		//console.log(area);
-		if (this.state.age == null)
+		if (this.state.age == null || this.state.age==undefined)
 			age = "0-100";
 		else
 			age = this.state.age;
-		if (this.state.area == null)
+		if (this.state.area == null || this.state.area == undefined)
 			area = "*";
 		else
 			area = this.state.area;
+		if (this.state.acttype == null || this.state.acttype == undefined) {
+			acttype = "全部";
+		} else {
+			acttype = this.state.acttype;
+		}
 
 		//console.log(area);
 		//console.log(age);
-		var args = {"area":area,"age":age,"page": this.state.pageable.page || 1,"pagesize":10,"city":"","district":"天河区","openid":geopenid()};
+		var args = {acttype: acttype, "area":area,"age":age,"page": this.state.pageable.page || 1,"pagesize":10,"city":"","district":"天河区","openid":geopenid()};
 		if (this.props.type == "preview")
 			args["type"] = "preview";
 		$.ajax({
@@ -44,9 +50,9 @@ var App = React.createClass({displayName: "App", //
 					activities: activities,
 					pageable: res.pageable
 				});
-				console.log("[updateActivities.]");
-				console.log(res.activities);
-				console.log(this.state.activities);
+				// console.log("[updateActivities.]");
+				// console.log(res.activities);
+				// console.log(this.state.activities);
 				// myScroll = new IScroll('#wrapper', { mouseWheel: true });
 				// myScroll.on('scrollEnd', function(){
 				// 	console.log(event);
@@ -72,7 +78,16 @@ var App = React.createClass({displayName: "App", //
 	},
 
 	componentDidMount: function() {
-		this.updateActivities();
+		var reg = new RegExp("(^|&)acttype=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+		if (r !== null) {
+			this.setState({
+				acttype: decodeURIComponent(r[2])
+			});
+		}
+		setTimeout(function(){
+			this.updateActivities();
+		}.bind(this), 200)
 	},
 
 	render: function() {
@@ -96,17 +111,39 @@ var App = React.createClass({displayName: "App", //
 //<Selecter name="area" text="地区选择" url={get_areas_url}/>
 var SelectHeader = React.createClass({displayName: "SelectHeader",
 
+	getInitialState: function() {
+		return {
+			acttype: ""
+		};
+	},
+
+	componentDidMount: function() {
+		//var acttype = getUrlParam("acttype");
+		var reg = new RegExp("(^|&)acttype=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+		var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+		var acttype;
+		if (r !== null) {
+			acttype = r[2];
+		}
+		if (acttype) {
+			this.setState({
+				acttype: decodeURIComponent(acttype)
+			});
+		}
+	},
+
 	render: function() {
-		var ages = [];
+		var ages = ["不限"];
 		for (var i = 1; i < 13; i++) {
 			ages.push(i + "岁");
 		}
 		//var get_agesel_url = ges("activities/get-agesel");
 		return (
 			React.createElement("div", {className: "select-header"}, 
-			React.createElement(Selecter, {name: "acttype", text: "声乐", url: "/wx/acttypes/list"}), 
-				React.createElement(Selecter, {name: "area", text: "天河区", url: "/wx/nearbyareas/list"}), 
-				React.createElement(Selecter, {name: "age", text: "8岁", menus: ages})
+				React.createElement(Selecter, {name: "acttype", selectHandler: this.selectHandler, text: this.state.acttype, 
+					url: "/wx/acttypes/list"}), 
+				React.createElement(Selecter, {name: "area", selectHandler: this.selectHandler, text: "全城", url: "/wx/nearbyareas/list"}), 
+				React.createElement(Selecter, {name: "age", selectHandler: this.selectHandler, text: "不限", menus: ages})
 			)
 		);
 	}
@@ -167,33 +204,10 @@ var Selecter = React.createClass({displayName: "Selecter",
 		});
 
 	},
-	selectChanged: function() {
-		//this.setState({value: event.target.value});
-		//console.log(event.target.value);
-		//console.log(App);
-		//console.log(Appobj);
-		if (this.props.name == "area"){
-			Appobj.state.area = event.target.value;
-		}
-		else if (this.props.name == "age"){
-			if (event.target.value == "不限")
-				Appobj.state.age = "0-100";
-			else
-				Appobj.state.age = event.target.value;
-		}
-		Appobj.state.pageable.page = 1;
-		Appobj.updateActivities();
-		//Appobj.setState({loaded: !Appobj.state.loaded});
-		//Appobj.setState({activities: [1,2,3,4,5,6]});
-		/*ReactDOM.render(
-			React.createElement(App, null),
-			document.getElementById('content')
-		).setState({activities: [1,2,3,4,5,6]});*/
-	},
 
 	labelClick: function(){
 		this.setState({
-			showSheet: true
+			showSheet: !this.state.showSheet
 		});
 	},
 
@@ -203,11 +217,34 @@ var Selecter = React.createClass({displayName: "Selecter",
 		});
 	},
 
+	selectHandler: function(e) {
+  	var value = e.target.dataset.menu;
+    this.setState({
+    	label: value
+    });
+    if (this.props.name == "area"){
+			Appobj.state.area = value;
+		} else if (this.props.name == "age"){
+			if (value == "不限")
+				Appobj.state.age = "0-100";
+			else
+				Appobj.state.age = parseInt(value) + "-" + parseInt(value);
+		} else if (this.props.name == "acttype") {
+			Appobj.state.acttype = value;
+		}
+		Appobj.state.pageable.page = 1;
+		Appobj.updateActivities();
+	},
+
 	render: function() {
+		var text = this.props.text || this.state.menus && this.state.menus[0];
+		if (this.state.label) {
+			text = this.state.label
+		}
 		return (
 			React.createElement("div", {className: "selecter"}, 
 				React.createElement("div", {className: "tt", onClick: this.labelClick}, 
-					React.createElement("div", {className: "txt"}, this.props.text), 
+					React.createElement("div", {className: "txt"}, text), 
 					React.createElement("div", {className: "tri"})
 				), 
 				React.createElement("div", {className: "actionsheet-wrap"}, 
@@ -218,19 +255,20 @@ var Selecter = React.createClass({displayName: "Selecter",
 									this.state.menus && this.state.menus.length > 0 ?
 									this.state.menus.map(function(elem, index) {
 										return (
-											React.createElement("div", {className: "weui_actionsheet_cell", key: index, value: elem}, 
+											React.createElement("div", {className: "weui_actionsheet_cell", key: index, "data-menu": elem, 
+												onClick: this.selectHandler, "data-name": this.props.name}, 
 												elem
 											)
 										);
-									})
+									}.bind(this))
 									:
-									React.createElement("div", {className: "weui_actionsheet_cell", value: "none"}, 
+									React.createElement("div", {className: "weui_actionsheet_cell", value: "*"}, 
 										"暂无数据"
 									)
 								
 							), 
 							React.createElement("div", {className: "weui_actionsheet_action"}, 
-								React.createElement("div", {className: "weui_actionsheet_cell", value: "none", onClick: this.hideSheet}, 
+								React.createElement("div", {className: "weui_actionsheet_cell", value: "*", onClick: this.hideSheet}, 
 									"取消"
 								)
 							)
@@ -272,7 +310,9 @@ var Activities = React.createClass({displayName: "Activities",
 
 	render: function() {
 		var moreBtn
-		if (this.props.pageable.total>1 && this.props.pageable.total > this.props.pageable.page) {
+		if (this.props.pageable && 
+				this.props.pageable.total > 1 &&
+			  this.props.pageable.total > this.props.pageable.page) {
 			moreBtn = React.createElement("div", {className: "more-btn", onClick: this.props.moreClick}, 
 									"点击加载更多..."
 								)
