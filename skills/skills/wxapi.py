@@ -1367,7 +1367,7 @@ def get_nearbyareas(req):
 	if not ret:
 		return openid
 
-	_json = { "values":[],"errcode":0,"errmsg":"" }
+	_json = { "values":["全城"],"errcode":0,"errmsg":"" }
 	_sql = "select name from 6s_position where pid=(((select position_id from 6s_user where openid='%s') div 10000)*10000);"%openid
 	count,rets=dbmgr.db_exec(_sql)
 	#exec  
