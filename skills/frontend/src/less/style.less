@@ -304,11 +304,12 @@ body{
 	}
 }
 .sign-page{
-	z-index: 99;
+	z-index: 1000;
 	position: fixed;
-	top: @backHeaderHeight;
+	top: 0px;
 	bottom: 0px;
 	width: 100%;
+	padding-top: @backHeaderHeight;
 	left: 0px;
 	background-color: #fff;
 	.back-btn{
@@ -441,6 +442,9 @@ body{
 .weui_btn_plain_primary{
 	color: @themeColor;
 	border-color: @themeColor;
+}
+.weui_label{
+	width: 150px;
 }
 
 //carousel

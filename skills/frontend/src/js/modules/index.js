@@ -161,6 +161,12 @@ var Navigation = React.createClass({
 	},
 
 	render: function() {
+		var btns = [
+			{url: "#", name: "音乐"},
+			{url: "#", name: "舞蹈"},
+			{url: "#", name: "书画"},
+			{url: "#", name: "全部"}
+		];
 		return (
 			<div className="weui_panel" style={{marginTop: 0}}>
 				<div className="weui_panel_bd" style={{padding: "0 10px"}}>

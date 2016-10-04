@@ -155,7 +155,7 @@ var SignForm = React.createClass({displayName: "SignForm",
 		matchClasses = matchClasses.map(function(elem, index){
 			return React.createElement("option", {key: index, value: elem}, elem)
 		});
-		var majors = ["声乐", "舞蹈", "器乐", "语言", "书画"];
+		var majors = ["声乐", "器乐", "舞蹈", "语言", "书画"];
 		majors = majors.map(function(elem, index) {
 			return (
 				React.createElement("option", {key: index, value: elem}, elem)
