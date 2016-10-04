@@ -344,19 +344,27 @@ var Activities = React.createClass({
 												</div>
 											</div>
 										</div>
-										<div className="weui_panel_bd">
-											<ul className="ttt">
-												<li className="tt clearfix">
-													<span className="pp red">限时</span>
-													<span className="txt">限时优惠，每周六晚上17:00-19:00</span>
-												</li>
-												<li className="tt clearfix">
-													<span className="pp yellow">保障</span>
-													<span className="txt">宝爸全程跟课，满意才收费。</span>
-												</li>
-											</ul>
-										</div>
-
+										{
+											elem.preinfo || elem.guarantee ?
+											<div className="weui_panel_bd">
+												<ul className="ttt">
+													{
+														elem.preinfo ? 
+														<li className="tt clearfix">
+															<span className="pp red">限时</span>
+															<span className="txt">限时优惠，每周六晚上17:00-19:00</span>
+														</li> : ""
+													}
+													{
+														elem.guarantee ? 
+														<li className="tt clearfix">
+															<span className="pp yellow">保障</span>
+															<span className="txt">宝爸全程跟课，满意才收费。</span>
+														</li> : ""
+													}
+												</ul>
+											</div> : ""
+										}
 									</div>
 								</li>
 							);
