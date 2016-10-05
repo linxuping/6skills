@@ -6,7 +6,7 @@ var Pay = React.createClass({
 
   payHandler: function(e) {
     var price = e.target.dataset.price;
-    price = 0.01;
+    //price = 0.01;
     $('#paybtn')[0].disabled = true;
     $('#paybtn')[0].innerText = "正在支付...";
     $.ajax({
