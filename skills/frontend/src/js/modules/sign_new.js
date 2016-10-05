@@ -27,7 +27,7 @@ var Sign = React.createClass({
 		return (
 			<div className="sign-page" style={{"overflowY": "auto"}}>
 				<SignForm actid={this.props.actid} back={this.back} 
-					reload={this.props.reload} signtype={this.props.signtype}/>
+					reload={this.props.reload} activity={this.props.activity}/>
 			</div>
 		);
 	}
@@ -85,16 +85,24 @@ function validateForm(actid, formConponent) {
 								title: "报名成功",
 								msg: "恭喜您报名成功！",
 								callback: function(){
-									formConponent.back();
-									if (obj.wxchat == ""){
-										var r = confirm("现在关注爱试课的公众号，可以查看更多活动和您的报名情况！");
-										if (r){
-											try_jump_pubnum();
+									if (formConponent.props.activity.price_child > 0) {
+										var major = $("#major");
+										if (major) {
+											major = major.val();
+										}
+									  ReactDOM.render(
+									    <Pay activity={formConponent.props.activity} major={major}/>,
+									    document.getElementById("pay-page-wrap")
+									  )
+									} else {
+										if (obj.wxchat == ""){
+											var r = confirm("现在关注爱试课的公众号，可以查看更多活动和您的报名情况！");
+											if (r){
+												try_jump_pubnum();
+											}
 										}
 									}
-									//try{
-									//	WeixinJSBridge.call('closeWindow');
-									//} catch (e){ }
+									formConponent.back();
 								}
 							}),
 							document.getElementById("alert-wrap")
@@ -170,7 +178,7 @@ var SignForm = React.createClass({
 				<option key={index} value={elem}>{elem}</option>
 			);
 		})
-
+		var signtype = this.props.activity.sign_type;
 		return (
 			<div className="SignForm">
 				<form action={sign_url} method="post" id="sign-form">
@@ -197,7 +205,7 @@ var SignForm = React.createClass({
 						</div>
 
 						{
-							this.props.signtype == "2" ? 
+							signtype == "2" ? 
 							<div>
 								<div className="weui_cell">
 									<div className="weui_cell_hd">
@@ -233,7 +241,7 @@ var SignForm = React.createClass({
 						}
 
 						{
-							this.props.signtype == "3" ? 
+							signtype == "3" ? 
 							<div className="weui_cell">
 								<div className="weui_cell_hd">
 									<label htmlFor="kids_name" className="weui_label">宝宝姓名</label>
@@ -283,7 +291,7 @@ var SignForm = React.createClass({
 
 
 					{
-						this.props.signtype == "3" ? 
+						signtype == "3" ? 
 						<div>
 							<div className="weui_cells weui_cells_form">
 
@@ -364,7 +372,7 @@ var SignForm = React.createClass({
 										<label htmlFor="major" className="weui_label">参赛专业</label>
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
-										<select name="major" id="major" className="weui_select" defautVlaue="1">
+										<select name="major" id="major" className="weui_select" ref="major">
 											{majors}
 										</select>
 									</div>
@@ -386,7 +394,7 @@ var SignForm = React.createClass({
 					}
 
 					<div className="weui_btn_area mb20">
-						<button type="submit" className="weui_btn weui_btn_primary">确定</button>
+						<button type="submit" className="weui_btn weui_btn_primary" >确定</button>
 					</div>
 				</form>
 				<div id="alert-wrap"></div>

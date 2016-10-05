@@ -331,7 +331,9 @@ var Activities = React.createClass({
 											<div className="weui_media_box weui_media_appmsg">
 												<div className="weui_media_hd ss-media-hd">
 													<img className="weui_media_appmsg_thumb" src={elem.img_cover} alt=""/>
-													<div className="money">￥{Number(elem.price_child).toFixed(2)}</div>
+													<div className="money">
+														{elem.price_child>0 ? ("￥" + Number(elem.price_child).toFixed(2)) : "免费"}
+													</div>
 												</div>
 												<div className="weui_media_bd ss-media-bd">
 													<h4 className="title">

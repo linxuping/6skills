@@ -62,7 +62,8 @@ var ActivityDetail = React.createClass({
 
 			document.title = "活动报名";
 			ReactDOM.render(
-				<Sign actid={actid} backTitle="活动详情" reload={this.getSignupStatus} signtype={this.state.activity.sign_type}/>,
+				<Sign actid={actid} backTitle="活动详情" reload={this.getSignupStatus} 
+					activity={this.state.activity}/>,
 				document.getElementById('sign-page-wrap')
 			);
 		}
@@ -200,6 +201,12 @@ var ActivityDetail = React.createClass({
 						document.body.appendChild(js);
 					}
 				}
+				// if (res.price_child == 0) {
+				// 	var js = document.createElement("script");
+				// 	js.async = false;
+				// 	js.src = "/static/js/modules/pay.js";
+				// 	document.body.appendChild(js);
+				// }
 
 			}.bind(this),
 			error: function() {
@@ -296,14 +303,3 @@ var QrCode = React.createClass({
 	}
 });
 
-var Pay = React.createClass({
-	render: function() {
-		return (
-			<div className="pay">
-				<div className="back-btn">
-					
-				</div>
-			</div>
-		);
-	}
-});
