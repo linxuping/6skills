@@ -1432,9 +1432,9 @@ def get_wx_payinfo(req):
 	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
 	if not ret:
 		return actid
-	ret,price = check_mysql_arg_jsonobj("price", req.GET.get("price",None), "int")
+	ret,price = check_mysql_arg_jsonobj("price", req.GET.get("price",None), "float")
 	if not ret:
-		price = -1
+		price = 0
 
 	_sql = "select a.title,a.price_child,b.price_child from 6s_activity a left join 6s_preinfo b on a.preinfo_id=b.id where a.id=%d;"%actid
 	count,rets=dbmgr.db_exec(_sql)
@@ -1474,6 +1474,60 @@ def get_wx_payinfo(req):
 		else:
 			mo.logger.error("save prepay_info OK. %s"%openid)
 	print _json
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def activities_myunpay_list(req):
+	args = req.GET
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	if page < 1:
+		page = 1
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "activities":[],"pageable":{"page":0,"total":0},"errcode":0,"errmsg":"" }
+	_sql = "select b.title,b.id,b.price_child,b.act_id,b.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d') from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_prepay_info c on b.id=c.act_id left join 6s_wxpay d on c.out_trade_no=d.out_trade_no left join 6s_user e on a.user_id=e.id where b.price_child>0 and e.openid='%s' and c.total_fee is null and a.status=1 and b.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
+	count,rets=dbmgr.db_exec(_sql)
+	if count >= 0:
+		for i in range(count):
+			_json["activities"].append( {"actid":rets[i][3],"title":rets[i][0],"time_signup":rets[i][5],"signid":rets[i][4]} )
+		#_sql = "select count(a.act_id) from 6s_collection a left join 6s_user b on a.openid=b.openid left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
+		#count,rets=dbmgr.db_exec(_sql)
+		#if count == 1:
+		#	_json["pageable"]["total"] = int(rets[0][0])
+		#	_json["pageable"]["page"] = page
+		#else:
+		#	_json["errcode"] = 1
+		#	_json["errmsg"] = "数据操作异常."
+		#	mo.logger.error("get collection count failed. "+REQ_TAG(args))
+	else:
+		_json["errcode"] = 2
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("DB failed."+REQ_TAG(args))
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	makeup_header_cache_ignore(resp)
+	return resp
+
+#-----------------------
+@req_print
+def lxpbuild(req):
+	mo.logger.info("testwxpay......");
+	_json = { "values":["声乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
