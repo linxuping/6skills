@@ -6,7 +6,7 @@ var Pay = React.createClass({
 
   payHandler: function() {
     alert("支付接口")
-  }
+  },
 
   render: function() {
     var sign3Price = {"舞蹈": 150, "声乐": 280, "器乐": 280, "语言": 280, "书画": 380};
