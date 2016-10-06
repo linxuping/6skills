@@ -416,7 +416,7 @@ var AlertDialog = React.createClass({
 				<div className="weui_mask"></div>
 				<div className="weui_dialog">
 					<div className="weui_dialog_hd">
-						<strong className="weui_dialog_title">{this.props.title && "提示"}</strong>
+						<strong className="weui_dialog_title">{this.props.title || "提示"}</strong>
 					</div>
 					<div className="weui_dialog_bd">{this.props.msg}</div>
 					<div className="weui_dialog_ft">
