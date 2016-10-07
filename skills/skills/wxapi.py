@@ -414,6 +414,7 @@ def activities_sign(req):
 	ret,part_group = check_mysql_arg_jsonobj("match_class", args.get("match_class",None), "str", '')
 	ret,part_profession = check_mysql_arg_jsonobj("major", args.get("major",None), "str", '')
 	ret,win_experience = check_mysql_arg_jsonobj("awards", args.get("awards",None), "str", '')
+	ret,company_tel = check_mysql_arg_jsonobj("company_tel", args.get("company_tel",None), "str", '')
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
@@ -454,7 +455,7 @@ def activities_sign(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: 
 					#save to 6s_user.
-					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime,city,name_ch,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience) values(%d,%d,'%s',%d,'%s','%s',now(),'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');"%(uid,actid,name,age,phone,gender,city,kids_name,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience)
+					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime,city,username_ch,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience,company_phone) values(%d,%d,'%s',%d,'%s','%s',now(),'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');"%(uid,actid,name,age,phone,gender,city,kids_name,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience,company_tel)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 1:
 						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)
@@ -832,12 +833,16 @@ def activities_getsignupstatus(req):
 		return actid
 
 	#exec  
-	_json = { "status":False,"errcode":0,"errmsg":"" }
-	_sql = "select a.id,b.img_qrcode,b.time_to>now() from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_user c on a.user_id=c.id where c.openid='%s' and a.act_id=%d and a.status=1 and b.status=1;"%(openid,actid)
+	_json = { "status":0,"errcode":0,"errmsg":"" }
+	_sql = "select a.id,b.img_qrcode,b.time_to>now(),e.id from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_user c on a.user_id=c.id left join 6s_prepay_info d on b.id=d.act_id left join 6s_wxpay e on d.out_trade_no=e.out_trade_no where c.openid='%s' and a.act_id=%d and a.status=1 and b.status=1;"%(openid,actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1 :
 		if str(rets[0][2]) == "1":
-			_json["status"] = True
+			if rets[0][3] == None:
+				_json["status"] = 2
+			else:
+				_json["status"] = 1
+				#_json["errmsg"] = "未支付"
 		else:
 			_json["errmsg"] = "过期"
 		_json["qrcode"] = rets[0][1]
@@ -846,7 +851,7 @@ def activities_getsignupstatus(req):
 		count,rets=dbmgr.db_exec(_sql)
 		if count>0 and str(rets[0][0])=="0":
 			_json["errmsg"] = "过期"
-		_json["status"] = False
+		_json["status"] = 0
 		_json["coll_status"] = False
 		#_json["errmsg"] = "未报名."
 		#mo.logger.info("no sign activity openid:%s actid:%d. "%(openid,actid)+REQ_TAG(args))
@@ -1498,11 +1503,11 @@ def activities_myunpay_list(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "activities":[],"pageable":{"page":0,"total":0},"errcode":0,"errmsg":"" }
-	_sql = "select b.title,b.id,b.price_child,b.act_id,b.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d') from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_prepay_info c on b.id=c.act_id left join 6s_wxpay d on c.out_trade_no=d.out_trade_no left join 6s_user e on a.user_id=e.id where b.price_child>0 and e.openid='%s' and c.total_fee is null and a.status=1 and b.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
+	_sql = "select b.title,b.id,b.price_child,b.act_id,b.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),b.sign_type,a.part_group,a.part_profession from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_prepay_info c on b.id=c.act_id left join 6s_wxpay d on c.out_trade_no=d.out_trade_no left join 6s_user e on a.user_id=e.id where b.price_child>0 and e.openid='%s' and c.total_fee is null and a.status=1 and b.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
-			_json["activities"].append( {"actid":rets[i][3],"title":rets[i][0],"time_signup":rets[i][5],"signid":rets[i][4]} )
+			_json["activities"].append( {"actid":rets[i][3],"title":rets[i][0],"time_signup":rets[i][5],"signid":rets[i][4],"sign_type":rets[i][5],"group":rets[i][6],"major":rets[i][7]} )
 		#_sql = "select count(a.act_id) from 6s_collection a left join 6s_user b on a.openid=b.openid left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
 		#count,rets=dbmgr.db_exec(_sql)
 		#if count == 1:
