@@ -1,3 +1,4 @@
+var dropload;
 var Index = React.createClass({
 
 	getInitialState: function() {
@@ -8,7 +9,7 @@ var Index = React.createClass({
 	},
 
 	componentDidMount: function() {
-		this.updateActivities();
+		
 	},
 
 	moreClick: function() {
@@ -22,7 +23,7 @@ var Index = React.createClass({
 
 	updateActivities: function(callback){
 		var page = this.state.pageable.page || 1;
-		var url =  '/activities/special-offers?area=*&age=0-100&pagesize=20&city&district=*';
+		var url =  '/activities/special-offers?area=*&age=0-100&pagesize=5&city&district=*';
 		$.ajax({
 			url: url,
 			type: 'get',
@@ -39,6 +40,7 @@ var Index = React.createClass({
 					activities: activities,
 					pageable: res.pageable
 				});
+				dropload.resetload();
 			}
 		}.bind(this))
 		.fail(function() {
@@ -57,8 +59,8 @@ var Index = React.createClass({
 			<div className="Index">
 				<Carousel url="/activities/hot/list"></Carousel>
 				<Navigation></Navigation>
-				<Activities activities={this.state.activities} pageable="no"
-					app={this}></Activities>
+				<Activities activities={this.state.activities}
+					app={this} scrollArea=".Index"></Activities>
 			</div>
 		);
 	}
@@ -106,10 +108,14 @@ var Carousel = React.createClass({
 		var settings = {
 			dots: true,
 			infinite: true,
+			autoplay: true,
+			autoplaySpeed: 5000,
+			pauseOnHover: true,
 			speed: 500,
+			lazyLoad:true,
+			arrows: false,
 			slidesToShow: 1,
-			slidesToScroll: 1,
-			arrows: false
+			slidesToScroll: 1
 		};
 		return (
 			<div className="carousel">
