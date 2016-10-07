@@ -563,24 +563,23 @@ body{
   padding-left: 0;
   list-style: none;
   text-align: right;
-
   li {
     display: inline-block;
     width:  @dotWidth;
     height: @dotWidth;
     margin: 1px;
     text-indent: -999px;
-    border: 1px solid @carousel-indicator-border-color;
-    border-radius: @dotWidth;
+    border: 2px solid @carousel-indicator-border-color;
+    border-radius: 50%;
     cursor: pointer;
-
-    background-color: #000 \9; // IE8
-    background-color: rgba(0,0,0,0); // IE9
     button{
       height: 100%;
       width: 100%;
+      border-radius: 50%;
+      border: 0px;
       display: block;
       color: transparent;
+      background-color: transparent;
     }
   }
   .slick-active {
