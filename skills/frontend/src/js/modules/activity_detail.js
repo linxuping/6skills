@@ -18,9 +18,19 @@ var ActivityDetail = React.createClass({
 		if (this.state.expire) {
 			alert("该活动已经过期！")
 		}
-		else if (this.state.status) {
+		else if (this.state.status == 1) {
 			window.location = "#qrcode";
 			alert("您已经报过名了，请到已报名活动中查看！")
+		} else if (this.state.status == 2) {
+			//付款
+			//TODO 阳光下成长还要返回报名科目
+			var major = "书画";
+			document.title = "付款";
+			ReactDOM.render(
+				<Pay backTitle="活动详情" major={major} 
+					activity={this.state.activity}/>,
+				document.getElementById('pay-page-wrap')
+			);
 		} else {
 			var actid = getUrlParam("actid");
 			if (sessionStorage.getItem("_remains_" + actid) == 0) {
@@ -50,11 +60,11 @@ var ActivityDetail = React.createClass({
 			}
 			verify = true;
 			profile = sessionStorage.getItem("_profile");
-			if (profile) {$
-				profile = JSON.parse(profile);$
+			if (profile) {
+				profile = JSON.parse(profile);
 				if (profile.phone==null || profile.phone=="")
 					verify = false;
-			} else { verify=false; }$
+			} else { verify=false; }
 			if (!verify) {
 				location.href=ges("template/verify_phone.html");
 				return;
@@ -66,7 +76,7 @@ var ActivityDetail = React.createClass({
 					activity={this.state.activity}/>,
 				document.getElementById('sign-page-wrap')
 			);
-		}
+		 }
 	},
 
 	openCollectPage: function(){
@@ -115,6 +125,7 @@ var ActivityDetail = React.createClass({
 			data: {openid: geopenid("ignore"), actid: actid},
 		})
 		.done(function(res) {
+			console.log(res);
 			this.setState({
 				status: res.status,
 				expire: res.errmsg=="过期",
@@ -228,6 +239,7 @@ var ActivityDetail = React.createClass({
 		console.log(this.state.activity)
 		return (
 			<div className="activity-detail">
+				{/*<Pay activity={this.state.activity}></Pay>*/}
 				<div className="back-btn" onClick={this.backHandler}>活动详情</div>
 				<article className="media">
 					<div className="media-hd" ref="coverBox">
@@ -278,7 +290,9 @@ var ActivityDetail = React.createClass({
 				<div className="sign-btn-right" style={{"cursor": "pointer"}}
 					onClick={this.openSignPage}>
 					{
-						this.state.expire ? "已过期" : (this.state.status ? "已报名" : "我要报名")
+						this.state.expire ? "已过期" : 
+							(this.state.status == 1 ? "已报名" : 
+								(this.state.status == 2 ? "付款" : "我要报名"))
 					}
 
 				</div>

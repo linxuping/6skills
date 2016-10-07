@@ -18,7 +18,7 @@ var Sign = React.createClass({
 		if (this.props.backTitle) {
 			document.title = this.props.backTitle;
 		}
-		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
+		ReactDOM.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 	},
 	componentDidMount: function(){
 
@@ -72,6 +72,10 @@ function validateForm(actid, formConponent) {
 			birthdate: {required: "请输入宝宝出生日期(例:20100101)"}
 		},
 		submitHandler: function(form){
+			if ($("#images").length > 0 && $("#images").val() == "") {
+				alert("请先上传宝宝照片");
+				return;
+			}
 			$(form).find(":submit").attr("disabled", true);
 			$(form).ajaxSubmit({
 				dataType: "json",
@@ -80,33 +84,39 @@ function validateForm(actid, formConponent) {
 					//此处加入sdk关闭网页
 					obj = typeof obj === "object" ? obj : JSON.parse(obj);
 					if (obj.errcode === 0) {
-						ReactDOM.render(
-							React.createElement(AlertDialog, {
-								title: "报名成功",
-								msg: "恭喜您报名成功！",
-								callback: function(){
-									if (formConponent.props.activity.price_child > 0) {
-										var major = $("#major");
-										if (major) {
-											major = major.val();
-										}
-									  ReactDOM.render(
-									    <Pay activity={formConponent.props.activity} major={major}/>,
-									    document.getElementById("pay-page-wrap")
-									  )
-									} else {
+						if (formConponent.props.activity.price_child > 0) {
+							//费用不为0，交费
+							var major = $("#major");
+							if (major) {
+								major = major.val();
+							}
+							document.title = "付款";
+						  ReactDOM.render(
+						    <Pay activity={formConponent.props.activity} major={major} backTitle="活动详情"/>,
+						    document.getElementById("pay-page-wrap")
+						  )
+						  //把报名页面关掉
+						  formConponent.back();
+						} else {
+							//免费直接报名成功
+							ReactDOM.render(
+								React.createElement(AlertDialog, {
+									title: "报名成功",
+									msg: "恭喜您报名成功！",
+									callback: function(){
 										if (obj.wxchat == ""){
 											var r = confirm("现在关注爱试课的公众号，可以查看更多活动和您的报名情况！");
 											if (r){
 												try_jump_pubnum();
 											}
 										}
+										formConponent.back();
 									}
-									formConponent.back();
-								}
-							}),
-							document.getElementById("alert-wrap")
-						);
+								}),
+								document.getElementById("alert-wrap")
+							);
+						}
+						
 					} else {
 						alert("报名失败：" + obj.errmsg);
 					}
@@ -167,21 +177,21 @@ var SignForm = React.createClass({
 			profile = JSON.parse(profile);
 		} else {profile = {}}
 		var sign_url = ges("activities/sign");
-
+		//var sign_url = "/static/js/test/sign.js";
 		var matchClasses = ["幼儿组（学龄前）", "小学甲组（1—2年级）", "小学乙组（3—4年级）", "小学丙组（5—6年级）"];
 		matchClasses = matchClasses.map(function(elem, index){
 			return <option key={index} value={elem}>{elem}</option>
 		});
-		var majors = ["声乐", "器乐", "舞蹈", "语言", "书画"];
+		var majors = ["声乐(报名费280元)", "器乐(报名费280元)", "舞蹈(报名费150元)", "语言(报名费280元)", "书画(报名费380元)"];
 		majors = majors.map(function(elem, index) {
 			return (
-				<option key={index} value={elem}>{elem}</option>
+				<option key={index} value={elem.split("(")[0]}>{elem}</option>
 			);
 		})
 		var signtype = this.props.activity.sign_type;
 		return (
 			<div className="SignForm">
-				<form action={sign_url} method="post" id="sign-form">
+				<form action={sign_url} method="get" id="sign-form">
 					<div className="back-btn" onClick={this.props.back}>报名</div>
 					<div className="weui_cells_title" style={{marginTop: 0}}>填写报名信息</div>
 					<div className="weui_cells weui_cells_form">
@@ -393,7 +403,7 @@ var SignForm = React.createClass({
 						""
 					}
 
-					<div className="weui_btn_area mb20">
+					<div className="weui_btn_area ss-btn-area">
 						<button type="submit" className="weui_btn weui_btn_primary" >确定</button>
 					</div>
 				</form>
@@ -408,7 +418,7 @@ var AlertDialog = React.createClass({
 		if (this.props.callback) {
 			this.props.callback();
 		} else
-			React.unmountComponentAtNode(document.getElementById("alert-wrap"));
+			ReactDOM.unmountComponentAtNode(document.getElementById("alert-wrap"));
 	},
 	render: function() {
 		return (
