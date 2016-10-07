@@ -1,12 +1,13 @@
 {
-  "activity_detail.js": "activity_detail-e5dd3a7f8e.js",
+  "activity_detail.js": "activity_detail-eb6b13fd62.js",
   "common.js": "common-7cf45fa76f.js",
-  "config.js": "config-7e65aff24d.js",
-  "index.js": "index-86bdedaaaf.js",
-  "list.js": "list-209728886a.js",
+  "config.js": "config-8edb964fe5.js",
+  "index.js": "index-bacf142868.js",
+  "list.js": "list-c611a552ed.js",
   "me.js": "me-1545626e6f.js",
+  "pay.js": "pay-55e1c36b3e.js",
   "sign.js": "sign-ee048be9f3.js",
-  "sign_new.js": "sign_new-b392cdebb2.js",
+  "sign_new.js": "sign_new-eceb2e4864.js",
   "upload.js": "upload-05866515e9.js",
   "verify.js": "verify-cda6e77f3b.js"
 }

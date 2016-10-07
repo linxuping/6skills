@@ -1,6 +1,7 @@
 var Pay = React.createClass({
 
   closeHandler: function() {
+    document.title = this.props.backTitle;
     ReactDOM.unmountComponentAtNode(document.getElementById("pay-page-wrap"));
   },
 
@@ -96,7 +97,7 @@ var Pay = React.createClass({
           {this.props.activity.sign_type == "3" ? 
             sign3Price[this.props.major] : this.props.activity.price_child}元</p>
         </section>
-        <div className="weui_btn_area mb20">
+        <div className="weui_btn_area ss-btn-area mb20">
           <button id="paybtn" type="button" className="weui_btn weui_btn_primary" onClick={this.payHandler} data-price={this.props.activity.sign_type == "3" ? sign3Price[this.props.major] : this.props.activity.price_child}>支付</button>
         </div>
       </div>

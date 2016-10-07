@@ -337,6 +337,7 @@ body{
 	bottom: 0px;
 	width: 100%;
 	padding-top: @backHeaderHeight;
+	padding-bottom: 110px;
 	left: 0px;
 	background-color: #fff;
 	.back-btn{
@@ -362,17 +363,24 @@ body{
 		color: #ff4444;
 		font-size: 26px;
 	}
-	.weui_btn_area{
-		position: fixed;
-		color: #000;
-		bottom: 0px;
-		width: 100%;
-		height: 70px;
-		text-align: center;
-		font-size: 26px;
-		cursor: pointer;
-		padding: 10px;
-		margin: 10px 0;
+}
+.ss-btn-area{
+	position: fixed;
+	color: #000;
+	bottom: 0px;
+	width: 100%;
+	height: 110px;
+	text-align: center;
+	font-size: 26px;
+	cursor: pointer;
+	padding: 10px;
+	margin: 0;
+	line-height: 110px;
+	background-color: @themeColor;
+	button{
+		height: 100%;
+		color: @fontColor;
+		background-color: transparent;
 	}
 }
 .get-btn{
@@ -418,7 +426,7 @@ body{
 		span{
 			display: block;
 			float: left;
-			width: 80px;
+			width: 120px;
 		}
 		time{
 			display: block;
@@ -555,24 +563,23 @@ body{
   padding-left: 0;
   list-style: none;
   text-align: right;
-
   li {
     display: inline-block;
     width:  @dotWidth;
     height: @dotWidth;
     margin: 1px;
     text-indent: -999px;
-    border: 1px solid @carousel-indicator-border-color;
-    border-radius: @dotWidth;
+    border: 2px solid @carousel-indicator-border-color;
+    border-radius: 50%;
     cursor: pointer;
-
-    background-color: #000 \9; // IE8
-    background-color: rgba(0,0,0,0); // IE9
     button{
       height: 100%;
       width: 100%;
+      border-radius: 50%;
+      border: 0px;
       display: block;
       color: transparent;
+      background-color: transparent;
     }
   }
   .slick-active {
@@ -608,6 +615,7 @@ body{
 	font-size: 26px;
 	&.weui_btn_mini{
 		font-size: 18px;
+		padding: 3px 15px;
 	}
 }
 .weui_uploader_input_wrp, .weui_uploader_file{

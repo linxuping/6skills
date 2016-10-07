@@ -8,7 +8,7 @@ var Index = React.createClass({displayName: "Index",
 	},
 
 	componentDidMount: function() {
-		this.fatchActivities();
+		this.updateActivities();
 	},
 
 	moreClick: function() {
@@ -20,9 +20,9 @@ var Index = React.createClass({displayName: "Index",
 		this.fatchActivities();
 	},
 
-	fatchActivities: function(){
+	updateActivities: function(callback){
 		var page = this.state.pageable.page || 1;
-		var url =  '/activities/special-offers?area=*&age=0-100&pagesize=5&city&district=*';
+		var url =  '/activities/special-offers?area=*&age=0-100&pagesize=20&city&district=*';
 		$.ajax({
 			url: url,
 			type: 'get',
@@ -45,7 +45,9 @@ var Index = React.createClass({displayName: "Index",
 			console.log("error");
 		})
 		.always(function() {
-			console.log("complete");
+			callback && setTimeout(function(){
+				callback();
+			}, 200)
 		});
 
 	},
@@ -55,8 +57,8 @@ var Index = React.createClass({displayName: "Index",
 			React.createElement("div", {className: "Index"}, 
 				React.createElement(Carousel, {url: "/activities/hot/list"}), 
 				React.createElement(Navigation, null), 
-				React.createElement(Activities, {activities: this.state.activities, pageable: this.state.pageable, 
-					moreClick: this.moreClick})
+				React.createElement(Activities, {activities: this.state.activities, pageable: "no", 
+					app: this})
 			)
 		);
 	}

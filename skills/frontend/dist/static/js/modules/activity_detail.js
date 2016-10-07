@@ -9,19 +9,19 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 
 	openSignPage: function(){
 		var _oid = geopenid();
-		// if ("undefined" == _oid || null == _oid){
-		// 	var r = confirm("请先关注公众号再查看.");
-		// 	if (r)
-		// 		jump_pubnum();
-		// 	return;
-		// }
-		// if (this.state.expire) {
-		// 	alert("该活动已经过期！")
-		// }
-		// else if (this.state.status) {
-		// 	window.location = "#qrcode";
-		// 	alert("您已经报过名了，请到已报名活动中查看！")
-		// } else {
+		if ("undefined" == _oid || null == _oid){
+			var r = confirm("请先关注公众号再查看.");
+			if (r)
+				jump_pubnum();
+			return;
+		}
+		if (this.state.expire) {
+			alert("该活动已经过期！")
+		}
+		else if (this.state.status) {
+			window.location = "#qrcode";
+			alert("您已经报过名了，请到已报名活动中查看！")
+		} else {
 			var actid = getUrlParam("actid");
 			if (sessionStorage.getItem("_remains_" + actid) == 0) {
 				alert("活动人数已满，无法报名");
@@ -55,17 +55,18 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 				if (profile.phone==null || profile.phone=="")
 					verify = false;
 			} else { verify=false; }$
-			// if (!verify) {
-			// 	location.href=ges("template/verify_phone.html");
-			// 	return;
-			// }
+			if (!verify) {
+				location.href=ges("template/verify_phone.html");
+				return;
+			}
 
 			document.title = "活动报名";
 			ReactDOM.render(
-				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus}),
+				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus, 
+					activity: this.state.activity}),
 				document.getElementById('sign-page-wrap')
 			);
-		// }
+		}
 	},
 
 	openCollectPage: function(){
@@ -137,6 +138,8 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			return;
 		}
 		_encodeurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri="+encodeURIComponent(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect"
+		
+		//获取活动具体信息
 		$.ajax({
 			url: this.props.url,
 			type: 'get',
@@ -182,8 +185,29 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 
 				this.setState({
 					activity: res,
+					signtype: res.sign_type || 1,
 					imgs: res.imgs,
 				});
+				
+				if (res.sign_type == 3) {
+					var uploadJs = [
+						'/static/js/upload/moxie.min.js', '/static/js/upload/plupload.js', 
+						'/static/js/upload/qiniu.min.js', '/static/js/upload/upload-config.js', 
+						'/static/js/modules/upload.js'];
+					for (var i = 0; i < uploadJs.length; i++) {
+						var js = document.createElement("script");
+						js.async = false;
+						js.src = uploadJs[i];
+						document.body.appendChild(js);
+					}
+				}
+				// if (res.price_child == 0) {
+				// 	var js = document.createElement("script");
+				// 	js.async = false;
+				// 	js.src = "/static/js/modules/pay.js";
+				// 	document.body.appendChild(js);
+				// }
+
 			}.bind(this),
 			error: function() {
 				this.setState({
@@ -279,14 +303,3 @@ var QrCode = React.createClass({displayName: "QrCode",
 	}
 });
 
-var Pay = React.createClass({displayName: "Pay",
-	render: function() {
-		return (
-			React.createElement("div", {className: "pay"}, 
-				React.createElement("div", {className: "back-btn"}
-					
-				)
-			)
-		);
-	}
-});

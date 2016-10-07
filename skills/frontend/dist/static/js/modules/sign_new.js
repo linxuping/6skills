@@ -26,7 +26,8 @@ var Sign = React.createClass({displayName: "Sign",
 	render: function() {
 		return (
 			React.createElement("div", {className: "sign-page", style: {"overflowY": "auto"}}, 
-				React.createElement(SignForm, {actid: this.props.actid, back: this.back, reload: this.props.reload})
+				React.createElement(SignForm, {actid: this.props.actid, back: this.back, 
+					reload: this.props.reload, activity: this.props.activity})
 			)
 		);
 	}
@@ -52,13 +53,14 @@ function validateForm(actid, formConponent) {
 			"company": {required: true},
 			"teacher": {required: true},
 			"company_tel": {required: true},
-			"teacher_phone": {required: true, digits: true, rangelength:[11, 11]}
+			"teacher_phone": {required: true, digits: true, rangelength:[11, 11]},
+			"birthdate": {required: true}
 		},
 		messages: {
 			"name": {required: "必填"},
 			"phone": {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
 			"age": {required: "请输入年龄", min: "", max: ""},
-			gender: {required: "请选择宝宝性别"},
+			"gender": {required: "请选择宝宝性别"},
 			"city": {required: "请输入所在城市"},
 			"kids_name": {required: "请输入宝宝姓名"},
 			"identity_card": {required: "请输入身份证号", rangelength: "18位身份证"},
@@ -66,9 +68,14 @@ function validateForm(actid, formConponent) {
 			"company": {required: "请输入选送单位"},
 			"teacher": {required: "请输入指导老师"},
 			"company_tel": {required: "请输入单位电话"},
-			"teacher_phone": {required: "请输入老师电话", digits: "11位手机号码", rangelength:"11位手机号码"}
+			"teacher_phone": {required: "请输入老师电话", digits: "11位手机号码", rangelength:"11位手机号码"},
+			birthdate: {required: "请输入宝宝出生日期(例:20100101)"}
 		},
 		submitHandler: function(form){
+			if (document.getElementsByName("images")[0].value == ""){
+				alert("请上传照片.");
+				return;
+			}
 			$(form).find(":submit").attr("disabled", true);
 			$(form).ajaxSubmit({
 				dataType: "json",
@@ -82,16 +89,24 @@ function validateForm(actid, formConponent) {
 								title: "报名成功",
 								msg: "恭喜您报名成功！",
 								callback: function(){
-									formConponent.back();
-									if (obj.wxchat == ""){
-										var r = confirm("现在关注爱试课的公众号，可以查看更多活动和您的报名情况！");
-										if (r){
-											try_jump_pubnum();
+									if (formConponent.props.activity.price_child > 0) {
+										var major = $("#major");
+										if (major) {
+											major = major.val();
+										}
+									  ReactDOM.render(
+									    React.createElement(Pay, {activity: formConponent.props.activity, major: major}),
+									    document.getElementById("pay-page-wrap")
+									  )
+									} else {
+										if (obj.wxchat == ""){
+											var r = confirm("现在关注爱试课的公众号，可以查看更多活动和您的报名情况！");
+											if (r){
+												try_jump_pubnum();
+											}
 										}
 									}
-									//try{
-									//	WeixinJSBridge.call('closeWindow');
-									//} catch (e){ }
+									formConponent.back();
 								}
 							}),
 							document.getElementById("alert-wrap")
@@ -139,7 +154,13 @@ var SignForm = React.createClass({displayName: "SignForm",
 	},
 
 	render: function() {
-		var ages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+		var age;
+		if (this.props.signtype == "3") {
+			ages = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+		} else {
+			ages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+		}
+		
 		ages = ages.map(function(elem, index) {
 			return (
 				React.createElement("option", {key: index, value: elem}, elem, "岁")
@@ -161,8 +182,7 @@ var SignForm = React.createClass({displayName: "SignForm",
 				React.createElement("option", {key: index, value: elem}, elem)
 			);
 		})
-
-
+		var signtype = this.props.activity.sign_type;
 		return (
 			React.createElement("div", {className: "SignForm"}, 
 				React.createElement("form", {action: sign_url, method: "post", id: "sign-form"}, 
@@ -188,15 +208,54 @@ var SignForm = React.createClass({displayName: "SignForm",
 							)
 						), 
 
-						React.createElement("div", {className: "weui_cell"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "kids_name", className: "weui_label"}, "宝宝姓名")
-							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("input", {type: "text", name: "kids_name", id: "kids_name", className: "weui_input", 
-									placeholder: "请输入宝宝姓名", defaultValue: profile.kids_name})
+						
+							signtype == "2" ? 
+							React.createElement("div", null, 
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "city", className: "weui_label"}, "所在城市")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "text", name: "city", id: "city", className: "weui_input", 
+											placeholder: "请输入所在城市", defaultValue: profile.city})
+									)
+								), 
+
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "kids_name", className: "weui_label"}, "宝宝姓名")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "text", name: "kids_name", id: "kids_name", className: "weui_input", 
+											placeholder: "请输入宝宝姓名", defaultValue: profile.kids_name})
+									)
+								), 
+
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "birthdate", className: "weui_label"}, "宝宝出生日期")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "date", name: "birthdate", id: "birthdate", className: "weui_input", 
+											placeholder: "请输入儿童出生日期", defaultValue: profile.birthdate})
+									)
+								)
 							)
-						), 
+							: "", 
+						
+
+						
+							signtype == "3" ? 
+							React.createElement("div", {className: "weui_cell"}, 
+								React.createElement("div", {className: "weui_cell_hd"}, 
+									React.createElement("label", {htmlFor: "kids_name", className: "weui_label"}, "宝宝姓名")
+								), 
+								React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+									React.createElement("input", {type: "text", name: "kids_name", id: "kids_name", className: "weui_input", 
+										placeholder: "请输入宝宝姓名", defaultValue: profile.kids_name})
+								)
+							) : "", 
+						
 
 						React.createElement("div", {className: "weui_cell weui_cell_select weui_select_after"}, 
 							React.createElement("div", {className: "weui_cell_hd"}, 
@@ -235,102 +294,108 @@ var SignForm = React.createClass({displayName: "SignForm",
 					), 
 
 
+					
+						signtype == "3" ? 
+						React.createElement("div", null, 
+							React.createElement("div", {className: "weui_cells weui_cells_form"}, 
 
-					React.createElement("div", {className: "weui_cells weui_cells_form"}, 
+								React.createElement(Upload, {uploadKey: "custom-sign"}), 
 
-						React.createElement(Upload, {uploadKey: "custom-sign"}), 
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "identity_card", className: "weui_label"}, "身份证号")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "text", name: "identity_card", id: "identity_card", className: "weui_input", 
+											placeholder: "请输入身份证号", defaultValue: profile.identity_card})
+									)
+								), 
 
-						React.createElement("div", {className: "weui_cell"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "identity_card", className: "weui_label"}, "身份证号")
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "program", className: "weui_label"}, "节目名称")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "text", name: "program", id: "program", className: "weui_input", 
+											placeholder: "请输入节目名称", defaultValue: profile.program})
+									)
+								), 
+
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "company", className: "weui_label"}, "选送单位")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "text", name: "company", id: "company", className: "weui_input", 
+											placeholder: "请输入选送单位", defaultValue: profile.company})
+									)
+								), 
+
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "company_tel", className: "weui_label"}, "单位电话")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "text", name: "company_tel", id: "company_tel", className: "weui_input", 
+											placeholder: "请输入单位电话", defaultValue: profile.company_tel})
+									)
+								), 
+
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "teacher", className: "weui_label"}, "指导老师")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "text", name: "teacher", id: "teacher", className: "weui_input", 
+											placeholder: "请输入指导老师姓名", defaultValue: profile.teach})
+									)
+								), 
+
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "teacher_phone", className: "weui_label"}, "老师电话")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("input", {type: "text", name: "teacher_phone", id: "teacher_phone", className: "weui_input", 
+											placeholder: "请输入老师电话", defaultValue: profile.teacher_phone})
+									)
+								), 
+
+								React.createElement("div", {className: "weui_cell weui_cell_select weui_select_after"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "match_class", className: "weui_label"}, "参赛组别")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("select", {name: "match_class", id: "match_class", className: "weui_select", defautVlaue: "1"}, 
+											matchClasses
+										)
+									)
+								), 
+								React.createElement("div", {className: "weui_cell weui_cell_select weui_select_after"}, 
+									React.createElement("div", {className: "weui_cell_hd"}, 
+										React.createElement("label", {htmlFor: "major", className: "weui_label"}, "参赛专业")
+									), 
+									React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+										React.createElement("select", {name: "major", id: "major", className: "weui_select", ref: "major"}, 
+											majors
+										)
+									)
+								)
 							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("input", {type: "text", name: "identity_card", id: "identity_card", className: "weui_input", 
-									placeholder: "请输入身份证号", defaultValue: profile.identity_card})
-							)
-						), 
 
-						React.createElement("div", {className: "weui_cell"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "program", className: "weui_label"}, "节目名称")
-							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("input", {type: "text", name: "program", id: "program", className: "weui_input", 
-									placeholder: "请输入节目名称", defaultValue: profile.program})
-							)
-						), 
-
-						React.createElement("div", {className: "weui_cell"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "company", className: "weui_label"}, "选送单位")
-							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("input", {type: "text", name: "company", id: "company", className: "weui_input", 
-									placeholder: "请输入选送单位", defaultValue: profile.company})
-							)
-						), 
-
-						React.createElement("div", {className: "weui_cell"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "company_tel", className: "weui_label"}, "单位电话")
-							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("input", {type: "text", name: "company_tel", id: "company_tel", className: "weui_input", 
-									placeholder: "请输入单位电话", defaultValue: profile.company_tel})
-							)
-						), 
-
-						React.createElement("div", {className: "weui_cell"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "teacher", className: "weui_label"}, "指导老师")
-							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("input", {type: "text", name: "teacher", id: "teacher", className: "weui_input", 
-									placeholder: "请输入指导老师姓名", defaultValue: profile.teach})
-							)
-						), 
-
-						React.createElement("div", {className: "weui_cell"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "teacher_phone", className: "weui_label"}, "老师电话")
-							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("input", {type: "text", name: "teacher_phone", id: "teacher_phone", className: "weui_input", 
-									placeholder: "请输入老师电话", defaultValue: profile.teacher_phone})
-							)
-						), 
-
-						React.createElement("div", {className: "weui_cell weui_cell_select weui_select_after"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "match_class", className: "weui_label"}, "参赛组别")
-							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("select", {name: "match_class", id: "match_class", className: "weui_select", defautVlaue: "1"}, 
-									matchClasses
+							React.createElement("div", {className: "weui_cells_title"}, "获奖经历"), 
+							React.createElement("div", {className: "weui_cells weui_cells_form"}, 
+								React.createElement("div", {className: "weui_cell"}, 
+									React.createElement("div", {className: "weui_cell_bd", style: {width: "100%"}}, 
+										React.createElement("textarea", {name: "awards", id: "awards", rows: "3", className: "weui_textarea", 
+											placeholder: "获奖经历"})
+									)
 								)
 							)
-						), 
-						React.createElement("div", {className: "weui_cell weui_cell_select weui_select_after"}, 
-							React.createElement("div", {className: "weui_cell_hd"}, 
-								React.createElement("label", {htmlFor: "major", className: "weui_label"}, "参赛专业")
-							), 
-							React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
-								React.createElement("select", {name: "major", id: "major", className: "weui_select", defautVlaue: "1"}, 
-									majors
-								)
-							)
-						)
-					), 
-
-					React.createElement("div", {className: "weui_cells_title"}, "获奖经历"), 
-					React.createElement("div", {className: "weui_cells weui_cells_form"}, 
-						React.createElement("div", {className: "weui_cell"}, 
-							React.createElement("div", {className: "weui_cell_bd", style: {width: "100%"}}, 
-								React.createElement("textarea", {name: "awards", id: "awards", rows: "3", className: "weui_textarea", 
-									placeholder: "获奖经历"})
-							)
-						)
-					), 
+						) 
+						:
+						"", 
+					
 
 					React.createElement("div", {className: "weui_btn_area mb20"}, 
 						React.createElement("button", {type: "submit", className: "weui_btn weui_btn_primary"}, "确定")
@@ -355,7 +420,7 @@ var AlertDialog = React.createClass({displayName: "AlertDialog",
 				React.createElement("div", {className: "weui_mask"}), 
 				React.createElement("div", {className: "weui_dialog"}, 
 					React.createElement("div", {className: "weui_dialog_hd"}, 
-						React.createElement("strong", {className: "weui_dialog_title"}, this.props.title && "提示")
+						React.createElement("strong", {className: "weui_dialog_title"}, this.props.title || "提示")
 					), 
 					React.createElement("div", {className: "weui_dialog_bd"}, this.props.msg), 
 					React.createElement("div", {className: "weui_dialog_ft"}, 
