@@ -33,7 +33,7 @@ var Upload = React.createClass({displayName: "Upload",
 			React.createElement("div", {className: "Upload"}, 
 				React.createElement("div", {className: "weui_cell"}, 
 					React.createElement("div", {className: "weui_cell_bd"}, 
-						React.createElement("input", {type: "hidden", name: this.state.name, value: this.state.file}), 
+						React.createElement("input", {type: "hidden", name: this.state.name, value: this.state.file, id: this.state.name}), 
 						React.createElement("div", {className: "weui_uploader"}, 
 							React.createElement("div", {className: "weui_uploader_hd fl"}, 
 								React.createElement("p", {className: "weui_uploader_title", style: {width: 105}}, "宝宝照片")

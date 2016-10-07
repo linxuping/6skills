@@ -1,3 +1,4 @@
+var dropload;
 var Index = React.createClass({displayName: "Index",
 
 	getInitialState: function() {
@@ -8,7 +9,7 @@ var Index = React.createClass({displayName: "Index",
 	},
 
 	componentDidMount: function() {
-		this.fatchActivities();
+		
 	},
 
 	moreClick: function() {
@@ -20,7 +21,7 @@ var Index = React.createClass({displayName: "Index",
 		this.fatchActivities();
 	},
 
-	fatchActivities: function(){
+	updateActivities: function(callback){
 		var page = this.state.pageable.page || 1;
 		var url =  '/activities/special-offers?area=*&age=0-100&pagesize=5&city&district=*';
 		$.ajax({
@@ -39,13 +40,16 @@ var Index = React.createClass({displayName: "Index",
 					activities: activities,
 					pageable: res.pageable
 				});
+				dropload.resetload();
 			}
 		}.bind(this))
 		.fail(function() {
 			console.log("error");
 		})
 		.always(function() {
-			console.log("complete");
+			callback && setTimeout(function(){
+				callback();
+			}, 200)
 		});
 
 	},
@@ -55,8 +59,8 @@ var Index = React.createClass({displayName: "Index",
 			React.createElement("div", {className: "Index"}, 
 				React.createElement(Carousel, {url: "/activities/hot/list"}), 
 				React.createElement(Navigation, null), 
-				React.createElement(Activities, {activities: this.state.activities, pageable: this.state.pageable, 
-					moreClick: this.moreClick})
+				React.createElement(Activities, {activities: this.state.activities, 
+					app: this, scrollArea: ".Index"})
 			)
 		);
 	}
@@ -104,10 +108,14 @@ var Carousel = React.createClass({displayName: "Carousel",
 		var settings = {
 			dots: true,
 			infinite: true,
+			autoplay: true,
+			autoplaySpeed: 5000,
+			pauseOnHover: true,
 			speed: 500,
+			lazyLoad:true,
+			arrows: false,
 			slidesToShow: 1,
-			slidesToScroll: 1,
-			arrows: false
+			slidesToScroll: 1
 		};
 		return (
 			React.createElement("div", {className: "carousel"}, 

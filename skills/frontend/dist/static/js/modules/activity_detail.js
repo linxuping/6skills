@@ -9,19 +9,29 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 
 	openSignPage: function(){
 		var _oid = geopenid();
-		// if ("undefined" == _oid || null == _oid){
-		// 	var r = confirm("请先关注公众号再查看.");
-		// 	if (r)
-		// 		jump_pubnum();
-		// 	return;
-		// }
-		// if (this.state.expire) {
-		// 	alert("该活动已经过期！")
-		// }
-		// else if (this.state.status) {
-		// 	window.location = "#qrcode";
-		// 	alert("您已经报过名了，请到已报名活动中查看！")
-		// } else {
+		if ("undefined" == _oid || null == _oid){
+			var r = confirm("请先关注公众号再查看.");
+			if (r)
+				jump_pubnum();
+			return;
+		}
+		if (this.state.expire) {
+			alert("该活动已经过期！")
+		}
+		else if (this.state.status == 1) {
+			window.location = "#qrcode";
+			alert("您已经报过名了，请到已报名活动中查看！")
+		} else if (this.state.status == 2) {
+			//付款
+			//TODO 阳光下成长还要返回报名科目
+			var major = "书画";
+			document.title = "付款";
+			ReactDOM.render(
+				React.createElement(Pay, {backTitle: "活动详情", major: major, 
+					activity: this.state.activity}),
+				document.getElementById('pay-page-wrap')
+			);
+		} else {
 			var actid = getUrlParam("actid");
 			if (sessionStorage.getItem("_remains_" + actid) == 0) {
 				alert("活动人数已满，无法报名");
@@ -50,22 +60,23 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			}
 			verify = true;
 			profile = sessionStorage.getItem("_profile");
-			if (profile) {$
-				profile = JSON.parse(profile);$
+			if (profile) {
+				profile = JSON.parse(profile);
 				if (profile.phone==null || profile.phone=="")
 					verify = false;
-			} else { verify=false; }$
-			// if (!verify) {
-			// 	location.href=ges("template/verify_phone.html");
-			// 	return;
-			// }
+			} else { verify=false; }
+			if (!verify) {
+				location.href=ges("template/verify_phone.html");
+				return;
+			}
 
 			document.title = "活动报名";
 			ReactDOM.render(
-				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus}),
+				React.createElement(Sign, {actid: actid, backTitle: "活动详情", reload: this.getSignupStatus, 
+					activity: this.state.activity}),
 				document.getElementById('sign-page-wrap')
 			);
-		// }
+		 }
 	},
 
 	openCollectPage: function(){
@@ -114,6 +125,7 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			data: {openid: geopenid("ignore"), actid: actid},
 		})
 		.done(function(res) {
+			console.log(res);
 			this.setState({
 				status: res.status,
 				expire: res.errmsg=="过期",
@@ -137,6 +149,8 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 			return;
 		}
 		_encodeurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri="+encodeURIComponent(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect"
+		
+		//获取活动具体信息
 		$.ajax({
 			url: this.props.url,
 			type: 'get',
@@ -182,8 +196,29 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 
 				this.setState({
 					activity: res,
+					signtype: res.sign_type || 1,
 					imgs: res.imgs,
 				});
+				
+				if (res.sign_type == 3) {
+					var uploadJs = [
+						'/static/js/upload/moxie.min.js', '/static/js/upload/plupload.js', 
+						'/static/js/upload/qiniu.min.js', '/static/js/upload/upload-config.js', 
+						'/static/js/modules/upload.js'];
+					for (var i = 0; i < uploadJs.length; i++) {
+						var js = document.createElement("script");
+						js.async = false;
+						js.src = uploadJs[i];
+						document.body.appendChild(js);
+					}
+				}
+				// if (res.price_child == 0) {
+				// 	var js = document.createElement("script");
+				// 	js.async = false;
+				// 	js.src = "/static/js/modules/pay.js";
+				// 	document.body.appendChild(js);
+				// }
+
 			}.bind(this),
 			error: function() {
 				this.setState({
@@ -204,6 +239,7 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 		console.log(this.state.activity)
 		return (
 			React.createElement("div", {className: "activity-detail"}, 
+				/*<Pay activity={this.state.activity}></Pay>*/
 				React.createElement("div", {className: "back-btn", onClick: this.backHandler}, "活动详情"), 
 				React.createElement("article", {className: "media"}, 
 					React.createElement("div", {className: "media-hd", ref: "coverBox"}, 
@@ -254,7 +290,9 @@ var ActivityDetail = React.createClass({displayName: "ActivityDetail",
 				React.createElement("div", {className: "sign-btn-right", style: {"cursor": "pointer"}, 
 					onClick: this.openSignPage}, 
 					
-						this.state.expire ? "已过期" : (this.state.status ? "已报名" : "我要报名")
+						this.state.expire ? "已过期" : 
+							(this.state.status == 1 ? "已报名" : 
+								(this.state.status == 2 ? "付款" : "我要报名"))
 					
 
 				), 
@@ -279,14 +317,3 @@ var QrCode = React.createClass({displayName: "QrCode",
 	}
 });
 
-var Pay = React.createClass({displayName: "Pay",
-	render: function() {
-		return (
-			React.createElement("div", {className: "pay"}, 
-				React.createElement("div", {className: "back-btn"}
-					
-				)
-			)
-		);
-	}
-});

@@ -1,3 +1,4 @@
+@import "dropload.css";
 * {
   box-sizing: border-box;
 }
@@ -39,10 +40,34 @@ body {
   -webkit-flex: 1;
   flex: 1;
 }
+.app {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  -webkit-box-orient: vertical;
+  box-orient: vertical;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+.app .activities {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
 .select-header {
   height: 90px;
   border-bottom: #ccc 1px solid;
-  position: fixed;
+  position: relative;
   top: 0px;
   background-color: #fff;
   z-index: 99;
@@ -300,18 +325,57 @@ body {
   border-top: 1px solid #222;
   border-left: 1px solid #222;
 }
-.sign-page {
+.sign-page,
+.pay-page {
   z-index: 1000;
   position: fixed;
   top: 0px;
   bottom: 0px;
   width: 100%;
   padding-top: 90px;
+  padding-bottom: 110px;
   left: 0px;
   background-color: #fff;
 }
-.sign-page .back-btn {
+.sign-page .back-btn,
+.pay-page .back-btn {
   border-bottom: 1px solid #ddd;
+}
+.pay-page section {
+  font-size: 24px;
+  padding-top: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.pay-page section .name {
+  font-size: 28px;
+}
+.pay-page section p {
+  text-indent: 2em;
+  padding-top: 10px;
+}
+.pay-page .price {
+  color: #ff4444;
+  font-size: 26px;
+}
+.ss-btn-area {
+  position: fixed;
+  color: #000;
+  bottom: 0px;
+  width: 100%;
+  height: 110px;
+  text-align: center;
+  font-size: 26px;
+  cursor: pointer;
+  padding: 10px;
+  margin: 0;
+  line-height: 110px;
+  background-color: #ff8db3;
+}
+.ss-btn-area button {
+  height: 100%;
+  color: #222;
+  background-color: transparent;
 }
 .get-btn {
   display: inline-block;
@@ -354,7 +418,7 @@ body {
 .my-activities .time span {
   display: block;
   float: left;
-  width: 80px;
+  width: 120px;
 }
 .my-activities .time time {
   display: block;
@@ -428,6 +492,23 @@ body {
   color: #ff8db3;
   border-color: #ff8db3;
 }
+.weui_label {
+  width: 150px;
+}
+.weui_actionsheet_cell:active {
+  background-color: #FFF;
+}
+.weui_dialog_title {
+  font-size: 28px;
+}
+.weui_dialog_bd {
+  font-size: 24px;
+}
+.weui_dialog_ft {
+  font-size: 28px;
+  line-height: 65px;
+  margin-top: 25px;
+}
 .carousel .slick-track {
   height: 330px;
   overflow: hidden;
@@ -462,17 +543,18 @@ body {
   height: 16px;
   margin: 1px;
   text-indent: -999px;
-  border: 1px solid #fff;
-  border-radius: 16px;
+  border: 2px solid #fff;
+  border-radius: 50%;
   cursor: pointer;
-  background-color: #000 \9;
-  background-color: rgba(0, 0, 0, 0);
 }
 .slick-dots li button {
   height: 100%;
   width: 100%;
+  border-radius: 50%;
+  border: 0px;
   display: block;
   color: transparent;
+  background-color: transparent;
 }
 .slick-dots .slick-active {
   width: 16px;
@@ -505,6 +587,7 @@ body {
 }
 .weui_btn.weui_btn_mini {
   font-size: 18px;
+  padding: 3px 15px;
 }
 .weui_uploader_input_wrp,
 .weui_uploader_file {

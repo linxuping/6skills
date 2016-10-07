@@ -19,7 +19,7 @@ var Me = React.createClass({displayName: "Me",
 			console.log(res.profile.username);
 			console.log(res.profile.img);
 			if (res.errcode != 0){
-				location.href=ges("template/verify_phone.html");
+				//location.href=ges("template/verify_phone.html");
 				return;
 			}
 			this.setState( { "username":res.profile.username,"phone":res.profile.phone,"img":res.profile.img } );
@@ -36,12 +36,14 @@ var Me = React.createClass({displayName: "Me",
 				this.gotoMyActivities();
 			} else if ("collections".indexOf(hash) !== -1) {
 				this.gotoMyCollections();
+			} else if ("activities-to-pay".indexOf(hash) !== -1) {
+				this.gotoNotPayActivities();
 			}
 		}
 	},
 
 	back: function(){
-		React.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
+		ReactDOM.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
 		document.title = "我";
 		var href = window.location.href.split("#")[0];
 		history.replaceState("myActivities", null, href);
@@ -75,6 +77,17 @@ var Me = React.createClass({displayName: "Me",
 			document.getElementById("sign-page-wrap")
 		);
 	},
+	
+	gotoNotPayActivities: function() {
+	  document.title = "待付款";
+	  var href = window.location.href.split("#")[0];
+	  history.replaceState("myActivities", null, href + "#activities-to-pay");
+	  ReactDOM.render(
+	  	React.createElement(ActivitiesToPay, {back: this.back, gotoActivityDetail: this.gotoActivityDetail}),
+	  	document.getElementById("sign-page-wrap")
+	  );
+	},
+
 	render: function() {
 		return (
 			React.createElement("div", {className: "me"}, 
@@ -99,7 +112,16 @@ var Me = React.createClass({displayName: "Me",
 									React.createElement("p", null, "我的收藏")
 								), 
 								React.createElement("div", {className: "weui_cell_ft"})
+							), 
+
+							React.createElement("a", {href: "javascript:void(0);", className: "weui_cell", 
+								 onClick: this.gotoNotPayActivities}, 
+								React.createElement("div", {className: "weui_cell_bd weui_cell_primary"}, 
+									React.createElement("p", null, "待付款")
+								), 
+								React.createElement("div", {className: "weui_cell_ft"})
 							)
+
 						)
 					)
 				), 
@@ -179,7 +201,7 @@ var MyActivities = React.createClass({displayName: "MyActivities",
 		})
 		.always(function() {
 			console.log("complete");
-			React.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
 		});
 	},
 
@@ -248,12 +270,13 @@ var MyCollections = React.createClass({displayName: "MyCollections",
 	pullFromServer: function() {
 		$.ajax({
 			url: ges('activities/mycollections'),
-			//url: '/test/my.json',
+			//url: '/static/js/test/list.js',
 			type: 'get',
 			dataType: 'json',
 			data: { openid:geopenid(),page:"1",pagesize:"100" },
 			success: function(res) {
 				console.log("mycollections success");
+				res = JSON.parse(res)
 				this.setState( {"activities":res.activities} );
 			}.bind(this),
 			error: function() {
@@ -263,6 +286,7 @@ var MyCollections = React.createClass({displayName: "MyCollections",
 	},
 
 	delCollectionHandler: function (event) {
+		var _this = this;
 		event.stopPropagation();
 		var collid = event.target.dataset.collid;
 		ReactDOM.render(
@@ -282,7 +306,7 @@ var MyCollections = React.createClass({displayName: "MyCollections",
 					})
 					.always(function() {
 						console.log("delCollection complete");
-						React.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+						ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
 					});
 				}.bind(this), title: "删除收藏", 
 				content: "您确定要删除这个收藏吗？"}),
@@ -321,10 +345,96 @@ var MyCollections = React.createClass({displayName: "MyCollections",
 	}
 });
 
+var ActivitiesToPay = React.createClass({displayName: "ActivitiesToPay",
+	getInitialState: function() {
+		return {
+			activities: []
+		};
+	},
+	componentDidMount: function() {
+		this.pullFromServer();
+	},
+	pullFromServer: function() {
+		$.ajax({
+			url: '/activities/unpay/list',
+			//url: "/static/js/test/list.js",
+			type: 'get',
+			dataType: 'json',
+			data: { openid:geopenid(),page:"1",pagesize:"100" },
+			success: function(res) {
+				console.log("unpay list success");
+				res = JSON.parse(res);
+				this.setState( {"activities":res.activities} );
+			}.bind(this),
+			error: function() {
+				console.log("unpay list error");
+			}.bind(this)
+		});
+	},
+
+	// delCollectionHandler: function (event) {
+	// 	event.stopPropagation();
+	// 	var collid = event.target.dataset.collid;
+	// 	ReactDOM.render(
+	// 		<ConfirmDialog callback={function(){
+	// 				$.ajax({
+	// 					url: ges('/activities/reset_collection'),
+	// 					//url: '/test/sign.json',
+	// 					type: 'post',
+	// 					dataType: 'json',
+	// 					data: { "openid":geopenid(),"collid": collid },
+	// 				})
+	// 				.done(function() {
+	// 					this.pullFromServer();
+	// 				}.bind(this))
+	// 				.fail(function() {
+	// 					console.log("delCollection error");
+	// 				})
+	// 				.always(function() {
+	// 					console.log("delCollection complete");
+	// 					ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+	// 				});
+	// 			}.bind(this)} title="删除收藏"
+	// 			content="您确定要删除这个收藏吗？"/>,
+	// 		document.getElementById("confirm-dialog-wrap")
+	// 	);
+	// },
+
+	render: function() {
+		var myActivitiesStr = this.state.activities &&
+			this.state.activities.map(function(elem, index) {
+				return (
+					React.createElement("li", {onClick: this.props.gotoActivityDetail.bind(this, elem), 
+						style: {"cursor": "pointer"}, "data-actid": elem.actid}, 
+						React.createElement("header", {className: "ss-hd"}, elem.title), 
+						React.createElement("p", {className: "time clearfix"}, 
+							React.createElement("span", null, "课程时间"), React.createElement("time", null, elem.time_signup)
+						)
+						/*<button type="button" onClick={this.delCollectionHandler}
+													data-uid={index} data-collid={elem.collid} className="weui_btn weui_btn_mini weui_btn_default">
+													付款
+												</button>*/
+					)
+				);
+			}.bind(this));
+		return (
+			React.createElement("div", {className: "myActivities sign-page", style: {"overflow": "auto"}}, 
+				React.createElement("div", {className: "back-btn", onClick: this.props.back}, "返回"), 
+				React.createElement("div", {className: "cell"}, 
+					React.createElement("ul", {className: "my-activities"}, 
+						myActivitiesStr
+					), 
+					React.createElement("div", {id: "confirm-dialog-wrap"})
+				)
+			)
+		);
+	}
+});
+
 
 var ConfirmDialog = React.createClass({displayName: "ConfirmDialog",
 	reset: function(){
-		React.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+		ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
 	},
 	render: function() {
 		return (
