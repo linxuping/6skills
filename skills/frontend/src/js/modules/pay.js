@@ -14,7 +14,7 @@ var Pay = React.createClass({
       url: ges('get_wx_payinfo'),
       type: 'get',
       dataType: 'json',
-      data: { "openid":geopenid(),"actid": this.props.activity. actid || getUrlParam("actid"),"price":price },
+      data: { "openid":geopenid(),"actid": this.props.activity.actid || getUrlParam("actid"),"price":price },
     })
     .done(function(res) {
       if (res.errcode == 0){

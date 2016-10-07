@@ -359,6 +359,7 @@ var ActivitiesToPay = React.createClass({
 			data: { openid:geopenid(),page:"1",pagesize:"100" },
 			success: function(res) {
 				console.log("unpay list success");
+				res = typeof res == "object" ? res : JSON.parse(res);
 				this.setState( {"activities":res.activities} );
 			}.bind(this),
 			error: function() {
