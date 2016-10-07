@@ -403,8 +403,8 @@ var SignForm = React.createClass({
 						""
 					}
 
-					<div className="weui_btn_area ss-btn-area">
-						<button type="submit" className="weui_btn weui_btn_primary" >确定</button>
+					<div className="weui_btn_area">
+						<button type="submit" className="weui_btn weui_btn_primary" style={{height: 100}}>确定</button>
 					</div>
 				</form>
 				<div id="alert-wrap"></div>
