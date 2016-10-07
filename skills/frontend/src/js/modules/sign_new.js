@@ -72,6 +72,10 @@ function validateForm(actid, formConponent) {
 			birthdate: {required: "请输入宝宝出生日期(例:20100101)"}
 		},
 		submitHandler: function(form){
+			if (document.getElementsByName("images")[0].value == ""){
+				alert("请上传照片.");
+				return;
+			}
 			$(form).find(":submit").attr("disabled", true);
 			$(form).ajaxSubmit({
 				dataType: "json",
