@@ -11,13 +11,15 @@ var developmentAssets = 'dist/static';
 
 var proxyOptions = url.parse('http://www.6skills.com/activities');
 proxyOptions.route = '/activities';
+var proxyOptions2 = url.parse('http://www.6skills.com/wx');
+proxyOptions2.route = '/wx';
 
 module.exports = {
   browsersync: {
     development: {
       server: {
         baseDir: [build],
-        middleware: [proxy(proxyOptions)]
+        middleware: [proxy(proxyOptions), proxy(proxyOptions2)]
       },
       port: 9901,
       files: [
