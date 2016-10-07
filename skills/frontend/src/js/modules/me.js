@@ -273,6 +273,7 @@ var MyCollections = React.createClass({
 			data: { openid:geopenid(),page:"1",pagesize:"100" },
 			success: function(res) {
 				console.log("mycollections success");
+				//res = JSON.parse(res)
 				this.setState( {"activities":res.activities} );
 			}.bind(this),
 			error: function() {
