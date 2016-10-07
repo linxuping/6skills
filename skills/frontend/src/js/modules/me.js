@@ -15,11 +15,8 @@ var Me = React.createClass({
 			data: { "openid":geopenid() },
 		})
 		.done(function(res) {
-			console.log("success");
-			console.log(res.profile.username);
-			console.log(res.profile.img);
 			if (res.errcode != 0){
-				//location.href=ges("template/verify_phone.html");
+				location.href=ges("template/verify_phone.html");
 				return;
 			}
 			this.setState( { "username":res.profile.username,"phone":res.profile.phone,"img":res.profile.img } );
@@ -276,7 +273,6 @@ var MyCollections = React.createClass({
 			data: { openid:geopenid(),page:"1",pagesize:"100" },
 			success: function(res) {
 				console.log("mycollections success");
-				res = JSON.parse(res)
 				this.setState( {"activities":res.activities} );
 			}.bind(this),
 			error: function() {
@@ -363,7 +359,6 @@ var ActivitiesToPay = React.createClass({
 			data: { openid:geopenid(),page:"1",pagesize:"100" },
 			success: function(res) {
 				console.log("unpay list success");
-				res = JSON.parse(res);
 				this.setState( {"activities":res.activities} );
 			}.bind(this),
 			error: function() {
@@ -372,48 +367,61 @@ var ActivitiesToPay = React.createClass({
 		});
 	},
 
-	// delCollectionHandler: function (event) {
-	// 	event.stopPropagation();
-	// 	var collid = event.target.dataset.collid;
-	// 	ReactDOM.render(
-	// 		<ConfirmDialog callback={function(){
-	// 				$.ajax({
-	// 					url: ges('/activities/reset_collection'),
-	// 					//url: '/test/sign.json',
-	// 					type: 'post',
-	// 					dataType: 'json',
-	// 					data: { "openid":geopenid(),"collid": collid },
-	// 				})
-	// 				.done(function() {
-	// 					this.pullFromServer();
-	// 				}.bind(this))
-	// 				.fail(function() {
-	// 					console.log("delCollection error");
-	// 				})
-	// 				.always(function() {
-	// 					console.log("delCollection complete");
-	// 					ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
-	// 				});
-	// 			}.bind(this)} title="删除收藏"
-	// 			content="您确定要删除这个收藏吗？"/>,
-	// 		document.getElementById("confirm-dialog-wrap")
-	// 	);
-	// },
+	gotoPayPage: function(activity) {
+		document.title = "付款";
+	  ReactDOM.render(
+	    <Pay activity={activity} backTitle="待付款" major={activity.major} price={activity.price}/>,
+	    document.getElementById("pay-page-wrap")
+	  )
+	},
+
+	delunPayActivity: function (e) {
+		e.stopPropagation();
+		var actid = e.target.dataset.id;
+		console.log(actid);
+		ReactDOM.render(
+			<ConfirmDialog callback={function(){
+					$.ajax({
+						url: "/activities/reset",
+						//url: '/test/sign.json',
+						type: 'post',
+						dataType: 'json',
+						data: { "openid":geopenid(), "signid": actid},
+					})
+					.done(function(res) {
+						if (res.errcode == 0) {
+							this.pullFromServer();
+						} else {
+							alert(res.errmsg);
+						}	
+					}.bind(this))
+					.fail(function() {
+						console.log("delCollection error");
+					})
+					.always(function() {
+						console.log("delCollection complete");
+						ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+					});
+				}.bind(this)} title="取消报名"
+				content="您确定要取消这个报名吗？"/>,
+			document.getElementById("confirm-dialog-wrap")
+		);
+	},
 
 	render: function() {
 		var myActivitiesStr = this.state.activities &&
 			this.state.activities.map(function(elem, index) {
 				return (
-					<li onClick={this.props.gotoActivityDetail.bind(this, elem)}
-						style={{"cursor": "pointer"}} data-actid={elem.actid}>
+					<li onClick={this.gotoPayPage.bind(this, elem)}
+						style={{"cursor": "pointer"}} key={index}>
 						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
 							<span>课程时间</span><time>{elem.time_signup}</time>
 						</p>
-						{/*<button type="button" onClick={this.delCollectionHandler}
-													data-uid={index} data-collid={elem.collid} className="weui_btn weui_btn_mini weui_btn_default">
-													付款
-												</button>*/}
+						<button type="button" onClick={this.delunPayActivity}
+							data-id={elem.actid} className="weui_btn weui_btn_mini weui_btn_default">
+							取消
+						</button>
 					</li>
 				);
 			}.bind(this));
