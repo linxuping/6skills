@@ -76,6 +76,10 @@ var Pay = React.createClass({
     $('#paybtn')[0].innerText = "支付";
   },
 
+  componentDidMount: function() {
+    document.title = "付款";
+  },
+
   render: function() {
     var sign3Price = {"舞蹈": 150, "声乐": 280, "器乐": 280, "语言": 280, "书画": 380};
     return (
