@@ -326,8 +326,8 @@ var Activities = React.createClass({
       if (r !== null) {
         _this.props.app.state.acttype = decodeURIComponent(r[2]);
       }
-
-      dropload = $('.activities').dropload({
+      var scrollArea = this.props.scrollArea || ".activities";
+      dropload = $(scrollArea).dropload({
           domUp : {
               domClass   : 'dropload-up',
               domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>',
