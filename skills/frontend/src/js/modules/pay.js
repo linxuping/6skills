@@ -14,7 +14,7 @@ var Pay = React.createClass({
       url: ges('get_wx_payinfo'),
       type: 'get',
       dataType: 'json',
-      data: { "openid":geopenid(),"actid":getUrlParam("actid"),"price":price },
+      data: { "openid":geopenid(),"actid": this.props.activity. actid || getUrlParam("actid"),"price":price },
     })
     .done(function(res) {
       if (res.errcode == 0){
@@ -94,8 +94,8 @@ var Pay = React.createClass({
           <h3 className="name">总价</h3>
           <p className="price">
           ￥
-          {this.props.activity.sign_type == "3" ? 
-            sign3Price[this.props.major] : this.props.activity.price_child}元</p>
+          {this.props.price ? this.props.price : (this.props.activity.sign_type == "3" ? 
+            sign3Price[this.props.major] : this.props.activity.price_child)}元</p>
         </section>
         <div className="weui_btn_area ss-btn-area mb20">
           <button id="paybtn" type="button" className="weui_btn weui_btn_primary" onClick={this.payHandler} data-price={this.props.activity.sign_type == "3" ? sign3Price[this.props.major] : this.props.activity.price_child}>支付</button>

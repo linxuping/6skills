@@ -23,12 +23,10 @@ var ActivityDetail = React.createClass({
 			alert("您已经报过名了，请到已报名活动中查看！")
 		} else if (this.state.status == 2) {
 			//付款
-			//TODO 阳光下成长还要返回报名科目
-			var major = "书画";
 			document.title = "付款";
 			ReactDOM.render(
-				<Pay backTitle="活动详情" major={major} 
-					activity={this.state.activity}/>,
+				<Pay backTitle="活动详情" major={this.state.major} 
+					activity={this.state.activity} price={this.state.price}/>,
 				document.getElementById('pay-page-wrap')
 			);
 		} else {
@@ -80,7 +78,8 @@ var ActivityDetail = React.createClass({
 	},
 
 	openCollectPage: function(){
-		var _oid = geopenid();
+		//var _oid = geopenid();
+		console.log(_oid);
 		if ("undefined" == _oid || null == _oid){
 			var r = confirm("请先关注公众号再查看.");
 			if (r)
@@ -129,6 +128,8 @@ var ActivityDetail = React.createClass({
 			this.setState({
 				status: res.status,
 				expire: res.errmsg=="过期",
+				price: res.price,
+				major: res.major,
 				coll_status: res.coll_status,
 				qrcode: res.qrcode,
 				loaded: true
