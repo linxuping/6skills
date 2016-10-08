@@ -13,6 +13,7 @@
 html{
 	min-height: 100%;
 	background-color: @bg;
+	font-size: 16px;
 }
 body{
 	width: auto;
@@ -287,8 +288,14 @@ body{
 		padding-bottom: 20px;
 	}
 	.detail-content{
-		font-size: 1.25rem;
+		font-size: .8rem;
+		@media screen and (min-width: 641px) {
+		  font-size: 1.25px;
+		}
 		line-height: 38px;
+		img{
+			width: 100%;
+		}
 	}
 	.sign-btn{
 		position:fixed;
