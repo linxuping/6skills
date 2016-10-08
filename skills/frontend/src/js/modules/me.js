@@ -190,7 +190,7 @@ var MyActivities = React.createClass({
 		})
 		.done(function() {
 			console.log("success");
-			console.log("取消报名成功!如需退款请联系客服!")
+			alert("取消报名成功!如需退款请联系客服!")
 			this.pullFromServer();
 		}.bind(this))
 		.fail(function() {
