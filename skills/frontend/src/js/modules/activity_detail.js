@@ -78,8 +78,7 @@ var ActivityDetail = React.createClass({
 	},
 
 	openCollectPage: function(){
-		//var _oid = geopenid();
-		console.log(_oid);
+		var _oid = geopenid();
 		if ("undefined" == _oid || null == _oid){
 			var r = confirm("请先关注公众号再查看.");
 			if (r)

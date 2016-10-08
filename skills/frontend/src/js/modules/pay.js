@@ -3,6 +3,9 @@ var Pay = React.createClass({
   closeHandler: function() {
     document.title = this.props.backTitle;
     ReactDOM.unmountComponentAtNode(document.getElementById("pay-page-wrap"));
+    if (activityDetail) {
+      activityDetail.getSignupStatus();
+    }
   },
 
   payHandler: function(e) {
