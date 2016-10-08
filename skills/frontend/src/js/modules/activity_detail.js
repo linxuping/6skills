@@ -267,7 +267,7 @@ var ActivityDetail = React.createClass({
 
 							{/*<p className="privilage"><b>{this.state.activity.preinfo}</b></p>*/}
 							<div className="ot-msg"><span>年龄：{this.state.activity.ages}岁</span></div>
-							<div className="ot-msg">活动时间: {this.state.activity.time_from} ~ {this.state.activity.time_to}</div>
+							<div className="ot-msg">活动时间：{this.state.activity.time_from} ~ {this.state.activity.time_to}</div>
 							<div className="ot-msg">活动地点：{this.state.activity.area} {this.state.activity.position_details}</div>
 							<div className="ot-msg">剩余名额：{(this.state.activity.quantities_remain>1000000) ? "不限":<font>{this.state.activity.quantities_remain}</font>}</div>
 						</div>

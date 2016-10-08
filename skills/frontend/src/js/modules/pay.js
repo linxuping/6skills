@@ -102,7 +102,7 @@ var Pay = React.createClass({
           <p className="price">
           ￥
           {this.props.price ? this.props.price : (this.props.activity.sign_type == "3" ? 
-            sign3Price[this.props.major] : this.props.activity.price_child)}元</p>
+            sign3Price[this.props.major] : (this.props.activity.price_child_pre? this.props.activity.price_child_pre:this.props.activity.price_child) )}元</p>
         </section>
         <div className="weui_btn_area mb20" 
           style={{position: "absolute", width: "100%", padding: 10, margin: 0, bottom: 0}}>
