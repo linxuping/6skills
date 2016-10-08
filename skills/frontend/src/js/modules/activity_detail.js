@@ -143,6 +143,7 @@ var ActivityDetail = React.createClass({
 	},
 
 	componentDidMount: function() {
+		// alert(devicePixelRatio);
 		var actid = getUrlParam("actid");
 		if (!IsNum(actid)){
 			alert("actid must be number.");
