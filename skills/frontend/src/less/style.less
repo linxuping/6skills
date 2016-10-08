@@ -288,9 +288,12 @@ body{
 		padding-bottom: 20px;
 	}
 	.detail-content{
-		font-size: .8rem;
-		@media screen and (min-width: 641px) {
-		  font-size: 1.25px;
+		font-size: 20px;
+		@media screen and (-webkit-device-pixel-ratio: 2) {
+		  font-size: 24px;
+		}
+		@media screen and (-webkit-device-pixel-ratio: 3) {
+		  font-size: 20px;
 		}
 		line-height: 38px;
 		img{
