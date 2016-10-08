@@ -19,6 +19,9 @@ var Sign = React.createClass({
 			document.title = this.props.backTitle;
 		}
 		ReactDOM.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
+		if (activityDetail) {
+			activityDetail.getSignupStatus();
+		}
 	},
 	componentDidMount: function(){
 
