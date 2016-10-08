@@ -41,7 +41,7 @@ var Me = React.createClass({
 
 	back: function(){
 		ReactDOM.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
-		document.title = "我";
+		document.title = "我的课程";
 		var href = window.location.href.split("#")[0];
 		history.replaceState("myActivities", null, href);
 	},
