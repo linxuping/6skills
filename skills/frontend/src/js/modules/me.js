@@ -379,8 +379,8 @@ var ActivitiesToPay = React.createClass({
 
 	delunPayActivity: function (e) {
 		e.stopPropagation();
-		var actid = e.target.dataset.id;
-		console.log(actid);
+		var signid = e.target.dataset.id;
+		console.log(signid);
 		ReactDOM.render(
 			<ConfirmDialog callback={function(){
 					$.ajax({
@@ -388,7 +388,7 @@ var ActivitiesToPay = React.createClass({
 						//url: '/test/sign.json',
 						type: 'post',
 						dataType: 'json',
-						data: { "openid":geopenid(), "signid": actid},
+						data: { "openid":geopenid(), "signid": signid},
 					})
 					.done(function(res) {
 						if (res.errcode == 0) {
@@ -421,7 +421,7 @@ var ActivitiesToPay = React.createClass({
 							<span>课程时间</span><time>{elem.time_signup}</time>
 						</p>
 						<button type="button" onClick={this.delunPayActivity}
-							data-id={elem.actid} className="weui_btn weui_btn_mini weui_btn_default">
+							data-id={elem.signid} className="weui_btn weui_btn_mini weui_btn_default">
 							取消
 						</button>
 					</li>
