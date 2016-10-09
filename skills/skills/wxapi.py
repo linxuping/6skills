@@ -1193,6 +1193,11 @@ def default_process(req):
 		mo.logger.info("openid:%s, msg:%s_%s, bodylen:%d"%(openid,node_msgtype.text,node_ev.text,len(body)) )
 	else:
 		mo.logger.info("openid:%s, msg:%s, bodylen:%d"%(openid,node_msgtype.text,len(body)) )
+		if node_msgtype.text == "text":
+			fname = msgxml.find("FromUserName").text
+			tname = msgxml.find("ToUserName").text
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，点击 <a href='"+settings.share_url+"' >这里</a> 马上报名吧！")
+			return HttpResponse(_rspxml, mimetype='text/plain')
 
 	if node_msgtype.text=="event" and node_ev!=None and node_ev.text=="LOCATION":
 		pass
@@ -1210,7 +1215,7 @@ def default_process(req):
 			_rspxml = "<xml><ToUserName><![CDATA[$fromUser]]></ToUserName><FromUserName><![CDATA[$toUser]]></FromUserName><CreateTime>$createTime</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[$content]]></Content><FuncFlag>$funcFlag</FuncFlag></xml>"
 			fname = msgxml.find("FromUserName").text
 			tname = msgxml.find("ToUserName").text
-			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，点击<a href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri=http%3A%2F%2Fwww.6skills.com%2Ftemplate%2Factivity_detail.html%3Factid%3D90%26code%3D031aCzYf2iuPJO0bUMWf2KIxYf2aCzYn%26state%3D123&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect' >这里</a>马上报名吧！")
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，点击 <a href='"+settings.share_url+"' >这里</a> 马上报名吧！")
 			return HttpResponse(_rspxml, mimetype='text/plain')
 		elif "unsubscribe" == node_ev.text:
 			_sql = "update 6s_user set status=-1 where openid='%s';"%(openid)
