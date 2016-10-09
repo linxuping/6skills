@@ -1473,7 +1473,7 @@ def get_wx_payinfo(req):
 	
 	import wxpay
 	out_trade_no = str(int(time.time()))
-	total_fee = "1"
+	#total_fee = "1"
 	trade_type = "JSAPI"
 	ret = wxpay.get_prepay_info(out_trade_no, body, total_fee, settings.pay_cb, trade_type, openid)
 	mo.logger.info("wxpay: trade_no:%s, openid:%s, ret:%s"%(out_trade_no,openid, str(ret)) )
