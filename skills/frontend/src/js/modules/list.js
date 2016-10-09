@@ -111,6 +111,10 @@ var App = React.createClass({ //
         <SelectHeader />
         <Activities activities={this.state.activities} pageable={this.state.pageable}
           moreClick={this.moreClickHandler} type={this.props.type} app={this}/>
+        <div className="paster">
+          <a href="index.html"><div className="top"></div></a>
+          <a href="me.html"><div className="bottom"></div></a>
+        </div>
       </div>
     );
   }

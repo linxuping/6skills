@@ -190,15 +190,16 @@ var MyActivities = React.createClass({
 		})
 		.done(function() {
 			console.log("success");
+			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
 			alert("取消报名成功!如需退款请联系客服!")
 			this.pullFromServer();
 		}.bind(this))
 		.fail(function() {
 			console.log("error");
+			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
 		})
 		.always(function() {
 			console.log("complete");
-			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
 		});
 	},
 

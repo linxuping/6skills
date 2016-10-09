@@ -185,10 +185,20 @@ var SignForm = React.createClass({
 		matchClasses = matchClasses.map(function(elem, index){
 			return <option key={index} value={elem}>{elem}</option>
 		});
-		var majors = ["声乐(报名费280元)", "器乐(报名费280元)", "舞蹈(报名费150元)", "语言(报名费280元)", "书画(报名费380元)"];
+		var majors = [
+			"声乐-个人初赛-280元", 
+			"声乐-团体初赛-150元", 
+			"器乐-个人初赛-280元", 
+			"器乐-团体初赛-260元", 
+			"舞蹈-个人初赛-280元", 
+			"舞蹈-团体初赛-150元", 
+			"语言-个人初赛-280元", 
+			"语言-团体初赛-150元", 
+			"书画-初赛-380元"];
 		majors = majors.map(function(elem, index) {
+			var major = elem.split("-");
 			return (
-				<option key={index} value={elem.split("(")[0]}>{elem}</option>
+				<option key={index} value={major[0] + "-" + major[1]}>{major[0]}({major[1] + ", " + major[2]})</option>
 			);
 		})
 		var signtype = this.props.activity.sign_type;

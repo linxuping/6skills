@@ -84,7 +84,17 @@ var Pay = React.createClass({
   },
 
   render: function() {
-    var sign3Price = {"舞蹈": 150, "声乐": 280, "器乐": 280, "语言": 280, "书画": 380};
+    var sign3Price = {
+      "声乐-个人初赛": 280,
+      "声乐-团体初赛": 150, 
+      "器乐-个人初赛": 280, 
+      "器乐-团体初赛": 260, 
+      "舞蹈-个人初赛": 280, 
+      "舞蹈-团体初赛": 150, 
+      "语言-个人初赛": 280, 
+      "语言-团体初赛": 150, 
+      "书画-初赛": 380
+    };
     return (
       <div className="pay-page">
         <div className="back-btn" onClick={this.closeHandler}>
