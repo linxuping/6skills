@@ -55,9 +55,12 @@ function load_6soid() {
 			success: function(res) {
 				if (res.errcode == 0)
 					sessionStorage.setItem("6soid",res.openid);
+				if (res.openid == null){
+					window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri="+encodeURI(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect";
+				}
 			},
 			error: function() {
-				alert("请稍后再试-6id.");
+				alert("服务忙，请稍后再试哦.");
 			},
 		});
 	}
