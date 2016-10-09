@@ -144,18 +144,18 @@ var Feedback = React.createClass({
 		return (
 			<div className="feedback">
 				{(this.props.onlyContact=="1") ? <div ></div>:<div className="back-btn" onClick={this.props.back}>返回</div>}
-				<h3>转载文章</h3>
-				<p>转载文章请在文中附下图，即视为有效制授权，无需再联系我们</p>
+				<div style={{margin:'4px'}}><font style={{fontSize:'32px'}}>转载文章</font></div>
+				<p style={{fontSize:'24px'}}>转载文章请在文中附下图，即视为有效授权，无需再联系我们</p>
 				<p className="qr">
 					<img src="/static/img/qrcode_for_gh_1f700e3515dc_258.jpg" alt=""/>
 				</p>
-				<h3>在线客服</h3>
-				<p className="ol-serv">
+				<div style={{margin:'4px'}}><font style={{fontSize:'32px'}}>在线客服</font></div>
+				<p style={{fontSize:'24px'}} className="ol-serv">
 					点击咨询在线客服
 					<a target="_blank" href="http://sighttp.qq.com/authd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb"><img border="0"  src="http://wpa.qq.com/imgd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb&pic=52" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
 				</p>
-				<h3>其他合作</h3>
-				<p>
+				<div style={{margin:'4px'}}><font style={{fontSize:'32px'}}>其他合作</font></div>
+				<p style={{fontSize:'24px'}}>
 					邮箱：<mail>1344671651@qq.com</mail>
 				</p>
 			</div>
