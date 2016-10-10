@@ -840,7 +840,7 @@ def activities_getsignupstatus(req):
 		if str(rets[0][2]) == "1":
 			_price = rets[0][5] if rets[0][6]==None else rets[0][6]
 			#print "debug: ",rets[0][5],rets[0][6],_price,rets[0][3]
-			if _price>0 and rets[0][3]==None:
+			if (_price==-1 or_price>0) and rets[0][3]==None:
 				_json["status"] = 2
 				_json["major"] = rets[0][4]
 				_json["price"] = _price
