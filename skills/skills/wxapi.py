@@ -1196,7 +1196,7 @@ def default_process(req):
 		if node_msgtype.text == "text":
 			fname = msgxml.find("FromUserName").text
 			tname = msgxml.find("ToUserName").text
-			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，点击 <a href='"+settings.share_url+"' >这里</a> 马上报名吧！")
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，<a href='"+settings.share_url+"' >点击这里马上报名吧</a>！")
 			return HttpResponse(_rspxml, mimetype='text/plain')
 
 	if node_msgtype.text=="event" and node_ev!=None and node_ev.text=="LOCATION":
@@ -1215,7 +1215,7 @@ def default_process(req):
 			_rspxml = "<xml><ToUserName><![CDATA[$fromUser]]></ToUserName><FromUserName><![CDATA[$toUser]]></FromUserName><CreateTime>$createTime</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[$content]]></Content><FuncFlag>$funcFlag</FuncFlag></xml>"
 			fname = msgxml.find("FromUserName").text
 			tname = msgxml.find("ToUserName").text
-			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，点击 <a href='"+settings.share_url+"' >这里</a> 马上报名吧！")
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，<a href='"+settings.share_url+"' >点击这里马上报名吧</a>！")
 			return HttpResponse(_rspxml, mimetype='text/plain')
 		elif "unsubscribe" == node_ev.text:
 			_sql = "update 6s_user set status=-1 where openid='%s';"%(openid)
