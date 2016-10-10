@@ -181,19 +181,26 @@ var SignForm = React.createClass({
 		} else {profile = {}}
 		var sign_url = ges("activities/sign");
 		//var sign_url = "/static/js/test/sign.js";
-		var matchClasses = ["幼儿组（学龄前）", "小学甲组（1—2年级）", "小学乙组（3—4年级）", "小学丙组（5—6年级）"];
+		var matchClasses = [
+			"幼儿组（学龄前）", 
+			"小学甲组（1—2年级）", 
+			"小学乙组（3—4年级）", 
+			"小学丙组（5—6年级）",
+			"初中组（1-3年级，中职）",
+			"高中组（1-3年级）",
+			"大学组（大学生、研究生、大专、留学生）",
+			];
 		matchClasses = matchClasses.map(function(elem, index){
 			return <option key={index} value={elem}>{elem}</option>
 		});
 		var majors = [
 			"声乐-个人初赛-280元", 
-			"声乐-团体初赛-150元", 
+			"声乐-团体初赛-260元", 
 			"器乐-个人初赛-280元", 
 			"器乐-团体初赛-260元", 
 			"舞蹈-个人初赛-280元", 
 			"舞蹈-团体初赛-150元", 
-			"语言-个人初赛-280元", 
-			"语言-团体初赛-150元", 
+			"语言-初赛-280元", 
 			"书画-初赛-380元"];
 		majors = majors.map(function(elem, index) {
 			var major = elem.split("-");
