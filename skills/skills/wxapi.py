@@ -1329,7 +1329,7 @@ def get_openid(req):
 				else:
 					_json["errcode"] = 1
 					_json["errmsg"] = "invalid city."
-					mo.ogger.error("invalid city. openid:%s,city:%s"%(openid,city) )
+					mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
 			else:
 				mo.logger.error("attrs error. %s  %s  %s"%(openid,_url,ret))
 	else:
