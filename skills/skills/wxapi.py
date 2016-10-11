@@ -893,7 +893,7 @@ def save_pos_wx(lat,lon,openid):
 		if count > 0:
 			pos_id = rets[0][0] #to district
 		else:
-			mo.logger.error("openid:%s city:%s area:%s cannot be found."%(openid,city,area) )
+			mo.logger.warn("openid:%s city:%s area:%s cannot be found."%(openid,city,area) )
 			pos_id = "0"
 		count,rets=dbmgr.db_exec("select id from 6s_user where openid='%s';"%openid)
 		if count == 0:
