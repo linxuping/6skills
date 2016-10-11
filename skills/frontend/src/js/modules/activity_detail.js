@@ -8,10 +8,10 @@ var ActivityDetail = React.createClass({
 	},
 
 	openSignPage: function(){
-		var _oid = geopenid();
+		var _oid = geopenid(1);
 		if ("undefined" == _oid || null == _oid){
 			var r = confirm("请先关注公众号再查看.");
-			if (r)
+			if (r == true)
 				jump_pubnum();
 			return;
 		}
@@ -78,10 +78,10 @@ var ActivityDetail = React.createClass({
 	},
 
 	openCollectPage: function(){
-		var _oid = geopenid();
+		var _oid = geopenid(1);
 		if ("undefined" == _oid || null == _oid){
 			var r = confirm("请先关注公众号再查看.");
-			if (r)
+			if (r == true)
 				jump_pubnum();
 			return;
 		}
@@ -162,7 +162,10 @@ var ActivityDetail = React.createClass({
 					url: ges("get_js_signature"),
 					type: 'get',
 					dataType: 'json',
-					data: { "url":window.location.href },//ges("template/activity_detail.html?actid="+res.actid)
+					//data: { "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri=http%3A%2F%2Fwww.6skills.com%2Ftemplate%2Factivity_detail.html%3Factid%3D"+actid.toString()+"&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect" },//{ "url":window.location.href },//ges("template/activity_detail.html?actid="+res.actid)
+					//data: { "url":encodeURIComponent(location.href.split('#')[0]) },//ges("template/activity_detail.html?actid="+res.actid)
+					data: { "url":location.href.split('#')[0] },//ges("template/activity_detail.html?actid="+res.actid)
+					//data: { "url":window.location.href },//ges("template/activity_detail.html?actid="+res.actid)
 					success: function(res2) {
 						if (res2.appid != null){
 							wx.config({
@@ -180,7 +183,9 @@ var ActivityDetail = React.createClass({
 								var reTag4 = / /g;
 								return this.replace(reTag,"").replace(reTag2,"").replace(reTag3,",").replace(reTag4,"");
 							}
-							var _content = res.content.substring(0, 100).stripHTML();
+							var _content = res.content_share;
+							if (_content=="" && _content==null)
+								_content = res.content.substring(0, 100).stripHTML();
 							wx.ready(function(){
 								make_share("all",res.title,_content,_encodeurl,res.img_cover,null);
 							});
@@ -191,7 +196,7 @@ var ActivityDetail = React.createClass({
 						}
 					},
 					error: function() {
-						alert("请稍后重试获取签名.");
+						;//alert("请稍后重试获取签名.");
 					},
 				});
 
@@ -238,6 +243,7 @@ var ActivityDetail = React.createClass({
 
 	render: function() {
 		console.log(this.state.activity)
+		var hid_price = this.state.activity.actid==90;
 		return (
 			<div className="activity-detail">
 				{/*<Pay activity={this.state.activity}></Pay>*/}
@@ -256,7 +262,7 @@ var ActivityDetail = React.createClass({
 										:
 										<span className="now fl">现价：<span className="cost">￥{this.state.activity.price_child_pre}元</span></span>
 									}
-								<span className={(this.state.activity.price_child_pre!=null) ? "original fr has-pre" : "original"}>
+								<span className={(this.state.activity.price_child_pre!=null) ? "original fr has-pre" : "original"} style={{display: hid_price && "none"}}>
 									{this.state.activity.price_child_pre != null ? "原价" : "价格"}：
 									<span className="cost">
 										{this.state.activity.price_child == 0 ? "免费" :
