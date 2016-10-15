@@ -93,13 +93,13 @@ function validateForm(actid, formConponent) {
 							if (major) {
 								major = major.val();
 							}
-							document.title = "付款";
+							//把报名页面关掉
+						  formConponent.back();
+						  document.title = "付款";
 						  ReactDOM.render(
 						    <Pay activity={formConponent.props.activity} major={major} backTitle="活动详情"/>,
 						    document.getElementById("pay-page-wrap")
 						  )
-						  //把报名页面关掉
-						  formConponent.back();
 						} else {
 							//免费直接报名成功
 							ReactDOM.render(

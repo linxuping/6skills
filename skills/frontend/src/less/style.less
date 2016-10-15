@@ -308,14 +308,12 @@ body{
 		padding-bottom: 20px;
 	}
 	.detail-content{
+		display: table;
 		font-size: 20px;
-		@media screen and (-webkit-device-pixel-ratio: 2) {
-		  font-size: 24px;
-		}
-		@media screen and (-webkit-device-pixel-ratio: 3) {
-		  font-size: 20px;
-		}
 		line-height: 38px;
+		p{
+			display: table;
+		}
 		img{
 			width: 100%;
 		}
@@ -447,6 +445,7 @@ body{
 		padding: 1rem;
 		border-bottom: 1px solid #ccc;
 		position: relative;
+		-webkit-tap-highlight-color: transparent;
 		button{
 			position: absolute;
 			right: 1rem;
