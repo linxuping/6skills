@@ -1313,23 +1313,25 @@ def get_openid(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count >0 :
 					pos_id = str(int(rets[0][0])+100)
-					_sql = "select id from 6s_user where openid='%s';"%(openid)
+				else:
+					pos_id = "0"
+				_sql = "select id from 6s_user where openid='%s';"%(openid)
+				count,rets=dbmgr.db_exec(_sql)
+				if count == 0:
+					_sql = "insert into 6s_user(wechat,gender,img,position_id,openid,createtime) values('%s','%s','%s','%s','%s',now());"%(nickname,sex,headimg,pos_id,openid)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 0:
-						_sql = "insert into 6s_user(wechat,gender,img,position_id,openid,createtime) values('%s','%s','%s','%s','%s',now());"%(nickname,sex,headimg,pos_id,openid)
-						count,rets=dbmgr.db_exec(_sql)
-						if count == 0:
-							mo.logger.error("insert 6s_user fail. ret:%s"%rets)
-					else:
-						#_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
-						_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',status=1 where openid='%s';"%(nickname,sex,headimg,openid)
-						cunt,rets=dbmgr.db_exec(_sql)
-						if count == 0:
-							mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
+						mo.logger.error("insert 6s_user fail. ret:%s"%rets)
 				else:
-					_json["errcode"] = 1
-					_json["errmsg"] = "invalid city."
-					mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
+					#_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+					_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',status=1 where openid='%s';"%(nickname,sex,headimg,openid)
+					cunt,rets=dbmgr.db_exec(_sql)
+					if count == 0:
+						mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
+			#else:
+			#	_json["errcode"] = 1
+			#	_json["errmsg"] = "invalid city."
+			#	mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
 			else:
 				mo.logger.error("attrs error. %s  %s  %s"%(openid,_url,ret))
 	else:
