@@ -95,6 +95,7 @@ var Pay = React.createClass({
       "语言-团体初赛": 260, 
       "书画-初赛": 380
     };
+    var _price = this.props.activity.sign_type == "3" ? sign3Price[this.props.major] : (this.props.activity.price? this.props.activity.price:(this.props.activity.price_child_pre? this.props.activity.price_child_pre:this.props.activity.price_child));
     return (
       <div className="pay-page">
         <div className="back-btn" onClick={this.closeHandler}>
@@ -111,12 +112,12 @@ var Pay = React.createClass({
           <h3 className="name">总价</h3>
           <p className="price">
           ￥
-          {this.props.activity.sign_type == "3" ? sign3Price[this.props.major] : (this.props.activity.price_child_pre? this.props.activity.price_child_pre:this.props.activity.price_child)}元</p>
+          {_price}元</p>
         </section>
         <div className="weui_btn_area mb20" 
           style={{position: "absolute", width: "100%", padding: 10, margin: 0, bottom: 0}}>
           <button id="paybtn" type="button" className="weui_btn weui_btn_primary" style={{height: 100}}
-            onClick={this.payHandler} data-price={this.props.activity.sign_type == "3" ? sign3Price[this.props.major] : (this.props.activity.price_child_pre? this.props.activity.price_child_pre:this.props.activity.price_child)}>支付</button>
+            onClick={this.payHandler} data-price={_price}>支付</button>
         </div>
       </div>
     );
