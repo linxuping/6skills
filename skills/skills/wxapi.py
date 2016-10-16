@@ -866,6 +866,7 @@ def activities_getsignupstatus(req):
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
+	makeup_header_cache_ignore(resp)
 	return resp
 
 
