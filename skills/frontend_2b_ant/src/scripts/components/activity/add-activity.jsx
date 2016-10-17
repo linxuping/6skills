@@ -5,21 +5,28 @@ import Reflux from 'Reflux';
 import activityAction from '../../actions/activity-action.jsx';
 import activityStore from '../../stores/activity-store.jsx';
 import Upload from '../../commons/upload/upload-component.jsx';
+require('simditor/styles/simditor.css');
+var Simeditor = require("simditor");
 
-import TinyMCE from 'react-tinymce';
-import { Form, Input, Select, Checkbox, Radio, Textarea, Icon, Row, Col, DatePicker, Cascader, Button} from 'antd';
+//import TinyMCE from 'react-tinymce';
+import { Form, Input, Select, Checkbox, Radio, Textarea, Icon, Row, Col, DatePicker, Cascader, Button, Modal} from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
 const RangePicker = DatePicker.RangePicker;
 const createForm = Form.create;
 
+import uploadConfig from '../../commons/upload/upload-config.js';
+var editor;
+
 let AddActivity = React.createClass({
 
   getInitialState: function() {
     return {
       costBool: "0",
-      personnumBool: "0"
+      personnumBool: "0",
+      modal2Visible: false,
+      contentId: "content"
     };
   },
 
@@ -27,6 +34,25 @@ let AddActivity = React.createClass({
     console.log(e.target.getContent())
     this.props.form.setFieldsValue({"content": e.target.getContent()});
     //ReactDom.findDOMNode(this.refs.content).value =  e.target.getContent();
+  },
+
+  setModal2Visible(modal2Visible){
+    this.setState({
+      modal2Visible: modal2Visible
+    });
+  },
+
+  contentUploadSuccessCallBack(file, domain){
+    let fileObj = JSON.parse(file);
+    this.props.form.setFieldsValue({"contentImgUrl": domain + fileObj.key});
+  },
+
+  uploadCompleteHandler(){
+    let imgObj =
+      this.props.form.getFieldsValue(["contentImgUrl", "contentImgWidth", "contentImgHeight"]);
+    let img = $("<img />").attr("src", imgObj.contentImgUrl).css({width: imgObj.contentImgWidth + "px", height: imgObj.contentImgHeight + "px"});
+    $(editor.body[0]).append(img);
+    this.setModal2Visible(false);
   },
 
   handleSubmit(e){
@@ -51,11 +77,37 @@ let AddActivity = React.createClass({
   },
 
   componentDidMount() {
-
     //get cities
     activityAction.fatchCityHandler(this);
     //get first act_type
     activityAction.fatchActTypesHandler(this, {level: 1});
+
+    //editor
+    editor = new Simeditor({
+      textarea: $("#editor"),
+      toolbar: [
+        'title', 'bold', 'italic', 'underline', 'fontScale', 'color', 'ol', 'ul', 'blockquote', 'code', 'table', 'link', 'image', 'hr', 'indent', 'outdent', 'alignment'],
+      placeholder: "上传图片后请编辑一下，否则上传的图片将无效..."
+    })
+    editor.on('valuechanged', (e, src) => {
+      let content = e.target.body[0].innerHTML;
+      this.props.form.setFieldsValue({"content": content});
+    });
+
+    //content upload
+    const uploadBtn = '<p><button type="button" title="上传" id="uploadBtn" class="ant-btn ant-btn-primary mr10 mt5"><i class="anticon anticon-area-chart"/></button></p>';
+    $(".content-item>.ant-form-item-label").append(uploadBtn);
+    $(document).on('click', '#uploadBtn', ()=>{
+      this.setModal2Visible(true);
+
+      let qiniu = new QiniuJsSDK()
+      qiniu.uploader(uploadConfig({
+        key: "content",
+        id: "content-img-upload",
+        successCallBack: this.contentUploadSuccessCallBack
+      }));
+
+    });
   },
 
   cityChangeHandler(value){
@@ -189,7 +241,6 @@ let AddActivity = React.createClass({
         {required: true, message: "请输入活动详情"}
       ]
     });
-    console.log(this.state.cities)
     return (
       <Form horizontal form={this.props.form} onSubmit={this.handleSubmit}>
         <FormItem id="title" {...itemLayout} label="活动标题">
@@ -373,34 +424,55 @@ let AddActivity = React.createClass({
                   success={this.qrcodeSuccess}/>
         </FormItem>
 
-        <FormItem id="content" label="活动详情" required={true}
+        <FormItem  label="活动详情" required={true} className="content-item"
           labelCol={{span: 4}} wrapperCol={{span: 14}}>
           <div>
-            <input type="hidden" name="content" ref="content" {...contentProps}/>
-            <TinyMCE
-              content=""
-              config={{
-                language: "zh_CN",
-                theme: "modern",
-                //menubar: false,
-                plugins: ["advlist autolink lists link image charmap preview",
-                          "searchreplace visualblocks fullscreen",
-                          "insertdatetime media table contextmenu paste",
-                          "emoticons textcolor"],
-                toolbar: 'fontsizeselect bold italic underline | alignleft aligncenter alignright alignjustify removeformat | link image mybutton | undo redo ',
-                height: 300,
-                imagetools_cors_hosts: ['http://img.6skills.com'],
-                setup: function(editor) {
-                  editor.addButton("mybutton", {
-                    text: '上传',
-                    icon: false,
-                    onClick: function(e){
-                      console.log(e)
-                    }
-                  })
-                }
-              }}
-              onBlur={this.handleEditorChange}/>
+            <input type="hidden" {...contentProps}/>
+            <textarea id="editor" autofocus></textarea>
+            <Modal
+              title="图片上传"
+              wrapClassName="vertical-center-modal"
+              visible={this.state.modal2Visible}
+              onOk={this.uploadCompleteHandler}
+              onCancel={() => this.setModal2Visible(false)}
+            >
+              <Row>
+                <Col span={4}>
+                  <FormItem label="URL" {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
+                </Col>
+                <Col span={15}>
+                  <FormItem>
+                    <Input name="imgUrl" placeholder="url" {...getFieldProps("contentImgUrl")}></Input>
+                  </FormItem>
+                </Col>
+                <Col span={5}>
+                  <FormItem>
+                    <Button htmlType="button" type="primary" size="large" className="fr" id="content-img-upload">
+                    <Icon type="upload" />
+                    上传
+                  </Button>
+                  </FormItem>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={4}>
+                  <FormItem label="大小" {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
+                </Col>
+                <Col span={6}>
+                  <FormItem>
+                    <Input name="width" placeholder="宽" {...getFieldProps("contentImgWidth")}></Input>
+                  </FormItem>
+                </Col>
+                <Col span={3} className="tc">
+                  <span style={{"fontSize": 20}}>×</span>
+                </Col>
+                <Col span={6}>
+                  <FormItem>
+                    <Input name="height" placeholder="高" {...getFieldProps("contentImgHeight")}></Input>
+                  </FormItem>
+                </Col>
+              </Row>
+            </Modal>
           </div>
         </FormItem>
 
