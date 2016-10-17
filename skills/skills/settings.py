@@ -62,16 +62,16 @@ WSGI_APPLICATION = 'skills.wsgi.application'
     }
 '''
 #W R+
-DB_HOST = ''
-DB_NAME = ''
-DB_USERNAME = ''
-DB_PASSWORD = ''
+DB_HOST = '127.0.0.1'
+DB_NAME = 'sixskillsdb'
+DB_USERNAME = 'root'
+DB_PASSWORD = 'sixskillslinxuping'
 DB_PORT = 3306
 #R
-DB_HOST2 = ''
-DB_NAME2 = ''
-DB_USERNAME2 = ''
-DB_PASSWORD2 = ''
+DB_HOST2 = '127.0.0.1'
+DB_NAME2 = 'sixskillsdb'
+DB_USERNAME2 = 'root'
+DB_PASSWORD2 = 'sixskillslinxuping'
 DB_PORT2 = 3306
 DATABASES = {
     'default': {
@@ -112,3 +112,44 @@ STATICFILES_DIRS = (
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
+
+access_key = '-YQ_Z6KbcOw1oGbhSM9au01otcr8UWvK5O4FfyiK'
+secret_key = 'wDhQo8wTEuESIN2dMYd5pEBl_Yoe5RsX0x4dThxa'
+#sms_id = "23449926" #liuyihudong
+#sms_secret = "029e868b396272e5fdf8ad7778aeb6d0"
+sms_id = "23467864"
+sms_secret = "b10ef84bb962534c0a7dcfbbfa5d4bba"
+sms_type = "normal"
+sms_temp_code = "SMS_14330272"
+BFE_URL = "http://www.6skills.com"
+#appid = "wx1cdf2c4bb014681e" #liuyihudong
+#appsecret = "694b093484ee85bc8537459f066f5cdf" 
+appid = "wxe6d40d1e6b8d010e"
+appsecret = "9560d101dc228aa5aab838312cbb0287" 
+token = "luckysixskills"
+txgeokey = "WFABZ-PI4WP-Y76DD-LMDLF-LW5MT-3FFUS"
+redis_server = "127.0.0.1"
+redis_port = 6379
+headimg_path = "/home/lxp/6skills/skills/static/imgs/head"
+check_access_token = True
+mopenid = "okgp_wNtQVsu20gRMpJRX50bTJKs"
+redis_pwd = "redislinxuping"
+js_noncestr = "zhongqiu@home88"
+js_timestamp = "1414587457"
+pay_key = "oi8enva8asidhfazlixucyv98w3l83nb" 
+pay_mchid = "1395115702"
+pay_cb = "http://www.6skills.com/wxpay/"
+pay_st = "MD5"
+
+
+#save func
+def check_marg_safe(_arg):
+	_arg = _arg.lower()
+	_checklist = [ " and "," or ","drop ","=","\'","\"",";","select " ]
+	if _arg.endswith("\\"):
+		return False
+	for cl in _checklist:
+		if cl in _arg:
+			return False
+	return True
+

@@ -29,6 +29,7 @@
     "jshint": "^2.8.0",
     "minimist": "^1.2.0",
     "proxy-middleware": "^0.15.0",
+    "qs": "^6.2.1",
     "url": "^0.11.0"
   },
   "scripts": {

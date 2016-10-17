@@ -24,9 +24,9 @@ gulp.task('default', function(callback){
           colors: true,
       }
 
-    }).listen(3000, '127.0.0.1', function(err){
+    }).listen(3000, '0.0.0.0', function(err){
       if(err) throw new gutil.PluginError("webpack-dev-server", err);
-      gutil.log("[webpack-dev-server]", "http://localhost:3000/webpack-dev-server/");
+      gutil.log("[webpack-dev-server]", "http://0.0.0.0:3000/webpack-dev-server/");
     })
   });
 

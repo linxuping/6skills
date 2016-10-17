@@ -61,6 +61,7 @@ urlpatterns = patterns('',
 		#activities/collect
 		url(r'^activities/collect$', wxapi.activities_collect),
 		url(r'^activities/get_signup_status$', wxapi.activities_getsignupstatus),
+		url(r'^activities/unpay/list$', wxapi.activities_myunpay_list),
 		#
 		#wxapi END.
 		
@@ -104,5 +105,11 @@ urlpatterns = patterns('',
 		#0928
 		url(r'^activities/hot/list$', wxapi.get_hot_activities),
 		url(r'^wx/nearbyareas/list$', wxapi.get_nearbyareas),
+		url(r'^wxpay/$', wxapi.wxpay),
+		url(r'^testwxpay$', wxapi.testwxpay),
+		url(r'^get_wx_payinfo$', wxapi.get_wx_payinfo),
+		#lxp
+		#url(r'^lxpbuild$', wxapi.lxpbuild),
+		#url(r'^lxpback$', wxapi.lxpback),
 )
 

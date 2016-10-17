@@ -45,6 +45,26 @@
 }
 ```
 
+### 0.4  未付款条目
+**GET**
+** URL ** activities/unpay/list?openid=***&page=1&pagesize=100
+
+**参数**
+```json
+{
+	"activities": [
+		{
+			"actid": "2",
+			"time_signup": "xxx",
+			"title": "简介",
+		},
+		...
+	],
+	"errcode": 0,
+	"errmsg": "errmsg"
+}
+```
+
 ### 1. 限时优惠
 **GET**
 **URL** /activities/special-offers?area=xxx&age=x&type=***&city=***&page=x&page_size=x

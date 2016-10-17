@@ -15,6 +15,7 @@ var proxyOptions2 = url.parse('http://www.6skills.com/api/admin');
 proxyOptions2.route = '/api/admin';
 var proxyOptions3 = url.parse('http://www.6skills.com/wx');
 proxyOptions3.route = '/wx';
+
 module.exports = {
   browsersync: {
     development: {
@@ -22,7 +23,7 @@ module.exports = {
         baseDir: [build],
         middleware: [proxy(proxyOptions), proxy(proxyOptions2), proxy(proxyOptions3)]
       },
-      port: 3000,
+      port: 9901,
       files: [
         developmentAssets + '/css/**',
         developmentAssets + '/js/**',

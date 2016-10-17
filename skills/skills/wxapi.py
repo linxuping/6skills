@@ -45,6 +45,90 @@ def activities_special_offers(req):
 	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
 	if not ret:
 		return pagesize
+	#ret,pagetype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
+	ret,acttype = check_mysql_arg_jsonobj("acttype", req.GET.get("acttype",None), "str", "")
+	ret,area = check_mysql_arg_jsonobj("area", req.GET.get("area",None), "str", "")
+	sql_datefilter = ""
+	#1 weekend.
+	#1 weekend - 1 month.
+	#if pagetype == "preview":
+	#	#sql_datefilter = "a.time_from>DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+	#	sql_datefilter = "a.preinfo_id is null and "
+	#else:
+	#	#sql_datefilter = "a.time_from<=DATE_ADD(NOW(),INTERVAL 2 WEEK) and "
+	#	sql_datefilter = "a.preinfo_id>0 and "
+	if acttype != "" and acttype != "全部" and acttype != "*":
+		sql_datefilter += "b2.name = '%s' and "%acttype
+	if area != "" and area != "全城" and area != "*":
+		sql_datefilter += "d.name = '%s' and "%area
+		
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	position_id = 0
+	if ret:
+		_sql = "select position_id from 6s_user where openid='%s'"%openid
+		count,rets=dbmgr.db_exec(_sql)
+		if count>0 and rets[0][0]!=None:
+			position_id = int(rets[0][0])
+		if position_id == 0:
+			position_id = 101010100;
+
+	#exec 
+	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
+	if not ret: #by date
+		_sql = "select a.id,imgs_act,title,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,a.createtime,a2.price_child from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1 order by a.createtime desc limit %d offset %d;"%(sql_datefilter,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	else: #by distr and date
+		_sql = "select * from ((select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,DATE_ADD(a.createtime,INTERVAL 12 MONTH) as sortdate,a2.price_child,a2.content from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_acttype b2 on b.pid=b2.id left join 6s_position c on a.position_id=c.id left join 6s_position d on c.pid=d.id where %s b.status=1 and c.pid=%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)  union  (select a.id,imgs_act,title,b.name as type,c.name,age_from,age_to,a.price_child as pchild,a.price_adult as padult,a.quantities_remain as qremains,img_cover,a.createtime as sortdate,a2.price_child,a2.content from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_acttype b2 on b.pid=b2.id left join 6s_position c on a.position_id=c.id left join 6s_position d on c.pid=d.id where %s b.status=1 and c.pid<>%d and ((age_from between %d and %d) or (age_to between %d and %d) or (age_from<%d and age_to>%d)) and a.status=1)) as tmptable order by sortdate desc limit %d offset %d;"%(sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,sql_datefilter,position_id,_age_from,_age_to,_age_from,_age_to,_age_from,_age_to,pagesize,pagesize*(page-1) )
+	count,rets=dbmgr.db_exec(_sql)
+	if count >= 0:
+		for i in range(count):
+			lis = rets[i]
+			imgs = lis[1].strip("\r\n ").split(" ")
+			_json["activities"].append( {"actid":lis[0], "imgs":imgs,"title":lis[2],"tags":lis[3],"area":lis[4],"ages":"%s-%s"%(lis[5],lis[6]),"price_child":(lis[7] if lis[12]==None else lis[12]),"quantities_remain":lis[9],"img_cover":lis[10]+"?imageMogr2/thumbnail/300x300|imageMogr2/gravity/Center/crop/250x250","preinfo":lis[13]} )#,"price_child_pre":lis[11],"preinfo":lis[13]
+	else:
+		_json["errcode"] = 1
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("db fail. ")
+
+	#if district == "":
+	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_acttype b2 on b.pid=b2.id left join 6s_position c on a.position_id=c.id left join 6s_position d on c.pid=d.id where %s ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,_age_from,_age_to,_age_from,_age_to)
+	#else:
+	#	_sql = "select count(a.id) from 6s_activity a left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where %s c.pid=(select id from 6s_position where name ='%s') and ((age_from between %d and %d) or (age_to between %d and %d)) and a.status=1; "%(sql_datefilter,area,_age_from,_age_to,_age_from,_age_to)
+	count,rets=dbmgr.db_exec(_sql)
+	if count > 0:
+		_json["pageable"]["total"] = int(rets[0][0])/pagesize+1
+		_json["pageable"]["page"] = page
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+	#return HttpResponseRedirect('/test2')
+
+
+@req_print
+def activities_special_offers2(req):
+	#check.
+	ret,city = check_mysql_arg_jsonobj("city", req.GET.get("city",None), "str")
+	if not ret:
+		return city
+	#ret,district = check_mysql_arg_jsonobj("district", req.GET.get("district",None), "str")
+	#if not ret:
+	#	return district
+	ret,age = check_mysql_arg_jsonobj("age", req.GET.get("age",None), "str")
+	tmps = []
+	if ret:
+		age = "0-100" if age=="*" else age
+		tmps = age.split("-")
+	if (not ret) or len(tmps)!=2 or (not tmps[0].isdigit()) or (not tmps[1].isdigit()):
+		return response_json_error( "age invalid! must be *-*" )
+	_age_from = int(str(tmps[0]))
+	_age_to = int(str(tmps[1]))
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
 	ret,pagetype = check_mysql_arg_jsonobj("type", req.GET.get("type",None), "str")
 	sql_datefilter = ""
 	#1 weekend.
@@ -156,13 +240,13 @@ def activities_details(req):
 
 	#exec 
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "select a.id,imgs_act,title,a.content,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,imgs_act,preinfo,DATE_FORMAT(a.time_from,'%%Y-%%m-%%d'),DATE_FORMAT(a.time_to,'%%Y-%%m-%%d'),a2.price_child,a2.price_adult,a2.content,a.position_details from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
+	_sql = "select a.id,imgs_act,title,a.content,b.name,c.name,age_from,age_to,a.price_child,a.price_adult,a.quantities_remain,img_cover,imgs_act,preinfo,DATE_FORMAT(a.time_from,'%%m月%%d日 %%H:%%i'),DATE_FORMAT(a.time_to,'%%m月%%d日 %%H:%%i'),a2.price_child,a2.price_adult,a2.content,a.position_details,a.sign_type,a.content_share from 6s_activity a left join 6s_preinfo a2 on a.preinfo_id=a2.id left join 6s_acttype b on a.act_id=b.id left join 6s_position c on a.position_id=c.id where a.id=%d;"%actid
 	count,rets=dbmgr.db_exec(_sql)
 	if count == 1:
 		for i in range(count):
 			lis = rets[i]
 			imgs = lis[1].strip("\r\n ").split(" ")
-			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_child":lis[8],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"time_from":lis[14],"time_to":lis[15],"price_child_pre":lis[16],"preinfo":lis[18],"position_details":lis[19]} ) 
+			_json.update( {"actid":lis[0],"imgs":imgs,"title":lis[2],"content":lis[3],"tags":lis[4],"area":lis[5],"ages":"%s-%s"%(lis[6],lis[7]),"price_child":lis[8],"quantities_remain":lis[10],"img_cover":lis[11],"imgs_act":lis[12],"time_from":lis[14],"time_to":lis[15],"price_child_pre":lis[16],"preinfo":lis[18],"position_details":lis[19],"sign_type":lis[20],"content_share":lis[21]} ) 
 	elif count == 0:
 		_json["errcode"] = 1
 		_json["errmsg"] = "activity:%d not exist."%actid
@@ -310,7 +394,12 @@ def activities_sign(req):
 		return gender
 	ret,city = check_mysql_arg_jsonobj("city", args.get("city",None), "str", '')
 	if city=="":
-		city = "广州市"
+		_sql = "select position_details from 6s_user where openid='%s';"%(openid)
+		count,rets=dbmgr.db_exec(_sql)
+		if count == 0:
+			pass #city = "广州市"
+		else:
+			city = rets[0][0].split(" ")[0]
 	else:
 		city = (city if "市" in city else city+"市")
 	ret,kids_name = check_mysql_arg_jsonobj("kids_name", args.get("kids_name",None), "str", '')
@@ -325,6 +414,7 @@ def activities_sign(req):
 	ret,part_group = check_mysql_arg_jsonobj("match_class", args.get("match_class",None), "str", '')
 	ret,part_profession = check_mysql_arg_jsonobj("major", args.get("major",None), "str", '')
 	ret,win_experience = check_mysql_arg_jsonobj("awards", args.get("awards",None), "str", '')
+	ret,company_tel = check_mysql_arg_jsonobj("company_tel", args.get("company_tel",None), "str", '')
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
@@ -365,7 +455,7 @@ def activities_sign(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count == 0: 
 					#save to 6s_user.
-					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime,city,name_ch,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience) values(%d,%d,'%s',%d,'%s','%s',now(),'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');"%(uid,actid,name,age,phone,gender,city,kids_name,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience)
+					_sql = "insert into 6s_signup(user_id,act_id,username_pa,age_ch,phone,gender,createtime,city,username_ch,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience,company_phone) values(%d,%d,'%s',%d,'%s','%s',now(),'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');"%(uid,actid,name,age,phone,gender,city,kids_name,birthdate,img,identity,program_name,organization,teacher,teacher_phone,part_group,part_profession,win_experience,company_tel)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 1:
 						_sql = "update 6s_activity set quantities_remain=quantities_remain-1 where id=%d;"%(actid)
@@ -423,12 +513,12 @@ def activities_my(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "activities":[],"pageable":{"page":0,"total":0},"errcode":0,"errmsg":"" }
-	_sql = "select a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id,DATE_FORMAT(c.time_from,'%%Y-%%m-%%d'),a.id from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and a.status=1 and b.status=1 and c.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
+	_sql = "select distinct a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id,DATE_FORMAT(c.time_from,'%%Y-%%m-%%d'),a.id from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id left join 6s_prepay_info d on c.id=d.act_id left join 6s_wxpay e on d.out_trade_no=e.out_trade_no left join 6s_preinfo f on c.preinfo_id=f.id where ( (f.price_child=0) or (f.price_child>0 and not e.id is null) or (c.price_child=0) or (c.price_child>0 and not e.id is null) ) and b.openid='%s' and a.status=1 and b.status=1 and c.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
 			_json["activities"].append( {"actid":rets[i][0],"title":rets[i][1],"time_signup":rets[i][2],"signid":rets[i][4],"time_act":rets[i][5],"signid":rets[i][6]} )
-		_sql = "select count(a.act_id) from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
+		_sql = "select count(distinct a.act_id) from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
 		count,rets=dbmgr.db_exec(_sql)
 		if count == 1:
 			_json["pageable"]["total"] = int(rets[0][0])
@@ -464,9 +554,9 @@ def activities_reset(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "errcode":0,"errmsg":"" }
-	_sql = "update 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id set c.quantities_remain=c.quantities_remain+1, a.status=0 where a.id=%d and b.openid='%s';"%(signid,openid)
+	_sql = "update 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id set c.quantities_remain=c.quantities_remain+1, a.status=0 where a.id=%d and b.openid='%s' and a.status=1;"%(signid,openid)
 	count,rets=dbmgr.db_exec(_sql)
-	if count == 1:
+	if count >= 1:
 		pass
 	elif count == 0:
 		_json["errcode"] = 1
@@ -743,12 +833,19 @@ def activities_getsignupstatus(req):
 		return actid
 
 	#exec  
-	_json = { "status":False,"errcode":0,"errmsg":"" }
-	_sql = "select a.id,b.img_qrcode,b.time_to>now() from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_user c on a.user_id=c.id where c.openid='%s' and a.act_id=%d and a.status=1 and b.status=1;"%(openid,actid)
+	_json = { "status":0,"errcode":0,"errmsg":"" }
+	_sql = "select distinct a.id,b.img_qrcode,b.time_to>now(),e.id,a.part_profession,b.price_child,b2.price_child from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_preinfo b2 on b.preinfo_id=b2.id left join 6s_user c on a.user_id=c.id left join 6s_prepay_info d on b.id=d.act_id left join 6s_wxpay e on d.out_trade_no=e.out_trade_no where c.openid='%s' and a.act_id=%d and a.status=1 and b.status=1 and c.status=1 order by e.createtime desc;"%(openid,actid)
 	count,rets=dbmgr.db_exec(_sql)
-	if count == 1 :
+	if count >= 1 :
 		if str(rets[0][2]) == "1":
-			_json["status"] = True
+			_price = rets[0][5] if rets[0][6]==None else rets[0][6]
+			#print "debug: ",rets[0][5],rets[0][6],_price,rets[0][3]
+			if _price>0 and rets[0][3]==None:
+				_json["status"] = 2
+				_json["major"] = rets[0][4]
+				_json["price"] = _price
+			else:
+				_json["status"] = 1
 		else:
 			_json["errmsg"] = "过期"
 		_json["qrcode"] = rets[0][1]
@@ -757,7 +854,7 @@ def activities_getsignupstatus(req):
 		count,rets=dbmgr.db_exec(_sql)
 		if count>0 and str(rets[0][0])=="0":
 			_json["errmsg"] = "过期"
-		_json["status"] = False
+		_json["status"] = 0
 		_json["coll_status"] = False
 		#_json["errmsg"] = "未报名."
 		#mo.logger.info("no sign activity openid:%s actid:%d. "%(openid,actid)+REQ_TAG(args))
@@ -769,6 +866,7 @@ def activities_getsignupstatus(req):
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
+	makeup_header_cache_ignore(resp)
 	return resp
 
 
@@ -796,7 +894,7 @@ def save_pos_wx(lat,lon,openid):
 		if count > 0:
 			pos_id = rets[0][0] #to district
 		else:
-			mo.logger.error("openid:%s city:%s area:%s cannot be found."%(openid,city,area) )
+			mo.logger.warn("openid:%s city:%s area:%s cannot be found."%(openid,city,area) )
 			pos_id = "0"
 		count,rets=dbmgr.db_exec("select id from 6s_user where openid='%s';"%openid)
 		if count == 0:
@@ -961,7 +1059,7 @@ def update_access_token():
 				mo.logger.error("[TOKEN] can't find %s in redis."%_rekey)
 				continue
 			for i in xrange(3):
-				print ">>> ",int(nosqlmgr.redis_conn.ttl(_ackey))>60, _check_access_token_valid(_actoken, _openid, "web")
+				#print ">>> ",int(nosqlmgr.redis_conn.ttl(_ackey))>60, _check_access_token_valid(_actoken, _openid, "web")
 				if int(nosqlmgr.redis_conn.ttl(_ackey))>60 and _check_access_token_valid(_actoken, _openid, "web"):
 					break
 				if _update_web_access_token(_openid, _retoken):
@@ -1096,6 +1194,11 @@ def default_process(req):
 		mo.logger.info("openid:%s, msg:%s_%s, bodylen:%d"%(openid,node_msgtype.text,node_ev.text,len(body)) )
 	else:
 		mo.logger.info("openid:%s, msg:%s, bodylen:%d"%(openid,node_msgtype.text,len(body)) )
+		if node_msgtype.text == "text":
+			fname = msgxml.find("FromUserName").text
+			tname = msgxml.find("ToUserName").text
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，<a href='"+settings.share_url+"' >点击这里马上报名吧</a>！")
+			return HttpResponse(_rspxml, mimetype='text/plain')
 
 	if node_msgtype.text=="event" and node_ev!=None and node_ev.text=="LOCATION":
 		pass
@@ -1113,7 +1216,7 @@ def default_process(req):
 			_rspxml = "<xml><ToUserName><![CDATA[$fromUser]]></ToUserName><FromUserName><![CDATA[$toUser]]></FromUserName><CreateTime>$createTime</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[$content]]></Content><FuncFlag>$funcFlag</FuncFlag></xml>"
 			fname = msgxml.find("FromUserName").text
 			tname = msgxml.find("ToUserName").text
-			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"欢迎关注六艺互动，这里将为您推荐附近好玩有创意的亲子活动。")
+			_rspxml = "<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%s</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content><FuncFlag>0</FuncFlag></xml>"%(fname,tname,get_date(),"2016“阳光下成长”暨中国艺术教育示范城市展演（广东）报名开始啦，<a href='"+settings.share_url+"' >点击这里马上报名吧</a>！")
 			return HttpResponse(_rspxml, mimetype='text/plain')
 		elif "unsubscribe" == node_ev.text:
 			_sql = "update 6s_user set status=-1 where openid='%s';"%(openid)
@@ -1211,23 +1314,25 @@ def get_openid(req):
 				count,rets=dbmgr.db_exec(_sql)
 				if count >0 :
 					pos_id = str(int(rets[0][0])+100)
-					_sql = "select id from 6s_user where openid='%s';"%(openid)
+				else:
+					pos_id = "0"
+				_sql = "select id from 6s_user where openid='%s';"%(openid)
+				count,rets=dbmgr.db_exec(_sql)
+				if count == 0:
+					_sql = "insert into 6s_user(wechat,gender,img,position_id,openid,createtime) values('%s','%s','%s','%s','%s',now());"%(nickname,sex,headimg,pos_id,openid)
 					count,rets=dbmgr.db_exec(_sql)
 					if count == 0:
-						_sql = "insert into 6s_user(wechat,gender,img,position_id,openid,createtime) values('%s','%s','%s','%s','%s',now());"%(nickname,sex,headimg,pos_id,openid)
-						count,rets=dbmgr.db_exec(_sql)
-						if count == 0:
-							mo.logger.error("insert 6s_user fail. ret:%s"%rets)
-					else:
-						#_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
-						_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',status=1 where openid='%s';"%(nickname,sex,headimg,openid)
-						count,rets=dbmgr.db_exec(_sql)
-						if count == 0:
-							mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
+						mo.logger.error("insert 6s_user fail. ret:%s"%rets)
 				else:
-					_json["errcode"] = 1
-					_json["errmsg"] = "invalid city."
-					mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
+					#_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',position_id=%s,status=1 where openid='%s';"%(nickname,sex,headimg,pos_id,openid)
+					_sql = "update 6s_user set wechat='%s',gender='%s',img='%s',status=1 where openid='%s';"%(nickname,sex,headimg,openid)
+					cunt,rets=dbmgr.db_exec(_sql)
+					if count == 0:
+						mo.logger.warn("save_user_info_wx update posid return 0. openid:%s %s"%(openid,ret))
+			#else:
+			#	_json["errcode"] = 1
+			#	_json["errmsg"] = "invalid city."
+			#	mo.logger.error("invalid city. openid:%s,city:%s"%(openid,city) )
 			else:
 				mo.logger.error("attrs error. %s  %s  %s"%(openid,_url,ret))
 	else:
@@ -1244,7 +1349,7 @@ def get_openid(req):
 @req_print
 def get_wx_acttypes(req):
 	#exec  
-	_json = { "values":["声乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
+	_json = { "values":["音乐","舞蹈","书画","全部"],"errcode":0,"errmsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)
@@ -1254,11 +1359,11 @@ def get_wx_acttypes(req):
 @req_print
 def get_hot_activities(req):
 	_json = { "activities":[],"pageable":{"page":0,"total":1},"errcode":0,"errmsg":"" }
-	_sql = "select b.id,b.img_cover from 6s_hot_activities a left join 6s_activity b on a.refid=b.id order by a.sequence;"
+	_sql = "select b.id,b.img_cover,b.title from 6s_hot_activities a left join 6s_activity b on a.refid=b.id order by a.sequence;"
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in xrange(count):
-			_json["activities"].append( {"id":rets[i][0],"img":rets[i][1]} )
+			_json["activities"].append( {"id":rets[i][0],"img":rets[i][1]+"?imageView2/2/h/200","act_name":rets[i][2]} )
 	else:
 		_json["errcode"] = 1
 		_json["errmsg"] = "数据操作异常."
@@ -1278,7 +1383,7 @@ def get_nearbyareas(req):
 	if not ret:
 		return openid
 
-	_json = { "values":[],"errcode":0,"errmsg":"" }
+	_json = { "values":["全城"],"errcode":0,"errmsg":"" }
 	_sql = "select name from 6s_position where pid=(((select position_id from 6s_user where openid='%s') div 10000)*10000);"%openid
 	count,rets=dbmgr.db_exec(_sql)
 	#exec  
@@ -1290,6 +1395,161 @@ def get_nearbyareas(req):
 		_json["errmsg"] = "数据操作异常."
 		mo.logger.error("db fail. "+rets)
 
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+@csrf_exempt
+@req_print
+def wxpay(req):
+	body = req.body
+	if len(body) == 0:
+		mo.logger.info( "wxpay body 0." )
+		return HttpResponse("-1", mimetype='text/plain')
+	print body
+	import xml.etree.ElementTree as Etree
+	msgxml = None
+	try:
+		msgxml = Etree.fromstring(body)
+	except:
+		mo.logger.error( str(sys.exc_info())+"; "+str(traceback.format_exc()) )
+		return HttpResponse("req.body invalid: %s"%str(body), mimetype='text/plain')
+	
+	bank_type,cash_fee,fee_type,is_subscribe,result_code,return_code,nonce_str,openid,total_fee,out_trade_no,trade_type,transaction_id = msgxml.find("bank_type").text, msgxml.find("cash_fee").text, msgxml.find("fee_type").text, msgxml.find("is_subscribe").text, msgxml.find("result_code").text, msgxml.find("return_code").text, msgxml.find("nonce_str").text, msgxml.find("openid").text, msgxml.find("total_fee").text, msgxml.find("out_trade_no").text, msgxml.find("trade_type").text, msgxml.find("transaction_id").text
+	_sql = "update 6s_prepay_info set status=1 where out_trade_no='%s'"%out_trade_no
+	count,rets=dbmgr.db_exec(_sql)
+	if count <= 0:
+		mo.logger.error("set out_trade_no:%s as 1 fail. %s"%(out_trade_no,openid))
+		return HttpResponse("set out_trade_no:%s as 1 fail. %s"%(out_trade_no,openid), mimetype='text/plain')
+	_sql = "insert into 6s_wxpay(bank_type,cash_fee,fee_type,is_subscribe,result_code,return_code,nonce_str,openid,total_fee,out_trade_no,trade_type,transaction_id) values ('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')"%(bank_type,cash_fee,fee_type,is_subscribe,result_code,return_code,nonce_str,openid,total_fee,out_trade_no,trade_type,transaction_id)
+	count,rets=dbmgr.db_exec(_sql)
+	if count <= 0:
+		mo.logger.error("save wxpay fail. %s"%body)
+	else:
+		mo.logger.info("save wxpay OK. %s: %s"%(openid,total_fee))
+
+	resp = HttpResponse("success", mimetype='text/plain')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@csrf_exempt
+@req_print
+def testwxpay(req):
+	mo.logger.info("testwxpay......");
+	_json = { "values":["声乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def get_wx_payinfo(req):
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,actid = check_mysql_arg_jsonobj("actid", req.GET.get("actid",None), "int")
+	if not ret:
+		return actid
+	ret,price = check_mysql_arg_jsonobj("price", req.GET.get("price",None), "float")
+	if not ret:
+		price = 0
+
+	_sql = "select a.title,a.price_child,b.price_child from 6s_activity a left join 6s_preinfo b on a.preinfo_id=b.id where a.id=%d;"%actid
+	count,rets=dbmgr.db_exec(_sql)
+	if count <= 0:
+		mo.logger.error("can't find activity: %d"%actid)
+		return response_json_error( "activity not exist." )
+	body = rets[0][0]
+	total_fee = price if price>0 else (rets[0][1] if rets[0][2] is None else rets[0][2])
+	try:
+		_total_fee = int(float(total_fee)*100)
+		if _total_fee <= 0:
+			mo.logger.error("total_fee must be larger than 0: %s"%openid)
+			return response_json_error( "total_fee invalid: %d. %s"%(_total_fee,openid) )
+		total_fee = str(_total_fee)
+	except:
+		mo.logger.error("total_fee is't float: %s"%total_fee)
+		return response_json_error( "total_fee invalid." )
+	
+	import wxpay
+	out_trade_no = str(int(time.time()))
+	#total_fee = "1"
+	trade_type = "JSAPI"
+	ret = wxpay.get_prepay_info(out_trade_no, body, total_fee, settings.pay_cb, trade_type, openid)
+	mo.logger.info("wxpay: trade_no:%s, openid:%s, ret:%s"%(out_trade_no,openid, str(ret)) )
+	_json = { "errcode":0,"errmsg":"" }
+	if "prepay_id" in ret:
+		_json["prepay_id"] = ret["prepay_id"] 
+		_json["appid"] = ret["appid"] 
+		_json["timestamp"] = str(int(time.time())) 
+		_json["noncestr"] = ret["nonce_str"] 
+		_json["sign"] = ret["sign"] 
+		_json["paysign"] = encode_md5("appId="+ret["appid"]+"&nonceStr="+ret["nonce_str"]+"&package=prepay_id="+ret["prepay_id"]+"&signType="+settings.pay_st+"&timeStamp="+_json["timestamp"]+'&key='+settings.pay_key)
+		_sql = "insert into 6s_prepay_info(act_id,out_trade_no,body,total_fee,trade_type,openid,prepay_id,status) values ('%d','%s','%s','%s','%s','%s','%s',0)"%(actid,out_trade_no,body,total_fee, trade_type, openid,ret["prepay_id"])
+		count,rets=dbmgr.db_exec(_sql)
+		if count <= 0:
+			mo.logger.error("save prepay_info fail. %s"%str(ret))
+		else:
+			mo.logger.info("save prepay_info OK. %s"%openid)
+	print _json
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	return resp
+
+
+@req_print
+def activities_myunpay_list(req):
+	args = req.GET
+	#check.
+	ret,openid = check_mysql_arg_jsonobj("openid", req.GET.get("openid",None), "str")
+	if not ret:
+		return openid
+	ret,page = check_mysql_arg_jsonobj("page", req.GET.get("page",None), "int")
+	if not ret:
+		return page
+	if page < 1:
+		page = 1
+	ret,pagesize = check_mysql_arg_jsonobj("pagesize", req.GET.get("pagesize",None), "int")
+	if not ret:
+		return pagesize
+
+	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
+	_json = { "activities":[],"pageable":{"page":0,"total":0},"errcode":0,"errmsg":"" }
+	#_sql = "select distinct b.title,b.id,b.price_child,b.act_id,a.id,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),b.sign_type,a.part_group,a.part_profession,b2.price_child from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_preinfo b2 on b.preinfo_id=b2.id left join 6s_prepay_info c on b.id=c.act_id left join 6s_wxpay d on c.out_trade_no=d.out_trade_no left join 6s_user e on a.user_id=e.id where ( (b.price_child>0 and d.id is null) or (b2.price_child>0 and d.id is null) ) and e.openid='%s' and a.status=1 and b.status=1 and (b2.id is null or b2.status=1) and a.status=1 and b.status=1 and e.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
+	_sql = "select distinct b.title,b.id,b.price_child,b.act_id,a.id,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),b.sign_type,a.part_group,a.part_profession,b2.price_child from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_preinfo b2 on b.preinfo_id=b2.id left join 6s_user e on a.user_id=e.id where ( (b.price_child>0 or b2.price_child>0) and not exists (select c.id from 6s_prepay_info c left join 6s_wxpay d on c.out_trade_no=d.out_trade_no where b.id=c.act_id and c.status=1 and d.status=1) ) and e.openid='%s' and a.status=1 and b.status=1 and (b2.id is null or b2.status=1) and a.status=1 and b.status=1 and e.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
+	count,rets=dbmgr.db_exec(_sql)
+	if count >= 0:
+		for i in range(count):
+			_json["activities"].append( {"actid":rets[i][1],"title":rets[i][0],"time_signup":rets[i][5],"signid":rets[i][4],"sign_type":rets[i][6],"group":rets[i][7],"major":rets[i][8],"price":rets[i][2] if rets[i][9]==None else rets[i][9] } )
+		#_sql = "select count(a.act_id) from 6s_collection a left join 6s_user b on a.openid=b.openid left join 6s_activity c on a.act_id=c.id where b.openid='%s' and b.status=1 and c.status=1;"%(openid)
+		#count,rets=dbmgr.db_exec(_sql)
+		#if count == 1:
+		#	_json["pageable"]["total"] = int(rets[0][0])
+		#	_json["pageable"]["page"] = page
+		#else:
+		#	_json["errcode"] = 1
+		#	_json["errmsg"] = "数据操作异常."
+		#	mo.logger.error("get collection count failed. "+REQ_TAG(args))
+	else:
+		_json["errcode"] = 2
+		_json["errmsg"] = "数据操作异常."
+		mo.logger.error("DB failed."+REQ_TAG(args))
+
+	_jsonobj = json.dumps(_json)
+	resp = HttpResponse(_jsonobj, mimetype='application/json')
+	makeup_headers_CORS(resp)
+	makeup_header_cache_ignore(resp)
+	return resp
+
+#-----------------------
+@req_print
+def lxpbuild(req):
+	mo.logger.info("testwxpay......");
+	_json = { "values":["声乐","舞蹈","美术","全部"],"errcode":0,"errmsg":"" }
 	_jsonobj = json.dumps(_json)
 	resp = HttpResponse(_jsonobj, mimetype='application/json')
 	makeup_headers_CORS(resp)

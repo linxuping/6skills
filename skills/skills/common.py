@@ -154,25 +154,37 @@ def check_mysql_arg(_url, _arg, _type):
 				return True,None
 		return True,None
 
-def _check_mysql_arg_json(_name, _arg, _type):
+def _check_mysql_arg_json(_name, _arg, _type, defval):
 		#invoke mysql injection. 
 		if _arg == None:
-				return False,{ "errcode":1, "errmsg":"参数%s不能为空."%_name }
+				if defval == None:
+					mo.logger.error( "参数%s不能为空."%_name+str(traceback.extract_stack()) )
+				return False,{ "errcode":1, "errmsg":"参数不能为空." }
 		if _type == "int":
 				if not _arg.isdigit():
-						mo.logger.error( "非法参数(%s-%s)"%(_name,str(_arg)) )
-						return False,{ "errcode":1, "errmsg":"非法参数(i-%s-%s)"%(_name,str(_arg)) }
+						if defval == None:
+							mo.logger.error( "非法参数(i-%s-%s)"%(_name,str(_arg))+str(traceback.extract_stack()) )
+						return False,{ "errcode":1, "errmsg":"非法参数(%s)"%(str(_arg)) }
 				return True,int(_arg)
+		elif _type == "float":
+				try:
+						float(_arg)
+				except:
+						if defval == None:
+							mo.logger.error( "非法参数(f-%s-%s)"%(_name,str(_arg))+str(traceback.extract_stack()) )
+						return False,{ "errcode":1, "errmsg":"非法参数(%s)"%(str(_arg)) }
+				return True,round(float(_arg),2)
 		elif _type == "sstr":
 				return True,str(_arg)
 		elif _type == "str":
 				if not settings.check_marg_safe(_arg):
-						mo.logger.error( "非法参数(%s-%s)"%(_name,str(_arg)) )
-						return False,{ "errcode":1, "errmsg":"非法参数(s-%s-%s)"%(_name,str(_arg)) }
+						if defval == None:
+							mo.logger.error( "非法参数(s-%s-%s)"%(_name,str(_arg))+str(traceback.extract_stack()) )
+						return False,{ "errcode":1, "errmsg":"非法参数(%s)"%(str(_arg)) }
 				return True,_arg
 		return False,{ "errcode":1, "errmsg":"未知判断类型(%s)."%str(_type) }
 def check_mysql_arg_jsonobj(_name, _arg, _type, defval=None):
-	ret,output = _check_mysql_arg_json(_name, _arg, _type)
+	ret,output = _check_mysql_arg_json(_name, _arg, _type, defval)
 	if ret:
 		return ret,output
 	if defval != None:
