@@ -34,7 +34,9 @@
     "react-router": "^2.7.0",
     "react-tinymce": "^0.5.1",
     "reflux": "^0.4.1",
+    "simditor": "^2.3.6",
     "style-loader": "^0.13.0",
+    "tinymce": "^4.4.3",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"

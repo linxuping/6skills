@@ -19,7 +19,7 @@
 }
 ```
 
-### 0.2 wx端活动分类列表 - 运营展示数据，与实际类型有细微差别
+### 0.2 wx端活动分类列表 - 运营展示数据，与实际类型有细微差别(返回数据不适合)
 **GET**
 **URL** /wx/acttypes/list
 
@@ -926,12 +926,12 @@ discountPrice|string|Y|折后价
 
 ### 15.2. 商户验证 - 重新申请
 **POST**
-** URL ** 重用 /api/admin/business/authorize 
+** URL ** 重用 /api/admin/business/authorize
 **参数**
 ```json
 {
     "reset":"1",
-    ... ... 
+    ... ...
 }
 ```
 
