@@ -513,7 +513,7 @@ def activities_my(req):
 
 	#exec  1\create 6s_user;2\put identifying code;3\send sms and input
 	_json = { "activities":[],"pageable":{"page":0,"total":0},"errcode":0,"errmsg":"" }
-	_sql = "select distinct a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id,DATE_FORMAT(c.time_from,'%%Y-%%m-%%d'),a.id from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id left join 6s_prepay_info d on c.id=d.act_id left join 6s_wxpay e on d.out_trade_no=e.out_trade_no left join 6s_preinfo f on c.preinfo_id=f.id where ( (f.price_child=0) or (f.price_child>0 and not e.id is null) or (c.price_child=0) or (c.price_child>0 and not e.id is null) ) and b.openid='%s' and a.status=1 and b.status=1 and c.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
+	_sql = "select distinct a.act_id,c.title,DATE_FORMAT(a.createtime,'%%Y-%%m-%%d'),c.position_details,a.id,DATE_FORMAT(c.time_from,'%%Y-%%m-%%d'),a.id from 6s_signup a left join 6s_user b on a.user_id=b.id left join 6s_activity c on a.act_id=c.id left join 6s_prepay_info d on c.id=d.act_id left join 6s_wxpay e on d.out_trade_no=e.out_trade_no and d.openid=e.openid left join 6s_preinfo f on c.preinfo_id=f.id where ( (f.price_child=0) or (f.price_child>0 and not e.id is null) or (c.price_child=0) or (c.price_child>0 and not e.id is null) ) and b.openid='%s' and b.openid=d.openid and a.status=1 and b.status=1 and c.status=1 order by a.createtime desc limit %d offset %d;"%(openid,pagesize,pagesize*(page-1))
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 0:
 		for i in range(count):
