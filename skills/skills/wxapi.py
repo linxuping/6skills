@@ -834,7 +834,7 @@ def activities_getsignupstatus(req):
 
 	#exec  
 	_json = { "status":0,"errcode":0,"errmsg":"" }
-	_sql = "select distinct a.id,b.img_qrcode,b.time_to>now(),e.id,a.part_profession,b.price_child,b2.price_child from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_preinfo b2 on b.preinfo_id=b2.id left join 6s_user c on a.user_id=c.id left join 6s_prepay_info d on b.id=d.act_id left join 6s_wxpay e on d.out_trade_no=e.out_trade_no where c.openid='%s' and a.act_id=%d and a.status=1 and b.status=1 and c.status=1 order by e.createtime desc;"%(openid,actid)
+	_sql = "select distinct a.id,b.img_qrcode,b.time_to>now(),e.id,a.part_profession,b.price_child,b2.price_child from 6s_signup a left join 6s_activity b on a.act_id=b.id left join 6s_preinfo b2 on b.preinfo_id=b2.id left join 6s_user c on a.user_id=c.id left join 6s_prepay_info d on b.id=d.act_id left join 6s_wxpay e on d.out_trade_no=e.out_trade_no where c.openid='%s' and d.openid='%s' and a.act_id=%d and a.status=1 and b.status=1 and c.status=1 order by e.createtime desc;"%(openid,openid,actid)
 	count,rets=dbmgr.db_exec(_sql)
 	if count >= 1 :
 		if str(rets[0][2]) == "1":
