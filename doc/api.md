@@ -1,5 +1,25 @@
 ## 公众号接口api
 
+### 0.01 付款列表
+**GET**
+**URL** /activities/pay/list?openid=abc
+
+**返回**
+```json
+{
+	"activities": [
+		{
+			"signid": 1,
+			"title:
+			"signtime": "2016-10-10",
+		},
+		...
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
 ### 0.1 滚动栏活动
 **GET**
 **URL** /activities/hot/list
