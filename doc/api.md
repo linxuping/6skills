@@ -1,4 +1,3 @@
-## 公众号接口api
 
 ### 0.01 付款列表
 **GET**
@@ -9,9 +8,10 @@
 {
 	"activities": [
 		{
-			"signid": 1,
-			"title:
-			"signtime": "2016-10-10",
+			"pid": 1,
+			"status: 2,	1可退款、2申请中、3成功申请
+			"title::"abc",
+			"time": "2016-10-10",
 		},
 		...
 	],
@@ -19,6 +19,28 @@
 	"errmsg": ""
 }
 ```
+
+### 0.02 退
+**POST**
+**URL** /activities/pay/refund
+
+**参数**
+```json
+{
+	"openid": 138,
+	"pid": 2,
+ 	"reason": "shit"		
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+
 
 ### 0.1 滚动栏活动
 **GET**
