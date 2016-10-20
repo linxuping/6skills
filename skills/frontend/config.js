@@ -9,11 +9,11 @@ var srcAssets         = 'src';
 var developmentAssets = 'dist/static';
 // var productionAssets  = 'dist/production/assets';
 
-var proxyOptions = url.parse('http://www.6skills.com/activities');
+var proxyOptions = url.parse('http://www.6skills.com:19900/activities');
 proxyOptions.route = '/activities';
-var proxyOptions2 = url.parse('http://www.6skills.com/api/admin');
+var proxyOptions2 = url.parse('http://www.6skills.com:19900/api/admin');
 proxyOptions2.route = '/api/admin';
-var proxyOptions3 = url.parse('http://www.6skills.com/wx');
+var proxyOptions3 = url.parse('http://www.6skills.com:19900/wx');
 proxyOptions3.route = '/wx';
 
 module.exports = {

@@ -647,8 +647,14 @@ body{
 .weui_btn{
 	font-size: 26px;
 	&.weui_btn_mini{
-		font-size: 18px;
+		font-size: 20px;
 		padding: 3px 15px;
+		background-color: @themeColor;
+		color: #FFF;
+		&:active{
+			background-color: lighten(@themeColor, 10%);
+			color: #FFF;
+		}
 	}
 }
 .weui_uploader_input_wrp, .weui_uploader_file{
@@ -660,7 +666,7 @@ body{
 .weui_cells_radio .weui_check:checked + .weui_icon_checked:before{
 	font-size: 24px;
 }
-.weui_cell_select .weui_cell_bd:after{
+.weui_cell_select .weui_cell_bd:after, .weui_cells_access .weui_cell_ft:after{
 	width: 12px;
 	height: 12px;
 }
@@ -668,4 +674,7 @@ body{
 	bottom: 0;
 	height: auto;
 	overflow: auto;
+}
+.weui_dialog .weui_dialog_hd{
+	padding-top: 18px !important;
 }
