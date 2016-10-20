@@ -7,11 +7,12 @@
 **返回**
 ```json
 {
-	"activities": [
+	"pays": [
 		{
-			"signid": 1,
-			"title:
-			"signtime": "2016-10-10",
+			"pid": 1,
+			"status: 1,	
+			"title::"abc",
+			"time": "2016-10-10",
 		},
 		...
 	],
@@ -19,6 +20,28 @@
 	"errmsg": ""
 }
 ```
+
+### 0.02 退
+**POST**
+**URL** /activities/pay/refund
+
+**参数**
+```json
+{
+	"openid": 138,
+	"pid": 2,
+ 	"reason": "shit"		
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+
 
 ### 0.1 滚动栏活动
 **GET**
