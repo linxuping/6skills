@@ -6,10 +6,10 @@
 **返回**
 ```json
 {
-	"pays": [
+	"activities": [
 		{
 			"pid": 1,
-			"status: 1,	
+			"status: 2,	1可退款、2申请中、3成功申请
 			"title::"abc",
 			"time": "2016-10-10",
 		},
