@@ -374,7 +374,7 @@ var ActivitiesToPay = React.createClass({
 	},
 	pullFromServer: function() {
 		$.ajax({
-			url: '/activities/unpay/list',
+			url: ges('activities/unpay/list'),
 			//url: "/static/js/test/list.js",
 			type: 'get',
 			dataType: 'json',
@@ -474,11 +474,14 @@ var ActivitiesWithdraw = React.createClass({
 	},
 	signReset: function(ev){
 		ev.stopPropagation();
-    var signid = ev.target.dataset.signid;
-    ReactDOM.render(
-      <WithdrawPage signid={signid} updateActivities={this.pullFromServer}/>,
-      document.getElementById("confirm-dialog-wrap")
-    )
+		var pid = ev.target.dataset.pid;
+		var status = ev.target.dataset.status;
+		if (status > 1)
+			return;
+		ReactDOM.render(
+			<WithdrawPage pid={pid} updateActivities={this.pullFromServer}/>,
+			document.getElementById("confirm-dialog-wrap")
+		)
 	},
 	confirmReset: function (argument) {
 		$.ajax({
@@ -491,7 +494,7 @@ var ActivitiesWithdraw = React.createClass({
 		.done(function() {
 			console.log("success");
 			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
-			alert("取消报名成功!如需退款请联系客服!")
+			alert("请耐心等候退款申请！")
 			this.pullFromServer();
 		}.bind(this))
 		.fail(function() {
@@ -511,7 +514,7 @@ var ActivitiesWithdraw = React.createClass({
   //url is not right
 	pullFromServer:function(){
 		$.ajax({
-			url: ges('activities/my'),
+			url: ges('activities/pay/list'),
 			type: 'get',
 			dataType: 'json',
 			data: { openid:geopenid(),page:"1",pagesize:"100" },
@@ -532,14 +535,11 @@ var ActivitiesWithdraw = React.createClass({
 						style={{"cursor": "pointer"}} data-actid={elem.actid}>
 						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
-							<span>课程时间</span><time>{elem.time_act}</time>
+							<span>课程时间</span><time>{elem.time}</time>
 						</p>
-						<div className="time clearfix">
-							<span>报名时间</span><time>{elem.time_signup}</time>
-						</div>
 						<button type="button" onClick={this.signReset}
-							data-uid={index} data-signid={elem.signid} className="weui_btn weui_btn_mini weui_btn_default">
-							申请退款
+							data-uid={index} data-pid={elem.pid} data-status={elem.status} className="weui_btn weui_btn_mini weui_btn_default">
+							{(elem.status==2) ? "等待退款":((elem.status==3) ? "已退款":"申请退款")}
 						</button>
 					</li>
 				);
@@ -573,16 +573,18 @@ var WithdrawPage = React.createClass({
   submitHandler: function(e){
     var form = $("#withdraw-form");
     var reason = $("input[name='reason']:checked").val();
-    var other_reason = $("#other_reason");
+    if (reason.indexOf("其他原因") != -1){
+      reason = $("#other_reason")[0].value;
+    }
+    //var other_reason = $("#other_reason");
     $.ajax({
-      url: '#',
+      url: ges('activities/pay/refund'),
       type: 'post',
       dataType: 'json',
       data: {
         reason: reason,
-        other_reason: other_reason,
         openid: geopenid(),
-        signid: this.props.signid
+        pid: this.props.pid
       },
     })
     .done(function(res) {
@@ -616,7 +618,7 @@ var WithdrawPage = React.createClass({
                 </div>
                 <div className="weui_cell_ft">
                   <input type="radio" className="weui_check" name="reason"
-                    value="0" defaultChecked="checked"/>
+                    value="没时间参加" defaultChecked="checked"/>
                   <span className="weui_icon_checked"></span>
                 </div>
               </label>
@@ -626,7 +628,7 @@ var WithdrawPage = React.createClass({
                 </div>
                 <div className="weui_cell_ft">
                   <input type="radio" className="weui_check" name="reason"
-                    value="1"/>
+                    value="无理由退款"/>
                   <span className="weui_icon_checked"></span>
                 </div>
               </label>
@@ -636,7 +638,7 @@ var WithdrawPage = React.createClass({
                 </div>
                 <div className="weui_cell_ft">
                   <input type="radio" className="weui_check" name="reason"
-                    value="2"/>
+                    value="其他原因，请在下方输入"/>
                   <span className="weui_icon_checked"></span>
                 </div>
               </label>
