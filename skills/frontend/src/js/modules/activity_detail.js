@@ -204,6 +204,7 @@ var ActivityDetail = React.createClass({
 					activity: res,
 					signtype: res.sign_type || 1,
 					imgs: res.imgs,
+					loaded: true
 				});
 
 				if (res.sign_type == 3) {
@@ -244,68 +245,71 @@ var ActivityDetail = React.createClass({
 	render: function() {
 		console.log(this.state.activity)
 		var hid_price = this.state.activity.actid==90;
-		return (
-			<div className="activity-detail">
-				{/*<Pay activity={this.state.activity}></Pay>*/}
-				<div className="back-btn" onClick={this.backHandler}>活动详情</div>
-				<article className="media">
-					<div className="media-hd" ref="coverBox">
-						<img src={this.state.activity.img_cover} alt=""/>
-					</div>
-					<div className="weui_panel header-msg">
-						<div className="weui_panel_bd " >
-							<h4 className="title">{this.state.activity.title}</h4>
+		if (this.state.loaded) {
+			return (
+				<div className="activity-detail">
+					<div className="back-btn" onClick={this.backHandler}>活动详情</div>
+					<article className="media">
+						<div className="media-hd" ref="coverBox">
+							<img src={this.state.activity.img_cover} alt=""/>
+						</div>
+						<div className="weui_panel header-msg">
+							<div className="weui_panel_bd " >
+								<h4 className="title">{this.state.activity.title}</h4>
 
-							<div className="money clearfix ot-msg">
-								{
-									(this.state.activity.price_child_pre==null)? ""
-										:
-										<span className="now fl">现价：<span className="cost">￥{this.state.activity.price_child_pre}元</span></span>
-									}
-								<span className={(this.state.activity.price_child_pre!=null) ? "original fr has-pre" : "original"} style={{display: hid_price && "none"}}>
-									{this.state.activity.price_child_pre != null ? "原价" : "价格"}：
-									<span className="cost">
-										{this.state.activity.price_child == 0 ? "免费" :
-											<span>￥{this.state.activity.price_child}元</span>}
+								<div className="money clearfix ot-msg">
+									{
+										(this.state.activity.price_child_pre==null)? ""
+											:
+											<span className="now fl">现价：<span className="cost">￥{this.state.activity.price_child_pre}元</span></span>
+										}
+									<span className={(this.state.activity.price_child_pre!=null) ? "original fr has-pre" : "original"} style={{display: hid_price && "none"}}>
+										{this.state.activity.price_child_pre != null ? "原价" : "价格"}：
+										<span className="cost">
+											{this.state.activity.price_child == 0 ? "免费" :
+												<span>￥{this.state.activity.price_child}元</span>}
+										</span>
 									</span>
-								</span>
+								</div>
+
+								{/*<p className="privilage"><b>{this.state.activity.preinfo}</b></p>*/}
+								<div className="ot-msg"><span>年龄：{this.state.activity.ages}岁</span></div>
+								<div className="ot-msg">活动时间：{this.state.activity.time_from} ~ {this.state.activity.time_to}</div>
+								<div className="ot-msg">活动地点：{this.state.activity.area} {this.state.activity.position_details}</div>
+								<div className="ot-msg">剩余名额：{(this.state.activity.quantities_remain>1000000) ? "不限":<font>{this.state.activity.quantities_remain}</font>}</div>
 							</div>
-
-							{/*<p className="privilage"><b>{this.state.activity.preinfo}</b></p>*/}
-							<div className="ot-msg"><span>年龄：{this.state.activity.ages}岁</span></div>
-							<div className="ot-msg">活动时间：{this.state.activity.time_from} ~ {this.state.activity.time_to}</div>
-							<div className="ot-msg">活动地点：{this.state.activity.area} {this.state.activity.position_details}</div>
-							<div className="ot-msg">剩余名额：{(this.state.activity.quantities_remain>1000000) ? "不限":<font>{this.state.activity.quantities_remain}</font>}</div>
 						</div>
-					</div>
 
-					<div className="weui_panel" style={{marginTop: "10px", padding:"20px 10px"}}>
-						<div className="weui_panel_bd detail-content" dangerouslySetInnerHTML={{__html: this.state.activity.content}}>
+						<div className="weui_panel" style={{marginTop: "10px", padding:"20px 10px"}}>
+							<div className="weui_panel_bd detail-content" dangerouslySetInnerHTML={{__html: this.state.activity.content}}>
+							</div>
 						</div>
-					</div>
+							{
+								this.state.status && this.state.qrcode ?
+									<QrCode qrcode={this.state.qrcode}/> : ""
+							}
+					</article>
+					<div className="sign-btn" style={{"cursor": "pointer"}}
+						onClick={this.openCollectPage}>
 						{
-							this.state.status && this.state.qrcode ?
-								<QrCode qrcode={this.state.qrcode}/> : ""
+							this.state.coll_status ? "已收藏" : "收藏"
 						}
-				</article>
-				<div className="sign-btn" style={{"cursor": "pointer"}}
-					onClick={this.openCollectPage}>
-					{
-						this.state.coll_status ? "已收藏" : "收藏"
-					}
-				</div>
-				<div className="sign-btn-right" style={{"cursor": "pointer"}}
-					onClick={this.openSignPage}>
-					{
-						this.state.expire ? "已过期" :
-							(this.state.status == 1 ? "已报名" :
-								(this.state.status == 2 ? "付款" : "我要报名"))
-					}
+					</div>
+					<div className="sign-btn-right" style={{"cursor": "pointer"}}
+						onClick={this.openSignPage}>
+						{
+							this.state.expire ? "已过期" :
+								(this.state.status == 1 ? "已报名" :
+									(this.state.status == 2 ? "付款" : "我要报名"))
+						}
 
+					</div>
+					<div id="sign-page-wrap"></div>
 				</div>
-				<div id="sign-page-wrap"></div>
-			</div>
-		);
+			);
+		}	else {
+			return <Loading loadType="page-loading"></Loading>
+		}
 	}
 });
 
@@ -324,3 +328,12 @@ var QrCode = React.createClass({
 	}
 });
 
+var Loading = React.createClass({
+	render: function() {
+		return (
+			<div className={this.props.loadType || "page-loading"}>
+				<img src="/static/img/loading.gif" alt=""/>
+			</div>
+		);
+	}
+});
