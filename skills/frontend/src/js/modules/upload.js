@@ -2,29 +2,32 @@ var Upload = React.createClass({
 
 	getInitialState: function() {
 		return {
-			name: "images"
+			name: "images",
+			uploading: false
 		};
 	},
 	componentDidMount: function() {
-		try{
-
-
 		var qiniu1 = new QiniuJsSDK()
     qiniu1.uploader(uploadConfig({
       key: this.props.uploadKey,
       id: this.props.id || "pickfile",
       name: this.props.name || "images",
-      successCallBack: this.successCallBack
+      successCallBack: this.successCallBack,
+      beforeCallBack: this.beforeCallBack
     }));
-  } catch(e){
-  	alert(e)
-  }
 	},
 
 	successCallBack: function (file, domain) {
 		var fileObj = JSON.parse(file);
 		this.setState({
-			file: domain + fileObj.key + "?" + new Date().getTime()
+			file: domain + fileObj.key + "?" + new Date().getTime(),
+			uploading: false
+		});
+	},
+
+	beforeCallBack: function(file) {
+		this.setState({
+			uploading: true
 		});
 	},
 
@@ -44,7 +47,12 @@ var Upload = React.createClass({
 									id="uploaderFiles" style={{float: "left"}}>
 
 									<li className="weui_uploader_file">
-										<img src={this.state.file} style={{width: "100%", height: "100%"}}/>
+										{
+											this.state.uploading ?
+											<img src="/static/img/loading.gif" style={{width: "100%", height: "100%"}}/>
+											:
+											<img src={this.state.file} style={{width: "100%", height: "100%"}}/>
+										}
 									</li>
 
 								</ul>

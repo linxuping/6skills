@@ -25,7 +25,7 @@ var ActivityDetail = React.createClass({
 			//付款
 			document.title = "付款";
 			ReactDOM.render(
-				<Pay backTitle="活动详情" major={this.state.major} 
+				<Pay backTitle="活动详情" major={this.state.major}
 					activity={this.state.activity} price={this.state.price}/>,
 				document.getElementById('pay-page-wrap')
 			);
@@ -70,7 +70,7 @@ var ActivityDetail = React.createClass({
 
 			document.title = "活动报名";
 			ReactDOM.render(
-				<Sign actid={actid} backTitle="活动详情" reload={this.getSignupStatus} 
+				<Sign actid={actid} backTitle="活动详情" reload={this.getSignupStatus}
 					activity={this.state.activity}/>,
 				document.getElementById('sign-page-wrap')
 			);
@@ -150,7 +150,7 @@ var ActivityDetail = React.createClass({
 			return;
 		}
 		_encodeurl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri="+encodeURIComponent(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect"
-		
+
 		//获取活动具体信息
 		$.ajax({
 			url: this.props.url,
@@ -205,11 +205,11 @@ var ActivityDetail = React.createClass({
 					signtype: res.sign_type || 1,
 					imgs: res.imgs,
 				});
-				
+
 				if (res.sign_type == 3) {
 					var uploadJs = [
-						'/static/js/upload/moxie.min.js', '/static/js/upload/plupload.js', 
-						'/static/js/upload/qiniu.min.js', '/static/js/upload/upload-config.js', 
+						'/static/js/upload/moxie.min.js', '/static/js/upload/plupload.js',
+						'/static/js/upload/qiniu.min.js', '/static/js/upload/upload-config.js',
 						'/static/js/modules/upload.js'];
 					for (var i = 0; i < uploadJs.length; i++) {
 						var js = document.createElement("script");
@@ -297,8 +297,8 @@ var ActivityDetail = React.createClass({
 				<div className="sign-btn-right" style={{"cursor": "pointer"}}
 					onClick={this.openSignPage}>
 					{
-						this.state.expire ? "已过期" : 
-							(this.state.status == 1 ? "已报名" : 
+						this.state.expire ? "已过期" :
+							(this.state.status == 1 ? "已报名" :
 								(this.state.status == 2 ? "付款" : "我要报名"))
 					}
 
