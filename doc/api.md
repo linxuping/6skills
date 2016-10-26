@@ -789,13 +789,27 @@ qrcode|url|Y|二维码url
 	"area":"越秀区",
 	"address":"越秀广场",
 	"firstacttype": "本地活动",
-	"secondacttype": “手工DIY”,
+	"secondacttype": "手工DIY",
 	"cost": 0,
 	"personnum": 33,
 	"agefrom": 3,
 	"ageto": 6,
 	"qrcode":"http://url.jpg",
-	"content":"活动详情活动详情活动详情"
+	"content":"活动详情活动详情活动详情",
+	"args_def":[
+		{
+			"name":"输入-文本",
+			"type":"value",
+			"description":""
+		},
+		{
+			"name":"输入-列表型",
+			"type":"obj",
+			"description":[
+				{"item":"1", "price":190, "limit":20}
+			]
+		}
+	]
 }
 ```
 
