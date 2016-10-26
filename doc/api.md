@@ -320,6 +320,71 @@
 
 
 ##后台管理
+### 0.1 课程管理
+### 0.11. 创建活动 newactivity
+**POST**
+** URL ** /api/admin/activities/add
+
+**参数**
+```json
+{
+	"title":"云南亲子一日游",
+	"coverimage":"http://www.xxx.jpg",
+	"begintime":"20160602",
+	"endtime":"20160602",
+	"city":"广州",
+	"area":"越秀区",
+	"address":"越秀广场",
+	"firstacttype": "本地活动",
+	"secondacttype": "手工DIY",
+	"cost": 0,
+	"personnum": 33,
+	"agefrom": 3,
+	"ageto": 6,
+	"qrcode":"http://url.jpg",
+	"content":"活动详情活动详情活动详情",
+	"args_def":[  //该部分未定，需要重新结构化传输！
+		{
+			"name":"输入-文本",
+			"type":"value",
+			"description":""
+		},
+		{
+			"name":"输入-列表型",
+			"type":"obj",
+			"description":[
+				{"item":"1", "price":190, "limit":20}
+			]
+		}
+	]
+}
+```
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+title|string|Y|活动标题
+coverImage|url|Y|封面图
+...
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+
 ### 1. 商户登录
 **POST**
 ** URL ** /api/admin/login
@@ -774,81 +839,6 @@ qrcode|url|Y|二维码url
 **GET**
 ** URL ** /api/admin/get-acttypes?level=2&type=tt
 
-### 12. 创建活动 newactivity
-**POST**
-** URL ** /api/admin/activities/add
-
-**参数**
-```json
-{
-	"title":"云南亲子一日游",
-	"coverimage":"http://www.xxx.jpg",
-	"begintime":"20160602",
-	"endtime":"20160602",
-	"city":"广州",
-	"area":"越秀区",
-	"address":"越秀广场",
-	"firstacttype": "本地活动",
-	"secondacttype": "手工DIY",
-	"cost": 0,
-	"personnum": 33,
-	"agefrom": 3,
-	"ageto": 6,
-	"qrcode":"http://url.jpg",
-	"content":"活动详情活动详情活动详情",
-	"args_def":[
-		{
-			"name":"输入-文本",
-			"type":"value",
-			"description":""
-		},
-		{
-			"name":"输入-列表型",
-			"type":"obj",
-			"description":[
-				{"item":"1", "price":190, "limit":20}
-			]
-		}
-	]
-}
-```
-
-**参数说明**
-
-名称 | 类型 | 是否必须 | 备注
------|------|----------|-----
-title|string|Y|活动标题
-coverImage|url|Y|封面图
-beginTime|string|Y|活动开始时间
-endTime|string|Y|活动结束时间
-city|string|Y|活动集合地点城市
-area|string|Y|活动集合地点区域
-address|string|Y|活动集合地点具体地址
-firstClassification|number|Y|活动一级分类
-secondClassification|number|Y|活动二级分类
-isFree|boolean|Y|是否收费
-kidFee|string|N|收费时必须
-adultFee|string|N|收费时必须
-personNum|number|Y|人数限制
-ageGroup|string|Y|适合的年龄段
-qrcode|url|N|活动微信群二维码
-details|text|Y|活动详情
-
-**成功返回**
-```json
-{
-	"errcode": 0,
-	"errmsg": "",
-}
-```
-
-**失败返回**
-```json
-{
-	"errcode": 1,
-	"errmsg": "errmsg"
-}
-```
 
 ### 13.1. 获取未优惠的活动列表
 **GET**
