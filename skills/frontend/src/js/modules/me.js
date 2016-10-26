@@ -211,7 +211,7 @@ var MyActivities = React.createClass({
 		.done(function() {
 			console.log("success");
 			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
-			alert("取消报名成功!如需退款请联系客服!")
+			alert("报名已成功删除，如需退款请到申请退款页面中发起!")
 			this.pullFromServer();
 		}.bind(this))
 		.fail(function() {
