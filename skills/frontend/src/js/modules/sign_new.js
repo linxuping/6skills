@@ -29,7 +29,7 @@ var Sign = React.createClass({
 	render: function() {
 		return (
 			<div className="sign-page" style={{"overflowY": "auto"}}>
-				<SignForm actid={this.props.actid} back={this.back} 
+				<SignForm actid={this.props.actid} back={this.back}
 					reload={this.props.reload} activity={this.props.activity}/>
 			</div>
 		);
@@ -51,7 +51,7 @@ function validateForm(actid, formConponent) {
 			"gender": {required: true},
 			"city": {required: true},
 			"kids_name": {required: true},
-			"identity_card": {required: true, rangelength: [18, 18]},
+			//"identity_card": {required: true, rangelength: [18, 18]},
 			"program": {required: true},
 			"company": {required: true},
 			"teacher": {required: true},
@@ -66,7 +66,7 @@ function validateForm(actid, formConponent) {
 			"gender": {required: "请选择宝宝性别"},
 			"city": {required: "请输入所在城市"},
 			"kids_name": {required: "请输入宝宝姓名"},
-			"identity_card": {required: "请输入身份证号", rangelength: "18位身份证"},
+			//"identity_card": {required: "请输入身份证号", rangelength: "18位身份证"},
 			"program": {required: "请输入节目名称"},
 			"company": {required: "请输入选送单位"},
 			"teacher": {required: "请输入指导老师"},
@@ -119,7 +119,7 @@ function validateForm(actid, formConponent) {
 								document.getElementById("alert-wrap")
 							);
 						}
-						
+
 					} else {
 						alert("报名失败：" + obj.errmsg);
 					}
@@ -164,12 +164,12 @@ var SignForm = React.createClass({
 
 	render: function() {
 		var age;
-		if (this.props.signtype == "3") {
+		if (this.props.activity.sign_type == "3") {
 			ages = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 		} else {
 			ages = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 		}
-		
+
 		ages = ages.map(function(elem, index) {
 			return (
 				<option key={index} value={elem}>{elem}岁</option>
@@ -182,9 +182,9 @@ var SignForm = React.createClass({
 		var sign_url = ges("activities/sign");
 		//var sign_url = "/static/js/test/sign.js";
 		var matchClasses = [
-			"幼儿组（学龄前）", 
-			"小学甲组（1—2年级）", 
-			"小学乙组（3—4年级）", 
+			"幼儿组（学龄前）",
+			"小学甲组（1—2年级）",
+			"小学乙组（3—4年级）",
 			"小学丙组（5—6年级）",
 			"初中组（1-3年级）",
 			"高中组（1-3年级、中职）",
@@ -194,14 +194,14 @@ var SignForm = React.createClass({
 			return <option key={index} value={elem}>{elem}</option>
 		});
 		var majors = [
-			"声乐-个人初赛-280元", 
-			"声乐-团体初赛-260元", 
-			"器乐-个人初赛-280元", 
-			"器乐-团体初赛-260元", 
-			"舞蹈-个人初赛-280元", 
-			"舞蹈-团体初赛-150元", 
-			"语言-个人初赛-280元", 
-			"语言-团体初赛-260元", 
+			"声乐-个人初赛-280元",
+			"声乐-团体初赛-260元",
+			"器乐-个人初赛-280元",
+			"器乐-团体初赛-260元",
+			"舞蹈-个人初赛-280元",
+			"舞蹈-团体初赛-150元",
+			"语言-个人初赛-280元",
+			"语言-团体初赛-260元",
 			"书画-初赛-380元"];
 		majors = majors.map(function(elem, index) {
 			var major = elem.split("-");
@@ -236,7 +236,7 @@ var SignForm = React.createClass({
 						</div>
 
 						{
-							signtype == "2" ? 
+							signtype == "2" ?
 							<div>
 								<div className="weui_cell">
 									<div className="weui_cell_hd">
@@ -272,7 +272,7 @@ var SignForm = React.createClass({
 						}
 
 						{
-							signtype == "3" ? 
+							signtype == "3" ?
 							<div className="weui_cell">
 								<div className="weui_cell_hd">
 									<label htmlFor="kids_name" className="weui_label">宝宝姓名</label>
@@ -322,21 +322,11 @@ var SignForm = React.createClass({
 
 
 					{
-						signtype == "3" ? 
+						signtype == "3" ?
 						<div>
 							<div className="weui_cells weui_cells_form">
 
 								<Upload uploadKey="custom-sign"></Upload>
-
-								<div className="weui_cell">
-									<div className="weui_cell_hd">
-										<label htmlFor="identity_card" className="weui_label">身份证号</label>
-									</div>
-									<div className="weui_cell_bd weui_cell_primary">
-										<input type="text" name="identity_card" id="identity_card" className="weui_input"
-											placeholder="请输入身份证号" defaultValue={profile.identity_card}/>
-									</div>
-								</div>
 
 								<div className="weui_cell">
 									<div className="weui_cell_hd">
@@ -419,7 +409,7 @@ var SignForm = React.createClass({
 									</div>
 								</div>
 							</div>
-						</div> 
+						</div>
 						:
 						""
 					}

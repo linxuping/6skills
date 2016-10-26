@@ -66,16 +66,12 @@ function uploadConfig(options){
           // });
       },
       'BeforeUpload': function(up, file) {
-          // var progress = new FileProgress(file, 'fsUploadProgress');
-          // var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
-          // if (up.runtime === 'html5' && chunk_size) {
-          //     progress.setChunkProgess(chunk_size);
-          // }
+          options.beforeCallBack && options.beforeCallBack(file);
       },
       'UploadProgress': function(up, file) {
-          // var progress = new FileProgress(file, 'fsUploadProgress');
-          // var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
-          // progress.setProgress(file.percent + "%", file.speed, chunk_size);
+          //var progress = new FileProgress(file, 'fsUploadProgress');
+          //var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
+          //progress.setProgress(file.percent + "%", file.speed, chunk_size);
       },
       'UploadComplete': function(res) {
           // $('#success').show();

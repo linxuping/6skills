@@ -547,6 +547,10 @@ var ActivitiesWithdraw = React.createClass({
 		return (
 			<div className="myActivities sign-page" style={{"overflow": "auto"}}>
 				<div className="back-btn" onClick={this.props.back}>返回</div>
+        <div className="tips">
+          退款须知：如您希望取消课程报名并退款，请在课程开始时间的24小时之前及时发起申请。超时将无法
+          自动退款，请联系人工客服处理。
+        </div>
 				<div className="cell">
 					<ul className="my-activities">
 						{myActivitiesStr}
