@@ -40,6 +40,41 @@
 }
 ```
 
+### 0.03 商户认证
+**POST**
+**URL** /business/auth
+
+**参数**
+```json
+{
+	"openid": 138,
+	"img_licence": "img1",
+	"img_iden": "img2",
+ 	"business": "yi++",
+	"username": "jim",
+	"phone": "1234"
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.04 商户认证状态
+**GET**
+**URL** /business/authrization/status?openid=1234
+
+**返回**
+```json
+{
+	"status": 0/1/2/3 未认证/认证通过/处理中/认证失败
+	"errcode": 0,
+	"errmsg": ""
+}
+```
 
 
 ### 0.1 滚动栏活动
