@@ -2,13 +2,13 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import ReactMixin from 'react-mixin';
 import Reflux from 'Reflux';
+import Panel from '../../commons/panel.jsx';
 import activityAction from '../../actions/activity-action.jsx';
 import activityStore from '../../stores/activity-store.jsx';
 import Upload from '../../commons/upload/upload-component.jsx';
 require('simditor/styles/simditor.css');
 var Simeditor = require("simditor");
 
-//import TinyMCE from 'react-tinymce';
 import { Form, Input, Select, Checkbox, Radio, Textarea, Icon, Row, Col, DatePicker, Cascader, Button, Modal} from 'antd';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -141,7 +141,6 @@ let AddActivity = React.createClass({
   },
 
   costBoolChangeHandler(e){
-    //console.log(this.props.form.getFieldProps("personnumBool").value)
     let costBool = this.props.form.getFieldProps("costBool").value
     this.setState({
       costBool: costBool == "0" ? "1" : "0"
@@ -150,31 +149,7 @@ let AddActivity = React.createClass({
 
   render() {
     const {getFieldProps, getFieldError, isFieldValidating} = this.props.form;
-    const itemLayout = {labelCol: {span: 4}, wrapperCol: {span: 8}}
-    const classOption = [
-      {
-        value: '1',
-        label: "本地活动",
-        children: [{
-            label: "本地活动1",
-            value: "11"
-          }, {
-            label: "本地活动2",
-            value: "12"
-          }
-        ]
-      }, {
-        value: '2',
-        label: "兴趣启蒙",
-        children: [{
-          label: "兴趣启蒙1",
-          value: "2.1"
-        },{
-          label: "兴趣启蒙2",
-          value: "22"
-        }]
-      }
-    ];
+    const itemLayout = {labelCol: {span: 4}, wrapperCol: {span: 16}}
     const ageList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     const titleProps = getFieldProps("title", {rules:[
         {required: true, message: "请输入活动标题"}
@@ -263,9 +238,9 @@ let AddActivity = React.createClass({
           <Col span={4}>
             <FormItem label="活动集合地点" required={true}  {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
           </Col>
-          <Col span={8}>
+          <Col span={16}>
             <Row>
-              <Col span={5}>
+              <Col span={4}>
                 <FormItem>
                   <Select allowClear {...cityProps} placeholder="城市">
                     {
@@ -279,7 +254,7 @@ let AddActivity = React.createClass({
                   </Select>
                 </FormItem>
               </Col>
-              <Col span={6} offset={1}>
+              <Col span={4} offset={1}>
                 <FormItem>
                   <Select allowClear {...areaProps} placeholder="区域">
                     {
@@ -293,7 +268,7 @@ let AddActivity = React.createClass({
                   </Select>
                 </FormItem>
               </Col>
-              <Col span={11} offset={1}>
+              <Col span={14} offset={1}>
                 <FormItem>
                   <Input id="address" placeholder="详细地址" {...addressProps}></Input>
                 </FormItem>
@@ -310,7 +285,7 @@ let AddActivity = React.createClass({
             <Row>
               <Col span={11}>
                 <FormItem>
-                  <Select allowClear {...firstActTypeProps} placeholder="活动大类">
+                  <Select allowClear {...firstActTypeProps} placeholder="活动类型">
                     {
                       this.state.firstacttype &&
                         this.state.firstacttype.map(function(elem, idx) {
@@ -324,7 +299,7 @@ let AddActivity = React.createClass({
               </Col>
               <Col span={11} offset={2}>
                 <FormItem>
-                  <Select allowClear {...secondActTypeProps} placeholder="活动小类">
+                  <Select allowClear {...secondActTypeProps} placeholder="具体分类">
                     {
                       this.state.secondacttype &&
                         this.state.secondacttype.map(function(elem) {
@@ -344,25 +319,31 @@ let AddActivity = React.createClass({
         <FormItem id="cost" label="活动费用" {...itemLayout}
           required={true}>
           <Row>
-            <Col span={12}>
+            <Col span={6}>
               <RadioGroup {...getFieldProps("costBool", {onChange: this.costBoolChangeHandler, initialValue: this.state.costBool})}>
                 <Radio key="1" value="0">免费</Radio>
                 <Radio key="2" value="1">收费</Radio>
               </RadioGroup>
             </Col>
-            {
-              this.state.costBool == "0" ? "" :
-              <Col span={12}>
-                <Input placeholder="金额" {...costProps}></Input>
-              </Col>
-            }
+
           </Row>
+          {
+              this.state.costBool == "0" ? "" :
+              <Row>
+                <Col span={24}>
+                  <Panel title={["编号", "电子票类型", "金额", "人数"]}></Panel>
+                  <Input placeholder="金额" {...costProps}></Input>
+                </Col>
+              </Row>
+            }
         </FormItem>
+
+
 
         <FormItem id="cost" label="活动人数限制" {...itemLayout}
           required={true}>
           <Row>
-            <Col span={12}>
+            <Col span={6}>
               <RadioGroup {...getFieldProps("personnumBool", {onChange: this.personnumBoolChangeHandler, initialValue: this.state.personnumBool})}>
                 <Radio key="1" value="0">不限</Radio>
                 <Radio key="2" value="1">其他</Radio>
@@ -371,7 +352,7 @@ let AddActivity = React.createClass({
             {
               //不知道什么getFieldValues那里获取的是前一个数据
               this.state.personnumBool == "0" ? "" :
-              <Col span={12}>
+              <Col span={18}>
                 <Input placeholder="人数" name="personnum" {...personnumProps}></Input>
               </Col>
             }
@@ -425,7 +406,7 @@ let AddActivity = React.createClass({
         </FormItem>
 
         <FormItem  label="活动详情" required={true} className="content-item"
-          labelCol={{span: 4}} wrapperCol={{span: 14}}>
+          labelCol={{span: 4}} wrapperCol={{span: 16}}>
           <div>
             <input type="hidden" {...contentProps}/>
             <textarea id="editor" autofocus></textarea>

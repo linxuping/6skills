@@ -39,3 +39,31 @@
 .tc{
 	text-align: center;
 }
+
+//over write ant noradius
+.noRadius(){
+	border-radius: 0px !important;
+}
+.ant-input,
+.ant-select-selection,
+.ant-calendar,
+.ant-select-dropdown,
+.ant-btn{
+	.noRadius();
+}
+.ant-upload.ant-upload-select-picture-card{
+	.noRadius();
+}
+.ant-calendar-time .ant-calendar-input, .ant-calendar-time .ant-time-picker-input{
+	.noRadius();
+}
+.ant-upload{
+  position: relative;
+  .upload-mask{
+    position: absolute !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
