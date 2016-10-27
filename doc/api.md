@@ -319,9 +319,9 @@
 ```
 
 
-##后台管理
-### 0.1 课程管理
-### 0.11. 创建活动 newactivity
+##后台管理2.1
+### 1 课程管理
+### 1.1 创建活动 newactivity
 **POST**
 ** URL ** /api/admin/activities/add
 
@@ -383,6 +383,86 @@ coverImage|url|Y|封面图
 	"errmsg": "errmsg"
 }
 ```
+
+### 1.2. 已发布课程
+**GET**
+** URL ** /api/admin/activities/published?page=1&pagesie=100
+
+**成功返回**
+```json
+{
+	"activities": [
+		{
+			"actid": 8,
+			"title": "abc",
+			"publish_time": "20161010 12:30",
+			"sign_num": 1000
+		}
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 1.2.1 课程下线
+**POST**
+** URL ** /api/admin/activities/offline
+
+**参数**
+```
+{
+	actid: 2,
+}
+```
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 1.2.2. 查看报名信息
+**GET**
+** URL ** /api/admin/activity/sign-users?actid=2&page=1&pagesie=100
+
+**成功返回**
+```json
+{
+	"users": [
+		{
+			"title": "123",
+			"name": "Jim",
+			"phone": "1234",
+			"time": "2016-10-10"
+			"amount": "免费",
+		}
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 1.3. 未发布课程
+**GET**
+** URL ** /api/admin/activities/unpublish?page=1&pagesie=100
+
+**成功返回**
+```json
+{
+	"activities": [
+		{
+			"actid": 8,
+			"title": "abc",
+		}
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+
 
 
 ### 1. 商户登录
