@@ -3,6 +3,8 @@ import ReactDom from 'react-dom';
 import $ from 'jquery';
 import {Menu, Icon} from 'antd';
 const SubMenu = Menu.SubMenu;
+import {Link, IndexLink} from "react-router";
+
 
 export default class Sidebar extends React.Component {
   static propTypes = {
@@ -83,8 +85,9 @@ export default class Sidebar extends React.Component {
               } else {
                 return (
                   <Menu.Item key={elem.id}>
-                    <Icon type={elem.icon}/>
-                    {elem.name}
+                    <Link to={elem.href}>
+                      <Icon type={elem.icon}/>{elem.name}
+                    </Link>
                   </Menu.Item>
                 );
               }

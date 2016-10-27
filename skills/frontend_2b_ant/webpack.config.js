@@ -34,9 +34,9 @@ function makeConf(options) {
         output: {
             // 在debug模式下，__build目录是虚拟的，webpack的dev server存储在内存里
             path: path.resolve(debug ? '__build/' : assets),
-            filename: 'scripts/[name]-[hash:8].js',
-            chunkFilename: 'scripts/[chunk_hash:8].chunk.min.js',
-            hotUpdateChunkFilename: 'scripts/[id].[chunk_hash:8].min.js',
+            filename: 'scripts/[name].[hash:8].js',
+            chunkFilename: 'scripts/[name].[hash:8].chunk.js',
+            hotUpdateChunkFilename: 'scripts/[id].[hash:8].js',
             publicPath: '/'
         },
         externals:{
