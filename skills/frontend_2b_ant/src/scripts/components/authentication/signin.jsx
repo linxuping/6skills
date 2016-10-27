@@ -7,6 +7,9 @@ import {Row, Col, Form, Input, Checkbox, Button} from 'antd';
 const createForm = Form.create;
 const FormItem = Form.Item;
 
+import authenticateAction from '../../actions/authentication-action.jsx';
+import authenticateStore from '../../stores/authentication-store.jsx';
+
 class Signin extends React.Component {
   static propTypes = {
     name: React.PropTypes.string,
@@ -18,7 +21,11 @@ class Signin extends React.Component {
 
   onSubmitHandler(e){
     e.preventDefault()
-    console.log(this.props.form.getFieldsValue())
+    this.props.form.validateFields((errors, values) => {
+      if (errors == null) {
+        authenticateAction.signinHandler(this, values);
+      }
+    })
   }
 
   componentWillMount() {
@@ -26,7 +33,17 @@ class Signin extends React.Component {
   }
 
   render() {
-    const { getFieldProps } = this.props.form;
+    const {getFieldProps, getFieldError, isFieldValidating} = this.props.form;
+    const phonePorps = getFieldProps("phone", {
+      rules: [
+        {required: true,  message: "请输入手机", pattern: /^[1][0-9]{10}$/}
+      ]
+    });
+    const passwordProps = getFieldProps("passwd", {
+      rules: [
+        {required: true, message: "请输入密码"}
+      ]
+    });
     return (
 
       <Row>
@@ -41,11 +58,11 @@ class Signin extends React.Component {
             <Form horizontal onSubmit={this.onSubmitHandler.bind(this)}>
               <FormItem>
                 <Input placeholder="账户(手机)" size="large"
-                  {...getFieldProps('phone')}></Input>
+                  {...phonePorps}></Input>
               </FormItem>
               <FormItem className="mb0">
                 <Input type="password" placeholder="密码" size="large"
-                  {...getFieldProps('password')} />
+                  {...passwordProps} />
               </FormItem>
 
               <FormItem className="mb0">
@@ -71,3 +88,5 @@ class Signin extends React.Component {
 Signin = createForm()(Signin);
 
 export default Signin;
+
+ReactMixin.onClass(Signin, Reflux.connect(authenticateStore, "key"));

@@ -17,7 +17,7 @@ class Signup extends React.Component {
   }
 
   onSubmitHandler(e){
-    e.preventDefault()
+    e.preventDefault();
     console.log(this.props.form.getFieldsValue())
     this.props.form.validateFields((errors, values) => {
       console.log(errors);
@@ -78,10 +78,10 @@ class Signup extends React.Component {
 
               <Row>
                 <Col span={16}>
-                <FormItem>
-                  <Input placeholder="验证码" size="large"
-                  {...codeProps} style={{"with": "66.6666%"}}></Input>
-                </FormItem>
+                  <FormItem>
+                    <Input placeholder="验证码" size="large"
+                    {...codeProps} style={{"with": "66.6666%"}}></Input>
+                  </FormItem>
                 </Col>
                 <Col span={8}>
                   <Button htmlType="button" type="primary" size="large" className="fr" onClick={this.getCodeHandler.bind(this)}>
