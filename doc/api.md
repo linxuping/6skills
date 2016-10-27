@@ -444,6 +444,56 @@ coverImage|url|Y|封面图
 }
 ```
 
+### 1.2.3. 导出报名信息
+**POST**
+** URL ** /api/admin/activity/sign-users/export
+
+**参数**
+```json
+{
+	actid: 2
+}
+```
+
+**成功返回**
+字节流
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 1.2.4. 替换活动微信群二维码
+**POST**
+** URL ** /api/admim/qr/replace
+
+**参数**
+```json
+{
+	"actid": 3,
+	"qrcode": "http://qrcode.jpg"
+}
+```
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
 ### 1.3. 未发布课程
 **GET**
 ** URL ** /api/admin/activities/unpublish?page=1&pagesie=100
@@ -461,6 +511,29 @@ coverImage|url|Y|封面图
 	"errmsg": ""
 }
 ```
+
+### 1.3.1. 上线
+**POST**
+** URL ** /api/admim/activity/online
+
+**参数**
+```json
+{
+	"actid": 3,
+}
+```
+
+### 1.3.2. 删除
+**POST**
+** URL ** /api/admim/activity/delete
+
+**参数**
+```json
+{
+	"actid": 3,
+}
+```
+
 
 
 
@@ -819,62 +892,9 @@ actid|number|Y|
 }
 ```
 
-### 10. 导出报名信息
-**POST**
-** URL ** /api/admin/export-activity-users
 
-**参数**
-```json
-{
-	actid: 2
-}
-```
 
-**成功返回**
-字节流
 
-**失败返回**
-```json
-{
-	"errcode": 1,
-	"errmsg": "errmsg"
-}
-```
-
-### 11. 替换活动微信群二维码
-**POST**
-** URL ** /api/admin/replace-qr
-
-**参数**
-```json
-{
-	"actid": 3,
-	"qrcode": "http://qrcode.jpg"
-}
-```
-
-**参数说明**
-
-名称 | 类型 | 是否必须 | 备注
------|------|----------|-----
-actid|number|Y|
-qrcode|url|Y|二维码url
-
-**成功返回**
-```json
-{
-	"errcode": 0,
-	"errmsg": "",
-}
-```
-
-**失败返回**
-```json
-{
-	"errcode": 1,
-	"errmsg": "errmsg"
-}
-```
 
 ### 12.1. 获取城市列表
 **GET**
