@@ -29,7 +29,7 @@
 {
 	"openid": 138,
 	"pid": 2,
- 	"reason": "shit"		
+ 	"reason": "shit"
 }
 ```
 **返回**
@@ -1249,4 +1249,3 @@ discountPrice|string|Y|折后价
 ### 24.导出所有报名信息
 **POST**
 ** URL ** /api/admin/export-activity-users 不带actid参数
-
