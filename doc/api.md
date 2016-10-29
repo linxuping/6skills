@@ -480,18 +480,17 @@ coverImage|url|Y|封面图
 ```
 
 ### 1.2.3. 导出报名信息
-**POST**
-** URL ** /api/admin/activity/sign-users/export
-
-**参数**
-```json
-{
-	actid: 2
-}
-```
+**GET**
+** URL ** /api/admin/activity/sign-users/export?actid=2&time_from=*&time_to=*
 
 **成功返回**
-字节流
+```json
+{
+	" content": “content with csv format.”			
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
 
 **失败返回**
 ```json
@@ -656,8 +655,8 @@ coverImage|url|Y|封面图
 ```
 
 ### 4.2. 导出完整报名表
-**POST**
-** URL ** /api/admim/signup/export
+**GET**
+** URL ** /api/admin/activity/sign-users/export
 
 
 
