@@ -569,9 +569,59 @@ coverImage|url|Y|封面图
 }
 ```
 
+### 2 商户认证审核 
+### 2.1 商户列表
+**GET**
+** URL ** /api/admim/business/list?time_from=*&time_to=*&page=1&pagesize=100
+
+**参数**
+```json
+{
+	"business": [
+		{
+			"id": 2,
+			"name": *,
+			"phone": *,
+			"time": *
+		},
+	]
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 2.2. 认证
+**POST**
+** URL ** /api/admim/business/auth
+
+**参数**
+```json
+{
+	"id": 3,
+	"type": "pass or deny",
+	"description": "sdf"
+}
+```
+
+### 2.3 商户详情
+**GET**
+** URL ** /api/admim/business/detail?id=2
+
+**参数**
+```json
+{
+	"img_licence": "",
+ 	"img_iden": "",
+	"business": "",
+	"name": "",
+	"phone": "",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
 
 
-
+### ----------------------------------- LXP LINE -----------------------------------------------
 
 ### 1. 商户登录
 **POST**
