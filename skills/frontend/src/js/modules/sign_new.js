@@ -79,58 +79,12 @@ function validateForm(actid, formConponent) {
 				alert("请先上传宝宝照片");
 				return;
 			}
-			$(form).find(":submit").attr("disabled", true);
-			$(form).ajaxSubmit({
-				dataType: "json",
-				data: { "openid":geopenid(), "actid":actid },
-				success: function(obj){
-					//此处加入sdk关闭网页
-					obj = typeof obj === "object" ? obj : JSON.parse(obj);
-					if (obj.errcode === 0) {
-						if (formConponent.props.activity.price_child > 0) {
-							//费用不为0，交费
-							var major = $("#major");
-							if (major) {
-								major = major.val();
-							}
-							//把报名页面关掉
-						  formConponent.back();
-						  document.title = "付款";
-						  ReactDOM.render(
-						    <Pay activity={formConponent.props.activity} major={major} backTitle="活动详情"/>,
-						    document.getElementById("pay-page-wrap")
-						  )
-						} else {
-							//免费直接报名成功
-							ReactDOM.render(
-								React.createElement(AlertDialog, {
-									title: "报名成功",
-									msg: "恭喜您报名成功！",
-									callback: function(){
-										if (obj.wxchat == ""){
-											var r = confirm("现在关注爱试课的公众号，可以查看更多活动和您的报名情况！");
-											if (r){
-												try_jump_pubnum();
-											}
-										}
-										formConponent.back();
-									}
-								}),
-								document.getElementById("alert-wrap")
-							);
-						}
 
-					} else {
-						alert("报名失败：" + obj.errmsg);
-					}
-				},
-				error: function(xmlHQ, textStatus) {
-					alert("服务出错，请稍后重试！");
-				},
-				complete: function(){
-					$(form).find(":submit").attr("disabled", false);
-				}
-			})
+			ReactDOM.render(
+				<SignConfirm form={form} formConponent={formConponent}
+					actid={actid}></SignConfirm>
+				, document.getElementById('alert-wrap')
+			)
 		}
 	});
 }
@@ -202,11 +156,11 @@ var SignForm = React.createClass({
 			"舞蹈-团体初赛-150元",
 			"语言-个人初赛-280元",
 			"语言-团体初赛-260元",
-			"书画-初赛-380元"];
+			"书画-初赛"];
 		majors = majors.map(function(elem, index) {
 			var major = elem.split("-");
 			return (
-				<option key={index} value={major[0] + "-" + major[1]}>{major[0]}({major[1] + ", " + major[2]})</option>
+				<option key={index} value={major[0] + "-" + major[1]}>{major[0]}({major[1] + ", " + (major[2] || "0元")})</option>
 			);
 		})
 		var signtype = this.props.activity.sign_type;

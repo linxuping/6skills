@@ -34,30 +34,30 @@ var Pay = React.createClass({
           function onBridgeReady(){
             WeixinJSBridge.invoke(
               'getBrandWCPayRequest', {
-                "appId" : res.appid,     //公众号名称，由商户传入     
-                "timeStamp": _ts,         //时间戳，自1970年以来的秒数     
-                "nonceStr" : res.noncestr, //随机串     
-                "package" : "prepay_id="+res.prepay_id,     
-                "signType" : "MD5",         //微信签名方式：     
-                "paySign" : res.paysign //微信签名 
+                "appId" : res.appid,     //公众号名称，由商户传入
+                "timeStamp": _ts,         //时间戳，自1970年以来的秒数
+                "nonceStr" : res.noncestr, //随机串
+                "package" : "prepay_id="+res.prepay_id,
+                "signType" : "MD5",         //微信签名方式：
+                "paySign" : res.paysign //微信签名
               },
-              function(res){     
+              function(res){
                 if(res.err_msg == "get_brand_wcpay_request:ok" ) {
                   $('#paybtn')[0].disabled = true;
                   //$('#paybtn')[0].style.backgroundColor = "gray";
                   $('#paybtn')[0].innerText = "已支付";
                   return;//alert("pay ok.");
-                }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+                }     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
                 else
                   ;//alert(res.err_msg);
               }
-            ); 
+            );
           }
           if (typeof WeixinJSBridge == "undefined"){
             if( document.addEventListener ){
               document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
             }else if (document.attachEvent){
-              document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+              document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
               document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
             }
           }else{
@@ -86,14 +86,14 @@ var Pay = React.createClass({
   render: function() {
     var sign3Price = {
       "声乐-个人初赛": 280,
-      "声乐-团体初赛": 260, 
-      "器乐-个人初赛": 280, 
-      "器乐-团体初赛": 260, 
-      "舞蹈-个人初赛": 280, 
-      "舞蹈-团体初赛": 150, 
-      "语言-个人初赛": 280, 
-      "语言-团体初赛": 260, 
-      "书画-初赛": 380
+      "声乐-团体初赛": 260,
+      "器乐-个人初赛": 280,
+      "器乐-团体初赛": 260,
+      "舞蹈-个人初赛": 280,
+      "舞蹈-团体初赛": 150,
+      "语言-个人初赛": 280,
+      "语言-团体初赛": 260,
+      "书画-初赛": 0
     };
     var _price = this.props.activity.sign_type == "3" ? sign3Price[this.props.major] : (this.props.activity.price? this.props.activity.price:(this.props.activity.price_child_pre? this.props.activity.price_child_pre:this.props.activity.price_child));
     return (
@@ -114,7 +114,7 @@ var Pay = React.createClass({
           ￥
           {_price}元</p>
         </section>
-        <div className="weui_btn_area mb20" 
+        <div className="weui_btn_area mb20"
           style={{position: "absolute", width: "100%", padding: 10, margin: 0, bottom: 0}}>
           <button id="paybtn" type="button" className="weui_btn weui_btn_primary" style={{height: 100}}
             onClick={this.payHandler} data-price={_price}>支付</button>
