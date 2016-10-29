@@ -174,6 +174,10 @@ var Feedback = React.createClass({
 					点击咨询在线客服
 					<a target="_blank" href="http://sighttp.qq.com/authd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb"><img border="0"  src="http://wpa.qq.com/imgd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb&pic=52" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
 				</p>
+				<div style={{margin:'4px'}}><font style={{fontSize:'32px'}}>申请商务合作</font></div>
+				<p style={{fontSize:'24px'}}>
+					老师与机构<a href="business_cooperation.html" className="co-link">合作申请入口</a>
+				</p>
 				<div style={{margin:'4px'}}><font style={{fontSize:'32px'}}>其他合作</font></div>
 				<p style={{fontSize:'24px'}}>
 					邮箱：<mail>1344671651@qq.com</mail>

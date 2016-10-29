@@ -9,19 +9,27 @@ var srcAssets         = 'src';
 var developmentAssets = 'dist/static';
 // var productionAssets  = 'dist/production/assets';
 
-var proxyOptions = url.parse('http://www.6skills.com:19900/activities');
+var proxyOptions = url.parse('http://www.6skills.com/activities');
 proxyOptions.route = '/activities';
 var proxyOptions2 = url.parse('http://www.6skills.com:19900/api/admin');
 proxyOptions2.route = '/api/admin';
-var proxyOptions3 = url.parse('http://www.6skills.com:19900/wx');
+var proxyOptions3 = url.parse('http://www.6skills.com/wx');
 proxyOptions3.route = '/wx';
+var proxyOptions4 = url.parse('http://www.6skills.com/business');
+proxyOptions4.route = '/business';
+
 
 module.exports = {
   browsersync: {
     development: {
       server: {
         baseDir: [build],
-        middleware: [proxy(proxyOptions), proxy(proxyOptions2), proxy(proxyOptions3)]
+        middleware: [
+          proxy(proxyOptions),
+          proxy(proxyOptions2),
+          proxy(proxyOptions3),
+          proxy(proxyOptions4)
+        ]
       },
       port: 9901,
       files: [

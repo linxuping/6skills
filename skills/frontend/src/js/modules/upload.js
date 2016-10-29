@@ -2,7 +2,7 @@ var Upload = React.createClass({
 
 	getInitialState: function() {
 		return {
-			name: "images",
+			name: this.props.name || "images",
 			uploading: false
 		};
 	},
@@ -36,11 +36,11 @@ var Upload = React.createClass({
 			<div className="Upload">
 				<div className="weui_cell">
 					<div className="weui_cell_bd">
-						<input type="hidden" name={this.state.name} value={this.state.file} id={this.state.name}/>
+						<input type="hidden" name={this.props.name} value={this.state.file} id={this.props.name}/>
 						<div className="weui_uploader">
 							<div className="weui_uploader_hd fl">
-								<p className="weui_uploader_title" style={{width: 105}}>
-									<label htmlFor={this.state.name}>宝宝照片</label>
+								<p className="weui_uploader_title" style={{width: 150}}>
+									<label htmlFor={this.props.name}>{this.props.label || "宝宝照片"}</label>
 								</p>
 							</div>
 							<div className="weui_uploader_bd fl">
