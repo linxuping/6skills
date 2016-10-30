@@ -280,7 +280,7 @@ var SignForm = React.createClass({
 						<div>
 							<div className="weui_cells weui_cells_form">
 
-								<Upload uploadKey="custom-sign"></Upload>
+								<Upload uploadKey="custom-sign" name="images"></Upload>
 
 								<div className="weui_cell">
 									<div className="weui_cell_hd">
