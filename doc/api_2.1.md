@@ -213,6 +213,34 @@ coverImage|url|Y|封面图
 }
 ```
 
+### 1.3.3. 加载详情
+**GET**
+** URL ** /api/admin/activities/detail
+
+**成功返回**
+```json
+{
+	"title":"云南亲子一日游",
+	"coverimage":"http://www.xxx.jpg",
+	"begintime":"20160602",
+	"endtime":"20160602",
+	"city":"广州",
+	"area":"越秀区",
+	"address":"越秀广场",
+	"firstacttype": "本地活动",
+	"secondacttype": "手工DIY",
+	"cost": 0,
+	"personnum": 33,
+	"agefrom": 3,
+	"ageto": 6,
+	"qrcode":"http://url.jpg",
+	"content":"活动详情活动详情活动详情",
+	"args_def":"",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
 ### 2 商户认证审核 
 ### 2.1 商户列表
 **GET**
