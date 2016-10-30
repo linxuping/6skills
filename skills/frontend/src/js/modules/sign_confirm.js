@@ -77,7 +77,7 @@ var SignConfirm = React.createClass({
               if (name == "") {
                 switch(data[0]){
                   case "gender":
-                    name = "宝宝性别";
+                    name = "选手性别";
                     break;
                   case "awards":
                     name = "获奖经历";
