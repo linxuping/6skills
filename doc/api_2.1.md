@@ -220,6 +220,7 @@ coverImage|url|Y|封面图
 **成功返回**
 ```json
 {
+	"actid": 3,
 	"title":"云南亲子一日游",
 	"coverimage":"http://www.xxx.jpg",
 	"begintime":"20160602",
@@ -240,6 +241,12 @@ coverImage|url|Y|封面图
 	"errmsg": ""
 }
 ```
+
+### 1.3.4  修改
+**GET**
+** URL ** /api/admin/activities/add  增加actid=3的属性标识修改
+
+
 
 ### 2 商户认证审核 
 ### 2.1 商户列表
