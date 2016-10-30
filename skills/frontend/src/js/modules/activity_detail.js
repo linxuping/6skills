@@ -184,10 +184,10 @@ var ActivityDetail = React.createClass({
 								return this.replace(reTag,"").replace(reTag2,"").replace(reTag3,",").replace(reTag4,"");
 							}
 							var _content = res.content_share;
-							if (_content=="" && _content==null)
-								_content = res.content.substring(0, 100).stripHTML();
+							if (_content=="" || _content==null)
+								_content = res.content.substring(0, 500).stripHTML();
 							wx.ready(function(){
-								make_share("all",res.title,_content,_encodeurl,res.img_cover,null);
+								make_share("all",res.title,_content,_encodeurl,res.img_cover_share,null);
 							});
 							wx.error(function(res2){
 								if (sessionStorage.getItem("6soid") != null)
