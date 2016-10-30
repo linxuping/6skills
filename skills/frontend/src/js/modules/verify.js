@@ -29,7 +29,7 @@ function validateForm() {
 									//update profile.
 									prostr = sessionStorage.getItem("_profile");
 									if (prostr == null) {
-										alert("从服务器获取用户信息失败.");
+										;//alert("从服务器获取用户信息失败.");
 									}
 									else{
 										var _profile = JSON.parse(prostr);

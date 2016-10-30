@@ -61,7 +61,7 @@ var SignConfirm = React.createClass({
   },
 
 
-  render() {
+  render:function() {
 
     var datas = decodeURIComponent($(this.props.form).serialize()).split("&");
 

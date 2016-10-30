@@ -1,6 +1,6 @@
 var BusinessCooperation = React.createClass({
 
-  getInitialState() {
+  getInitialState:function() {
     return {
       loaded: false,
       component: ""
@@ -84,7 +84,7 @@ var BusinessCooperation = React.createClass({
     }
   },
 
-  render() {
+  render:function() {
 
     if (this.state.loaded) {
       return (
@@ -105,7 +105,7 @@ var BusinessCooperation = React.createClass({
  */
 var Signup = React.createClass({
 
-  getInitialState() {
+  getInitialState:function() {
     return {
       hasLicense: 1
     };
@@ -154,11 +154,11 @@ var Signup = React.createClass({
     this.setState({hasLicense: e.target.value})
   },
 
-  render() {
+  render:function() {
     return (
       <div className="signup business-page">
         <header className="title">合作申请</header>
-        <form action="/business/auth" id="signup-form">
+        <form action="/business/auth" id="signup-form" method="post">
           <div className="weui_cells_title">是否有营业执照</div>
           <div className="weui_cells weui_cells_radio">
             <label className="weui_cell weui_check_label" for="x11">
@@ -234,7 +234,7 @@ var Signup = React.createClass({
 });
 
 var DuringApply = React.createClass({
-  render() {
+  render:function() {
     return (
       <div className="during">
         <header className="title">合作申请</header>
@@ -253,7 +253,7 @@ var DuringApply = React.createClass({
 });
 
 var ApplyPass = React.createClass({
-  render() {
+  render:function() {
     return (
       <div className="during">
         <header className="title">合作申请</header>
@@ -272,7 +272,7 @@ var ApplyPass = React.createClass({
 });
 
 var ApplyNotPass = React.createClass({
-  render() {
+  render:function() {
     return (
       <div className="during">
         <header className="title">合作申请</header>
@@ -295,7 +295,7 @@ var ApplyNotPass = React.createClass({
 
 
 var Loading = React.createClass({
-  render() {
+  render:function() {
     return (
       <div className={this.props.loadType || "page-loading"}>
         <img src="/static/img/loading.gif" alt=""/>
