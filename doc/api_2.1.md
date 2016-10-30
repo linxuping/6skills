@@ -285,7 +285,7 @@ coverImage|url|Y|封面图
 ### 4 课程报名统计
 ### 4.1 列表
 **GET**
-** URL ** /api/admim/activity/refund-list?time_from=*&time_to=*&page=1&pagesize=100
+** URL ** /api/admim/activity/sign-list?time_from=*&time_to=*&page=1&pagesize=100
 
 **参数**
 ```json
