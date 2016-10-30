@@ -87,6 +87,9 @@ var SignConfirm = React.createClass({
               var value = data[1];
               if (data[0] == "images") {
                 value = <img src={data[1]} style={{width: 120}}/>
+              } else if (data[0] == "gender") {
+                var genders = {"male": "男", "female": "女"};
+                value = genders[data[1]];
               }
               return (
                   <div className="weui_cell" key={idx}>

@@ -40,7 +40,7 @@ var Upload = React.createClass({
 						<div className="weui_uploader">
 							<div className="weui_uploader_hd fl">
 								<p className="weui_uploader_title" style={{width: 150}}>
-									<label htmlFor={this.props.name}>{this.props.label || "宝宝照片"}</label>
+									<label htmlFor={this.props.name}>{this.props.label || "选手照片"}</label>
 								</p>
 							</div>
 							<div className="weui_uploader_bd fl">
