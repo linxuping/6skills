@@ -193,19 +193,17 @@ var Signup = React.createClass({
                 <Upload uploadKey="business-img" label="营业执照" name="img_licence"></Upload> :
                 <Upload uploadKey="business-img" label="身份证照片" name="img_iden"></Upload>
             }
-            {
-              this.state.hasLicense > 0 ?
-                <div className="weui_cell">
-                  <div className="weui_cell_hd">
-                    <label htmlFor="business" className="weui_label">商户名称</label>
-                  </div>
-                  <div className="weui_cell_bd weui_cell_primary">
-                    <input type="text" name="business" id="business" className="weui_input"
-                      placeholder="请输入商户名称"/>
-                  </div>
-                </div>
-                : ""
-            }
+
+            <div className="weui_cell">
+              <div className="weui_cell_hd">
+                <label htmlFor="business" className="weui_label">商户名称</label>
+              </div>
+              <div className="weui_cell_bd weui_cell_primary">
+                <input type="text" name="business" id="business" className="weui_input"
+                  placeholder="请输入商户名称"/>
+              </div>
+            </div>
+
             <div className="weui_cell">
               <div className="weui_cell_hd">
                 <label htmlFor="username" className="weui_label">联系人姓名</label>
