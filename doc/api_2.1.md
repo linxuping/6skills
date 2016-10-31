@@ -215,7 +215,7 @@ coverImage|url|Y|封面图
 
 ### 1.3.3. 加载详情
 **GET**
-** URL ** /api/admin/activities/detail
+** URL ** /api/admin/activities/detail?actid=3
 
 **成功返回**
 ```json
