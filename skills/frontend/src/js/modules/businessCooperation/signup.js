@@ -128,6 +128,11 @@ var Signup = React.createClass({
         }
       },
       submitHandler: function(form){
+        var image = $("#img_iden").val() || $("#img_licence").val();
+        if (image == "" || image == undefined) {
+          alert("请先上传营业执照或身份证！");
+          return;
+        }
         $(form).find(":submit").attr("disabled", true);
         $(form).ajaxSubmit({
           dataType: "json",

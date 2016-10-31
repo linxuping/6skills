@@ -22,7 +22,7 @@ function uploadConfig(options){
 
       var ajax = new XMLHttpRequest();
 
-      var url = '/api/admin/uploadtoken/get?key=' + key;
+      var url = '/uploadtoken/get?key=' + key;
       ajax.open('GET', url, false);
       ajax.setRequestHeader("If-Modified-Since", "0");
       ajax.send();
