@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import ReactMixin from 'react-mixin';
 import Reflux from 'Reflux';
-import Panel from '../../commons/panel.jsx';
+import ActiveCharge from '../../commons/activeCharge.jsx';
 import activityAction from '../../actions/activity-action.jsx';
 import activityStore from '../../stores/activity-store.jsx';
 import Upload from '../../commons/upload/upload-component.jsx';
-require('simditor/styles/simditor.css');
+require('css/simditor.css');
 var Simeditor = require("simditor");
 
 import { Form, Input, Select, Checkbox, Radio, Textarea, Icon, Row, Col, DatePicker, Cascader, Button, Modal} from 'antd';
@@ -152,17 +152,17 @@ let AddActivity = React.createClass({
     const itemLayout = {labelCol: {span: 4}, wrapperCol: {span: 16}}
     const ageList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
     const titleProps = getFieldProps("title", {rules:[
-        {required: true, message: "请输入活动标题"}
+        {required: true, message: "请输入课程标题"}
       ]
     });
     const coverProps = getFieldProps("coverimage", {rules:[
-        {required: true, message: "请上传活动封面(海报)"}
+        {required: true, message: "请上传封面图(海报)"}
       ]
     });
     const qrcodeProps = getFieldProps("qrcode");
     const timeProps = getFieldProps("times", {
       rules: [
-        {required: true, message: "请选择活动时间",type: "array"}
+        {required: true, message: "请选择时间",type: "array"}
       ]
     });
     const cityProps = getFieldProps("city", {
@@ -178,18 +178,18 @@ let AddActivity = React.createClass({
     });
     const addressProps = getFieldProps("address", {
       rules: [
-        {required: true, message: "请输入详细活动集合地点"}
+        {required: true, message: "请输入详细上课地址"}
       ]
     });
     const firstActTypeProps = getFieldProps("firstacttype", {
       rules: [
-        {required: true, message: "请选择活动分类大类"}
+        {required: true, message: "请选择课程分类"}
       ],
       onChange: this.firstacttypeChangeHandler
     });
     const secondActTypeProps = getFieldProps("secondacttype", {
       rules: [
-        {required: true, message: "请选择活动分类小类"}
+        {required: true, message: "请选择课程具体类型"}
       ]
     });
     const agefromProps = getFieldProps("agefrom", {
@@ -213,16 +213,16 @@ let AddActivity = React.createClass({
 
     const contentProps = getFieldProps("content", {
       rules: [
-        {required: true, message: "请输入活动详情"}
+        {required: true, message: "请输入课程详情"}
       ]
     });
     return (
       <Form horizontal form={this.props.form} onSubmit={this.handleSubmit}>
-        <FormItem id="title" {...itemLayout} label="活动标题">
-          <Input placeholder="请输入活动标题(200字以内)" {...titleProps} />
+        <FormItem id="title" {...itemLayout} label="课程标题">
+          <Input placeholder="请输入课程标题(200字以内)" {...titleProps} />
         </FormItem>
 
-        <FormItem id="coverImage" label="活动封面" {...itemLayout} required={true}>
+        <FormItem id="coverImage" label="封面图" {...itemLayout} required={true}>
           <Upload uploadKey="coverimage"
                   id="coverimage-pickfiles"
                   imgProps={coverProps}
@@ -230,13 +230,13 @@ let AddActivity = React.createClass({
 
         </FormItem>
 
-        <FormItem id="times" {...itemLayout} label="活动时间">
+        <FormItem id="times" {...itemLayout} label="时间">
           <RangePicker showTime format="yyyy-MM-dd HH:mm" {...timeProps}/>
         </FormItem>
 
         <Row>
           <Col span={4}>
-            <FormItem label="活动集合地点" required={true}  {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
+            <FormItem label="上课地点" required={true}  {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
           </Col>
           <Col span={16}>
             <Row>
@@ -279,13 +279,13 @@ let AddActivity = React.createClass({
 
         <Row>
           <Col span={4}>
-            <FormItem label="活动分类" required={true}  {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
+            <FormItem label="课程分类" required={true}  {...{labelCol: {span: 24}, wrapperCol: {span: 0}}}></FormItem>
           </Col>
           <Col span={8}>
             <Row>
               <Col span={11}>
                 <FormItem>
-                  <Select allowClear {...firstActTypeProps} placeholder="活动类型">
+                  <Select allowClear {...firstActTypeProps} placeholder="课程类型">
                     {
                       this.state.firstacttype &&
                         this.state.firstacttype.map(function(elem, idx) {
@@ -316,7 +316,7 @@ let AddActivity = React.createClass({
           </Col>
         </Row>
 
-        <FormItem id="cost" label="活动费用" {...itemLayout}
+        <FormItem id="cost" label="课程费用" {...itemLayout}
           required={true}>
           <Row>
             <Col span={6}>
@@ -331,16 +331,17 @@ let AddActivity = React.createClass({
               this.state.costBool == "0" ? "" :
               <Row>
                 <Col span={24}>
-                  <Panel title={["编号", "电子票类型", "金额", "人数"]}></Panel>
-                  <Input placeholder="金额" {...costProps}></Input>
+                  <ActiveCharge title={["编号", "电子票类型", "金额", "人数"]}
+                      charges={this.state.charges}
+                      form={this.props.form}>
+                  </ActiveCharge>
+                  {/*<Input placeholder="金额" {...costProps}></Input>*/}
                 </Col>
               </Row>
             }
         </FormItem>
 
-
-
-        <FormItem id="cost" label="活动人数限制" {...itemLayout}
+        <FormItem id="cost" label="课程人数限制" {...itemLayout}
           required={true}>
           <Row>
             <Col span={6}>
@@ -405,7 +406,7 @@ let AddActivity = React.createClass({
                   success={this.qrcodeSuccess}/>
         </FormItem>
 
-        <FormItem  label="活动详情" required={true} className="content-item"
+        <FormItem  label="课程详情" required={true} className="content-item"
           labelCol={{span: 4}} wrapperCol={{span: 16}}>
           <div>
             <input type="hidden" {...contentProps}/>
