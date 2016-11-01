@@ -37,7 +37,7 @@ var BusinessCooperation = React.createClass({
             this.setState({component: <DuringApply></DuringApply>});
             break;
           case 3:
-            this.setState({component: <ApplyNotPass signupAgain={this.signupAgain}></ApplyNotPass>});
+            this.setState({component: <ApplyNotPass signupAgain={this.signupAgain} description={res.description}></ApplyNotPass>});
             break;
         }
       }
@@ -284,7 +284,7 @@ var ApplyNotPass = React.createClass({
           <div className="weui_text_area">
             <h2 className="weui_msg_title">申请失败</h2>
             <p className="weui_msg_desc">
-              您的合作申请未通过，请上传清晰的营业证照片或身份证照片。
+              您的合作申请未通过，{this.props.description}
             </p>
           </div>
           <div className="weui_extra_area" onClick={this.props.signupAgain}>
