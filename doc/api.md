@@ -71,6 +71,7 @@
 ```json
 {
 	"status": 0/1/2/3 未认证/认证通过/处理中/认证失败
+	"description": "error info",
 	"errcode": 0,
 	"errmsg": ""
 }
