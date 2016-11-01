@@ -1,5 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import {Table} from 'antd';
+import ReactDom from 'react-dom';
+import ReactMixin from 'react-mixin';
+import Reflux from 'Reflux';
+import activityAction from '../../actions/activity-action.jsx';
+import activityStore from '../../stores/activity-store.jsx';
+
+import {Table, Popconfirm} from 'antd';
 
 class PublishActivities extends Component {
   static propTypes = {
@@ -20,11 +26,15 @@ class PublishActivities extends Component {
           </span>
         )
       },
-      {title: "链接", dataIndex: "link", key: "link"},
+      // {title: "链接", dataIndex: "link", key: "link"},
       {title: "报名人数", dataIndex: "sign_num", key: "sign_num"},
       {title: "操作", key: "operation", render: (text, record) => (
+
         <span>
-          <a href="#">下线</a>
+          <Popconfirm title={"确定要下线\"" + record.title + "\""} okText="是" cancelText="否"
+            onConfirm={this.offlineHandler.bind(this, record.actid)}>
+            <a href="javascript:;">下线</a>
+          </Popconfirm>
           <span className="ant-divider"></span>
           <a href="#">查看报名信息</a>
           <span className="ant-divider"></span>
@@ -34,26 +44,41 @@ class PublishActivities extends Component {
     ]
   };
 
+  offlineHandler(actid){
+    activityAction.offLineActivity(this, actid);
+  }
+
+  componentDidMount() {
+    this.fatchActivities();
+  }
+
+  fatchActivities(){
+    let params = {page: 1, pagesize: 10}
+    activityAction.fatchPublishActivities(this, params);
+  }
+
   render() {
-    const data = [];
-    for (var i = 0; i < 15; i++) {
-      data.push({id: i, title: "上海迪士尼亲子活动" + i, publish_time: 1472660806815, sign_num: 20});
-    };
-    const pagination = {
-      total: data.length,
-      showSizeChanger: true,
-      onShowSizeChange(current, pageSize) {
-        console.log('Current: ', current, '; PageSize: ', pageSize);
-      },
-      onChange(current) {
-        console.log('Current: ', current);
-      },
-    };
-    return (
-      <Table columns={this.state.columns} dataSource={data}
-        pagination={pagination}/>
-    );
+    if (this.state.loaded) {
+      let pagination = {
+        total: this.state.pageable.total*10,
+        showSizeChanger: true,
+        onShowSizeChange(current, pagesige) {
+          console.log('Current: ', current, '; pagesige: ', pagesige);
+        },
+        onChange(current) {
+          console.log('Current: ', current);
+        },
+      };
+      return (
+        <Table columns={this.state.columns} dataSource={this.state.activities}
+          pagination={pagination}/>
+      );
+    } else {
+      return (<p>加载中。。。</p>)
+    }
   }
 }
 
 export default PublishActivities;
+
+ReactMixin.onClass(PublishActivities, Reflux.connect(activityStore, "key"));
