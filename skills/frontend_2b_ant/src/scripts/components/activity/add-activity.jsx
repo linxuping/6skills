@@ -410,7 +410,7 @@ let AddActivity = React.createClass({
           labelCol={{span: 4}} wrapperCol={{span: 16}}>
           <div>
             <input type="hidden" {...contentProps}/>
-            <textarea id="editor" autofocus></textarea>
+            <textarea id="editor"></textarea>
             <Modal
               title="图片上传"
               wrapClassName="vertical-center-modal"

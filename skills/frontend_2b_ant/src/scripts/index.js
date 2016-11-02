@@ -24,7 +24,8 @@ const rootRoute = {
 		}
 	},
 	childRoutes: [
-		require('./components/activity')
+		require('./components/activity'),
+		require('./components/audit')
 	]
 }
 
