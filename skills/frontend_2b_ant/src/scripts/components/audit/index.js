@@ -6,8 +6,8 @@ const auditDetail = {
   path: ":id",
   getComponent(nextState, cb) {
     require.ensure([], (require) => {
-      cb(null, require('./audit-detial.jsx').default)
-    }, "audit-detial")
+      cb(null, require('./audit-detail.jsx').default)
+    }, "audit-detail")
   }
 }
 
@@ -23,6 +23,6 @@ module.exports = {
     }, "audit-list")
   },
   childRoutes: [
-
+    auditDetail
   ]
 };

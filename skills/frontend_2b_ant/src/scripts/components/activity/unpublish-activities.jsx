@@ -65,7 +65,7 @@ class UnpublishActivities extends Component {
           pagination={pagination}/>
       );
     } else {
-      return (<p>加载中。。。</p>)
+      return (<div className="loading">加载中</div>)
     }
 
   }
