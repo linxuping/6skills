@@ -248,7 +248,7 @@ coverImage|url|Y|封面图
 
 
 
-### 2 商户认证审核 
+### 2 商户认证审核
 ### 2.1 商户列表
 **GET**
 ** URL ** /api/admim/business/list?time_from=*&time_to=*&page=1&pagesize=100
@@ -299,7 +299,7 @@ coverImage|url|Y|封面图
 }
 ```
 
-### 3 退款审核 
+### 3 退款审核
 ### 3.1 退款列表
 **GET**
 ** URL ** /api/admim/activity/refund-list?time_from=*&time_to=*&page=1&pagesize=100
@@ -307,11 +307,26 @@ coverImage|url|Y|封面图
 **参数**
 ```json
 {
-	"name": "",
- 	"username": "",
-	"phone": "",
-	"time": "",
-	"reason": "",
+	"refunds": [
+		{
+			"name": "陶艺家庭日，亲子欢乐DIY在温馨的亲子时光里发挥你的想象力吧！",
+		 	"username": "翔宇",
+			"phone": "13901234567",
+			"time": "2016-10-18 14:45",
+			"reason": "没时间参加",
+		},
+		{
+			"name": "陶艺家庭日，亲子欢乐DIY在温馨的亲子时光里发挥你的想象力吧！",
+		 	"username": "翔宇",
+			"phone": "13901234567",
+			"time": "2016-10-18 14:45",
+			"reason": "没时间参加",
+		},
+	],
+	"pageable": {
+		"page": 1,
+		"total": 1
+	},
 	"errcode": 0,
 	"errmsg": ""
 }
@@ -325,10 +340,25 @@ coverImage|url|Y|封面图
 **参数**
 ```json
 {
-	"name": "",
- 	"username": "",
-	"phone": "",
-	"time": "",
+	"sign_users": [
+		{
+			"name": "",
+		 	"username": "",
+			"phone": "",
+			"time": "",
+		},
+		{
+			"name": "",
+		 	"username": "",
+			"phone": "",
+			"time": "",
+		},
+	],
+	],
+	"pageable": {
+		"page": 1,
+		"total": 1,
+	},
 	"errcode": 0,
 	"errmsg": ""
 }
@@ -337,5 +367,3 @@ coverImage|url|Y|封面图
 ### 4.2. 导出完整报名表
 **GET**
 ** URL ** /api/admin/activity/sign-users/export
-
-

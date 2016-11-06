@@ -24,7 +24,7 @@ export default class Sidebar extends React.Component {
        submenu: [
          {id: "act-manager", name: "课程管理", href: "#"},
          {id: "audit", name: "商户认证审核", href: "/manager-audit"},
-         {id: "perf-manager", name: "限时优惠", href: "#"},
+         {id: "refund", name: "退款审核", href: "/manager-refund"},
        ]
       },
       {name: "统计", icon: "bar-chart", href: "#", id: "analytics",
@@ -45,7 +45,6 @@ export default class Sidebar extends React.Component {
       current = path.split("-")[1];
       openKeys = [path.split("-")[0]];
     }
-    console.log(path.length);
     this.setState({
       current: current,
       openKeys: openKeys

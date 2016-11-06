@@ -59,6 +59,7 @@ let AddActivity = React.createClass({
     e.preventDefault();
     //console.log(this.props.form.getFieldsValue());
     this.props.form.validateFields((errors, values) => {
+      console.log(values);
       console.log(errors)
       //submit the form
       if (errors == null) {

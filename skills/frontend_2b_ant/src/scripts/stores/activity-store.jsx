@@ -113,6 +113,16 @@ export default Reflux.createStore({
       //重新加载
       _this.fatchActivities();
     })
+  },
+
+  onFatchRefundList(_this, params){
+    activityController.fatchRefundList(params, (res) => {
+      _this.setState({
+        refund_list: res.refunds,
+        pageable: res.pageable,
+        loaded: true
+      });
+    })
   }
 
 })

@@ -1,4 +1,4 @@
-import 'antd/dist/antd.css';
+import 'antd/dist/antd.less';
 require('../../css/style.less');
 
 import React from 'react';
@@ -30,7 +30,6 @@ class Layout extends React.Component {
     let content = ReactDom.findDOMNode(this.refs.content);
     let bodyHeight = document.body.offsetHeight;
     content.style.height = (bodyHeight - 95) + "px";
-    console.log(bodyHeight)
   }
 
   render() {

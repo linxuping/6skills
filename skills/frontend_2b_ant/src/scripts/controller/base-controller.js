@@ -26,7 +26,8 @@ export default class BaseController {
         });
       }
     })
-    .fail(function() {
+    .fail(function(xmlHttpRequest, errText) {
+      console.log(errText);
       error ?
         error() :
         notification['error']({
