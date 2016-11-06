@@ -115,10 +115,23 @@ export default Reflux.createStore({
     })
   },
 
+  /**
+   * 退款列表
+   */
   onFatchRefundList(_this, params){
     activityController.fatchRefundList(params, (res) => {
       _this.setState({
         refund_list: res.refunds,
+        pageable: res.pageable,
+        loaded: true
+      });
+    })
+  },
+
+  onFatchApplicants(_this, params){
+    activityController.fatchApplicants(params, (res) => {
+      _this.setState({
+        applicants: res.sign_users,
         pageable: res.pageable,
         loaded: true
       });

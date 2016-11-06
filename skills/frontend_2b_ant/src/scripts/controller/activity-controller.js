@@ -59,4 +59,11 @@ export default class ActivityController extends BaseController{
     this.get("/api/admin/activities/refund-list", params, success);
   }
 
+  /**
+   * 完整报名列表 
+   */
+  fatchApplicants(params, success){
+    this.get("/api/admin/activities/sign-list", params, success);
+  }
+
 }

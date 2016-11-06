@@ -29,7 +29,7 @@ export default class Sidebar extends React.Component {
       },
       {name: "统计", icon: "bar-chart", href: "#", id: "analytics",
         submenu: [
-          {id: "analytics", name: "活动报名统计", href:"#"}
+          {id: "applicants", name: "活动报名统计", href:"/analytics-applicants"}
         ]
       }
     ]

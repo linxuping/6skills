@@ -27,6 +27,7 @@ const rootRoute = {
 		require('./components/activity'),
 		require('./components/audit'),
 		require('./components/refund'),
+		require('./components/applicants')
 	]
 }
 
