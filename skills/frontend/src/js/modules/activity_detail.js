@@ -207,18 +207,18 @@ var ActivityDetail = React.createClass({
 					loaded: true
 				});
 
-				if (res.sign_type == 3) {
-					var uploadJs = [
-						'/static/js/upload/moxie.min.js', '/static/js/upload/plupload.js',
-						'/static/js/upload/qiniu.min.js', '/static/js/upload/upload-config.js',
-						'/static/js/modules/upload.js'];
-					for (var i = 0; i < uploadJs.length; i++) {
-						var js = document.createElement("script");
-						js.async = false;
-						js.src = uploadJs[i];
-						document.body.appendChild(js);
-					}
-				}
+				// if (res.sign_type == 3) {
+				// 	var uploadJs = [
+				// 		'/static/js/upload/moxie.min.js', '/static/js/upload/plupload.js',
+				// 		'/static/js/upload/qiniu.min.js', '/static/js/upload/upload-config.js',
+				// 		'/static/js/modules/upload.js'];
+				// 	for (var i = 0; i < uploadJs.length; i++) {
+				// 		var js = document.createElement("script");
+				// 		js.async = false;
+				// 		js.src = uploadJs[i];
+				// 		document.body.appendChild(js);
+				// 	}
+				// }
 				// if (res.price_child == 0) {
 				// 	var js = document.createElement("script");
 				// 	js.async = false;

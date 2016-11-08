@@ -75,10 +75,10 @@ function validateForm(actid, formConponent) {
 			birthdate: {required: "请输入选手出生日期(例:20100101)"}
 		},
 		submitHandler: function(form){
-			if ($("#images").length > 0 && $("#images").val() == "") {
-				alert("请先上传选手照片");
-				return;
-			}
+			// if ($("#images").length > 0 && $("#images").val() == "") {
+			// 	alert("请先上传选手照片");
+			// 	return;
+			// }
 
 			ReactDOM.render(
 				<SignConfirm form={form} formConponent={formConponent}
@@ -280,7 +280,7 @@ var SignForm = React.createClass({
 						<div>
 							<div className="weui_cells weui_cells_form">
 
-								<Upload uploadKey="custom-sign" name="images"></Upload>
+								{/*<Upload uploadKey="custom-sign" name="images"></Upload>*/}
 
 								<div className="weui_cell">
 									<div className="weui_cell_hd">
