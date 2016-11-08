@@ -134,85 +134,85 @@ let AddActivity = React.createClass({
   },
 
   personnumBoolChangeHandler(e){
-    //console.log(this.props.form.getFieldProps("personnumBool").value)
-    let personnumBool = this.props.form.getFieldProps("personnumBool").value
+    //console.log(this.props.form.getFieldDecorator("personnumBool").value)
+    let personnumBool = this.props.form.getFieldDecorator("personnumBool").value
     this.setState({
       personnumBool: personnumBool == "0" ? "1" : "0"
     });
   },
 
   costBoolChangeHandler(e){
-    let costBool = this.props.form.getFieldProps("costBool").value
+    let costBool = this.props.form.getFieldDecorator("costBool").value
     this.setState({
       costBool: costBool == "0" ? "1" : "0"
     });
   },
 
   render() {
-    const {getFieldProps, getFieldError, isFieldValidating} = this.props.form;
+    const {getFieldDecorator, getFieldError, isFieldValidating} = this.props.form;
     const itemLayout = {labelCol: {span: 4}, wrapperCol: {span: 16}}
     const ageList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-    const titleProps = getFieldProps("title", {rules:[
+    const titleProps = getFieldDecorator("title", {rules:[
         {required: true, message: "请输入课程标题"}
       ]
     });
-    const coverProps = getFieldProps("coverimage", {rules:[
+    const coverProps = getFieldDecorator("coverimage", {rules:[
         {required: true, message: "请上传封面图(海报)"}
       ]
     });
-    const qrcodeProps = getFieldProps("qrcode");
-    const timeProps = getFieldProps("times", {
+    const qrcodeProps = getFieldDecorator("qrcode");
+    const timeProps = getFieldDecorator("times", {
       rules: [
         {required: true, message: "请选择时间",type: "array"}
       ]
     });
-    const cityProps = getFieldProps("city", {
+    const cityProps = getFieldDecorator("city", {
       rules: [
         {required: true, message: "请选择城市"}
       ],
       onChange: this.cityChangeHandler
     });
-    const areaProps = getFieldProps("area", {
+    const areaProps = getFieldDecorator("area", {
       rules: [
         {required: true, message: "请选择区域"}
       ]
     });
-    const addressProps = getFieldProps("address", {
+    const addressProps = getFieldDecorator("address", {
       rules: [
         {required: true, message: "请输入详细上课地址"}
       ]
     });
-    const firstActTypeProps = getFieldProps("firstacttype", {
+    const firstActTypeProps = getFieldDecorator("firstacttype", {
       rules: [
         {required: true, message: "请选择课程分类"}
       ],
       onChange: this.firstacttypeChangeHandler
     });
-    const secondActTypeProps = getFieldProps("secondacttype", {
+    const secondActTypeProps = getFieldDecorator("secondacttype", {
       rules: [
         {required: true, message: "请选择课程具体类型"}
       ]
     });
-    const agefromProps = getFieldProps("agefrom", {
+    const agefromProps = getFieldDecorator("agefrom", {
       rules: [
         {type: 'integer', required: true, message: "请选择合适的年龄段"}
       ],
       initialValue: 1
     });
-    const agetoProps = getFieldProps("ageto", {
+    const agetoProps = getFieldDecorator("ageto", {
       rules: [
         {type: 'integer', required: true, message: "请选择合适的年龄段"}
       ],
       initialValue: 2
     });
-    const costProps = getFieldProps("cost", {
+    const costProps = getFieldDecorator("cost", {
       initialValue: "0"
     });
-    const personnumProps = getFieldProps("personnum", {
+    const personnumProps = getFieldDecorator("personnum", {
       initialValue: "0"
     });
 
-    const contentProps = getFieldProps("content", {
+    const contentProps = getFieldDecorator("content", {
       rules: [
         {required: true, message: "请输入课程详情"}
       ]
@@ -248,7 +248,7 @@ let AddActivity = React.createClass({
                       this.state.cities
                         && this.state.cities.map(function(elem) {
                         return (
-                          <Option key={elem} value={elem}>{elem}</Option>
+                          <Option key={elem} value="{elem}">{elem}</Option>
                         );
                       })
                     }
@@ -262,7 +262,7 @@ let AddActivity = React.createClass({
                       this.state.areas
                         && this.state.areas.map(function(elem) {
                         return (
-                          <Option key={elem} value={elem}>{elem}</Option>
+                          <Option key={elem} value="{elem}">{elem}</Option>
                         );
                       })
                     }
@@ -291,7 +291,7 @@ let AddActivity = React.createClass({
                       this.state.firstacttype &&
                         this.state.firstacttype.map(function(elem, idx) {
                           return (
-                            <Option key={elem} value={elem}>{elem}</Option>
+                            <Option key={elem} value="{elem}">{elem}</Option>
                           );
                         })
                     }
@@ -305,7 +305,7 @@ let AddActivity = React.createClass({
                       this.state.secondacttype &&
                         this.state.secondacttype.map(function(elem) {
                           return (
-                            <Option key={elem} value={elem}>{elem}</Option>
+                            <Option key={elem} value="{elem}">{elem}</Option>
                           );
                         })
                     }
@@ -321,7 +321,7 @@ let AddActivity = React.createClass({
           required={true}>
           <Row>
             <Col span={6}>
-              <RadioGroup {...getFieldProps("costBool", {onChange: this.costBoolChangeHandler, initialValue: this.state.costBool})}>
+              <RadioGroup {...getFieldDecorator("costBool", {onChange: this.costBoolChangeHandler, initialValue: this.state.costBool})}>
                 <Radio key="1" value="0">免费</Radio>
                 <Radio key="2" value="1">收费</Radio>
               </RadioGroup>
@@ -346,7 +346,7 @@ let AddActivity = React.createClass({
           required={true}>
           <Row>
             <Col span={6}>
-              <RadioGroup {...getFieldProps("personnumBool", {onChange: this.personnumBoolChangeHandler, initialValue: this.state.personnumBool})}>
+              <RadioGroup {...getFieldDecorator("personnumBool", {onChange: this.personnumBoolChangeHandler, initialValue: this.state.personnumBool})}>
                 <Radio key="1" value="0">不限</Radio>
                 <Radio key="2" value="1">其他</Radio>
               </RadioGroup>
@@ -373,7 +373,7 @@ let AddActivity = React.createClass({
                     {
                       ageList.map(function(elem) {
                         return (
-                          <Option key={elem} value={elem}>{elem}</Option>
+                          <Option key={elem} value="{elem}">{elem}</Option>
                         );
                       })
                     }
@@ -389,7 +389,7 @@ let AddActivity = React.createClass({
                     {
                       ageList.map(function(elem) {
                         return (
-                          <Option key={elem} value={elem}>{elem}</Option>
+                          <Option key={elem} value="{elem}">{elem}</Option>
                         );
                       })
                     }
@@ -425,7 +425,7 @@ let AddActivity = React.createClass({
                 </Col>
                 <Col span={15}>
                   <FormItem>
-                    <Input name="imgUrl" placeholder="url" {...getFieldProps("contentImgUrl")}></Input>
+                    <Input name="imgUrl" placeholder="url" {...getFieldDecorator("contentImgUrl")}></Input>
                   </FormItem>
                 </Col>
                 <Col span={5}>
@@ -443,7 +443,7 @@ let AddActivity = React.createClass({
                 </Col>
                 <Col span={6}>
                   <FormItem>
-                    <Input name="width" placeholder="宽" {...getFieldProps("contentImgWidth")}></Input>
+                    <Input name="width" placeholder="宽" {...getFieldDecorator("contentImgWidth")}></Input>
                   </FormItem>
                 </Col>
                 <Col span={3} className="tc">
@@ -451,7 +451,7 @@ let AddActivity = React.createClass({
                 </Col>
                 <Col span={6}>
                   <FormItem>
-                    <Input name="height" placeholder="高" {...getFieldProps("contentImgHeight")}></Input>
+                    <Input name="height" placeholder="高" {...getFieldDecorator("contentImgHeight")}></Input>
                   </FormItem>
                 </Col>
               </Row>
@@ -471,7 +471,7 @@ let AddActivity = React.createClass({
   }
 })
 
-AddActivity = createForm()(AddActivity);
+AddActivity = Form.create()(AddActivity);
 export default AddActivity;
 
 ReactMixin.onClass(AddActivity, Reflux.connect(activityStore, "key"));

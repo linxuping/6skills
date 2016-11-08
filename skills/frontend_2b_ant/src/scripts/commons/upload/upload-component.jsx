@@ -10,7 +10,7 @@ import uploadConfig from './upload-config.js';
 class Upload extends Component {
   static propTypes = {
     uploadKey: PropTypes.string,
-    imgProps: PropTypes.object,
+    imgProps: PropTypes.func,
     id: PropTypes.string,
     form: PropTypes.object,
     success: React.PropTypes.func

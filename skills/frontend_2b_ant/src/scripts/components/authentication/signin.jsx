@@ -33,17 +33,7 @@ class Signin extends React.Component {
   }
 
   render() {
-    const {getFieldProps, getFieldError, isFieldValidating} = this.props.form;
-    const phonePorps = getFieldProps("phone", {
-      rules: [
-        {required: true,  message: "请输入手机", pattern: /^[1][0-9]{10}$/}
-      ]
-    });
-    const passwordProps = getFieldProps("passwd", {
-      rules: [
-        {required: true, message: "请输入密码"}
-      ]
-    });
+    const {getFieldDecorator, getFieldError, isFieldValidating} = this.props.form;
     return (
 
       <Row>
@@ -57,12 +47,26 @@ class Signin extends React.Component {
             </header>
             <Form horizontal onSubmit={this.onSubmitHandler.bind(this)}>
               <FormItem>
-                <Input placeholder="账户(手机)" size="large"
-                  {...phonePorps}></Input>
+                {
+                  getFieldDecorator("phone", {
+                    rules: [
+                      {required: true,  message: "请输入手机", pattern: /^[1][0-9]{10}$/}
+                    ]
+                  })(
+                    <Input placeholder="账户(手机)" size="large"/>
+                  )
+                }
               </FormItem>
               <FormItem className="mb0">
-                <Input type="password" placeholder="密码" size="large"
-                  {...passwordProps} />
+                {
+                  getFieldDecorator("passwd", {
+                    rules: [
+                      {required: true, message: "请输入密码"}
+                    ]
+                  })(
+                    <Input type="password" placeholder="密码" size="large"/>
+                  )
+                }
               </FormItem>
 
               <FormItem className="mb0">

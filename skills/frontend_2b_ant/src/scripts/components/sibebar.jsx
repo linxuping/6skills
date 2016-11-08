@@ -76,8 +76,7 @@ export default class Sidebar extends React.Component {
           defaultSelectedKeys={[this.state.current]}
           defaultOpenKeys={this.state.openKeys}
           onClick={this.handleClick.bind(this)}
-          onOpen={this.onToggle.bind(this)}
-          onClose={this.onToggle.bind(this)}>
+          onOpenChange={this.onToggle.bind(this)}>
           {
             this.state.menus.map(function(elem, index) {
               if (elem.submenu) {
