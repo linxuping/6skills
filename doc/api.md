@@ -242,7 +242,8 @@
 			"ages": "3-8",
 			"original_price": "800",
 			"current_price": "700",
-			"remain": "40"
+			"remain": "40",
+			"readnum": 43
 		},
 		...
 	],
@@ -304,6 +305,7 @@
 	"current_price": 700,
 	"remain": "40",
 	"introdution": "详情",
+	"signnum": 12,
 	"errcode": 0,
 	"errmsg": ""
 }
