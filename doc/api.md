@@ -55,28 +55,9 @@
 }
 ```
 
-### 0.004 待评论
+### 0.004 评论列表
 **GET**
-**URL** /sign/comments/todo?openid=abc
-
-**返回**
-```json
-{
-	"activities": [
-		{
-			"actid": 1,
-			"title": "title",
-			"time": "2016-01-01",
-		}
-	]
-	"errcode": 0,
-	"errmsg": ""
-}
-```
-
-### 0.005 已评论
-**GET**
-**URL** /sign/comments/done?openid=abc
+**URL** /sign/comment/list?openid=abc
 
 **返回**
 ```json
