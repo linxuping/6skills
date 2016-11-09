@@ -1,4 +1,35 @@
 
+
+### 0.001 报名信息
+**GET**
+**URL** /signupinfo/get?openid=1&signid=12
+
+**返回**
+```json
+{
+	"sign_type":3,
+	"actid": 2,
+	"username_pa":"",
+	"kids_name":"",
+	"age":"",
+	"birthdate":"",
+	"phone":"",
+	"gender":"",
+	"city":"",
+	"identity_card":"",
+	"program":"",
+	"company":"",
+	"teacher":"",
+	"teacher_phone":"",
+	"match_class":"",
+	"major":"",
+	"awards":"",
+	"company_tel":"",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
 ### 0.01 付款列表
 **GET**
 **URL** /activities/pay/list?openid=abc
