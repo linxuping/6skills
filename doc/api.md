@@ -30,6 +30,76 @@
 }
 ```
 
+### 0.002. 报名更新
+**POST**
+** URL ** /activities/sign 重用
+
+### 0.003. 评论
+**POST**
+** URL ** /sign/comment
+
+**参数**
+```json
+{
+	"actid":3,
+	"openid":'',
+	"score": 4,
+	"comment": 2,
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.004 待评论
+**GET**
+**URL** /sign/comments/todo?openid=abc
+
+**返回**
+```json
+{
+	"activities": [
+		{
+			"actid": 1,
+			"title": "title",
+			"time": "2016-01-01",
+		}
+	]
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.005 已评论
+**GET**
+**URL** /sign/comments/done?openid=abc
+
+**返回**
+```json
+{
+	"activities": [
+		{
+			"actid": 1,
+			"title": "title",
+			"score": 3,
+			"comment": "cmt",
+			"time": "2016-01-01",
+		}
+	]
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+
+
+
+
+
 ### 0.01 付款列表
 **GET**
 **URL** /activities/pay/list?openid=abc
