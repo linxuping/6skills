@@ -1,8 +1,30 @@
 var SignConfirm = React.createClass({
 
-  back: function(){
-    ReactDOM.unmountComponentAtNode(document.getElementById('alert-wrap'));
+  PropTypes: {
+    mountnode: React.PropTypes.string,
   },
+
+  getInitialState: function() {
+    return {
+      loaded: false
+    };
+  },
+
+  back: function(){
+    if (this.props.mountnode) {
+      ReactDOM.unmountComponentAtNode(document.getElementById(this.props.mountnode));
+    } else {
+      ReactDOM.unmountComponentAtNode(document.getElementById('alert-wrap'));
+    }
+
+  },
+
+  componentDidMount: function() {
+    if (this.props.signid) {
+      this.getSignMsg();
+    }
+  },
+
 
   submitHandler: function(e){
     var formConponent = this.props.formConponent;

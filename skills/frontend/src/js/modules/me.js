@@ -193,6 +193,15 @@ var MyActivities = React.createClass({
 			activities: []
 		};
 	},
+
+	signViewHandler: function(ev){
+		ev.stopPropagation();
+		ReactDOM.render(
+			<Signupinfo mountnode="confirm-dialog-wrap" signid={ev.target.dataset.signid}/>,
+			document.getElementById("confirm-dialog-wrap")
+		)
+	},
+
 	signReset: function(ev){
 		ev.stopPropagation();
 		this.setState({
@@ -204,6 +213,7 @@ var MyActivities = React.createClass({
 			document.getElementById("confirm-dialog-wrap")
 		);
 	},
+
 	confirmReset: function (argument) {
 		$.ajax({
 			url: ges('activities/reset'),
@@ -229,7 +239,13 @@ var MyActivities = React.createClass({
 
 	componentDidMount: function() {
 	 	this.pullFromServer();
+		//加载confirm.js
+		var js = document.createElement("script");
+		js.async = false;
+		js.src = "/static/js/modules/signinfo.js";
+		document.body.appendChild(js);
 	},
+
 	pullFromServer:function(){
 		$.ajax({
 			url: ges('activities/my'),
@@ -251,7 +267,7 @@ var MyActivities = React.createClass({
 			this.state.activities.map(function(elem, index) {
 				return (
 					<li onClick={this.props.gotoActivityDetail.bind(this, elem)}
-						style={{"cursor": "pointer"}} data-actid={elem.actid}>
+						style={{"cursor": "pointer"}} data-actid={elem.actid} key={index}>
 						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
 							<span>课程时间</span><time>{elem.time_act}</time>
@@ -259,6 +275,7 @@ var MyActivities = React.createClass({
 						<div className="time clearfix">
 							<span>报名时间</span><time>{elem.time_signup}</time>
 						</div>
+						<button type="button" onClick={this.signViewHandler} data-signid={elem.signid} className="weui_btn weui_btn_mini weui_btn_default f-bt">查看报名信息</button>
 						<button type="button" onClick={this.signReset}
 							data-uid={index} data-signid={elem.signid} className="weui_btn weui_btn_mini weui_btn_default">
 							取消
