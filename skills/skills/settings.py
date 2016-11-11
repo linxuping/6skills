@@ -68,7 +68,7 @@ DB_USERNAME = 'root'
 DB_PASSWORD = 'sixskillslinxuping'
 DB_PORT = 3306
 #R
-DB_HOST2 = '127.0.0.1'
+DB_HOST2 = '10.164.21.33'
 DB_NAME2 = 'sixskillsdb'
 DB_USERNAME2 = 'root'
 DB_PASSWORD2 = 'sixskillslinxuping'
@@ -140,6 +140,7 @@ pay_key = "oi8enva8asidhfazlixucyv98w3l83nb"
 pay_mchid = "1395115702"
 pay_cb = "http://www.6skills.com/wxpay/"
 pay_st = "MD5"
+share_url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri=http%3a%2f%2fwww.6skills.com%2ftemplate%2factivity_detail.html%3factid%3d90&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
 
 
 #save func
