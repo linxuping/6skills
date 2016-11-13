@@ -28,10 +28,10 @@ var Signupinfo = React.createClass({
 
   getSignMsg: function(){
     $.ajax({
-      url: '/signupinfo/get',
+      url: ges('signupinfo/get'),
       type: 'get',
       dataType: 'json',
-      data: {openid: geopenid, signid: this.props.signid}
+      data: {openid: geopenid(), signid: this.props.signid}
     })
     .done(function(res) {
       console.log("success");
@@ -45,7 +45,7 @@ var Signupinfo = React.createClass({
       }
     })
     .fail(function(xmlHttpReq) {
-      console.log("error");
+      console.log(xmlHttpReq);
       alert("服务出错，请稍后重试！")
     })
     .always(function() {
