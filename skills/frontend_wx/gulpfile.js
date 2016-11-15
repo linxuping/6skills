@@ -24,14 +24,17 @@ gulp.task('default', function(callback){
           colors: true,
       },
       proxy: {
-        '/api/*': {
-          target: "http://wx.hexugongshe.com",
+        '/activities/*': {
+          target: "http://6skills.com",
           //target: "http://wljbi.chinacloudapp.cn",
           secure: false,
-          changeOrigin: true,
-          rewrite: function(req) {
-
-          }
+          changeOrigin: true
+        },
+        '/wx/*': {
+          target: "http://6skills.com",
+          //target: "http://wljbi.chinacloudapp.cn",
+          secure: false,
+          changeOrigin: true
         },
         '*.htm[l]?': {
           target: "http://localhost:3000",
