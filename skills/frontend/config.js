@@ -11,13 +11,16 @@ var developmentAssets = 'dist/static';
 
 var proxyOptions = url.parse('http://www.6skills.com/activities');
 proxyOptions.route = '/activities';
-var proxyOptions2 = url.parse('http://www.6skills.com:19900/api/admin');
-proxyOptions2.route = '/api/admin';
+var proxyOptions2 = url.parse('http://www.6skills.com/uploadtoken');
+proxyOptions2.route = '/uploadtoken';
 var proxyOptions3 = url.parse('http://www.6skills.com/wx');
 proxyOptions3.route = '/wx';
 var proxyOptions4 = url.parse('http://www.6skills.com/business');
 proxyOptions4.route = '/business';
-
+var proxyOptions5 = url.parse('http://www.6skills.com/get-auth-code');
+proxyOptions5.route = '/get-auth-code';
+var proxyOptions6 = url.parse('http://www.6skills.com/signupinfo');
+proxyOptions6.route = '/signupinfo';
 
 module.exports = {
   browsersync: {
@@ -28,7 +31,9 @@ module.exports = {
           proxy(proxyOptions),
           proxy(proxyOptions2),
           proxy(proxyOptions3),
-          proxy(proxyOptions4)
+          proxy(proxyOptions4),
+          proxy(proxyOptions5),
+          proxy(proxyOptions6)
         ]
       },
       port: 9901,
