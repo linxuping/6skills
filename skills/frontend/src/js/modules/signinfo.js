@@ -43,7 +43,7 @@ var Signupinfo = React.createClass({
       } else {
         alert("获取信息失败:" + res.errmsg);
       }
-    })
+    }.bind(this))
     .fail(function(xmlHttpReq) {
       console.log(xmlHttpReq);
       alert("服务出错，请稍后重试！")
