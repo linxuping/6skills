@@ -38,24 +38,20 @@ function ges(controller) {
   return "/" + controller;
 }
 function jump_pubnum(){
-	// location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIzODU5NDE0Ng==&scene=123#wechat_redirect";
+	location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIzODU5NDE0Ng==&scene=123#wechat_redirect";
 }
 function try_jump_pubnum(){
 	if (sessionStorage.getItem("6soid") == null){
-	  // location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIzODU5NDE0Ng==&scene=123#wechat_redirect";
+	  location.href = "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIzODU5NDE0Ng==&scene=123#wechat_redirect";
 		return true;
 	}
 	return false;
 }
 function geopenid(){
 	//return de("31e6adc301ded919","aXi7$kj0l3@X");
-<<<<<<< HEAD
-  return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw";
-=======
-  if (true) {
-    return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw";
-  }
->>>>>>> d2b24aa4d36b0cf54703e4e24f07c3af5fe92ed2
+  // if (true) {
+  //   return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw";
+  // }
 	if (sessionStorage.getItem("6soid") == null){
 		load_6soid();
 		if (arguments[0] == null)
@@ -63,5 +59,3 @@ function geopenid(){
 	}
 	return sessionStorage.getItem("6soid");
 }
-
-
