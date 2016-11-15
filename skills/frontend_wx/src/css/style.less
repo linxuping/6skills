@@ -1,0 +1,741 @@
+@themeColor: #ff8db3;
+@secondColor: #ffd052;
+@fontColor: #222;
+
+@backHeaderHeight: 90px;
+@bg: #f1f1f1;
+
+@import "dropload.css";
+
+*{
+	box-sizing: border-box;
+}
+html{
+	min-height: 100%;
+	background-color: @bg;
+	font-size: 16px;
+}
+body{
+	width: auto;
+	height: 100%;
+	font-family: "MicroSoft YaHei", "微软雅黑", Georgia, 'Times New Roman', serif;
+	color: @fontColor;
+}
+.fl{
+	float: left !important;
+}
+.fr{
+	float: right !important;
+}
+.clearfix{
+	*zoom: 1;
+	&:before, &:after{
+		display: table;
+		line-height:0px;
+		content: "";
+	}
+	&:after{
+		clear: both;
+	}
+}
+.ss-flex {
+    display: -webkit-box;
+  	display: -webkit-flex;
+  	display: flex;
+}
+.ss-flex-item {
+    -webkit-box-flex: 1;
+  -webkit-flex: 1;
+          flex: 1;
+}
+.app{
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-direction:column;
+	-webkit-box-orient:vertical;
+	box-orient:vertical;
+	-webkit-flex-direction:column;
+	flex-direction:column;
+	.activities{
+		-webkit-box-flex: 1;
+		-webkit-flex: 1;
+		-ms-flex: 1;
+		flex: 1;
+		overflow-y: scroll;
+		-webkit-overflow-scrolling: touch;
+	}
+	.paster{
+		position: fixed;
+		right: 45px;
+		top: 370px;
+		height: 186px;
+		width: 60px;
+		.sun{
+			height: 50%;
+			background-image: url(../img/btn_01.png);
+			background-repeat: no-repeat;
+			background-size: 100%;
+		}
+		.top{
+			.sun();
+		}
+		.bottom{
+			.sun();
+			background-position: 0 100%;
+		}
+	}
+}
+
+
+.select-header{
+	@height: 90px;
+	height: @height;
+	border-bottom: #ccc 1px solid;
+	position: relative;
+	top: 0px;
+	background-color: #fff;
+	z-index: 99;
+	font-size: 24px;
+	.selecter{
+		display: table-cell;
+		width: 1%;
+		.tt{
+			display: block;
+			width: 100%;
+			line-height: @height;
+			text-align: center;
+			float: left;
+			overflow: visible;
+			white-space: nowrap;
+			padding-right: 10px;
+			.txt{
+				display: inline-block;
+				margin-right: 5px;
+			}
+			.tri{
+				display: inline-block;
+				position: relative;
+				top: -5px;
+				left: 5px;
+				width: 15px;
+				height: 15px;
+				margin-top: -5px;
+				background-color: #FFF;
+				border-left: 2px solid #ccc;
+				border-bottom: 2px solid #ccc;
+				transform: rotate(-45deg)
+			}
+		}
+	}
+	&:after{
+		display: table;
+		clear: both;
+		content: "";
+	}
+}
+.weui_mask_transition{
+	top: 0px;
+	&.show{
+		display: block;
+		background: rgba(0,0,0,.6);
+	}
+}
+.weui_actionsheet{
+	position: relative;
+	bottom: auto !important;
+}
+.weui_actionsheet_cell{
+	height: 84px;
+	background-color: rgba(255, 255, 255, 0.75);
+	font-size: 24px;
+	line-height: 64px;
+}
+
+.activities-list{
+	margin-bottom: 10px;
+	.activity-item{
+		margin-top: 10px;
+
+	}
+	.weui_media_box{
+		padding: 10px;
+		padding-top: 20px;
+		-webkit-box-align: start;
+		-webkit-align-items: flex-start;
+		align-items: flex-start;
+		border-bottom: 1px solid #e4e8d1;
+		.weui_media_hd{
+			width: 236px;
+			height: 150px;
+			margin-right: 23px;
+			position: relative;
+			.money{
+				position: absolute;
+				bottom: 0;
+				line-height: 26px;
+				font-size: 26px;
+				color: #fb4381;
+				background-color: rgba(255, 255, 255, .6);
+				padding: 10px 15px;
+			}
+		}
+		.title{
+			height: 80px;
+			font-size: 26px;
+			word-break: break-all;
+		    text-overflow: ellipsis;
+		    display: -webkit-box; /** 对象作为伸缩盒子模型显示 **/
+		    -webkit-box-orient: vertical; /** 设置或检索伸缩盒对象的子元素的排列方式 **/
+		    -webkit-line-clamp: 2; /** 显示的行数 **/
+		    overflow: hidden;  /** 隐藏超出的内容 **/
+		    margin-bottom: 30px;
+		}
+		.ot{
+			padding-right: 25px;
+			font-size: 20px;
+			color:#999;
+		}
+	}
+}
+.more-btn{
+	height: 100px;
+	text-align: center;
+	font-size: 26px;
+	line-height: 100px;
+	cursor: pointer;
+}
+.ttt{
+	padding: 20px 10px 10px;
+	font-size: 20px;
+	line-height: 30px;
+	.tt{
+		margin-bottom: 10px;
+		.pp{
+			display: block;
+			color: #FFF;
+			padding: 5px 10px;
+			height: 33px;
+			margin-right: 10px;
+			float: left;
+			line-height: 20px;
+			&.red{
+				background-color: @themeColor;
+			}
+			&.yellow{
+				background-color: #ffd052;
+			}
+		}
+		.txt{
+			display: block;
+			float: left;
+		}
+	}
+}
+.media{
+	.media-hd {
+		width: 100%;
+		overflow: hidden;
+		max-height: 271px;
+		img{
+			width: 100%;
+		}
+	}
+	.title{
+		font-size: 32px;
+		line-height: 46px;
+		padding-top: 30px;
+		padding-bottom: 35px;
+	}
+	.has-pre{
+		position: relative;
+		&:after{
+			content: " ";
+			position: absolute;
+			width: 100%;
+			height: 3px;
+			top: 50%;
+			left: 0;
+			background-color: #222;
+		}
+	}
+}
+.ot-msg{
+	margin-bottom: 24px;
+	span{
+		display: inline-block;
+	}
+	font-size: 24px;
+	line-height: 32px;
+}
+.activity-detail{
+	@btnHeight: 110px;
+	margin-top: @backHeaderHeight;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 100%;
+	margin-bottom: @btnHeight;
+	overflow: auto;
+	.weui_panel{
+		margin: 0 -10px;
+		padding: 0 10px;
+	}
+	.header-msg{
+		p{
+			font-size: 24px;
+			margin-bottom: 24px;
+			&:last-child{
+				margin-bottom: 15px;
+			}
+		}
+	}
+	.money{
+		.cost{
+			color: #ff4444;
+			font-size: 32px;
+		}
+	}
+	.media{
+		padding: 0 10px;
+		background-color: #f1f1f1;
+		padding-bottom: 20px;
+	}
+	.detail-content{
+		display: table;
+		font-size: 20px;
+		line-height: 38px;
+		p{
+			display: table;
+		}
+		img{
+			width: 100%;
+		}
+	}
+	.sign-btn{
+		position:fixed;
+		background-color: #fed152;
+		color: #000;
+		bottom: 0px;
+		width: 50%;
+		height: @btnHeight;
+		line-height: @btnHeight;
+		text-align: center;
+		font-size: 26px;
+	}
+	.sign-btn-right{
+		.sign-btn();
+		margin-left: 50%;
+		background-color: #fd8db3;
+	}
+}
+.back-btn{
+	font-size: 26px;
+	height: @backHeaderHeight;
+	line-height: @backHeaderHeight;
+	padding-left: 3rem;
+	cursor: pointer;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: #FFF;
+	z-index: 999;
+	width: 100%;
+	&:before{
+		position: absolute;
+		content: "";
+		width: 12px;
+		height: 12px;
+		top: 50%;
+		left: 1rem;
+		margin-top: -6px;
+		-webkit-transform: rotate(135deg);
+		transform: rotate(315deg);
+		border-top: 1px solid @fontColor;
+		border-left: 1px solid @fontColor;
+	}
+}
+.sign-page, .pay-page{
+	z-index: 1000;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	width: 100%;
+	padding-top: @backHeaderHeight;
+	padding-bottom: 10px;
+	left: 0px;
+	background-color: #fff;
+	.back-btn{
+		border-bottom: 1px solid #ddd;
+	}
+}
+.pay-page{
+	@btnHeight: 110px;
+	padding-bottom: @btnHeight;
+	section{
+		font-size: 24px;
+		padding-top: 15px;
+		padding-left: 10px;
+		padding-right: 10px;
+		.name{
+			font-size: 28px;
+		}
+		p{
+			text-indent: 2em;
+			padding-top: 10px;
+		}
+	}
+	.price{
+		color: #ff4444;
+		font-size: 26px;
+	}
+}
+.ss-btn-area{
+	position: fixed;
+	color: #000;
+	bottom: 0px;
+	width: 100%;
+	height: 110px;
+	text-align: center;
+	font-size: 26px;
+	cursor: pointer;
+	padding: 10px;
+	margin: 0;
+	line-height: 110px;
+	background-color: @themeColor;
+	button{
+		height: 100%;
+		color: @fontColor;
+		background-color: transparent;
+	}
+}
+.get-btn{
+	display: inline-block;
+}
+.ss-title{
+	padding:0 1rem;
+	font-size: 1.8rem;
+	height: 3.5rem;
+	line-height: 3.5rem;
+	border-bottom: 1px solid #ccc;
+}
+.tc{
+	text-align: center;
+
+}
+.me{
+	margin-top: 3rem;
+	font-size: 2rem;
+	@imgSize: 120px;
+	img{
+		width: @imgSize;
+		height: @imgSize;
+		border-radius: 50%;
+	}
+	.tips{
+		font-size: 22px;
+		padding: 15px;
+		border-bottom: 1px solid #ccc;
+	}
+}
+.my-activities{
+	font-size: 1.5rem;
+	li{
+		padding: 1rem;
+		border-bottom: 1px solid #ccc;
+		position: relative;
+		-webkit-tap-highlight-color: transparent;
+		button{
+			position: absolute;
+			right: 1rem;
+			bottom: 1rem;
+			&.f-bt{
+				right: 110px;
+			}
+		}
+	}
+	.ss-hd{
+		font-size: 1.8rem;
+	}
+	.time{
+		span{
+			display: block;
+			float: left;
+			width: 120px;
+		}
+		time{
+			display: block;
+			float: left;
+		}
+	}
+
+}
+.myActivities{
+	.back-btn{
+		position: fixed;
+		background-color: #fff;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+	}
+}
+
+.QrCode{
+	margin-top: 3rem;
+	.tip{
+		text-align: center;
+		h3{
+			font-size: 2rem;
+			margin-top: 2rem;
+		}
+		p{
+			font-size: 1.4rem;
+		}
+		img{
+			width: 150px;
+			height: 150px;
+		}
+	}
+}
+.feedback{
+	h3{
+		margin: 10px 15px;
+		font-size: 28px;
+	}
+	p{
+		font-size: 20px;
+		margin: 5px 15px;
+		text-indent: 2em;
+	}
+	img{
+		border-radius: 0px;
+	}
+	.qr{
+		text-align: center;
+		img{
+			width: 400px;
+			height: 400px;
+		}
+	}
+	.ol-serv{
+		@height: 25px;
+		line-height: @height;
+		span{
+			padding-top: 3px;
+			padding-right: 5px;
+		}
+		img{
+			width: @height;
+			height: @height;
+			vertical-align: middle;
+		}
+	}
+}
+
+.weui_btn_primary{
+	background-color: @themeColor;
+}
+.weui_cells_radio .weui_check:checked + .weui_icon_checked:before {
+	color: @themeColor;
+}
+.weui_btn_primary:not(.weui_btn_disabled):active {
+	background-color: lighten(@themeColor, 10%);
+}
+.weui_btn_plain_primary{
+	color: @themeColor;
+	border-color: @themeColor;
+}
+.weui_label{
+	width: 150px;
+}
+.weui_actionsheet_cell:active{
+	background-color: #FFF;
+}
+.weui_dialog_title{
+	font-size: 28px;
+}
+.weui_dialog_bd{
+	font-size: 24px;
+}
+.weui_dialog_ft{
+	font-size: 28px;
+	line-height: 65px;
+	margin-top: 25px;
+}
+//carousel
+@carousel-indicator-border-color: #fff;
+@carousel-indicator-active-bg: @themeColor;
+@carousel-title-h: 54px;
+@dotWidth: 16px;
+.carousel{
+	.slick-track{
+		height: 330px;
+		overflow: hidden;
+	}
+	.item{
+		img{
+			width: 100%;
+		}
+		.title-box{
+			position: absolute;
+			bottom: 0;
+			height: @carousel-title-h;
+			line-height: @carousel-title-h;
+			background-color: rgba(0, 0, 0, .6);
+			color: #FFF;
+			width: 100%;
+			padding-left: 15px;
+			font-size: 26px;
+		}
+	}
+}
+.slick-dots {
+  position: absolute;
+  bottom: 13px;
+  right: 10px;
+  z-index: 15;
+  width: 40%;
+  padding-left: 0;
+  list-style: none;
+  text-align: right;
+  li {
+    display: inline-block;
+    width:  @dotWidth;
+    height: @dotWidth;
+    margin: 1px;
+    text-indent: -999px;
+    border: 2px solid @carousel-indicator-border-color;
+    border-radius: 50%;
+    cursor: pointer;
+    button{
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
+      border: 0px;
+      display: block;
+      color: transparent;
+      background-color: transparent;
+    }
+  }
+  .slick-active {
+    width:  @dotWidth;
+    height: @dotWidth;
+    background-color: @carousel-indicator-active-bg;
+    border-color: @carousel-indicator-active-bg;
+  }
+}
+
+.page-loading{
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	text-align: center;
+	background-color: #FFF;
+	img{
+		display: block;
+		position: relative;
+		left: 50%;
+		margin-left: -100px;
+		top: 50%;
+		margin-top: -100px;
+		width: 200px;
+	}
+}
+.loading{
+	position: absolute;;
+	top: 40%;
+	left: 50%;
+	margin-left: -60px;
+	text-align: center;
+}
+//navication
+.nav-item{
+	padding: 33px 0;
+	text-align: center;
+	img{
+		width: 118px;
+	}
+	.text{
+		color: @fontColor;
+		font-size: 24px;
+	}
+}
+.weui_cells_title{
+	font-size: 24px;
+}
+.weui_cells{
+	font-size: 24px;
+	.weui_cell{
+		padding: 20px 30px;
+	}
+}
+.weui_btn{
+	font-size: 26px;
+	&.weui_btn_mini{
+		font-size: 20px;
+		padding: 3px 15px;
+		background-color: @themeColor;
+		color: #FFF;
+		&:active{
+			background-color: lighten(@themeColor, 10%);
+			color: #FFF;
+		}
+	}
+}
+.weui_uploader_input_wrp, .weui_uploader_file{
+	width: 120px;
+	height: 120px;
+	margin-right: 15px;
+	margin-bottom: 15px;
+}
+.weui_cells_radio .weui_check:checked + .weui_icon_checked:before{
+	font-size: 24px;
+}
+.weui_cell_select .weui_cell_bd:after, .weui_cells_access .weui_cell_ft:after{
+	width: 12px;
+	height: 12px;
+}
+.weui_mask_transition{
+	bottom: 0;
+	height: auto;
+	overflow: auto;
+}
+.weui_dialog .weui_dialog_hd{
+	padding-top: 18px !important;
+}
+.weui_icon_msg:before{
+	font-size: 208px;
+}
+.weui_msg {
+	.weui_msg_title{
+		margin-bottom: 10px;
+	  font-weight: 400;
+	  font-size: 30px;
+	}
+  .weui_msg_desc{
+    font-size: 24px;
+  }
+  .weui_text_area{
+    padding: 0 40px;
+  }
+  .weui_extra_area{
+    margin-bottom: 30px;
+    font-size: 30px;
+  }
+}
+.cooperation{
+	.title{
+		font-size: 30px;
+		height: @backHeaderHeight;
+		line-height: @backHeaderHeight;
+		padding-left: 1rem;
+		background-color: #fff;
+
+	}
+}

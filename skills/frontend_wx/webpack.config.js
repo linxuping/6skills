@@ -109,12 +109,14 @@ function makeConf(options) {
         config.module.loaders.push(cssLoader);
         config.module.loaders.push(sassLoader);
         config.module.loaders.push(lessLoader);
-        config.plugins.push(new CommonsChunkPlugin({
-            name: 'common',
-            chunks: chunks,
-            // Modules must be shared between all entries
-            minChunks: chunks.length // 提取所有chunks共同依赖的模块
-        }))
+        config.plugins.push(
+          new CommonsChunkPlugin({
+              name: 'common',
+              chunks: chunks,
+              // Modules must be shared between all entries
+              minChunks: chunks.length // 提取所有chunks共同依赖的模块
+          })
+        )
     } else {
 
         // 编译阶段，css分离出来单独引入
@@ -181,6 +183,9 @@ function makeConf(options) {
             if(m[1] in config.entry) {
                 conf.inject = 'body';
                 conf.chunks = [m[1]];
+                if (debug) {
+                  conf.chunks.unshift("common");
+                }
             }
 
             config.plugins.push(new HtmlWebpackPlugin(conf));

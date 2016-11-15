@@ -49,7 +49,13 @@ function try_jump_pubnum(){
 }
 function geopenid(){
 	//return de("31e6adc301ded919","aXi7$kj0l3@X");
+<<<<<<< HEAD
   return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw";
+=======
+  if (true) {
+    return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw";
+  }
+>>>>>>> d2b24aa4d36b0cf54703e4e24f07c3af5fe92ed2
 	if (sessionStorage.getItem("6soid") == null){
 		load_6soid();
 		if (arguments[0] == null)

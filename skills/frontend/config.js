@@ -9,7 +9,7 @@ var srcAssets         = 'src';
 var developmentAssets = 'dist/static';
 // var productionAssets  = 'dist/production/assets';
 
-var proxyOptions = url.parse('http://www.6skills.com/activities');
+var proxyOptions = url.parse('http://www.6skills.com:19900/activities');
 proxyOptions.route = '/activities';
 var proxyOptions2 = url.parse('http://www.6skills.com/uploadtoken');
 proxyOptions2.route = '/uploadtoken';
@@ -27,8 +27,6 @@ module.exports = {
     development: {
       server: {
         baseDir: [build],
-        middleware: [
-          proxy(proxyOptions),
           proxy(proxyOptions2),
           proxy(proxyOptions3),
           proxy(proxyOptions4),
