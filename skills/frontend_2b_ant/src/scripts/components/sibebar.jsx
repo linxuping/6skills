@@ -3,6 +3,8 @@ import ReactDom from 'react-dom';
 import $ from 'jquery';
 import {Menu, Icon} from 'antd';
 const SubMenu = Menu.SubMenu;
+import {Link, IndexLink} from "react-router";
+
 
 export default class Sidebar extends React.Component {
   static propTypes = {
@@ -15,36 +17,49 @@ export default class Sidebar extends React.Component {
 
   state = {
     current: 'index',
-    openKeys: [],
+    openKeys: [''],
     menus: [
       {id: "index", name: "首页", icon: "home", href: "/"},
       {name: "管理", icon: "setting", href: "#", id: "manager",
        submenu: [
-         {id: "act-manager", name: "活动管理", href: "#"},
-         {id: "auth-manager", name: "商户认证审核", href: "#"},
-         {id: "perf-manager", name: "限时优惠", href: "#"},
+         {id: "act-manager", name: "课程管理", href: "#"},
+         {id: "audit", name: "商户认证审核", href: "/manager-audit"},
+         {id: "refund", name: "退款审核", href: "/manager-refund"},
        ]
       },
       {name: "统计", icon: "bar-chart", href: "#", id: "analytics",
         submenu: [
-          {id: "analytics", name: "活动报名统计", href:"#"}
+          {id: "applicants", name: "活动报名统计", href:"/analytics-applicants"}
         ]
       }
     ]
   };
 
-  componentDidMount() {
-    var path = window.location.pathname;
-    console.log(path)
+  componentWillMount() {
+    let path = window.location.hash.slice(2).split("?")[0];
+    let current, openKeys;
+    if (path == "") {
+      current = "index";
+      openKeys = [""];
+    } else {
+      current = path.split("-")[1];
+      openKeys = [path.split("-")[0]];
+    }
     this.setState({
-      url: path
+      current: current,
+      openKeys: openKeys
     });
   }
 
+  componentDidMount() {
+
+  }
+
   handleClick(e) {
+    let openKeys = e.keyPath.slice(1) || [""];
     this.setState({
       current: e.key,
-      openKeys: [e.keyPath.slice(1)] || [],
+      openKeys: openKeys,
     });
   }
 
@@ -61,8 +76,7 @@ export default class Sidebar extends React.Component {
           defaultSelectedKeys={[this.state.current]}
           defaultOpenKeys={this.state.openKeys}
           onClick={this.handleClick.bind(this)}
-          onOpen={this.onToggle.bind(this)}
-          onClose={this.onToggle.bind(this)}>
+          onOpenChange={this.onToggle.bind(this)}>
           {
             this.state.menus.map(function(elem, index) {
               if (elem.submenu) {
@@ -73,7 +87,7 @@ export default class Sidebar extends React.Component {
                       elem.submenu.map(function(elem, index) {
                         return (
                           <Menu.Item key={elem.id} >
-                            <a href="#">{elem.name}</a>
+                            <Link to={elem.href}>{elem.name}</Link>
                           </Menu.Item>
                         );
                       }.bind(this))
@@ -83,8 +97,9 @@ export default class Sidebar extends React.Component {
               } else {
                 return (
                   <Menu.Item key={elem.id}>
-                    <Icon type={elem.icon}/>
-                    {elem.name}
+                    <IndexLink to={elem.href}>
+                      <Icon type={elem.icon}/>{elem.name}
+                    </IndexLink>
                   </Menu.Item>
                 );
               }

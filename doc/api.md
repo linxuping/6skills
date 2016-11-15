@@ -1,4 +1,164 @@
-## 公众号接口api
+
+
+### 0.001 报名信息
+**GET**
+**URL** /signupinfo/get?openid=1&signid=12
+
+**返回**
+```json
+{
+	"sign_type":3,
+	"actid": 2,
+	"username_pa":"",
+	"kids_name":"",
+	"age":"",
+	"birthdate":"",
+	"phone":"",
+	"gender":"",
+	"city":"",
+	"identity_card":"",
+	"program":"",
+	"company":"",
+	"teacher":"",
+	"teacher_phone":"",
+	"match_class":"",
+	"major":"",
+	"awards":"",
+	"company_tel":"",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.002. 报名更新
+**POST**
+** URL ** /activities/sign 重用
+
+### 0.003. 评论
+**POST**
+** URL ** /sign/comment
+
+**参数**
+```json
+{
+	"actid":3,
+	"openid":'',
+	"score": 4,
+	"comment": 2,
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.004 评论列表
+**GET**
+**URL** /sign/comment/list?openid=abc
+
+**返回**
+```json
+{
+	"activities": [
+		{
+			"actid": 1,
+			"title": "title",
+			"score": 3,
+			"comment": "cmt",
+			"time": "2016-01-01",
+		}
+	]
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+
+
+
+=====================================================================
+
+### 0.01 付款列表
+**GET**
+**URL** /activities/pay/list?openid=abc
+
+**返回**
+```json
+{
+	"activities": [
+		{
+			"pid": 1,
+			"status: 2,	1可退款、2申请中、3成功申请
+			"title::"abc",
+			"time": "2016-10-10",
+		},
+		...
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.02 退
+**POST**
+**URL** /activities/pay/refund
+
+**参数**
+```json
+{
+	"openid": 138,
+	"pid": 2,
+ 	"reason": "shit"
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.03 商户认证
+**POST**
+**URL** /business/auth
+
+**参数**
+```json
+{
+	"openid": 138,
+	"img_licence": "img1",
+	"img_iden": "img2",
+ 	"business": "yi++",
+	"username": "jim",
+	"phone": "1234"
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.04 商户认证状态
+**GET**
+**URL** /business/authrization/status?openid=1234
+
+**返回**
+```json
+{
+	"status": 0/1/2/3 未认证/认证通过/处理中/认证失败
+	"description": "error info",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
 
 ### 0.1 滚动栏活动
 **GET**
@@ -19,7 +179,7 @@
 }
 ```
 
-### 0.2 wx端活动分类列表 - 运营展示数据，与实际类型有细微差别
+### 0.2 wx端活动分类列表 - 运营展示数据，与实际类型有细微差别(返回数据不适合)
 **GET**
 **URL** /wx/acttypes/list
 
@@ -82,7 +242,8 @@
 			"ages": "3-8",
 			"original_price": "800",
 			"current_price": "700",
-			"remain": "40"
+			"remain": "40",
+			"readnum": 43
 		},
 		...
 	],
@@ -144,6 +305,7 @@
 	"current_price": 700,
 	"remain": "40",
 	"introdution": "详情",
+	"signnum": 12,
 	"errcode": 0,
 	"errmsg": ""
 }
@@ -277,7 +439,321 @@
 ```
 
 
-##后台管理
+##后台管理2.1
+### 1 课程管理
+### 1.1 创建活动 newactivity
+**POST**
+** URL ** /api/admin/activities/add
+
+**参数**
+```json
+{
+	"title":"云南亲子一日游",
+	"coverimage":"http://www.xxx.jpg",
+	"begintime":"20160602",
+	"endtime":"20160602",
+	"city":"广州",
+	"area":"越秀区",
+	"address":"越秀广场",
+	"firstacttype": "本地活动",
+	"secondacttype": "手工DIY",
+	"cost": 0,
+	"personnum": 33,
+	"agefrom": 3,
+	"ageto": 6,
+	"qrcode":"http://url.jpg",
+	"content":"活动详情活动详情活动详情",
+	"args_def":[  //该部分未定，需要重新结构化传输！
+		{
+			"name":"输入-文本",
+			"type":"value",
+			"description":""
+		},
+		{
+			"name":"输入-列表型",
+			"type":"obj",
+			"description":[
+				{"item":"1", "price":190, "limit":20}
+			]
+		}
+	]
+}
+```
+
+**参数说明**
+
+名称 | 类型 | 是否必须 | 备注
+-----|------|----------|-----
+title|string|Y|活动标题
+coverImage|url|Y|封面图
+...
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 1.2. 已发布课程
+**GET**
+** URL ** /api/admin/activities/published?page=1&pagesie=100
+
+**成功返回**
+```json
+{
+	"activities": [
+		{
+			"actid": 8,
+			"title": "abc",
+			"publish_time": "20161010 12:30",
+			"sign_num": 1000
+		}
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 1.2.1 课程下线
+**POST**
+** URL ** /api/admin/activities/offline
+
+**参数**
+```
+{
+	actid: 2,
+}
+```
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 1.2.2. 查看报名信息
+**GET**
+** URL ** /api/admin/activity/sign-users?actid=2&page=1&pagesie=100
+
+**成功返回**
+```json
+{
+	"users": [
+		{
+			"title": "123",
+			"name": "Jim",
+			"phone": "1234",
+			"time": "2016-10-10"
+			"amount": "免费",
+		}
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 1.2.3. 导出报名信息
+**GET**
+** URL ** /api/admin/activity/sign-users/export?actid=2&time_from=*&time_to=*
+
+**成功返回**
+```json
+{
+	" content": “content with csv format.”			
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 1.2.4. 替换活动微信群二维码
+**POST**
+** URL ** /api/admim/qr/replace
+
+**参数**
+```json
+{
+	"actid": 3,
+	"qrcode": "http://qrcode.jpg"
+}
+```
+
+**成功返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": "",
+}
+```
+
+**失败返回**
+```json
+{
+	"errcode": 1,
+	"errmsg": "errmsg"
+}
+```
+
+### 1.3. 未发布课程
+**GET**
+** URL ** /api/admin/activities/unpublish?page=1&pagesie=100
+
+**成功返回**
+```json
+{
+	"activities": [
+		{
+			"actid": 8,
+			"title": "abc",
+		}
+	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 1.3.1. 上线
+**POST**
+** URL ** /api/admim/activity/online
+
+**参数**
+```json
+{
+	"actid": 3,
+}
+```
+
+### 1.3.2. 删除
+**POST**
+** URL ** /api/admim/activity/delete
+
+**参数**
+```json
+{
+	"actid": 3,
+}
+```
+
+### 2 商户认证审核 
+### 2.1 商户列表
+**GET**
+** URL ** /api/admim/business/list?time_from=*&time_to=*&page=1&pagesize=100
+
+**参数**
+```json
+{
+	"business": [
+		{
+			"id": 2,
+			"name": *,
+			"phone": *,
+			"time": *
+		},
+	]
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 2.2. 认证
+**POST**
+** URL ** /api/admim/business/auth
+
+**参数**
+```json
+{
+	"id": 3,
+	"type": "pass or deny",
+	"description": "sdf"
+}
+```
+
+### 2.3 商户详情
+**GET**
+** URL ** /api/admim/business/detail?id=2
+
+**参数**
+```json
+{
+	"img_licence": "",
+ 	"img_iden": "",
+	"business": "",
+	"name": "",
+	"phone": "",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 3 退款审核 
+### 3.1 退款列表
+**GET**
+** URL ** /api/admim/activity/refund-list?time_from=*&time_to=*&page=1&pagesize=100
+
+**参数**
+```json
+{
+	"name": "",
+ 	"username": "",
+	"phone": "",
+	"time": "",
+	"reason": "",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 4 课程报名统计
+### 4.1 列表
+**GET**
+** URL ** /api/admim/activity/refund-list?time_from=*&time_to=*&page=1&pagesize=100
+
+**参数**
+```json
+{
+	"name": "",
+ 	"username": "",
+	"phone": "",
+	"time": "",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 4.2. 导出完整报名表
+**GET**
+** URL ** /api/admin/activity/sign-users/export
+
+
+
+
+
+
+### ----------------------------------- LXP LINE -----------------------------------------------
+
+
+
+
+
 ### 1. 商户登录
 **POST**
 ** URL ** /api/admin/login
@@ -632,62 +1108,9 @@ actid|number|Y|
 }
 ```
 
-### 10. 导出报名信息
-**POST**
-** URL ** /api/admin/export-activity-users
 
-**参数**
-```json
-{
-	actid: 2
-}
-```
 
-**成功返回**
-字节流
 
-**失败返回**
-```json
-{
-	"errcode": 1,
-	"errmsg": "errmsg"
-}
-```
-
-### 11. 替换活动微信群二维码
-**POST**
-** URL ** /api/admin/replace-qr
-
-**参数**
-```json
-{
-	"actid": 3,
-	"qrcode": "http://qrcode.jpg"
-}
-```
-
-**参数说明**
-
-名称 | 类型 | 是否必须 | 备注
------|------|----------|-----
-actid|number|Y|
-qrcode|url|Y|二维码url
-
-**成功返回**
-```json
-{
-	"errcode": 0,
-	"errmsg": "",
-}
-```
-
-**失败返回**
-```json
-{
-	"errcode": 1,
-	"errmsg": "errmsg"
-}
-```
 
 ### 12.1. 获取城市列表
 **GET**
@@ -732,67 +1155,6 @@ qrcode|url|Y|二维码url
 **GET**
 ** URL ** /api/admin/get-acttypes?level=2&type=tt
 
-### 12. 创建活动 newactivity
-**POST**
-** URL ** /api/admin/activities/add
-
-**参数**
-```json
-{
-	"title":"云南亲子一日游",
-	"coverimage":"http://www.xxx.jpg",
-	"begintime":"20160602",
-	"endtime":"20160602",
-	"city":"广州",
-	"area":"越秀区",
-	"address":"越秀广场",
-	"firstacttype": "本地活动",
-	"secondacttype": “手工DIY”,
-	"cost": 0,
-	"personnum": 33,
-	"agefrom": 3,
-	"ageto": 6,
-	"qrcode":"http://url.jpg",
-	"content":"活动详情活动详情活动详情"
-}
-```
-
-**参数说明**
-
-名称 | 类型 | 是否必须 | 备注
------|------|----------|-----
-title|string|Y|活动标题
-coverImage|url|Y|封面图
-beginTime|string|Y|活动开始时间
-endTime|string|Y|活动结束时间
-city|string|Y|活动集合地点城市
-area|string|Y|活动集合地点区域
-address|string|Y|活动集合地点具体地址
-firstClassification|number|Y|活动一级分类
-secondClassification|number|Y|活动二级分类
-isFree|boolean|Y|是否收费
-kidFee|string|N|收费时必须
-adultFee|string|N|收费时必须
-personNum|number|Y|人数限制
-ageGroup|string|Y|适合的年龄段
-qrcode|url|N|活动微信群二维码
-details|text|Y|活动详情
-
-**成功返回**
-```json
-{
-	"errcode": 0,
-	"errmsg": "",
-}
-```
-
-**失败返回**
-```json
-{
-	"errcode": 1,
-	"errmsg": "errmsg"
-}
-```
 
 ### 13.1. 获取未优惠的活动列表
 **GET**
@@ -926,12 +1288,12 @@ discountPrice|string|Y|折后价
 
 ### 15.2. 商户验证 - 重新申请
 **POST**
-** URL ** 重用 /api/admin/business/authorize 
+** URL ** 重用 /api/admin/business/authorize
 **参数**
 ```json
 {
     "reset":"1",
-    ... ... 
+    ... ...
 }
 ```
 
@@ -1103,4 +1465,3 @@ discountPrice|string|Y|折后价
 ### 24.导出所有报名信息
 **POST**
 ** URL ** /api/admin/export-activity-users 不带actid参数
-

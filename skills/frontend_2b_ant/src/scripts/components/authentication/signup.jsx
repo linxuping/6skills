@@ -17,7 +17,7 @@ class Signup extends React.Component {
   }
 
   onSubmitHandler(e){
-    e.preventDefault()
+    e.preventDefault();
     console.log(this.props.form.getFieldsValue())
     this.props.form.validateFields((errors, values) => {
       console.log(errors);
@@ -38,28 +38,7 @@ class Signup extends React.Component {
   }
 
   render() {
-    const {getFieldProps, getFieldError, isFieldValidating} = this.props.form;
-    const phonePorps = getFieldProps("phone", {
-      rules: [
-        {required: true,  message: "请输入手机", pattern: /^[1][0-9]{10}$/}
-      ]
-    });
-    const codeProps = getFieldProps("code", {
-      rules: [
-        {required: true, message: "请输入验证码"}
-      ]
-    });
-    const passwordProps = getFieldProps("password", {
-      rules: [
-        {required: true, message: "请输入密码"}
-      ]
-    });
-    const passwordConfirmProps = getFieldProps("passwordConform", {
-      rules: [
-        {required: true, message: "请输入确认密码"},
-        {validator: this.checkPassComfirm.bind(this)}
-      ]
-    })
+    const {getFieldDecorator, getFieldError, isFieldValidating} = this.props.form;
     return (
       <Row>
         <Col span={8} offset={8}>
@@ -72,16 +51,30 @@ class Signup extends React.Component {
             </header>
             <Form horizontal onSubmit={this.onSubmitHandler.bind(this)}>
               <FormItem>
-                <Input placeholder="账户(手机)" size="large"
-                  {...phonePorps}></Input>
+                {
+                  getFieldDecorator("phone", {
+                    rules: [
+                      {required: true,  message: "请输入手机", pattern: /^[1][0-9]{10}$/}
+                    ]
+                  })(
+                    <Input placeholder="账户(手机)" size="large"/>
+                  )
+                }
               </FormItem>
 
               <Row>
                 <Col span={16}>
-                <FormItem>
-                  <Input placeholder="验证码" size="large"
-                  {...codeProps} style={{"with": "66.6666%"}}></Input>
-                </FormItem>
+                  <FormItem>
+                    {
+                      getFieldDecorator("code", {
+                        rules: [
+                          {required: true, message: "请输入验证码"}
+                        ]
+                      })(
+                        <Input placeholder="验证码" size="large" style={{"with": "66.6666%"}}/>
+                      )
+                    }
+                  </FormItem>
                 </Col>
                 <Col span={8}>
                   <Button htmlType="button" type="primary" size="large" className="fr" onClick={this.getCodeHandler.bind(this)}>
@@ -91,13 +84,28 @@ class Signup extends React.Component {
               </Row>
 
               <FormItem className="">
-                <Input type="password" placeholder="密码" size="large"
-                  {...passwordProps} />
+                {
+                  getFieldDecorator("password", {
+                    rules: [
+                      {required: true, message: "请输入密码"}
+                    ]
+                  })(
+                    <Input type="password" placeholder="密码" size="large"/>
+                  )
+                }
               </FormItem>
 
               <FormItem className="">
-                <Input type="password" placeholder="确认密码" size="large"
-                  {...passwordConfirmProps} />
+                {
+                  getFieldDecorator("passwordConform", {
+                    rules: [
+                      {required: true, message: "请输入确认密码"},
+                      {validator: this.checkPassComfirm.bind(this)}
+                    ]
+                  })(
+                    <Input type="password" placeholder="确认密码" size="large"/>
+                  )
+                }
               </FormItem>
 
               <Button htmlType="submit" type="primary" size="large"

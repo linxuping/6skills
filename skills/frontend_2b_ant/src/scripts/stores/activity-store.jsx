@@ -75,4 +75,67 @@ export default Reflux.createStore({
     })
   },
 
+  /**
+   * 已发布课程
+   * @param  {component} _this
+   * @param  {object} params
+   * @return
+   */
+  onFatchPublishActivities(_this, params){
+    activityController.fatchPublishActivities(params, (res)=>{
+      console.log(res);
+      _this.setState({
+        activities: res.activities,
+        pageable: res.pageable,
+        loaded: true
+      });
+    })
+  },
+
+  /**
+   * 未发布课程
+   */
+  onFatchUnpublishActivities(_this, params){
+    activityController.fatchUnpublishActivities(params, (res)=>{
+      _this.setState({
+        activities: res.activities,
+        pageable: res.pageable,
+        loaded: true
+      });
+    })
+  },
+
+  /**
+   * 课程下线
+   */
+  onOffLineActivity(_this, params){
+    activityController.offLineActivity(params, (res)=>{
+      //重新加载
+      _this.fatchActivities();
+    })
+  },
+
+  /**
+   * 退款列表
+   */
+  onFatchRefundList(_this, params){
+    activityController.fatchRefundList(params, (res) => {
+      _this.setState({
+        refund_list: res.refunds,
+        pageable: res.pageable,
+        loaded: true
+      });
+    })
+  },
+
+  onFatchApplicants(_this, params){
+    activityController.fatchApplicants(params, (res) => {
+      _this.setState({
+        applicants: res.sign_users,
+        pageable: res.pageable,
+        loaded: true
+      });
+    })
+  }
+
 })

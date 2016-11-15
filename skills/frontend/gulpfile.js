@@ -9,7 +9,7 @@ var gulp = require('gulp'),
 	clean = require('gulp-clean'),
 	concat = require('gulp-concat'),
 	notify = require('gulp-notify'),
-	cache = require('gulp-cache'),
+	//cache = require('gulp-cache'),
 	livereload = require('gulp-livereload'),
 	react = require('gulp-react'),
 	rev = require('gulp-rev'),                              //- 对文件名加MD5后缀
@@ -150,6 +150,14 @@ gulp.task('lib_scripts', function(){
 	.pipe(notify({message: 'lib scripts complete'}))
 })
 
+//qi nui upload
+gulp.task("qiniu", function(){
+	var prefix = "upload/";
+	return gulp.src([src.js + prefix + "moxie.js", src.js + prefix + "plupload.dev.js", src.js + prefix + "qiniu.js", src.js + prefix + "upload-config.js"])
+	.pipe(concat('qinui.js'))
+	.pipe(gulp.dest(dist.js + "/lib"))
+})
+
 
 // 图片压缩
 gulp.task('images', function(){
@@ -244,7 +252,7 @@ gulp.task("build", ['clean'], function(){
 	flag = true;
 
 	// 库
-	gulp.start(['lib_scripts', 'lib_other_files'])
+	gulp.start(['lib_scripts', 'lib_other_files', "qiniu"])
 
 	// 用户数据
 	gulp.start(['styles', 'scripts', 'react', 'images']);
@@ -258,7 +266,7 @@ gulp.task("build", ['clean'], function(){
 gulp.task("build-dev", ['clean'], function(){
 
 	// 库
-	gulp.start(['lib_scripts', 'lib_other_files'])
+	gulp.start(['lib_scripts', 'lib_other_files', 'qiniu'])
 
 	// 用户数据
 	gulp.start(['styles', 'scripts', 'react', 'images']);

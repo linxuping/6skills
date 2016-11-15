@@ -29,7 +29,11 @@ function validateForm() {
 									//update profile.
 									prostr = sessionStorage.getItem("_profile");
 									if (prostr == null) {
-										alert("从服务器获取用户信息失败.");
+										var _profile = [];
+										_profile["phone"] = $("#phone").val();
+										sessionStorage.setItem("_profile", JSON.stringify(_profile));
+										history.back();
+										//alert("从服务器获取用户信息失败.");
 									}
 									else{
 										var _profile = JSON.parse(prostr);
@@ -170,7 +174,7 @@ var AlertDialog = React.createClass({
 		if (this.props.callback) {
 			this.props.callback();
 		} else
-			React.unmountComponentAtNode(document.getElementById("alert-wrap"));
+			ReactDOM.unmountComponentAtNode(document.getElementById("alert-wrap"));
 	},
 	render: function() {
 		return (

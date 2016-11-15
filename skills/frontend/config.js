@@ -15,13 +15,19 @@ var proxyOptions2 = url.parse('http://www.6skills.com:19900/wx');
 proxyOptions2.route = '/wx';
 var proxyOptions3 = url.parse('http://www.6skills.com:19900/get_wx_payinfo');
 proxyOptions3.route = '/get_wx_payinfo';
+var proxyOptions4 = url.parse('http://www.6skills.com/business');
+proxyOptions4.route = '/business';
+
 
 module.exports = {
   browsersync: {
     development: {
       server: {
         baseDir: [build],
-        middleware: [proxy(proxyOptions), proxy(proxyOptions2), proxy(proxyOptions3)]
+          proxy(proxyOptions2),
+          proxy(proxyOptions3),
+          proxy(proxyOptions4)
+        ]
       },
       port: 9901,
       files: [

@@ -34,7 +34,9 @@ var Me = React.createClass({
 			} else if ("collections".indexOf(hash) !== -1) {
 				this.gotoMyCollections();
 			} else if ("activities-to-pay".indexOf(hash) !== -1) {
-				this.gotoNotPayActivities();
+        this.gotoNotPayActivities();
+      } else if ("activities-withdraw".indexOf(hash) !== -1) {
+				this.gotoWithdrawActivities();
 			}
 		}
 	},
@@ -74,7 +76,7 @@ var Me = React.createClass({
 			document.getElementById("sign-page-wrap")
 		);
 	},
-	
+
 	gotoNotPayActivities: function() {
 	  document.title = "待付款";
 	  var href = window.location.href.split("#")[0];
@@ -83,6 +85,16 @@ var Me = React.createClass({
 	  	<ActivitiesToPay back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
 	  	document.getElementById("sign-page-wrap")
 	  );
+	},
+
+	gotoWithdrawActivities: function(){
+		document.title = "退款";
+		var href = window.location.href.split("#")[0];
+		history.replaceState("myActivities", null, href + "#activities-withdraw");
+		ReactDOM.render(
+			<ActivitiesWithdraw back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
+			document.getElementById("sign-page-wrap")
+		);
 	},
 
 	render: function() {
@@ -115,6 +127,14 @@ var Me = React.createClass({
 								 onClick={this.gotoNotPayActivities}>
 								<div className="weui_cell_bd weui_cell_primary">
 									<p>待付款</p>
+								</div>
+								<div className="weui_cell_ft"></div>
+							</a>
+
+							<a href="javascript:void(0);" className="weui_cell"
+								 onClick={this.gotoWithdrawActivities}>
+								<div className="weui_cell_bd weui_cell_primary">
+									<p>申请退款</p>
 								</div>
 								<div className="weui_cell_ft"></div>
 							</a>
@@ -154,6 +174,10 @@ var Feedback = React.createClass({
 					点击咨询在线客服
 					<a target="_blank" href="http://sighttp.qq.com/authd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb"><img border="0"  src="http://wpa.qq.com/imgd?IDKEY=e482769a89f979b33df8b6856321444d4dbc1dceccb270cb&pic=52" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
 				</p>
+				<div style={{margin:'4px'}}><font style={{fontSize:'32px'}}>申请商务合作</font></div>
+				<p style={{fontSize:'24px'}}>
+					老师与机构<a href="business_cooperation.html" className="co-link">合作申请入口</a>
+				</p>
 				<div style={{margin:'4px'}}><font style={{fontSize:'32px'}}>其他合作</font></div>
 				<p style={{fontSize:'24px'}}>
 					邮箱：<mail>1344671651@qq.com</mail>
@@ -169,6 +193,15 @@ var MyActivities = React.createClass({
 			activities: []
 		};
 	},
+
+	signViewHandler: function(ev){
+		ev.stopPropagation();
+		ReactDOM.render(
+			<Signupinfo mountnode="confirm-dialog-wrap" signid={ev.target.dataset.signid}/>,
+			document.getElementById("confirm-dialog-wrap")
+		)
+	},
+
 	signReset: function(ev){
 		ev.stopPropagation();
 		this.setState({
@@ -180,6 +213,7 @@ var MyActivities = React.createClass({
 			document.getElementById("confirm-dialog-wrap")
 		);
 	},
+
 	confirmReset: function (argument) {
 		$.ajax({
 			url: ges('activities/reset'),
@@ -191,7 +225,7 @@ var MyActivities = React.createClass({
 		.done(function() {
 			console.log("success");
 			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
-			alert("取消报名成功!如需退款请联系客服!")
+			alert("报名已成功删除，如需退款请到申请退款页面中发起!")
 			this.pullFromServer();
 		}.bind(this))
 		.fail(function() {
@@ -205,7 +239,13 @@ var MyActivities = React.createClass({
 
 	componentDidMount: function() {
 	 	this.pullFromServer();
+		//加载confirm.js
+		var js = document.createElement("script");
+		js.async = false;
+		js.src = "/static/js/modules/signinfo.js";
+		document.body.appendChild(js);
 	},
+
 	pullFromServer:function(){
 		$.ajax({
 			url: ges('activities/my'),
@@ -227,7 +267,7 @@ var MyActivities = React.createClass({
 			this.state.activities.map(function(elem, index) {
 				return (
 					<li onClick={this.props.gotoActivityDetail.bind(this, elem)}
-						style={{"cursor": "pointer"}} data-actid={elem.actid}>
+						style={{"cursor": "pointer"}} data-actid={elem.actid} key={index}>
 						<header className="ss-hd">{elem.title}</header>
 						<p className="time clearfix">
 							<span>课程时间</span><time>{elem.time_act}</time>
@@ -235,6 +275,7 @@ var MyActivities = React.createClass({
 						<div className="time clearfix">
 							<span>报名时间</span><time>{elem.time_signup}</time>
 						</div>
+						<button type="button" onClick={this.signViewHandler} data-signid={elem.signid} className="weui_btn weui_btn_mini weui_btn_default f-bt">查看报名信息</button>
 						<button type="button" onClick={this.signReset}
 							data-uid={index} data-signid={elem.signid} className="weui_btn weui_btn_mini weui_btn_default">
 							取消
@@ -354,7 +395,7 @@ var ActivitiesToPay = React.createClass({
 	},
 	pullFromServer: function() {
 		$.ajax({
-			url: '/activities/unpay/list',
+			url: ges('activities/unpay/list'),
 			//url: "/static/js/test/list.js",
 			type: 'get',
 			dataType: 'json',
@@ -396,7 +437,7 @@ var ActivitiesToPay = React.createClass({
 							this.pullFromServer();
 						} else {
 							alert(res.errmsg);
-						}	
+						}
 					}.bind(this))
 					.fail(function() {
 						console.log("delCollection error");
@@ -437,6 +478,212 @@ var ActivitiesToPay = React.createClass({
 					</ul>
 					<div id="confirm-dialog-wrap"></div>
 				</div>
+			</div>
+		);
+	}
+});
+
+/**
+ * 退款列表
+ * return
+ */
+var ActivitiesWithdraw = React.createClass({
+	getInitialState: function() {
+		return {
+			activities: []
+		};
+	},
+	signReset: function(ev){
+		ev.stopPropagation();
+		var pid = ev.target.dataset.pid;
+		var status = ev.target.dataset.status;
+		if (status > 1)
+			return;
+		ReactDOM.render(
+			<WithdrawPage pid={pid} updateActivities={this.pullFromServer}/>,
+			document.getElementById("confirm-dialog-wrap")
+		)
+	},
+	confirmReset: function (argument) {
+		$.ajax({
+			url: ges('activities/reset'),
+			//url: '/test/sign.json',
+			type: 'post',
+			dataType: 'json',
+			data: { "openid":geopenid(),"signid": this.state.signidWantToReset },
+		})
+		.done(function() {
+			console.log("success");
+			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+			alert("请耐心等候退款申请！")
+			this.pullFromServer();
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+			ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	},
+
+	componentDidMount: function() {
+	 	this.pullFromServer();
+	},
+
+  //FIX ME
+  //url is not right
+	pullFromServer:function(){
+		$.ajax({
+			url: ges('activities/pay/list'),
+			type: 'get',
+			dataType: 'json',
+			data: { openid:geopenid(),page:"1",pagesize:"100" },
+			success: function(res) {
+				console.log("success");
+				this.setState( {"activities":res.activities} );
+			}.bind(this),
+			error: function() {
+				console.log("error");
+			}.bind(this)
+		});
+	},
+	render: function() {
+		var myActivitiesStr = this.state.activities &&
+			this.state.activities.map(function(elem, index) {
+				return (
+					<li onClick={this.props.gotoActivityDetail.bind(this, elem)}
+						style={{"cursor": "pointer"}} data-actid={elem.actid}>
+						<header className="ss-hd">{elem.title}</header>
+						<p className="time clearfix">
+							<span>课程时间</span><time>{elem.time}</time>
+						</p>
+						<button type="button" onClick={this.signReset}
+							data-uid={index} data-pid={elem.pid} data-status={elem.status} className="weui_btn weui_btn_mini weui_btn_default">
+							{(elem.status==2) ? "等待退款":((elem.status==3) ? "已退款":"申请退款")}
+						</button>
+					</li>
+				);
+			}.bind(this));
+		return (
+			<div className="myActivities sign-page" style={{"overflow": "auto"}}>
+				<div className="back-btn" onClick={this.props.back}>返回</div>
+        <div className="tips">
+          退款须知：如您希望取消课程报名并退款，请在课程开始时间的24小时之前及时发起申请。超时将无法
+          自动退款，请联系人工客服处理。
+        </div>
+				<div className="cell">
+					<ul className="my-activities">
+						{myActivitiesStr}
+					</ul>
+					<div id="confirm-dialog-wrap"></div>
+				</div>
+			</div>
+		);
+	}
+});
+
+
+/**
+ * 退款页面
+ * @return
+ */
+var WithdrawPage = React.createClass({
+
+  back: function(){
+    this.props.updateActivities();
+    ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+  },
+
+  submitHandler: function(e){
+    var form = $("#withdraw-form");
+    var reason = $("input[name='reason']:checked").val();
+    if (reason.indexOf("其他原因") != -1){
+      reason = $("#other_reason")[0].value;
+    }
+    //var other_reason = $("#other_reason");
+    $.ajax({
+      url: ges('activities/pay/refund'),
+      type: 'post',
+      dataType: 'json',
+      data: {
+        reason: reason,
+        openid: geopenid(),
+        pid: this.props.pid
+      },
+    })
+    .done(function(res) {
+      console.log("success");
+      if (res.errcode == 0) {
+        alert("申请成功，款项将在3个工作日内退到您的微信账户里！");
+        this.back();
+      } else {
+        alert("退款申请失败:" + res.errmsg);
+      }
+    }.bind(this))
+    .fail(function(res) {
+      alert("服务出错，请稍后重试！")
+    })
+    .always(function() {
+      console.log("complete");
+    });
+
+  },
+
+	render: function() {
+		return (
+			<div className="withdraw-page sign-page">
+        <div className="back-btn" onClick={this.back}>返回</div>
+        <form action="#" method="post" id="withdraw-form">
+          <div className="weui_cells_title">退款原因</div>
+            <div className="weui_cells weui_cells_radio">
+              <label className="weui_cell weui_check_label" for="x11">
+                <div className="weui_cell_bd weui_cell_primary">
+                  <p>没时间参加</p>
+                </div>
+                <div className="weui_cell_ft">
+                  <input type="radio" className="weui_check" name="reason"
+                    value="没时间参加" defaultChecked="checked"/>
+                  <span className="weui_icon_checked"></span>
+                </div>
+              </label>
+              <label className="weui_cell weui_check_label" for="x11">
+                <div className="weui_cell_bd weui_cell_primary">
+                  <p>无理由退款</p>
+                </div>
+                <div className="weui_cell_ft">
+                  <input type="radio" className="weui_check" name="reason"
+                    value="无理由退款"/>
+                  <span className="weui_icon_checked"></span>
+                </div>
+              </label>
+              <label className="weui_cell weui_check_label" for="x11">
+                <div className="weui_cell_bd weui_cell_primary">
+                  <p>其他原因，请在下方输入</p>
+                </div>
+                <div className="weui_cell_ft">
+                  <input type="radio" className="weui_check" name="reason"
+                    value="其他原因，请在下方输入"/>
+                  <span className="weui_icon_checked"></span>
+                </div>
+              </label>
+
+              <div className="weui_cell">
+                <div className="weui_cell_bd" style={{width: "100%"}}>
+                  <textarea name="other_reason" id="other_reason" rows="3" className="weui_textarea"
+                    placeholder="退款原因"></textarea>
+                </div>
+              </div>
+            </div>
+            <div className="weui_btn_area mb20"
+              style={{position: "absolute", width: "100%", padding: 10, margin: 0, bottom: 0}}>
+              <button type="button" className="weui_btn weui_btn_primary"
+                style={{height: 100}} onClick={this.submitHandler.bind(this)}>
+                提交
+              </button>
+            </div>
+        </form>
+
 			</div>
 		);
 	}

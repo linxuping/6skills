@@ -438,6 +438,11 @@ body{
 		height: @imgSize;
 		border-radius: 50%;
 	}
+	.tips{
+		font-size: 22px;
+		padding: 15px;
+		border-bottom: 1px solid #ccc;
+	}
 }
 .my-activities{
 	font-size: 1.5rem;
@@ -450,6 +455,9 @@ body{
 			position: absolute;
 			right: 1rem;
 			bottom: 1rem;
+			&.f-bt{
+				right: 110px;
+			}
 		}
 	}
 	.ss-hd{
@@ -623,6 +631,29 @@ body{
   }
 }
 
+.page-loading{
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	text-align: center;
+	background-color: #FFF;
+	img{
+		display: block;
+		position: relative;
+		left: 50%;
+		margin-left: -100px;
+		top: 50%;
+		margin-top: -100px;
+		width: 200px;
+	}
+}
+.loading{
+	position: absolute;;
+	top: 40%;
+	left: 50%;
+	margin-left: -60px;
+	text-align: center;
+}
 //navication
 .nav-item{
 	padding: 33px 0;
@@ -647,8 +678,14 @@ body{
 .weui_btn{
 	font-size: 26px;
 	&.weui_btn_mini{
-		font-size: 18px;
+		font-size: 20px;
 		padding: 3px 15px;
+		background-color: @themeColor;
+		color: #FFF;
+		&:active{
+			background-color: lighten(@themeColor, 10%);
+			color: #FFF;
+		}
 	}
 }
 .weui_uploader_input_wrp, .weui_uploader_file{
@@ -660,7 +697,7 @@ body{
 .weui_cells_radio .weui_check:checked + .weui_icon_checked:before{
 	font-size: 24px;
 }
-.weui_cell_select .weui_cell_bd:after{
+.weui_cell_select .weui_cell_bd:after, .weui_cells_access .weui_cell_ft:after{
 	width: 12px;
 	height: 12px;
 }
@@ -668,4 +705,37 @@ body{
 	bottom: 0;
 	height: auto;
 	overflow: auto;
+}
+.weui_dialog .weui_dialog_hd{
+	padding-top: 18px !important;
+}
+.weui_icon_msg:before{
+	font-size: 208px;
+}
+.weui_msg {
+	.weui_msg_title{
+		margin-bottom: 10px;
+	  font-weight: 400;
+	  font-size: 30px;
+	}
+  .weui_msg_desc{
+    font-size: 24px;
+  }
+  .weui_text_area{
+    padding: 0 40px;
+  }
+  .weui_extra_area{
+    margin-bottom: 30px;
+    font-size: 30px;
+  }
+}
+.cooperation{
+	.title{
+		font-size: 30px;
+		height: @backHeaderHeight;
+		line-height: @backHeaderHeight;
+		padding-left: 1rem;
+		background-color: #fff;
+
+	}
 }

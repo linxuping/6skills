@@ -4,7 +4,12 @@ var ActivityAction = Reflux.createActions([
   "addActivityHandler",
   "fatchCityHandler",
   "fatchAreaHandler",
-  "fatchActTypesHandler"
+  "fatchActTypesHandler",
+  "fatchPublishActivities",
+  "fatchUnpublishActivities",
+  "offLineActivity",
+  "fatchRefundList",
+  "fatchApplicants"
 ]);
 
 export default ActivityAction;
