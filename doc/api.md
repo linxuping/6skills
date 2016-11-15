@@ -57,7 +57,7 @@
 
 ### 0.004 评论列表
 **GET**
-**URL** /sign/comment/list?actid=2
+**URL** /sign/comment/list?actid=2&openid=abc openid不填则显示全部评论
 
 **返回**
 ```json
