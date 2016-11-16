@@ -24,6 +24,18 @@ var Signupinfo = React.createClass({
     if (this.props.signid) {
       this.getSignMsg();
     }
+
+    injectScript("/static/js/modules/sign_new.js");
+    injectScript('/static/js/jquery.validate.min.js');
+    injectScript('/static/js/jquery.form.min.js');
+
+  },
+
+  verifyHandler: function(){
+    ReactDOM.render(
+      <Sign activity={this.state.signinfo} actid={this.state.signinfo.actid} isVerify={true} updateSignInfo={this.getSignMsg}></Sign>,
+      document.getElementById('sign-page-wrap')
+    )
   },
 
   getSignMsg: function(){
@@ -216,6 +228,15 @@ var Signupinfo = React.createClass({
             }
 
           </div>
+
+          <div className="weui_btn_area">
+            <button type="button" style={{height: 100}}
+                    onClick={this.verifyHandler}
+                    className="weui_btn weui_btn_primary mb15 mt10">
+              修改
+            </button>
+          </div>
+          <div id="sign-page-wrap"></div>
         </div>
       )
     } else {

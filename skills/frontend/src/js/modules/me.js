@@ -42,7 +42,7 @@ var Me = React.createClass({
 	},
 
 	back: function(){
-		ReactDOM.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
+		ReactDOM.unmountComponentAtNode(document.getElementById('activities-list-wrap'));
 		document.title = "我的课程";
 		var href = window.location.href.split("#")[0];
 		history.replaceState("myActivities", null, href);
@@ -54,7 +54,7 @@ var Me = React.createClass({
 		document.title = "联系我们";
 		ReactDOM.render(
 			<Feedback back={this.back} />,
-			document.getElementById("sign-page-wrap")
+			document.getElementById("activities-list-wrap")
 		);
 	},
 
@@ -64,7 +64,7 @@ var Me = React.createClass({
 		history.replaceState("myActivities", null, href + "#myactivities");
 		ReactDOM.render(
 			<MyActivities back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
-			document.getElementById("sign-page-wrap")
+			document.getElementById("activities-list-wrap")
 		);
 	},
 	gotoMyCollections: function () {
@@ -73,7 +73,7 @@ var Me = React.createClass({
 		history.replaceState("myActivities", null, href + "#collections");
 		ReactDOM.render(
 			<MyCollections back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
-			document.getElementById("sign-page-wrap")
+			document.getElementById("activities-list-wrap")
 		);
 	},
 
@@ -83,7 +83,7 @@ var Me = React.createClass({
 	  history.replaceState("myActivities", null, href + "#activities-to-pay");
 	  ReactDOM.render(
 	  	<ActivitiesToPay back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
-	  	document.getElementById("sign-page-wrap")
+	  	document.getElementById("activities-list-wrap")
 	  );
 	},
 
@@ -93,7 +93,7 @@ var Me = React.createClass({
 		history.replaceState("myActivities", null, href + "#activities-withdraw");
 		ReactDOM.render(
 			<ActivitiesWithdraw back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
-			document.getElementById("sign-page-wrap")
+			document.getElementById("activities-list-wrap")
 		);
 	},
 
@@ -142,7 +142,7 @@ var Me = React.createClass({
 						</div>
 					</div>
 				</div>
-				<div id="sign-page-wrap"></div>
+				<div id="activities-list-wrap"></div>
 			</div>
 		);
 	}

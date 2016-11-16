@@ -31,7 +31,7 @@ var SignConfirm = React.createClass({
     $(e.target).attr("disabled", true);
     $(this.props.form).ajaxSubmit({
      dataType: "json",
-     data: { "openid":geopenid(), "actid": this.props.actid },
+     data: { "openid":geopenid(), "actid": formConponent.props.actid },
      success: function(obj){
        //此处加入sdk关闭网页
        obj = typeof obj === "object" ? obj : JSON.parse(obj);
@@ -62,7 +62,15 @@ var SignConfirm = React.createClass({
                      try_jump_pubnum();
                    }
                  }
-                 formConponent.back();
+                 //修改的回到报名信息页
+                 if (formConponent.props.isVerify) {
+                  ReactDOM.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
+                  formConponent.props.updateSignInfo();
+                 } else {
+                   //否则回到详情
+                   formConponent.back();
+                 }
+
                }
              }),
              document.getElementById("alert-wrap")

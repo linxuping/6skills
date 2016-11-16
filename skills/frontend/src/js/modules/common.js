@@ -31,7 +31,7 @@ function codeLatLng(lat, lng) {
 		complete : function(result){
 			console.log(result.detail.addressComponents);
 		}
-	});	
+	});
 
 	//调用获取位置方法
 	geocoder.getAddress(latLng);
@@ -106,10 +106,10 @@ function make_share(sharetype,title,desc,link,imgurl,type,dataurl){
 			title: title, // 分享标题
 			link: link, // 分享链接
 			imgUrl: imgurl, // 分享图标
-			success: function () { 
+			success: function () {
 				;//alert("成功分享到朋友圈!");// 用户确认分享后执行的回调函数
 			},
-			cancel: function () { 
+			cancel: function () {
 				;//alert("取消分享到朋友圈!");// 用户取消分享后执行的回调函数
 			}
 		});
@@ -122,10 +122,10 @@ function make_share(sharetype,title,desc,link,imgurl,type,dataurl){
 			imgUrl: imgurl, // 分享图标
 			type: type, // 分享类型,music、video或link，不填默认为link
 			dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-			success: function () { 
+			success: function () {
 				;//alert("成功分享给朋友!");// 用户确认分享后执行的回调函数
 			},
-			cancel: function () { 
+			cancel: function () {
 				;//alert("取消分享给朋友!");// 用户取消分享后执行的回调函数
 			}
 		});
@@ -136,10 +136,10 @@ function make_share(sharetype,title,desc,link,imgurl,type,dataurl){
 			desc: desc, // 分享描述
 			link: link, // 分享链接
 			imgUrl: imgurl, // 分享图标
-			success: function () { 
+			success: function () {
 				;// 用户确认分享后执行的回调函数
 			},
-			cancel: function () { 
+			cancel: function () {
 				;// 用户取消分享后执行的回调函数
 			}
 		});
@@ -150,10 +150,10 @@ function make_share(sharetype,title,desc,link,imgurl,type,dataurl){
 			desc: desc, // 分享描述
 			link: link, // 分享链接
 			imgUrl: imgurl, // 分享图标
-			success: function () { 
+			success: function () {
 				;// 用户确认分享后执行的回调函数
 			},
-			cancel: function () { 
+			cancel: function () {
 				;// 用户取消分享后执行的回调函数
 			}
 		});
@@ -164,13 +164,25 @@ function make_share(sharetype,title,desc,link,imgurl,type,dataurl){
 			desc: desc, // 分享描述
 			link: link, // 分享链接
 			imgUrl: imgurl, // 分享图标
-			success: function () { 
+			success: function () {
 				;// 用户确认分享后执行的回调函数
 			},
-			cancel: function () { 
+			cancel: function () {
 				;// 用户取消分享后执行的回调函数
 			}
 		});
 	}
 }
 
+function injectScript(src) {
+	var scripts = $("script");
+	var i=0;
+	while (i<scripts.length) {
+		if (scripts[i++].src.indexOf(src) !== -1) {
+			return false;
+		}
+	}
+	var script = document.createElement("script");
+	script.src = src;
+	document.body.appendChild(script);
+}

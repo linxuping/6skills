@@ -19,30 +19,34 @@ var Sign = React.createClass({
 			document.title = this.props.backTitle;
 		}
 		ReactDOM.unmountComponentAtNode(document.getElementById('sign-page-wrap'));
-		if (activityDetail) {
-			activityDetail.getSignupStatus();
-		}
+		try {
+			if (activityDetail) {
+				activityDetail.getSignupStatus();
+			}
+		} catch (e) {}
+
 	},
 	componentDidMount: function(){
-
+		injectScript('/static/js/modules/sign_confirm.js');
 	},
 	render: function() {
 		return (
 			<div className="sign-page" style={{"overflowY": "auto"}}>
-				<SignForm actid={this.props.actid} back={this.back}
-					reload={this.props.reload} activity={this.props.activity}/>
+				<SignForm actid={this.props.actid} back={this.back} signinfo={this.props.activity}
+					reload={this.props.reload} activity={this.props.activity}
+					updateSignInfo={this.props.updateSignInfo} isVerify={this.props.isVerify}/>
 			</div>
 		);
 	}
 });
 
 function validateForm(actid, formConponent) {
-
 	var actid = getUrlParam("actid") || String(actid);
 	if (!isNum(actid)){
 		alert("actid must be number.");
 		return;
 	}
+	console.log(actid);
 	$("#sign-form").validate({
 		rules: {
 			"name": {required: true},
@@ -79,10 +83,10 @@ function validateForm(actid, formConponent) {
 			// 	alert("请先上传选手照片");
 			// 	return;
 			// }
-
+			console.log(actid);
 			ReactDOM.render(
 				<SignConfirm form={form} formConponent={formConponent}
-					actid={actid}></SignConfirm>
+					actid={actid} isVerify={formConponent.props.isVerify}></SignConfirm>
 				, document.getElementById('alert-wrap')
 			)
 		}
@@ -171,6 +175,7 @@ var SignForm = React.createClass({
 			);
 		})
 		var signtype = this.props.activity.sign_type;
+		var signinfo = this.props.signinfo || {};
 		return (
 			<div className="SignForm">
 				<form action={sign_url} method="post" id="sign-form">
@@ -183,7 +188,7 @@ var SignForm = React.createClass({
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="text" name="name" id="name" className="weui_input"
-									placeholder="请输入家长真实姓名" defaultValue={profile.username}/>
+									placeholder="请输入家长真实姓名" defaultValue={signinfo.username_pa || profile.username}/>
 							</div>
 						</div>
 						<div className="weui_cell">
@@ -192,7 +197,7 @@ var SignForm = React.createClass({
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
 								<input type="number" name="phone" id="phone" className="weui_input"
-									placeholder="请输入手机号码" defaultValue={profile.phone}/>
+									placeholder="请输入手机号码" defaultValue={signinfo.phone||profile.phone}/>
 							</div>
 						</div>
 
@@ -205,7 +210,7 @@ var SignForm = React.createClass({
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
 										<input type="text" name="city" id="city" className="weui_input"
-											placeholder="请输入所在城市" defaultValue={profile.city}/>
+											placeholder="请输入所在城市" defaultValue={signinfo.city||profile.city}/>
 									</div>
 								</div>
 
@@ -215,7 +220,7 @@ var SignForm = React.createClass({
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
 										<input type="text" name="kids_name" id="kids_name" className="weui_input"
-											placeholder="请输入选手姓名" defaultValue={profile.kids_name}/>
+											placeholder="请输入选手姓名" defaultValue={signinfo.kids_name||profile.kids_name}/>
 									</div>
 								</div>
 
@@ -225,7 +230,7 @@ var SignForm = React.createClass({
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
 										<input type="date" name="birthdate" id="birthdate" className="weui_input"
-											placeholder="请输入儿童出生日期" defaultValue={profile.birthdate}/>
+											placeholder="请输入儿童出生日期" defaultValue={signinfo.birthdate||profile.birthdate}/>
 									</div>
 								</div>
 							</div>
@@ -240,7 +245,7 @@ var SignForm = React.createClass({
 								</div>
 								<div className="weui_cell_bd weui_cell_primary">
 									<input type="text" name="kids_name" id="kids_name" className="weui_input"
-										placeholder="请输入选手姓名" defaultValue={profile.kids_name}/>
+										placeholder="请输入选手姓名" defaultValue={signinfo.kids_name||profile.kids_name}/>
 								</div>
 							</div> : ""
 						}
@@ -250,7 +255,7 @@ var SignForm = React.createClass({
 								<label htmlFor="age" className="weui_label">选手年龄</label>
 							</div>
 							<div className="weui_cell_bd weui_cell_primary">
-								<select name="age" id="age" className="weui_select" defautVlaue="1">
+								<select name="age" id="age" className="weui_select" defaultValue={signinfo.age||"3"}>
 									{ages}
 								</select>
 							</div>
@@ -264,8 +269,15 @@ var SignForm = React.createClass({
 									<p>男</p>
 							</div>
 							<div className="weui_cell_ft">
-								<input type="radio" className="weui_check" name="gender"
-									value="male" defaultChecked="checked"/>
+								{
+									signinfo.gender == "male" || signinfo.gender == undefined?
+									<input type="radio" className="weui_check" name="gender"
+										value="male" defaultChecked="checked"/>
+									:
+									<input type="radio" className="weui_check" name="gender"
+										value="male"/>
+								}
+
 								<span className="weui_icon_checked"></span>
 							</div>
 						</label>
@@ -274,8 +286,14 @@ var SignForm = React.createClass({
 								<p>女</p>
 							</div>
 							<div className="weui_cell_ft">
-								<input type="radio" className="weui_check" name="gender"
-									value="female"/>
+								{
+									signinfo.gender == "female" ?
+									<input type="radio" className="weui_check" name="gender"
+										value="female" defaultChecked="checked"/>
+									:
+									<input type="radio" className="weui_check" name="gender"
+										value="female"/>
+								}
 								<span className="weui_icon_checked"></span>
 							</div>
 						</label>
@@ -295,7 +313,7 @@ var SignForm = React.createClass({
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
 										<input type="text" name="program" id="program" className="weui_input"
-											placeholder="请输入节目名称" defaultValue={profile.program}/>
+											placeholder="请输入节目名称" defaultValue={signinfo.program||profile.program}/>
 									</div>
 								</div>
 
@@ -305,7 +323,7 @@ var SignForm = React.createClass({
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
 										<input type="text" name="company" id="company" className="weui_input"
-											placeholder="请输入选送单位" defaultValue={profile.company}/>
+											placeholder="请输入选送单位" defaultValue={signinfo.company||profile.company}/>
 									</div>
 								</div>
 
@@ -315,7 +333,7 @@ var SignForm = React.createClass({
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
 										<input type="text" name="company_tel" id="company_tel" className="weui_input"
-											placeholder="请输入单位电话" defaultValue={profile.company_tel}/>
+											placeholder="请输入单位电话" defaultValue={signinfo.company_tel||profile.company_tel}/>
 									</div>
 								</div>
 
@@ -325,7 +343,7 @@ var SignForm = React.createClass({
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
 										<input type="text" name="teacher" id="teacher" className="weui_input"
-											placeholder="请输入指导老师姓名" defaultValue={profile.teach}/>
+											placeholder="请输入指导老师姓名" defaultValue={signinfo.teacher||profile.teach}/>
 									</div>
 								</div>
 
@@ -335,7 +353,7 @@ var SignForm = React.createClass({
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
 										<input type="text" name="teacher_phone" id="teacher_phone" className="weui_input"
-											placeholder="请输入老师电话" defaultValue={profile.teacher_phone}/>
+											placeholder="请输入老师电话" defaultValue={signinfo.teacher_phone||profile.teacher_phone}/>
 									</div>
 								</div>
 
@@ -344,7 +362,7 @@ var SignForm = React.createClass({
 										<label htmlFor="match_class" className="weui_label">参赛组别</label>
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
-										<select name="match_class" id="match_class" className="weui_select" defautVlaue="1">
+										<select name="match_class" id="match_class" className="weui_select" defaultValue={signinfo.match_class||profile.match_class}>
 											{matchClasses}
 										</select>
 									</div>
@@ -354,7 +372,8 @@ var SignForm = React.createClass({
 										<label htmlFor="major" className="weui_label">参赛专业</label>
 									</div>
 									<div className="weui_cell_bd weui_cell_primary">
-										<select name="major" id="major" className="weui_select" ref="major">
+										<select name="major" id="major" className="weui_select" ref="major"
+											defaultValue={signinfo.major}>
 											{majors}
 										</select>
 									</div>
@@ -366,7 +385,7 @@ var SignForm = React.createClass({
 								<div className="weui_cell">
 									<div className="weui_cell_bd" style={{width: "100%"}}>
 										<textarea name="awards" id="awards" rows="3" className="weui_textarea"
-											placeholder="获奖经历"></textarea>
+											placeholder="获奖经历" defaultValue={signinfo.awards}></textarea>
 									</div>
 								</div>
 							</div>
