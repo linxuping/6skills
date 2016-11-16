@@ -5,7 +5,7 @@ import Reflux from "Reflux";
 import { Link } from "react-router";
 import Carousel from './carousel.jsx';
 import Navigation from './navigation.jsx';
-
+import Activities from '../activities/list.jsx';
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -15,10 +15,9 @@ export default class Home extends React.Component {
   render() {
     return (
       <div className="Index">
-				<Carousel></Carousel>
-				<Navigation></Navigation>
-				{/*<Activities activities={this.state.activities}
-					app={this} scrollArea=".Index"></Activities>*/}
+				<Carousel />
+				<Navigation />
+				<Activities scrollArea=".Index" />
 			</div>
     );
   }

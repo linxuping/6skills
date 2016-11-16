@@ -21,8 +21,10 @@ export default class BaseService {
       //post metod
       options.body = JSON.stringify(params)
     } else if(method=="get" && params != null) {
-      //get method
-
+      //get method params
+      Object.keys(params).map(key=>{
+        url+=`&${key}=${params[key]}`;
+      })
     }
 
     fetch(url, options)

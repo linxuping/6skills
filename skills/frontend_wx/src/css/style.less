@@ -48,6 +48,9 @@ body{
   -webkit-flex: 1;
           flex: 1;
 }
+.ss-media-hd, .ss-media-bd{
+	color: @fontColor;
+}
 .app{
 	position: absolute;
 	left: 0;
@@ -172,10 +175,14 @@ body{
 		align-items: flex-start;
 		border-bottom: 1px solid #e4e8d1;
 		.weui_media_hd{
-			width: 236px;
-			height: 150px;
-			margin-right: 23px;
+			width: 236px !important;
+			height: 150px !important;
+			margin-right: 23px !important;
 			position: relative;
+			img{
+				width: 100%;
+				height: 100%;
+			}
 			.money{
 				position: absolute;
 				bottom: 0;
@@ -215,6 +222,7 @@ body{
 	padding: 20px 10px 10px;
 	font-size: 20px;
 	line-height: 30px;
+	color: @fontColor;
 	.tt{
 		margin-bottom: 10px;
 		.pp{

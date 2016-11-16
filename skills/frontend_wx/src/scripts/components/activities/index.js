@@ -20,7 +20,7 @@ module.exports = {
   indexRoute: {
     getComponent(nextState, cb){
       require.ensure([], (require)=>{
-        cb(null, require('./list.jsx').default)
+        cb(null, require('./list.spec.jsx').default)
       }, "list")
     }
   },

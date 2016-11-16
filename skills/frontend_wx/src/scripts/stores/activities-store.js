@@ -7,28 +7,54 @@ let store = Reflux.createStore({
   listenables: [actions],
 
   onFetchHotActivities(that){
-    service.fetchHotActivities((data)=>{
-      that.setState({
-        activities: data.activities
-      })
-    })
-  },
-
-  onFetchTypes(that){
-    if (sessionStorage.getItem("acitivtiesTypes") == undefined) {
-      service.fetchTypes((data)=>{
+    if (sessionStorage.getItem("_home_hotactivities") == undefined) {
+      service.fetchHotActivities((data)=>{
         that.setState({
-          btns: data.values
+          activities: data.activities
         })
-        sessionStorage.setItem("acitivtiesTypes", JSON.stringify(data.values));
+        sessionStorage.setItem("_home_hotactivities", JSON.stringify(data.activities));
       })
     } else {
-      let btns = JSON.parse(sessionStorage.getItem("acitivtiesTypes"));
+      let activities = JSON.parse(sessionStorage.getItem("_home_hotactivities"));
       that.setState({
-        btns: btns
+        activities: activities
       })
     }
 
+  },
+
+  onFetchFilter(that, url){
+    if (sessionStorage.getItem(url) == undefined) {
+      service.fetchFilter(url, (data)=>{
+        that.setState({
+          values: data.values
+        })
+        sessionStorage.setItem(url, JSON.stringify(data.values));
+      })
+    } else {
+      let values = JSON.parse(sessionStorage.getItem(url));
+      that.setState({
+        values: values
+      })
+    }
+  },
+
+  onFetchActivities(that, params, cb){
+    service.fetchActivities(params, data=>{
+      if (data.pageable.page == 1) {
+        that.setState({
+          activities: data.activities,
+          pageable: data.pageable
+        })
+      } else {
+        that.setState({
+          activities: that.state.activities.concat(data.activities),
+          pageable: data.pageable
+        })
+      }
+
+      cb && cb();
+    })
   }
 
 });

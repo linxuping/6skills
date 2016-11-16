@@ -2,11 +2,11 @@ import React from "react"
 import { render } from "react-dom"
 import { Router, Route, hashHistory } from "react-router"
 import mobileUtils from './common/fixscreen'
+import 'weui';
 
 mobileUtils.fixScreen(window, document)
 
 require('css/style.less');
-
 
 
 

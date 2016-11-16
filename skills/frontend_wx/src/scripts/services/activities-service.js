@@ -9,8 +9,12 @@ class ActivitieService extends Service {
     this.fetch("/activities/hot/list", null, cb);
   }
 
-  fetchTypes(cb){
-    this.fetch('/wx/acttypes/list',null,cb);
+  fetchFilter(url, cb){
+    this.fetch(url || '/wx/acttypes/list',null,cb);
+  }
+
+  fetchActivities(params, cb){
+    this.fetch('/activities/special-offers', params, cb);
   }
 }
 

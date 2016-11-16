@@ -15,21 +15,21 @@ export default class Navication extends React.Component {
   }
 
   state = {
-    btns: []
+    values: []
   }
 
   componentDidMount() {
-    actions.fetchTypes(this)
+    actions.fetchFilter(this, "/wx/acttypes/list")
   }
 
   render() {
-    let btns = this.state.btns;
+    let values = this.state.values;
     return (
       <Panel className="mt0">
         <PanelBody>
           <div className="ss-flex">
             {
-              btns && btns.map((elem, index) => {
+              values && values.map((elem, index) => {
               	return (
                   <div className="ss-flex-item nav-item" key={index}>
                     <Link to={"/activities?acttype=" + encodeURIComponent(elem)}>
