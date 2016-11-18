@@ -79,7 +79,7 @@
 
 ### 0.005 评论详情
 **GET**
-**URL** /sign/comment/list?commentid=2&openid=abc
+**URL** /sign/comment/get?commentid=2&openid=abc
 
 **返回**
 ```json
