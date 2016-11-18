@@ -6,6 +6,7 @@
 @bg: #f1f1f1;
 
 @import "dropload.css";
+@import "font/iconfont.css";
 
 *{
 	box-sizing: border-box;
@@ -534,6 +535,38 @@ body{
 			width: @height;
 			height: @height;
 			vertical-align: middle;
+		}
+	}
+}
+/**
+ * 评论
+ */
+.comment-page{
+	font-size: 20px;
+	.bd{
+		padding: 20px;
+		.txt{
+			padding-left: 30px;
+		}
+	}
+	.title{
+		font-size: 26px;
+	}
+	.icon-list{
+		width: 500px;
+		margin: auto;
+		margin-top: 20px;
+		margin-bottom: 50px;
+		display: -webkit-box;
+  	display: -webkit-flex;
+  	display: flex;
+		text-align: center;
+		.icon{
+			color: @themeColor;
+			font-size: 50px;
+			-webkit-box-flex: 1;
+	  -webkit-flex: 1;
+	          flex: 1;
 		}
 	}
 }

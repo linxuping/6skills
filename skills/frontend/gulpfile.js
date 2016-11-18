@@ -73,6 +73,11 @@ gulp.task('styles', function(){
 	.pipe(notify({message: 'styles task complete'}))
 });
 
+gulp.task('font', function(){
+	return gulp.src([src.css + '/font/**'])
+	.pipe(gulp.dest(dist.css + "/font"))
+})
+
 
 // gulp.task('styles2', function(){
 // 	return gulp.src([src.css2 + '/*.css'])
@@ -255,7 +260,7 @@ gulp.task("build", ['clean'], function(){
 	gulp.start(['lib_scripts', 'lib_other_files', "qiniu"])
 
 	// 用户数据
-	gulp.start(['styles', 'scripts', 'react', 'images']);
+	gulp.start(['styles', 'scripts', 'react', 'images', "font"]);
 
 	// jsp模板
 	gulp.start('templates');
@@ -269,7 +274,7 @@ gulp.task("build-dev", ['clean'], function(){
 	gulp.start(['lib_scripts', 'lib_other_files', 'qiniu'])
 
 	// 用户数据
-	gulp.start(['styles', 'scripts', 'react', 'images']);
+	gulp.start(['styles', 'scripts', 'react', 'images', 'font']);
 
 	// jsp模板
 	gulp.start('templates');

@@ -48,10 +48,7 @@ function try_jump_pubnum(){
 	return false;
 }
 function geopenid(){
-	//return de("31e6adc301ded919","aXi7$kj0l3@X");
-  // if (true) {
-  //   return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw";
-  // }
+	
 	if (sessionStorage.getItem("6soid") == null){
 		load_6soid();
 		if (arguments[0] == null)

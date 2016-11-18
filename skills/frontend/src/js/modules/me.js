@@ -37,6 +37,8 @@ var Me = React.createClass({
         this.gotoNotPayActivities();
       } else if ("activities-withdraw".indexOf(hash) !== -1) {
 				this.gotoWithdrawActivities();
+			} else if ("activities-comment".indexOf(hash) !== -1) {
+				this.gotoComments();
 			}
 		}
 	},
@@ -97,6 +99,16 @@ var Me = React.createClass({
 		);
 	},
 
+	gotoComments: function(){
+		document.title = "我的评论";
+		var href = window.location.href.split("#")[0];
+		history.replaceState("myActivities", null, href + "#activities-comment");
+		ReactDOM.render(
+			<Comments back={this.back} gotoActivityDetail={this.gotoActivityDetail}/>,
+			document.getElementById("activities-list-wrap")
+		);
+	},
+
 	render: function() {
 		return (
 			<div className="me">
@@ -135,6 +147,14 @@ var Me = React.createClass({
 								 onClick={this.gotoWithdrawActivities}>
 								<div className="weui_cell_bd weui_cell_primary">
 									<p>申请退款</p>
+								</div>
+								<div className="weui_cell_ft"></div>
+							</a>
+
+							<a href="javascript:void(0);" className="weui_cell"
+								 onClick={this.gotoComments}>
+								<div className="weui_cell_bd weui_cell_primary">
+									<p>我的评论</p>
 								</div>
 								<div className="weui_cell_ft"></div>
 							</a>
@@ -531,8 +551,6 @@ var ActivitiesWithdraw = React.createClass({
 	 	this.pullFromServer();
 	},
 
-  //FIX ME
-  //url is not right
 	pullFromServer:function(){
 		$.ajax({
 			url: ges('activities/pay/list'),
@@ -688,6 +706,226 @@ var WithdrawPage = React.createClass({
 		);
 	}
 });
+
+const Comments = React.createClass({
+
+	addComment: function(ev){
+	  ev.stopPropagation();
+		var actid = ev.target.dataset.actid;
+		var commentid = ev.target.dataset.commentid;
+		if (commentid) {
+			$.ajax({
+				url: '/sign/comment/get',
+				type: 'get',
+				dataType: 'json',
+				data: {commentid: this.props.commentid, openid: geopenid()}
+			})
+			.done(function(res) {
+				console.log("success");
+				if (res.errcode == 0) {
+					ReactDOM.render(
+						<CommentPage actid={actid} commentid={commentid} updateActivities={this.updateActivities} commentObj={res}></CommentPage>
+						, document.getElementById('confirm-dialog-wrap')
+					)
+				} else {
+					alert("获取评论信息失败，请稍后重试")
+				}
+			}.bind(this))
+			.fail(function(xmlHttpReq) {
+				console.log("error");
+				alert("获取评论信息失败，请稍后重试")
+			}.bind(this))
+			.always(function() {
+				console.log("complete");
+			})
+
+		} else {
+			ReactDOM.render(
+				<CommentPage actid={actid} commentid={commentid} updateActivities={this.updateActivities}></CommentPage>
+				, document.getElementById('confirm-dialog-wrap')
+			)
+		}
+
+	},
+
+	getInitialState: function() {
+		return {
+			activities: []
+		};
+	},
+
+	componentDidMount: function() {
+		this.updateActivities();
+	},
+
+	updateActivities: function(){
+		$.ajax({
+			url: '/activities/my',
+			type: 'get',
+			dataType: 'json',
+			data: {openid: geopenid(),page:1,pagesize:100}
+		})
+		.done(function(res) {
+			console.log("success");
+			if (res.errcode == 0) {
+				this.setState({
+					activities: res.activities
+				});
+			} else {
+				alert("获取报名信息失败:" + res.errmsg)
+			}
+		}.bind(this))
+		.fail(function(xmlHR) {
+			console.log("error");
+			alert("服务出错，请稍后重试！")
+		})
+		.always(function() {
+			console.log("complete");
+		});
+	},
+
+	render: function () {
+		var activities = this.state.activities;
+		return (
+			<div className="myActivities sign-page" style={{"overflow": "auto"}}>
+				<div className="back-btn" onClick={this.props.back}>返回</div>
+				<div className="cell">
+					<ul className="my-activities">
+						{
+							activities.map(function(elem, index) {
+								if (new Date(elem.time_act).getTime() <= new Date().getTime()) {
+									return (
+										<li onClick={this.props.gotoActivityDetail.bind(this, elem)}
+											style={{"cursor": "pointer"}} data-actid={elem.actid} key={index}>
+											<header className="ss-hd">{elem.title}</header>
+											<p className="time clearfix">
+												<span>课程时间</span><time>{elem.time_act}</time>
+											</p>
+											<button type="button" onClick={this.addComment}
+															data-uid={index} data-actid={elem.actid}
+															data-commentid={elem.commentid}
+															className="weui_btn weui_btn_mini weui_btn_default">
+												{(elem.commentid==undefined) ? "评论": "修改评论"}
+											</button>
+										</li>
+									);
+								} else {
+									return ""
+								}
+							}.bind(this))
+						}
+					</ul>
+					<div id="confirm-dialog-wrap"></div>
+				</div>
+			</div>
+		)
+	}
+})
+
+
+const CommentPage = React.createClass({
+
+	getInitialState: function() {
+		return {
+			point: this.props.commentObj&&this.props.commentObj.score || 1
+		};
+	},
+
+	back: function(){
+    ReactDOM.unmountComponentAtNode(document.getElementById('confirm-dialog-wrap'));
+  },
+
+	pointHandler: function(item){
+		this.setState({
+			point: item
+		});
+	},
+
+	submitHandler: function(){
+		var comment = this.refs.comment.value;
+		var data = {
+			actid: this.props.actid,
+			openid: geopenid(),
+			score: this.state.point,
+			comment: comment
+		};
+		if (this.props.commentid) {
+			data.commentid = this.props.commentid;
+		}
+		$.ajax({
+			url: '/sign/comment',
+			type: 'post',
+			dataType: 'json',
+			data: data
+		})
+		.done(function(res) {
+			console.log("success");
+			if (res.errcode == 0) {
+				alert("您的评论已成功提交");
+				this.props.updateActivities();
+				this.back()
+			} else {
+				alert(res.errmsg)
+			}
+		}.bind(this))
+		.fail(function() {
+			console.log("error");
+			alert("服务出错，请稍后重试！")
+		})
+		.always(function() {
+			console.log("complete");
+		});
+
+	},
+
+	render:function () {
+		var starlist = [];
+		for (var i = 1; i < 6; i++) {
+			starlist.push(i);
+		}
+		return (
+			<div className="comment-page sign-page">
+        <div className="back-btn" onClick={this.back}>返回</div>
+				<form action="#" method="post" id="comment-form">
+					<div className="point-box">
+						<div className="weui_cells" style={{marginTop: 0}}>
+							<div className="bd">
+								<h4 className="title fl">评分</h4>
+								<div className="txt fl">{this.state.point}星</div>
+								<div className="clearfix"></div>
+								<div className="icon-list">
+									{
+										starlist.map(function(item){
+											return <i className={item <= this.state.point ? "icon icon-heart-fill" : "icon icon-heart"} key={item}
+												onClick={this.pointHandler.bind(this, item)}></i>
+										}.bind(this))
+									}
+								</div>
+								<h4 className="title">评论</h4>
+							</div>
+							<div className="weui_cell">
+								<div className="weui_cell_bd" style={{width: "100%"}}>
+									<textarea name="comment" id="comment" rows="3"
+										className="weui_textarea" ref="comment"
+										placeholder="评论" defaultValue={this.props.commentObj&&this.props.commentObj.comment}></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div className="weui_btn_area mb20"
+						style={{position: "absolute", width: "100%", padding: 10, margin: 0, bottom: 0}}>
+						<button type="button" className="weui_btn weui_btn_primary"
+							style={{height: 100}} onClick={this.submitHandler}>
+							提交
+						</button>
+					</div>
+				</form>
+			</div>
+		)
+	}
+})
+
 
 
 var ConfirmDialog = React.createClass({

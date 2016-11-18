@@ -21,6 +21,8 @@ var proxyOptions5 = url.parse('http://www.6skills.com/get-auth-code');
 proxyOptions5.route = '/get-auth-code';
 var proxyOptions6 = url.parse('http://www.6skills.com/signupinfo');
 proxyOptions6.route = '/signupinfo';
+var proxyOptions7 = url.parse('http://www.6skills.com/sign');
+proxyOptions7.route = '/sign';
 
 module.exports = {
   browsersync: {
@@ -33,7 +35,8 @@ module.exports = {
           proxy(proxyOptions3),
           proxy(proxyOptions4),
           proxy(proxyOptions5),
-          proxy(proxyOptions6)
+          proxy(proxyOptions6),
+          proxy(proxyOptions7)
         ]
       },
       port: 9901,
