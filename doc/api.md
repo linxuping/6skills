@@ -65,6 +65,7 @@
 	"activities": [
 		{
 			"actid": 1,
+			"commentid":2,
 			"title": "title",
 			"score": 3,
 			"comment": "cmt",
@@ -76,7 +77,26 @@
 }
 ```
 
+### 0.005 评论详情
+**GET**
+**URL** /sign/comment/list?commentid=2&openid=abc
 
+**返回**
+```json
+{
+	"actid": 1,
+	"title": "title",
+	"score": 3,
+	"comment": "cmt",
+	"time": "2016-01-01",
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 0.006. 评论修改
+**POST**
+** URL ** /sign/comment 重用该接口，增加上传参数commentid
 
 
 =====================================================================
@@ -381,7 +401,8 @@
 			"title": "标题",
 			"activity_timestamp": 1468079745610,
 			"sign_timetamp": 1468079745610,
-			"area": "活动地点"
+			"area": "活动地点",
+			"commentid":2
 		},
 		...
 	],
