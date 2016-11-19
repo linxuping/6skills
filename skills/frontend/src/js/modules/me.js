@@ -718,7 +718,7 @@ const Comments = React.createClass({
 				url: '/sign/comment/get',
 				type: 'get',
 				dataType: 'json',
-				data: {commentid: this.props.commentid, openid: geopenid()}
+				data: {commentid: commentid, openid: geopenid()}
 			})
 			.done(function(res) {
 				console.log("success");

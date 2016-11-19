@@ -288,6 +288,7 @@ var ActivityDetail = React.createClass({
 								this.state.status && this.state.qrcode ?
 									<QrCode qrcode={this.state.qrcode}/> : ""
 							}
+							<Comments actid={this.props.actid}></Comments>
 					</article>
 					<div className="sign-btn" style={{"cursor": "pointer"}}
 						onClick={this.openCollectPage}>
