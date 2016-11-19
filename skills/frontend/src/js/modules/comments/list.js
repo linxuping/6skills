@@ -37,7 +37,7 @@ var Comments = React.createClass({
 
   },
 
-  render () {
+  render:function () {
     var comments = this.state.comments;
     return (
       <div className="comments">

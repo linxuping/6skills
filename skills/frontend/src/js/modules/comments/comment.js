@@ -4,7 +4,7 @@ var Comment = React.createClass({
     ReactDOM.unmountComponentAtNode(document.getElementById('comment-page-wrap'))
   },
 
-  render () {
+  render:function () {
     var comment = this.props.comment;
     return (
       <div className="comments sign-page">
