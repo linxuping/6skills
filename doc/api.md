@@ -64,6 +64,8 @@
 {
 	"activities": [
 		{
+			"headportrait"：“http://a.jpg”，
+			"username":"lxp",	
 			"actid": 1,
 			"commentid":2,
 			"title": "title",
