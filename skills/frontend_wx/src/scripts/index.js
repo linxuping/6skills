@@ -22,7 +22,8 @@ const rootRoute = {
       }
     },
     childRoutes: [
-      require('./components/activities')
+      require('./components/activities'),
+      require('./components/profile')
     ]
   }]
 }

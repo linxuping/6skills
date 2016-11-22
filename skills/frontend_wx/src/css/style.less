@@ -285,12 +285,8 @@ body{
 .activity-detail{
 	@btnHeight: 110px;
 	margin-top: @backHeaderHeight;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	width: 100%;
 	margin-bottom: @btnHeight;
-	overflow: auto;
+	width: 100%;
 	.weui_panel{
 		margin: 0 -10px;
 		padding: 0 10px;
@@ -348,12 +344,11 @@ body{
 	height: @backHeaderHeight;
 	line-height: @backHeaderHeight;
 	padding-left: 3rem;
-	cursor: pointer;
 	position: fixed;
-	top: 0;
+	top: 0px;
 	left: 0;
-	background-color: #FFF;
-	z-index: 999;
+	background-color: rgba(250, 250, 250, .95);
+	z-index: 1001;
 	width: 100%;
 	&:before{
 		position: absolute;
@@ -438,7 +433,7 @@ body{
 
 }
 .me{
-	margin-top: 3rem;
+	margin-top: 120px;
 	font-size: 2rem;
 	@imgSize: 120px;
 	img{
@@ -453,7 +448,9 @@ body{
 	}
 }
 .my-activities{
-	font-size: 1.5rem;
+	margin-top: @backHeaderHeight;
+	font-size: 22px;
+	margin-bottom: 10px;
 	li{
 		padding: 1rem;
 		border-bottom: 1px solid #ccc;
@@ -466,10 +463,20 @@ body{
 			&.f-bt{
 				right: 110px;
 			}
+			a{
+				color: @themeColor;
+				display: block;
+			}
+		}
+		a{
+			color: @fontColor;
 		}
 	}
 	.ss-hd{
-		font-size: 1.8rem;
+		font-size: 26px;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
 	}
 	.time{
 		span{
@@ -483,15 +490,6 @@ body{
 		}
 	}
 
-}
-.myActivities{
-	.back-btn{
-		position: fixed;
-		background-color: #fff;
-		top: 0px;
-		left: 0px;
-		width: 100%;
-	}
 }
 
 .QrCode{
@@ -565,17 +563,47 @@ body{
 .weui_actionsheet_cell:active{
 	background-color: #FFF;
 }
-.weui_dialog_title{
-	font-size: 28px;
+.weui_dialog{
+	.weui_dialog_hd{
+		padding: 20px 20px 15px !important;
+		border-bottom: 2px solid @themeColor;
+		color: @themeColor;
+		.weui_dialog_title{
+			font-size: 26px;
+		}
+	}
+	.weui_dialog_bd{
+		padding-top: 10px;
+		padding-bottom: 20px;
+		font-size: 24px;
+		text-align: left;
+		color: @fontColor;
+	}
+	.weui_dialog_ft{
+		font-size: 22px;
+		line-height: 60px;
+		margin-top: 25px;
+		.weui_btn_dialog{
+			color: #585858;
+		}
+	}
 }
-.weui_dialog_bd{
-	font-size: 24px;
+.weui_toast{
+	width: 140px;
+	min-height: 140px;
+	top: 360px;
+	left: 50%;
+	margin-left: -70px;
+	.weui_loading_leaf{
+		&::before{
+			width: 13px;
+		}
+	}
+	.weui_toast_content{
+		font-size: 20px;
+	}
 }
-.weui_dialog_ft{
-	font-size: 28px;
-	line-height: 65px;
-	margin-top: 25px;
-}
+
 //carousel
 @carousel-indicator-border-color: #fff;
 @carousel-indicator-active-bg: @themeColor;
@@ -684,9 +712,17 @@ body{
 	}
 }
 .weui_btn{
+	&.weui_btn_mini{
+		font-size:18px;
+	}
+}
+.weui_btn_plain_default{
+	color: @themeColor;
+	border-color: @themeColor;
+}
+.weui_btn_default{
 	font-size: 26px;
 	&.weui_btn_mini{
-		font-size: 20px;
 		padding: 3px 15px;
 		background-color: @themeColor;
 		color: #FFF;

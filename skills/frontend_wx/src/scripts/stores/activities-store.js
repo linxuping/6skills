@@ -1,6 +1,7 @@
 import Reflux from "Reflux";
 import actions from '../actions/activities-actions';
 import service from '../services/activities-service';
+import {confirm, alert} from '../common/dialog.jsx'
 
 let store = Reflux.createStore({
 
@@ -52,8 +53,66 @@ let store = Reflux.createStore({
           pageable: data.pageable
         })
       }
-
       cb && cb();
+    })
+  },
+
+  /**
+   * 获取活动具体信息
+   */
+  onFetchActivityDetails(that, params){
+    service.fetchActivityDetails(params, (res)=>{
+      that.setState({
+        activity: res,
+        loaded: true,
+        signtype: res.sign_type || 1,
+        imgs: res.imgs,
+      })
+      this.fetchJsSignature(that);
+    })
+  },
+
+  /**
+   * js sdk 签名
+   */
+  // TODO:
+  fetchJsSignature(that){
+    service.fetchJsSignature({url: location.href}, (res)=>{
+      console.log(res);
+    }, (err)=>{
+      console.log(err);
+    });
+  },
+
+  /**
+   * 报名状态及收藏状态等等
+   */
+  onFetchSignupStatus(that, params){
+    service.fetchSignupStatus(params, (res)=>{
+      that.setState({
+        status: res.status,
+				expire: res.errmsg=="过期",
+				price: res.price,
+				major: res.major,
+				coll_status: res.coll_status,
+				qrcode: res.qrcode,
+      })
+    })
+  },
+
+  /**
+   * 收藏
+   */
+  onCollectPost(that, params, target){
+    service.collectPost(params, (res)=>{
+      target.innerHTML = "已收藏";
+      that.setState({coll_status: 1});
+      //收藏成功后把缓存的数据清理掉
+      sessionStorage.removeItem("_profile__collections_");
+    }, (err)=>{
+      alert({
+        content: "收藏失败:" + err.errmsg
+      })
     })
   }
 

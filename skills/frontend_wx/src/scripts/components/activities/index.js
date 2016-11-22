@@ -3,7 +3,7 @@
  * @type
  */
 const detailRoute = {
-  path: ':aid',
+  path: ':actid',
   getComponents(nextState, cb){
     require.ensure([], (require) => {
       cb(null, require('./detail.jsx').default)
