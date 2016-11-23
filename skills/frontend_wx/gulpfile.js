@@ -36,6 +36,12 @@ gulp.task('default', function(callback){
           secure: false,
           changeOrigin: true
         },
+        '/get': {
+          target: "http://6skills.com",
+          //target: "http://wljbi.chinacloudapp.cn",
+          secure: false,
+          changeOrigin: true
+        },
         '*.htm[l]?': {
           target: "http://localhost:3000",
           rewrite: function(req) {

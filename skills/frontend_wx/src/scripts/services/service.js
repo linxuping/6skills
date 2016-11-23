@@ -1,9 +1,11 @@
 import "whatwg-fetch"
+import utils from '../common/utils';
+import { alert } from '../common/dialog.jsx';
 
 export default class BaseService {
 
   constructor(){
-    this.openid = "";
+    this.openid = utils.getopenid();
   }
 
   fetch(url, params, scb, fcb, method="get"){
@@ -19,7 +21,11 @@ export default class BaseService {
 
     if (method=="post" && params != null) {
       //post metod
-      options.body = JSON.stringify(params)
+      options.body = `openid=${this.openid}`;
+      Object.keys(params).map(key=>{
+        options.body += `&${key}=${params[key]}`;
+      })
+      options.headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     } else if(method=="get" && params != null) {
       //get method params
       Object.keys(params).map(key=>{
@@ -34,9 +40,16 @@ export default class BaseService {
       .then((data)=>{
         console.log(data);
         if (data.errcode == 0) {
-          scb(data)
+          scb && scb(data)
         } else {
-          fcb(xmlHttpRequest.text)
+          if (fcb) {
+            fcb(data)
+          } else {
+            alert({
+              content: data.errmsg,
+              title: "错误"
+            })
+          }
         }
       })
       .catch((err)=>{

@@ -16,6 +16,31 @@ class ActivitieService extends Service {
   fetchActivities(params, cb){
     this.fetch('/activities/special-offers', params, cb);
   }
+
+  fetchActivityDetails(params, cb) {
+    this.fetch('/activities/details', params, cb);
+  }
+
+  /**
+   * js sdk 签名
+   */
+  fetchJsSignature(params, scb, fcb){
+    this.fetch("/get_js_signature", params, scb, fcb);
+  }
+
+  /**
+   * 报名收藏等状态
+   */
+  fetchSignupStatus(params, scb){
+    this.fetch('/activities/get_signup_status', params, scb);
+  }
+
+  /**
+   * 收藏
+   */
+  collectPost(params, scb, fcb){
+    this.fetch("/activities/collect", params, scb, fcb, "post");
+  }
 }
 
 
