@@ -51,6 +51,21 @@ class ProfileService extends service {
     this.fetch("/wxauth", params, scb, fcb, "post");
   }
 
+  /**
+   * 获取我的评论详情
+   */
+  fetchComment(params, scb){
+    this.fetch('/sign/comment/get', params, scb);
+  }
+
+  /**
+   * 评论
+   */
+  postComment(params, scb){
+    this.fetch('/sign/comment', params, scb, null, "post");
+
+  }
+
 }
 
 export default new ProfileService();

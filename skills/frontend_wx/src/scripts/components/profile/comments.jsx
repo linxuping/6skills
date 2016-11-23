@@ -44,7 +44,7 @@ class Comments extends Component {
                           <span>课程时间</span><time>{elem.time_act}</time>
                         </p>
                       </Link>
-                      <Link to={`/profile/activities/${elem.actid}/comments?commentid=${elem.commentid}`}>
+                      <Link to={`/profile/comment?actid=${elem.actid}&commentid=${elem.commentid}`}>
                         <Button type="default" plain size="small">
                           {(elem.commentid==undefined) ? "评论": "修改评论"}
                         </Button>

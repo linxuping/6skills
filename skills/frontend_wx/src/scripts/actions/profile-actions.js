@@ -10,7 +10,9 @@ let action = Reflux.createActions([
   "fetchCollections",
   "delCollection",
   "getCode",
-  "verifyPhone"
+  "verifyPhone",
+  "fetchComment",
+  "postComment"
 ]);
 
 export default action;

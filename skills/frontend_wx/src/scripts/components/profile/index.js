@@ -67,7 +67,7 @@ const myCommentsRoute = {
  * @type {Object}
  */
 const commentRoute = {
-  path: "activities/:actid/comments",
+  path: "comment",
   getComponent(nextState, cb){
     require.ensure([], (require)=>{
       cb(null, require('./addcomment.jsx').default)

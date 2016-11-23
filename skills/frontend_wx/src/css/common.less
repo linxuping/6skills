@@ -1,0 +1,45 @@
+.generate-border(@n) when (@n <= 6) {
+	@i: @n * 5;
+	.pd@{i}{padding: 5px * @n !important;}
+	.pt@{i}{padding-top: 5px * @n !important;}
+	.pb@{i}{padding-bottom: 5px * @n !important;}
+	.pl@{i}{padding-left: 5px * @n !important;}
+	.pr@{i}{padding-right: 5px * @n !important;}
+
+	.mg@{i}{margin: 5px * @n !important;}
+	.mt@{i}{margin-top: 5px * @n !important;}
+	.mb@{i}{margin-bottom: 5px * @n !important;}
+	.ml@{i}{margin-left: 5px * @n !important;}
+	.mr@{i}{margin-right: 5px * @n !important;}
+	.generate-border(@n + 1);
+}
+.generate-border(0);
+.fl{
+	float: left;
+}
+.fr{
+	float: right;
+}
+.clearfix{
+	&:after{
+		content: "";
+		display: table;
+		clear: both;
+	}
+	&:before{
+		content: "";
+		display: table;
+	}
+}
+.ma{
+	margin: auto;
+}
+.tc{
+	text-align: center;
+}
+.tl{
+	text-align: left;
+}
+.tr{
+	text-align: right;
+}

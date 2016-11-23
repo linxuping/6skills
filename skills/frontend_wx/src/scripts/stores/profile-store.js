@@ -38,15 +38,17 @@ let profileStore = Reflux.createStore({
   /**
    * 获取已报名活动或未付款活动
    */
-  onFetchMyActivities(that, isForce=false){
-    let requestType, url;
+  onFetchMyActivities(that, isForce=false, requestType){
+    let url;
     //我的活动
-    if (that.props.location.pathname.indexOf("my") !== -1) {
-      requestType = "my";
-      url = "/activities/my"
-    } else {
-        requestType = "non-payments";
-        url = '/activities/unpay/list'
+    if (!requestType) {
+      if (that.props.location.pathname.indexOf("my") !== -1) {
+        requestType = "my";
+        url = "/activities/my"
+      } else {
+          requestType = "non-payments";
+          url = '/activities/unpay/list'
+      }
     }
     if ((requestType == "my" && sessionStorage.getItem("_profile__activities_") == undefined)
         || (requestType == "non-payments" && sessionStorage.getItem("_profile__unpays_") == undefined)
@@ -191,6 +193,36 @@ let profileStore = Reflux.createStore({
           });
         }
       })
+    })
+  },
+
+  onFetchComment(that, params){
+    profileService.fetchComment(params, (res)=>{
+      that.setState({
+        comment: res,
+        point: res.score,
+        loaded: true
+      });
+    })
+  },
+
+  onPostComment(that, params){
+    profileService.postComment(params, (res)=>{
+      alert({
+        content: "您的评论已成功提交",
+        onOk: ()=>{
+          history.back();
+        }
+      })
+      this.onFetchMyActivities(that, true, "my")
+
+    }, (err)=>{
+      alert({
+        content: err.errmsg
+      })
+      that.setState({
+        submitDisabled: false
+      });
     })
   }
 
