@@ -914,7 +914,7 @@ const CommentPage = React.createClass({
 					</div>
 
 					<div className="weui_btn_area mb20"
-						style={{position: "absolute", width: "100%", padding: 10, margin: 0, bottom: 0}}>
+						style={{width: "100%", padding: 10, margin: "15px 0", bottom: 0}}>
 						<button type="button" className="weui_btn weui_btn_primary"
 							style={{height: 100}} onClick={this.submitHandler}>
 							提交
