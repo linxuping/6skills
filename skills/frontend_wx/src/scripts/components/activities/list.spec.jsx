@@ -45,7 +45,7 @@ export default class ActivitiesList extends React.Component {
         <Activities acttype={this.state.acttype} age={this.state.age} area={this.state.area}/>
         <div className="paster">
           <Link to="/"><div className="top"></div></Link>
-          <a href="me.html"><div className="bottom"></div></a>
+          <Link to="/profile"><div className="bottom"></div></Link>
         </div>
       </div>
     );

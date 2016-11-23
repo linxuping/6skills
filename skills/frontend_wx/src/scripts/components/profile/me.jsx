@@ -24,6 +24,7 @@ export default class Profile extends React.Component {
       {name: "我的收藏", href: "/profile/collections"},
       {name: "待付款", href: "/profile/non-payments"},
       {name: "退款", href: "/profile/refunds"},
+      {name: "评论", href: "/profile/mycomments"}
     ]
   }
 

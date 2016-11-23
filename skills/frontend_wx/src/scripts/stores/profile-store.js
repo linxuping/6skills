@@ -38,7 +38,7 @@ let profileStore = Reflux.createStore({
   /**
    * 获取已报名活动或未付款活动
    */
-  onFetchMyActivities(that, isForce){
+  onFetchMyActivities(that, isForce=false){
     let requestType, url;
     //我的活动
     if (that.props.location.pathname.indexOf("my") !== -1) {
@@ -115,6 +115,12 @@ let profileStore = Reflux.createStore({
     }
   },
 
+  /**
+   * 删除收藏活动
+   * @param  {object} that compoent
+   * @param  {[object]} params request obj
+   * @return
+   */
   onDelCollection(that, params){
     profileService.delCollection(params, ()=>{
       alert({
@@ -126,6 +132,64 @@ let profileStore = Reflux.createStore({
     }, (err)=>{
       alert({
         content: "删除失败:" + err.errmsg
+      })
+    })
+  },
+
+  /**
+   * 认证获取验证码
+   */
+  onGetCode(that, params){
+    profileService.getCode(params, (res)=>{
+      this.countDown(that, 10)
+    })
+  },
+
+  /**
+   * 倒数
+   */
+  countDown: function(that, tm) {
+    if (tm > 0) {
+      that.setState({
+        codeText: tm + "S",
+        codeDisable: true
+      });
+      setTimeout(()=>{
+        this.countDown(that, tm - 1);
+      }, 1000);
+    } else {
+      that.setState({
+        codeText: "获取验证码",
+        codeDisable: false
+      });
+    }
+  },
+
+  /**
+   * 验证手机
+   */
+  onVerifyPhone(that, form) {
+    const params = {phone: form.phone.value, code: form.code.value}
+    profileService.verifyPhone(params, (res)=>{
+      //may be it need to set phone to _profile
+      alert({
+        content: "恭喜您验证成功！",
+        onOk: ()=>{
+          if (that.props.location.query.redirect_url) {
+            location.href = that.props.location.query.redirect_url
+          } else {
+            history.back();
+          }
+        }
+      })
+    }, (err)=>{
+      alert({
+        content: err.errmsg,
+        onOk: ()=>{
+          that.setState({
+            submitDisabled: false
+          });
+        }
       })
     })
   }

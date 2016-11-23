@@ -37,6 +37,20 @@ class ProfileService extends service {
     this.fetch("/activities/reset_collection", params, scb, fcb, "post");
   }
 
+  /**
+   * 获取验证码
+   */
+  getCode(params, scb, fcb){
+    this.fetch('/get-auth-code', params, scb);
+  }
+
+  /**
+   * 验证手机
+   */
+  verifyPhone(params, scb, fcb) {
+    this.fetch("/wxauth", params, scb, fcb, "post");
+  }
+
 }
 
 export default new ProfileService();
