@@ -20,7 +20,7 @@ var ActivityDetail = React.createClass({
 		}
 		else if (this.state.status == 1) {
 			window.location = "#qrcode";
-			alert("您已经报过名了，请到已报名活动中查看！")
+			alert("您已经报过名了，请到已报名课程中查看！")
 		} else if (this.state.status == 2) {
 			//付款
 			document.title = "付款";

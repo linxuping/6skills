@@ -151,7 +151,7 @@ var SignForm = React.createClass({
 		matchClasses = matchClasses.map(function(elem, index){
 			return <option key={index} value={elem}>{elem}</option>
 		});
-		var majors = [
+		/*var majors = [
 			"声乐-个人初赛-280元",
 			"声乐-团体初赛-260元",
 			"舞蹈-个人初赛-280元",
@@ -167,6 +167,9 @@ var SignForm = React.createClass({
 			"器乐-团体小提琴初赛-260元",
 			"器乐-团体古筝初赛-260元",
 			"器乐-团体其他乐器初赛-260元"
+		];*/
+		var majors = [
+			"书画-初赛"
 		];
 		majors = majors.map(function(elem, index) {
 			var major = elem.split("-");
