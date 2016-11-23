@@ -38,7 +38,7 @@ let profileStore = Reflux.createStore({
   /**
    * 获取已报名活动或未付款活动
    */
-  onFetchMyActivities(that, isForce){
+  onFetchMyActivities(that, isForce=false){
     let requestType, url;
     //我的活动
     if (that.props.location.pathname.indexOf("my") !== -1) {

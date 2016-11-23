@@ -49,6 +49,33 @@ const refundRoute = {
     }, "profile.refunds")
   }
 }
+/**
+ * 我的评论
+ * @type {Object}
+ */
+const myCommentsRoute = {
+  path: "mycomments",
+  getComponent(nextState, cb){
+    require.ensure([], (require)=>{
+      cb(null, require('./comments.jsx').default)
+    }, "profile.comments")
+  }
+}
+
+/**
+ * 评论
+ * @type {Object}
+ */
+const commentRoute = {
+  path: "activities/:actid/comments",
+  getComponent(nextState, cb){
+    require.ensure([], (require)=>{
+      cb(null, require('./addcomment.jsx').default)
+    }, "profile.add.comment")
+  }
+}
+
+
 
 /**
  * 认证
@@ -82,6 +109,8 @@ module.exports = {
     collectionsRoute,
     notPaymentsRoute,
     refundRoute,
+    myCommentsRoute,
+    commentRoute,
     verifyRoute
   ]
 }

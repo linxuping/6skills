@@ -14,7 +14,8 @@ class Utils {
 
   getopenid(){
     if (true) {
-      return "oYgYJwXWP9vbAVtIGWYJ5TDGky5A";
+      // return "oYgYJwXWP9vbAVtIGWYJ5TDGky5A";
+      return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw"
     }
     if (sessionStorage.getItem("6soid") == null){
   		load_6soid();
