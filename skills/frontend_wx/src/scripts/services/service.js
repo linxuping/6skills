@@ -1,5 +1,6 @@
 import "whatwg-fetch"
 import utils from '../common/utils';
+import { alert } from '../common/dialog.jsx';
 
 export default class BaseService {
 
@@ -39,9 +40,16 @@ export default class BaseService {
       .then((data)=>{
         console.log(data);
         if (data.errcode == 0) {
-          scb(data)
+          scb && scb(data)
         } else {
-          fcb(data)
+          if (fcb) {
+            fcb(data)
+          } else {
+            alert({
+              content: data.errmsg,
+              title: "错误"
+            })
+          }
         }
       })
       .catch((err)=>{

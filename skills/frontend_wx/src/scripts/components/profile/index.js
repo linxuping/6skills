@@ -37,6 +37,10 @@ const notPaymentsRoute = {
   }
 }
 
+/**
+ * 退款
+ * @type
+ */
 const refundRoute = {
   path: "refunds",
   getComponent(nextState, cb){
@@ -45,6 +49,20 @@ const refundRoute = {
     }, "profile.refunds")
   }
 }
+
+/**
+ * 认证
+ * @type
+ */
+const verifyRoute = {
+  path: "verify",
+  getComponent(nextState, cb){
+    require.ensure([], (require)=>{
+      cb(null, require('./verify.jsx').default)
+    }, "profile.verify")
+  }
+}
+
 
 /**
  * 用户信息
@@ -63,6 +81,7 @@ module.exports = {
     activitiesRoute,
     collectionsRoute,
     notPaymentsRoute,
-    refundRoute
+    refundRoute,
+    verifyRoute
   ]
 }

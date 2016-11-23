@@ -8,7 +8,9 @@ let action = Reflux.createActions([
   "fetchNonPayment",
   "resetSignup",
   "fetchCollections",
-  "delCollection"
+  "delCollection",
+  "getCode",
+  "verifyPhone"
 ]);
 
 export default action;

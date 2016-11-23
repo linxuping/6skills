@@ -708,17 +708,36 @@ body{
 .weui_cells{
 	font-size: 24px;
 	.weui_cell{
-		padding: 20px 30px;
+		padding: 20px;
+	}
+}
+.weui_cells_form{
+	.weui_cell{
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    align-items: flex-start;
+	}
+	label.error{
+		color: rgba(255, 94, 97, 0.85);
 	}
 }
 .weui_btn{
 	&.weui_btn_mini{
 		font-size:18px;
 	}
+	font-size: 26px;
+	// padding: 20px;
 }
 .weui_btn_plain_default{
 	color: @themeColor;
 	border-color: @themeColor;
+	&.weui_btn_disabled{
+		color: #929392;
+		border-color: #929392;
+	}
+}
+.weui_btn_area{
+	margin: 20px;
 }
 .weui_btn_default{
 	font-size: 26px;
@@ -782,4 +801,19 @@ body{
 		background-color: #fff;
 
 	}
+}
+.not-found{
+	.title{
+		font-size: 50px;
+		text-align: center;
+		margin-top: 250px;
+	}
+	.dsc{
+		font-size: 24px;
+		text-align: center;
+		color: #666;
+	}
+}
+.verify{
+	margin-top: 120px;
 }
