@@ -1,6 +1,5 @@
 /**
  * 已报名活动
- * @type {Object}
  */
 const activitiesRoute = {
   path: "activities",
@@ -13,7 +12,6 @@ const activitiesRoute = {
 
 /**
  * 收藏活动
- * @type {Object}
  */
 const collectionsRoute = {
   path: "collections",
@@ -26,7 +24,6 @@ const collectionsRoute = {
 
 /**
  * 未付款
- * @type {Object}
  */
 const notPaymentsRoute = {
   path: "non-payments",
@@ -39,7 +36,6 @@ const notPaymentsRoute = {
 
 /**
  * 退款
- * @type
  */
 const refundRoute = {
   path: "refunds",
@@ -51,7 +47,6 @@ const refundRoute = {
 }
 /**
  * 我的评论
- * @type {Object}
  */
 const myCommentsRoute = {
   path: "mycomments",
@@ -64,7 +59,6 @@ const myCommentsRoute = {
 
 /**
  * 评论
- * @type {Object}
  */
 const commentRoute = {
   path: "comment",
@@ -76,10 +70,8 @@ const commentRoute = {
 }
 
 
-
 /**
  * 认证
- * @type
  */
 const verifyRoute = {
   path: "verify",
@@ -90,10 +82,18 @@ const verifyRoute = {
   }
 }
 
+const signinfoRoute = {
+  path: "signinfo/:signid",
+  getComponent(nextState, cb){
+    require.ensure([], (require)=>{
+      cb(null, require('./signinfo.jsx').default)
+    }, "profile.signinfo")
+  }
+}
+
 
 /**
  * 用户信息
- * @type
  */
 module.exports = {
   path: "/profile",
@@ -111,6 +111,7 @@ module.exports = {
     refundRoute,
     myCommentsRoute,
     commentRoute,
-    verifyRoute
+    verifyRoute,
+    signinfoRoute
   ]
 }
