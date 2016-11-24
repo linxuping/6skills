@@ -8,6 +8,7 @@
 @import "reset.css";
 @import "dropload.css";
 @import "font/iconfont.css";
+@import "common.less";
 
 *{
 	box-sizing: border-box;
@@ -320,6 +321,12 @@ body{
 		p{
 			display: table;
 		}
+		h1{font-size: 30px;}
+		h2{font-size: 28px;}
+		h3{font-size: 26px;}
+		h4{font-size: 24px;}
+		h5{font-size: 22px;}
+		h6{font-size: 20px;}
 		img{
 			width: 100%;
 		}
@@ -339,6 +346,12 @@ body{
 		.sign-btn();
 		margin-left: 50%;
 		background-color: #fd8db3;
+		a{
+			color: @fontColor;
+			display: block;
+			width: 100%;
+			height: 100%;
+		}
 	}
 }
 .back-btn{
@@ -401,6 +414,14 @@ body{
 		font-size: 26px;
 	}
 }
+.signinfo{
+	.weui_cell_bd{
+		p{
+			min-width: 120px;
+		}
+	}
+}
+
 .ss-btn-area{
 	position: fixed;
 	color: #000;

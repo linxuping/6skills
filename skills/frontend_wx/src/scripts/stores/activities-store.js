@@ -114,6 +114,25 @@ let store = Reflux.createStore({
         content: "收藏失败:" + err.errmsg
       })
     })
+  },
+
+  /**
+   * 报名
+   */
+  onPostSignup(that, params){
+
+  },
+
+  /**
+   * 获取报名信息
+   */
+  onFetchSigninfo(that, params){
+    service.fetchSigninfo(params,(res) => {
+      that.setState({
+        signinfo: res,
+        loaded: true
+      });
+    })
   }
 
 });
