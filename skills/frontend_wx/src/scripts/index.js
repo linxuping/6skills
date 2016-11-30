@@ -24,6 +24,7 @@ const rootRoute = {
     childRoutes: [
       require('./components/activities'),
       require('./components/profile'),
+      require('./components/contact'),
       require('./components/404')  //must be put at the end
     ]
   }]

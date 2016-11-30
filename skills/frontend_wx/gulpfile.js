@@ -26,19 +26,31 @@ gulp.task('default', function(callback){
       proxy: {
         '/activities/*': {
           target: "http://6skills.com",
-          //target: "http://wljbi.chinacloudapp.cn",
           secure: false,
           changeOrigin: true
         },
         '/wx/*': {
           target: "http://6skills.com",
-          //target: "http://wljbi.chinacloudapp.cn",
           secure: false,
           changeOrigin: true
         },
         '/get': {
           target: "http://6skills.com",
-          //target: "http://wljbi.chinacloudapp.cn",
+          secure: false,
+          changeOrigin: true
+        },
+        '/sign': {
+          target: "http://6skills.com",
+          secure: false,
+          changeOrigin: true
+        },
+        '/business': {
+          target: "http://6skills.com",
+          secure: false,
+          changeOrigin: true
+        },
+        '/uploadtoken': {
+          target: "http://6skills.com",
           secure: false,
           changeOrigin: true
         },

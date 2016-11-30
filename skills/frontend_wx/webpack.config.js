@@ -44,7 +44,7 @@ function makeConf(options) {
             filename: 'scripts/[name].[hash:8].js',
             chunkFilename: 'scripts/[name].[hash:8].chunk.js',
             hotUpdateChunkFilename: 'scripts/[id].[hash:8].chunk.js',
-            publicPath: debug ? '/' : '/crm/'
+            publicPath: debug ? '/' : '/'
         },
         externals:{
             'jQuery':'window.jQuery',
@@ -81,7 +81,9 @@ function makeConf(options) {
                 {
                     test: /\.ts[x]$/,
                     loader: 'typescript-loader?typescriptCompiler=jsx-typescript'
-                  }
+                },
+                { test: /\.cjsx$/, loader: "react-hot!coffee-loader!cjsx"},
+                { test: /\.coffee$/, loader: "react-hot!coffee-loader"}
             ]
         },
 

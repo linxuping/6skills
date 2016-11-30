@@ -10,8 +10,10 @@ const entries = {
     "react-router",
     "react-mixin",
     "reflux",
-    "amazeui-react",
-    "jquery"
+    'react-weui',
+    //"amazeui-react",
+    "jquery",
+    "whatwg-fetch"
   ]
 }
 
@@ -22,7 +24,7 @@ function makeConfig(option) {
     entry: entries,
     output: {
       path: path.join(__dirname, (debug ? "__build": "build")),
-      filename: 'scripts/[name].[hash:8].js',
+      filename: '[name].[hash:8].js',
       library: '[name]'
     },
     plugins: [
