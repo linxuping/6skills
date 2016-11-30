@@ -163,7 +163,6 @@ body{
 	font-size: 24px;
 	line-height: 64px;
 }
-
 .activities-list{
 	margin-bottom: 10px;
 	.activity-item{
@@ -287,8 +286,10 @@ body{
 }
 .activity-detail{
 	@btnHeight: 110px;
-	margin-top: @backHeaderHeight;
-	margin-bottom: @btnHeight;
+	padding-top: @backHeaderHeight;
+	padding-bottom: @btnHeight;
+	-webkit-overflow-scrolling : touch;
+	overflow: auto;
 	width: 100%;
 	.weui_panel{
 		margin: 0 -10px;

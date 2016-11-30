@@ -15,12 +15,14 @@ html{
 	min-height: 100%;
 	background-color: @bg;
 	font-size: 16px;
+	-webkit-overflow-scrolling : touch;
 }
 body{
 	width: auto;
 	height: 100%;
 	font-family: "MicroSoft YaHei", "微软雅黑", Georgia, 'Times New Roman', serif;
 	color: @fontColor;
+	-webkit-overflow-scrolling: touch;
 }
 .fl{
 	float: left !important;
@@ -158,9 +160,12 @@ body{
 	font-size: 24px;
 	line-height: 64px;
 }
-
+.activities{
+	-webkit-overflow-scrolling : touch;
+}
 .activities-list{
 	margin-bottom: 10px;
+	-webkit-overflow-scrolling : touch;
 	.activity-item{
 		margin-top: 10px;
 
@@ -277,11 +282,9 @@ body{
 }
 .activity-detail{
 	@btnHeight: 110px;
-	margin-top: @backHeaderHeight;
-
-
+	padding-top: @backHeaderHeight;
 	width: 100%;
-	margin-bottom: @btnHeight;
+	padding-bottom: @btnHeight;
 	overflow: auto;
 	// -webkit-overflow-scrolling: touch;
 	.weui_panel{
@@ -424,12 +427,13 @@ body{
 	position: fixed;
 	top: 0px;
 	bottom: 0px;
+	height: 100%;
 	width: 100%;
 	padding-top: @backHeaderHeight;
 	padding-bottom: 10px;
 	left: 0px;
 	background-color: #fff;
-	overflow-y: auto;
+	overflow-y: scroll;
 	.back-btn{
 		border-bottom: 1px solid #ddd;
 	}

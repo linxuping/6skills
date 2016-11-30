@@ -31,7 +31,7 @@ var Sign = React.createClass({
 	},
 	render: function() {
 		return (
-			<div className="sign-page" style={{"overflowY": "auto"}}>
+			<div className="sign-page">
 				<SignForm actid={this.props.actid} back={this.back} signinfo={this.props.activity}
 					reload={this.props.reload} activity={this.props.activity}
 					updateSignInfo={this.props.updateSignInfo} isVerify={this.props.isVerify}/>
