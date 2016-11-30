@@ -7,7 +7,25 @@ const detailRoute = {
   getComponents(nextState, cb){
     require.ensure([], (require) => {
       cb(null, require('./detail.jsx').default)
-    }, 'detail')
+    }, 'activity.detail')
+  }
+}
+
+const signupRoute = {
+  path: ':actid/signup',
+  getComponents(nextState, cb){
+    require.ensure([], (require) => {
+      cb(null, require('./signup/signup.jsx').default)
+    }, 'activity.signup')
+  }
+}
+
+const comfirmRoute = {
+  path: ':actid/signup-confirm',
+  getComponents(nextState, cb){
+    require.ensure([], (require) => {
+      cb(null, require('./signup/confirm.jsx').default)
+    }, 'activity.signup.confirm')
   }
 }
 
@@ -21,11 +39,12 @@ module.exports = {
     getComponent(nextState, cb){
       require.ensure([], (require)=>{
         cb(null, require('./list.spec.jsx').default)
-      }, "list")
+      }, "activity.list")
     }
   },
   childRoutes: [
     detailRoute,
-    // analysisRoute
+    signupRoute,
+    comfirmRoute
   ]
 }

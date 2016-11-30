@@ -6,5 +6,7 @@ export default Reflux.createActions([
   "fetchActivities",
   "fetchActivityDetails",
   "fetchSignupStatus",
-  "collectPost"
+  "collectPost",
+  "postSignup",
+  "fetchSigninfo"
 ])

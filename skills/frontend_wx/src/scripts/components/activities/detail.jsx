@@ -75,7 +75,7 @@ export default class Detail extends React.Component {
                     </span>
                   </span>
                 </div>
-                
+
                 <div className="ot-msg"><span>年龄：{activity.ages}岁</span></div>
                 <div className="ot-msg">活动时间：{activity.time_from} ~ {activity.time_to}</div>
                 <div className="ot-msg">活动地点：{activity.area} {activity.position_details}</div>
@@ -105,14 +105,16 @@ export default class Detail extends React.Component {
               this.state.coll_status ? "已收藏" : "收藏"
             }
           </div>
-          <div className="sign-btn-right" style={{"cursor": "pointer"}}
-            onClick={this.openSignPage}>
-            {
-              this.state.expire ? "已过期" :
-                (this.state.status == 1 ? "已报名" :
-                  (this.state.status == 2 ? "付款" : "我要报名"))
-            }
+          <div className="sign-btn-right">
+            <Link to={`/activities/${activity.actid}/signup`}>
 
+
+              {
+                this.state.expire ? "已过期" :
+                  (this.state.status == 1 ? "已报名" :
+                    (this.state.status == 2 ? "付款" : "我要报名"))
+              }
+              </Link>
           </div>
         </div>
       );

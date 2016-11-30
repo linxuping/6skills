@@ -41,6 +41,10 @@ class ActivitieService extends Service {
   collectPost(params, scb, fcb){
     this.fetch("/activities/collect", params, scb, fcb, "post");
   }
+
+  fetchSigninfo(params, scb){
+    this.fetch('/signupinfo/get', params, scb)
+  }
 }
 
 
