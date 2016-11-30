@@ -10,7 +10,6 @@ let businessStore = Reflux.createStore({
   onFetchBusinessStatus(that, params){
 
     service.fetchBusinessStatus(params, (res) => {
-      res.status = 0;
       switch (res.status) {
         case 1:
           require.ensure([], (require)=>{

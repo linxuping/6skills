@@ -12,7 +12,7 @@ function uploadConfig(options){
     browse_button: options.id || 'pickfiles',
     // container: 'container',
     // drop_element: 'container',
-    max_file_size: '1000mb',
+    max_file_size: 5242880,
     //flash_swf_url: require('./Moxie.swf'),
     dragdrop: true,
     chunk_size: '4mb',
@@ -83,7 +83,7 @@ function uploadConfig(options){
           options.successCallBack && options.successCallBack(info, config.domain);
       },
       'Error': function(up, err, errTip) {
-          console.log(errTip)
+          alert(errTip)
       }
       ,
       'Key': function(up, file) {
