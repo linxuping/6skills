@@ -83,9 +83,12 @@ function uploadConfig(options){
           options.successCallBack && options.successCallBack(info, config.domain);
       },
       'Error': function(up, err, errTip) {
+        if (err.code === -600) {
+          alert("上传图片大小不能超过5M，请重新选择")
+        } else {
           alert(errTip)
-      }
-      ,
+        }
+      },
       'Key': function(up, file) {
           //var key = "";
           // do something with key
