@@ -57,7 +57,6 @@ export default class Signup extends React.Component {
   render() {
     return (
       <div className="signup business-page">
-        <header className="title">合作申请</header>
         <form action="/business/auth" id="signup-form" method="post">
           <div className="weui_cells_title">是否有营业执照</div>
           <div className="weui_cells weui_cells_radio">

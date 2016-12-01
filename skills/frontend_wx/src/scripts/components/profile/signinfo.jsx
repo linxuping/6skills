@@ -27,7 +27,7 @@ export default class Signinfo extends Component {
     let info = this.state.signinfo || {};
     return (
       <div className="signinfo mt120">
-        <Back></Back>
+        <Back>报名信息</Back>
         {
           this.state.loaded ?
             <div>

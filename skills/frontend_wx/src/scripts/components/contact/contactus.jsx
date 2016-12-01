@@ -11,7 +11,7 @@ export default class Contactus extends React.Component {
     return (
       <div className="contactus mt120">
         <div className="feedback">
-          <Back></Back>
+          <Back>联系我们</Back>
           <div className="ml15 mt30" style={{fontSize:30}}>转载文章</div>
           <p>转载文章请在文中附下图，即视为有效授权，无需再联系我们</p>
           <p className="qr">

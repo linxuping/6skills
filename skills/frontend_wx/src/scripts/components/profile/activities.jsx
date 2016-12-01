@@ -16,7 +16,7 @@ export default class Activities extends React.Component {
   }
 
   state = {
-    loaded: false
+    loaded: false,
   }
 
   componentDidMount() {
@@ -31,6 +31,19 @@ export default class Activities extends React.Component {
     })
   }
 
+  componentWillMount() {
+    console.log(this.props.location);
+    if (this.props.location.pathname.indexOf("activities") !== -1) {
+      this.setState({
+        title: "已报名课程"
+      });
+    } else {
+      this.setState({
+        title: "待付款课程"
+      });
+    }
+  }
+
   signResetConfirm(signid){
     actions.resetSignup(this, {signid: signid});
   }
@@ -39,7 +52,7 @@ export default class Activities extends React.Component {
     let activities = this.state.activities || [];
     return (
       <div className="myActivities">
-        <Back></Back>
+        <Back>{this.state.title}</Back>
         {
           this.state.loaded ?
           <div className="cell">

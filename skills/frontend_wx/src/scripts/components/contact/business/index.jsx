@@ -21,14 +21,19 @@ export default class Business extends React.Component {
     actions.fetchBusinessStatus(this)
   }
 
+  signReset() {
+    actions.signupReset(this)
+  }
+
   render() {
     const ComponentToMount = this.state.component;
     return (
       <div className="cooperation mt120">
-        <Back></Back>
+        <Back>合作申请</Back>
         {
           this.state.loaded ?
-            <ComponentToMount description={this.state.description}></ComponentToMount>
+            <ComponentToMount description={this.state.description}
+                              signReset={this.signReset.bind(this)}></ComponentToMount>
           : <Toast icon="loading" show={true}>加载中...</Toast>
         }
       </div>

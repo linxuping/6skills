@@ -11,7 +11,10 @@ export default class Back extends React.Component {
 
   render() {
     return (
-      <div className="back-btn" onClick={this.backHandler}>{this.props.title || "返回"}</div>
+      <div className="back-btn" onClick={this.backHandler}>
+        <div className="back">返回</div>
+        <div className="back-title">{this.props.children || this.props.title}</div>
+      </div>
     );
   }
 }

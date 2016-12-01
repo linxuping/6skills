@@ -29,7 +29,7 @@ class Comments extends Component {
     let activities = this.state.activities || [];
     return (
       <div className="myActivities">
-        <Back></Back>
+        <Back>我的评论</Back>
         {
           this.state.loaded ?
           <div className="cell">

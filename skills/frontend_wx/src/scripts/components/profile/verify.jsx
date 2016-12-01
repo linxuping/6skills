@@ -70,7 +70,7 @@ export default class Verify extends React.Component {
     profile = JSON.parse(profile);
     return (
       <div className="verify">
-        <Back title="返回"></Back>
+        <Back>手机认证</Back>
 
         <CellsTitle>验证手机号</CellsTitle>
         <form action="/wxauth" method="post" id="auth-form" className="weui_cells weui_cells_form">
@@ -97,7 +97,7 @@ export default class Verify extends React.Component {
           </Cell>
         </form>
         <div className="weui_btn_area">
-          <Button type="primary" onClick={this.submitHandler.bind(this)} 
+          <Button type="primary" onClick={this.submitHandler.bind(this)}
             disabled={this.state.submitDisabled}>
             提交
           </Button>

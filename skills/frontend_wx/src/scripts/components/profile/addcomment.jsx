@@ -57,7 +57,7 @@ class AddComment extends Component {
     let comment = this.state.comment || {};
     return (
       <div className="verify comment-page">
-        <Back></Back>
+        <Back>评论</Back>
           {
             this.state.loaded ?
               <form action="#" method="post" id="comment-form">

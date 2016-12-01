@@ -39,7 +39,7 @@ export default class Collections extends React.Component {
     var activities = this.state.activities || [];
     return (
       <div className="myActivities">
-        <Back></Back>
+        <Back>我的收藏</Back>
         {
           this.state.loaded ?
           <div className="cell">

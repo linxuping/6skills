@@ -57,6 +57,16 @@ let businessStore = Reflux.createStore({
     })
   },
 
+  onSignupReset(that) {
+    require.ensure([], (require)=>{
+      const Signup = require('../components/contact/business/signup.jsx').default;
+      that.setState({
+        loaded: true,
+        component: Signup
+      });
+    }, "business.signup")
+  },
+
   onPostApply(that, form) {
     that.setState({
       submitDisabled: true

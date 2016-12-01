@@ -379,6 +379,15 @@ body{
 		border-top: 1px solid @fontColor;
 		border-left: 1px solid @fontColor;
 	}
+	.back{
+		position: absolute;
+		height: 100%;
+		width: 100px;
+	}
+	.back-title{
+		text-align: center;
+		margin-left: -3rem;
+	}
 }
 .sign-page, .pay-page{
 	z-index: 1000;
@@ -390,9 +399,6 @@ body{
 	padding-bottom: 10px;
 	left: 0px;
 	background-color: #fff;
-	.back-btn{
-		border-bottom: 1px solid #ddd;
-	}
 }
 .pay-page{
 	@btnHeight: 110px;
@@ -844,15 +850,6 @@ body{
     margin-bottom: 30px;
     font-size: 30px;
   }
-}
-.cooperation{
-	.title{
-		font-size: 30px;
-		height: @backHeaderHeight;
-		line-height: @backHeaderHeight;
-		padding-left: 1rem;
-
-	}
 }
 .not-found{
 	.title{

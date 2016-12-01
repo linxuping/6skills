@@ -25,7 +25,7 @@ export default class NonPayments extends React.Component {
     var activities = this.state.activities || [];
     return (
       <div className="myActivities">
-        <Back></Back>
+        <Back>申请退款</Back>
         {
           this.state.loaded ?
           <div className="cell">
