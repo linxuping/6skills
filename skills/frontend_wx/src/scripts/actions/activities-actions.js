@@ -10,5 +10,6 @@ export default Reflux.createActions([
   "postSignup",
   "fetchSigninfo",
   "fetchProfiles",
-  "fetchWxPayInfo"
+  "fetchWxPayInfo",
+  "fetchComments"
 ])

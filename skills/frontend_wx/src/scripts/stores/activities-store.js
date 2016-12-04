@@ -251,6 +251,10 @@ let store = Reflux.createStore({
                   disabled: true,
                   payText: "已支付"
                 });
+                // 支付完成把这几个列表删除了，下次重新获取
+                sessionStorage.removeItem('_profile__refunds_');
+                sessionStorage.removeItem("_profile__activities_");
+                sessionStorage.removeItem("_profile__unpays_");
                 // $('#paybtn')[0].disabled = true;
                 // $('#paybtn')[0].style.backgroundColor = "gray";
                 // $('#paybtn')[0].innerText = "已支付";
@@ -274,6 +278,17 @@ let store = Reflux.createStore({
       });
       wx.error(function(res2){
         alert({content: '支付配置错误.'});
+      });
+    })
+  },
+
+  /**
+   * 详情页评论
+   */
+  onFetchComments(that, params) {
+    service.fetchComments(params, (res)=>{
+      that.setState({
+        comments: res.activities
       });
     })
   }

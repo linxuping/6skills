@@ -428,6 +428,55 @@ body{
 		}
 	}
 }
+.comments{
+	.weui_panel{
+		&::before{
+			border-top: 2px solid #E5E5E5;
+		}
+	}
+	.weui_media_box {
+		-webkit-box-align: start;
+	-webkit-align-items: flex-start;
+					align-items: flex-start;
+		&::before{
+			border-top: 2px solid #E5E5E5;
+		}
+		.weui_media_hd{
+			img{
+				width: 60px;
+				height: 60px;
+				border-radius: 50%;
+			}
+		}
+		.weui_media_title {
+			font-size: 22px;
+			color: #0066FF;
+		}
+		.comment-dsc{
+			color: #222;
+			font-size: 20px;
+			-webkit-line-clamp: 8; /** 显示的行数 **/
+			overflow: hidden;
+    	text-overflow: ellipsis;
+    	display: -webkit-box;
+			-webkit-box-orient: vertical;
+			&.no-elipsis{
+				-webkit-line-clamp: inherit;
+				word-break: normal;
+				text-overflow: inherit;
+			  display: block;; /** 对象作为伸缩盒子模型显示 **/
+			  overflow: visible;  /** 隐藏超出的内容 **/
+			}
+		}
+		time.time{
+			display: block;
+			font-size: 20px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+			color: #999999;
+		}
+	}
+}
 
 .ss-btn-area{
 	position: fixed;
@@ -471,11 +520,13 @@ body{
 		height: @imgSize;
 		border-radius: 50%;
 	}
-	.tips{
-		font-size: 22px;
-		padding: 15px;
-		border-bottom: 1px solid #ccc;
-	}
+
+}
+.tips{
+	margin-top: @backHeaderHeight;
+	font-size: 22px;
+	padding: 15px;
+	border-bottom: 1px solid #ccc;
 }
 .my-activities{
 	margin-top: @backHeaderHeight;

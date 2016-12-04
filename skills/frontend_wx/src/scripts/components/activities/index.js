@@ -47,6 +47,15 @@ const payRoute = {
   }
 }
 
+const commentRoute = {
+  path: ':actid/comment',
+  getComponents(nextState, cb){
+    require.ensure([], (require) => {
+      cb(null, require('./comments/details.jsx').default)
+    }, 'activity.comment.detail')
+  }
+}
+
 /**
  * 活动列表
  */
@@ -63,6 +72,7 @@ module.exports = {
     detailRoute,
     signupRoute,
     comfirmRoute,
-    payRoute
+    payRoute,
+    commentRoute
   ]
 }

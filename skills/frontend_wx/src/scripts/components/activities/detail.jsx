@@ -10,6 +10,7 @@ import store from '../../stores/activities-store';
 import Back from '../../common/back.jsx';
 import utils from '../../common/utils';
 import { confirm, alert } from '../../common/dialog.jsx';
+import Comments from './comments/list.jsx';
 
 export default class Detail extends React.Component {
   constructor(props) {
@@ -98,6 +99,7 @@ export default class Detail extends React.Component {
                 </div>
               </div> : ""
             }
+            <Comments actid={this.props.params.actid}></Comments>
           </article>
           <div className="sign-btn" style={{"cursor": "pointer"}}
                onClick={this::this.collectHandler}>

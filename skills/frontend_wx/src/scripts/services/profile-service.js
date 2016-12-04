@@ -63,7 +63,13 @@ class ProfileService extends service {
    */
   postComment(params, scb){
     this.fetch('/sign/comment', params, scb, null, "post");
+  }
 
+  /**
+   * 获取退款列表
+   */
+  fetchRefunds(params, scb) {
+    this.fetch('/activities/pay/list', params, scb)
   }
 
 }

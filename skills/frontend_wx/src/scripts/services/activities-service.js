@@ -59,6 +59,13 @@ class ActivitieService extends Service {
   fetchWxPayInfo(params, scb) {
     this.fetch("/get_wx_payinfo", params, scb)
   }
+
+  /**
+   * 详情页评论列表
+   */
+  fetchComments(params, scb) {
+    this.fetch("/sign/comment/list", params, scb)
+  }
 }
 
 

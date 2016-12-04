@@ -117,6 +117,25 @@ let profileStore = Reflux.createStore({
     }
   },
 
+  onFetchRefunds(that, params, isForce=false) {
+    if (sessionStorage.getItem("_profile__refunds_") == undefined || isForce) {
+      profileService.fetchRefunds(params, (res)=>{
+        that.setState({
+          activities: res.activities,
+          loaded: true
+        });
+        sessionStorage.setItem("_profile__refunds_", JSON.stringify(res.activities));
+      })
+    } else {
+      const activities = JSON.parse(sessionStorage.getItem("_profile__refunds_"));
+      that.setState({
+        activities: activities,
+        loaded: true
+      });
+    }
+
+  },
+
   /**
    * 删除收藏活动
    * @param  {object} that compoent
