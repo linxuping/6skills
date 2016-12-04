@@ -389,7 +389,7 @@ body{
 		margin-left: -3rem;
 	}
 }
-.sign-page, .pay-page{
+.sign-page{
 	z-index: 1000;
 	position: fixed;
 	top: 0px;
@@ -398,11 +398,11 @@ body{
 	padding-top: @backHeaderHeight;
 	padding-bottom: 10px;
 	left: 0px;
+	overflow-y: scroll;
 	background-color: #fff;
 }
 .pay-page{
-	@btnHeight: 110px;
-	padding-bottom: @btnHeight;
+	padding-top: @backHeaderHeight;
 	section{
 		font-size: 24px;
 		padding-top: 15px;
@@ -819,6 +819,13 @@ body{
 .weui_cells_radio .weui_check:checked + .weui_icon_checked:before{
 	font-size: 24px;
 }
+.weui_select{
+	height: 34px;
+	line-height: 34px;
+}
+input[type="radio"]{
+	visibility: hidden;
+}
 .weui_cell_select .weui_cell_bd:after, .weui_cells_access .weui_cell_ft:after{
 	width: 12px;
 	height: 12px;
@@ -833,6 +840,27 @@ body{
 }
 .weui_icon_msg:before{
 	font-size: 208px;
+}
+.inner_cells{
+	> .weui_cells_title{
+		position: relative;
+		margin-top: 0px;
+		padding-top: .77em;
+		&::before{
+			content: " ";
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 1px;
+			border-bottom: 1px solid #D9D9D9;
+			color: #D9D9D9;
+			-webkit-transform-origin: 0 100%;
+			transform-origin: 0 100%;
+			-webkit-transform: scaleY(0.5);
+			transform: scaleY(0.5);
+		}
+	}
 }
 .weui_msg {
 	.weui_msg_title{

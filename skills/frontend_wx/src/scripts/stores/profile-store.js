@@ -42,7 +42,7 @@ let profileStore = Reflux.createStore({
     let url;
     //我的活动
     if (!requestType) {
-      if (that.props.location.pathname.indexOf("my") !== -1) {
+      if (that.props.location.pathname.indexOf("activities") !== -1) {
         requestType = "my";
         url = "/activities/my"
       } else {

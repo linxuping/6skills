@@ -37,6 +37,15 @@ class Utils {
   	return false;
   }
 
+  url2json(url) {
+    let arr = url.split("&");
+    let res = {};
+    for(var i = 0; i < arr.length; i++){
+     res[arr[i].split('=')[0]] = decodeURIComponent(arr[i].split('=')[1]);
+    }
+    return res;
+  }
+
 }
 
 export default new Utils();

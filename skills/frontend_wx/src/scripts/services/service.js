@@ -34,8 +34,12 @@ export default class BaseService {
     }
 
     fetch(url, options)
-      .then((res)=>{
-        return res.json()
+      .then((res, err)=>{
+        if (res.ok) {
+          return res.json()
+        } else {
+          return {errcode: res.status, errmsg: `${res.status}-${res.statusText}`}
+        }
       })
       .then((data)=>{
         console.log(data);

@@ -11,6 +11,9 @@ const detailRoute = {
   }
 }
 
+/**
+ * 报名
+ */
 const signupRoute = {
   path: ':actid/signup',
   getComponents(nextState, cb){
@@ -20,6 +23,9 @@ const signupRoute = {
   }
 }
 
+/**
+ * 报名信息确认
+ */
 const comfirmRoute = {
   path: ':actid/signup-confirm',
   getComponents(nextState, cb){
@@ -30,8 +36,19 @@ const comfirmRoute = {
 }
 
 /**
+ * 付款
+ */
+const payRoute = {
+  path: ':actid/pay',
+  getComponents(nextState, cb){
+    require.ensure([], (require) => {
+      cb(null, require('./pay/pay.jsx').default)
+    }, 'activity.pay')
+  }
+}
+
+/**
  * 活动列表
- * @type {Object}
  */
 module.exports = {
   path: '/activities',
@@ -45,6 +62,7 @@ module.exports = {
   childRoutes: [
     detailRoute,
     signupRoute,
-    comfirmRoute
+    comfirmRoute,
+    payRoute
   ]
 }

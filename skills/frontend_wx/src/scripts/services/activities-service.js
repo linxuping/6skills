@@ -22,6 +22,13 @@ class ActivitieService extends Service {
   }
 
   /**
+   * 报名
+   */
+  postSignup(params, scb, fcb) {
+    this.fetch('/activities/sign', params, scb, fcb, "post")
+  }
+
+  /**
    * js sdk 签名
    */
   fetchJsSignature(params, scb, fcb){
@@ -44,6 +51,13 @@ class ActivitieService extends Service {
 
   fetchSigninfo(params, scb){
     this.fetch('/signupinfo/get', params, scb)
+  }
+
+  /**
+   * 付款信息
+   */
+  fetchWxPayInfo(params, scb) {
+    this.fetch("/get_wx_payinfo", params, scb)
   }
 }
 

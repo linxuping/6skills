@@ -23,6 +23,11 @@ export default class Signinfo extends Component {
     actions.fetchSigninfo(this, {signid: this.props.params.signid})
   }
 
+  verifyHandler() {
+    sessionStorage.setItem(`_signup_msg_${this.props.location.query.actid}_`, JSON.stringify(this.state.signinfo))
+    location.href = `#/activities/${this.state.signinfo.actid}/signup?signid=${this.props.params.signid}`
+  }
+
   render() {
     let info = this.state.signinfo || {};
     return (
@@ -139,7 +144,7 @@ export default class Signinfo extends Component {
 
               </Cells>
               <div className="weui_btn_area">
-                <Button type="primary" href={`#/activities/${info.actid}/signup`}>
+                <Button type="primary" onClick={this.verifyHandler.bind(this)} >
                   修改
                 </Button>
               </div>

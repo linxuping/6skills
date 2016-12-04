@@ -29,7 +29,7 @@ class AddComment extends Component {
 	}
 
   componentDidMount() {
-    if (this.props.location.query.commentid) {
+    if (this.props.location.query.commentid != "null") {
       actions.fetchComment(this, {commentid: this.props.location.query.commentid})
     } else {
       this.setState({

@@ -22,7 +22,7 @@ class Comments extends Component {
   }
 
   componentDidMount() {
-    actions.fetchMyActivities(this)
+    actions.fetchMyActivities(this, false, 'my')
   }
 
   render() {

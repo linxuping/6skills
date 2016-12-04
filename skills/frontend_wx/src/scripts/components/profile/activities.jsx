@@ -32,7 +32,7 @@ export default class Activities extends React.Component {
   }
 
   componentWillMount() {
-    console.log(this.props.location);
+    // console.log(this.props.location);
     if (this.props.location.pathname.indexOf("activities") !== -1) {
       this.setState({
         title: "已报名课程"
@@ -50,6 +50,7 @@ export default class Activities extends React.Component {
 
   render() {
     let activities = this.state.activities || [];
+    const pay = this.props.location.pathname.indexOf("non-payments") !== -1
     return (
       <div className="myActivities">
         <Back>{this.state.title}</Back>
@@ -61,7 +62,7 @@ export default class Activities extends React.Component {
                 activities.map((elem, index) => {
                   return (
                     <li key={index}>
-                      <Link to={`/activities/${elem.actid}`}>
+                      <Link to={pay ? `/activities/${elem.actid}/pay` : `/activities/${elem.actid}`}>
                         <header className="ss-hd">{elem.title}</header>
                         <p className="time clearfix">
                           <span>课程时间</span><time>{elem.time_act}</time>
@@ -70,7 +71,7 @@ export default class Activities extends React.Component {
                           <span>报名时间</span><time>{elem.time_signup}</time>
                         </div>
                       </Link>
-                      <Link to={`/profile/signinfo/${elem.signid}`}>
+                      <Link to={`/profile/signinfo/${elem.signid}?actid=${elem.actid}`}>
                         <Button type="default" plain size="small" className="f-bt">
                           查看报名信息
                         </Button>
