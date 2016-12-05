@@ -18,14 +18,14 @@ class Utils {
   }
 
   getopenid(){
-    if (true) {
-      return "oYgYJwXWP9vbAVtIGWYJ5TDGky5A";
-      // return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw"
-    }
+    // if (true) {
+    //   return "oYgYJwXWP9vbAVtIGWYJ5TDGky5A";
+    //   // return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw"
+    // }
     if (sessionStorage.getItem("6soid") == null){
   		this.load_6soid();
   		if (arguments[0] == null)
-  			try_jump_pubnum();
+  			this.try_jump_pubnum();
   	}
   	return sessionStorage.getItem("6soid");
   }
