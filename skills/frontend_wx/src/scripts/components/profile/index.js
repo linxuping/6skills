@@ -45,6 +45,19 @@ const refundRoute = {
     }, "profile.refunds")
   }
 }
+
+/**
+ * 退款理由
+ */
+const refundConfirmRoute = {
+  path: "refunds/:pid",
+  getComponent(nextState, cb){
+    require.ensure([], (require)=>{
+      cb(null, require('./refund-confirm.jsx').default)
+    }, "profile.refund.confirm")
+  }
+}
+
 /**
  * 我的评论
  */
@@ -109,6 +122,7 @@ module.exports = {
     collectionsRoute,
     notPaymentsRoute,
     refundRoute,
+    refundConfirmRoute,
     myCommentsRoute,
     commentRoute,
     verifyRoute,

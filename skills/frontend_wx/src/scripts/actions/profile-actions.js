@@ -5,6 +5,7 @@ let action = Reflux.createActions([
   "fetchMyActivities",
   "fetchCollections",
   "fetchRefunds",
+  "postRefund",
   "fetchNonPayment",
   "resetSignup",
   "fetchCollections",

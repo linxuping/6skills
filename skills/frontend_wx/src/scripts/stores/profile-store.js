@@ -243,6 +243,29 @@ let profileStore = Reflux.createStore({
         submitDisabled: false
       });
     })
+  },
+
+  onPostRefund(that, params) {
+    that.setState({
+      disabled: true
+    });
+    profileService.postRefund(params, res=>{
+      sessionStorage.removeItem("_profile__refunds_");
+      sessionStorage.removeItem("_profile__unpays_");
+      alert({
+        content: "申请成功，款项将在3个工作日内退到您的微信账户里！",
+        onOk: ()=>{
+          history.back();
+        }
+      })
+    }, err => {
+      alert({
+        content: `退款申请失败:${err.errmsg}`
+      })
+      that.setState({
+        disabled: false
+      });
+    })
   }
 
 });

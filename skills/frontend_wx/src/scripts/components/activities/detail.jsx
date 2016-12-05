@@ -109,20 +109,16 @@ export default class Detail extends React.Component {
           </div>
           <div className="sign-btn-right">
             {
-              this.state.expire ||this.state.status == 1 || this.state.status == 2 ?
+              this.state.expire ||this.state.status == 1 ?
               <span>
                 {
-                  this.state.expire ? "已过期" :
-                    (this.state.status == 1 ? "已报名" :
-                      (this.state.status == 2 ? "付款" : ""))
+                  this.state.expire ? "已过期" : "已报名"
                 }
               </span>
               :
-              <Link to={`/activities/${activity.actid}/signup`}>
+              <Link to={this.state.status == 2 ? `/activities/${activity.actid}/pay` : `/activities/${activity.actid}/signup`}>
                 {
-                  this.state.expire ? "已过期" :
-                    (this.state.status == 1 ? "已报名" :
-                      (this.state.status == 2 ? "付款" : "我要报名"))
+                  this.state.status == 2 ? "付款" : "我要报名"
                 }
               </Link>
             }

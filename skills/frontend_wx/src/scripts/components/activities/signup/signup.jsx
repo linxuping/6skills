@@ -31,35 +31,35 @@ export default class Signup extends Component {
   validateForm() {
     $("#signup-form").validate({
       rules: {
-  			"name": {required: true},
-  			"phone": {required: true, digits: true, rangelength:[11, 11]},
-  			"age": {required: true, min: 0, max: 99},
-  			"gender": {required: true},
-  			"city": {required: true},
-  			"kids_name": {required: true},
-  			//"identity_card": {required: true, rangelength: [18, 18]},
-  			"program": {required: true},
-  			"company": {required: true},
-  			"teacher": {required: true},
-  			"company_tel": {required: true},
-  			"teacher_phone": {required: true, digits: true, rangelength:[11, 11]},
-  			"birthdate": {required: true}
-  		},
-  		messages: {
-  			"name": {required: "必填"},
-  			"phone": {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
-  			"age": {required: "请输入年龄", min: "", max: ""},
-  			"gender": {required: "请选择选手性别"},
-  			"city": {required: "请输入所在城市"},
-  			"kids_name": {required: "请输入选手姓名"},
-  			//"identity_card": {required: "请输入身份证号", rangelength: "18位身份证"},
-  			"program": {required: "请输入节目名称"},
-  			"company": {required: "请输入选送单位"},
-  			"teacher": {required: "请输入指导老师"},
-  			"company_tel": {required: "请输入单位电话"},
-  			"teacher_phone": {required: "请输入老师电话", digits: "11位手机号码", rangelength:"11位手机号码"},
-  			birthdate: {required: "请输入选手出生日期(例:20100101)"}
-  		},
+        "name": {required: true},
+        "phone": {required: true, digits: true, rangelength:[11, 11]},
+        "age": {required: true, min: 0, max: 99},
+        "gender": {required: true},
+        "city": {required: true},
+        "kids_name": {required: true},
+        //"identity_card": {required: true, rangelength: [18, 18]},
+        "program": {required: true},
+        "company": {required: true},
+        "teacher": {required: true},
+        "company_tel": {required: true},
+        "teacher_phone": {required: true, digits: true, rangelength:[11, 11]},
+        "birthdate": {required: true}
+      },
+      messages: {
+        "name": {required: "必填"},
+        "phone": {required: "请输入正确的手机号码", digits: "", rangelength: "11位手机号码" },
+        "age": {required: "请输入年龄", min: "", max: ""},
+        "gender": {required: "请选择选手性别"},
+        "city": {required: "请输入所在城市"},
+        "kids_name": {required: "请输入选手姓名"},
+        //"identity_card": {required: "请输入身份证号", rangelength: "18位身份证"},
+        "program": {required: "请输入节目名称"},
+        "company": {required: "请输入选送单位"},
+        "teacher": {required: "请输入指导老师"},
+        "company_tel": {required: "请输入单位电话"},
+        "teacher_phone": {required: "请输入老师电话", digits: "11位手机号码", rangelength:"11位手机号码"},
+        birthdate: {required: "请输入选手出生日期(例:20100101)"}
+      },
       submitHandler: (form)=>{
         const signMsg = $(form).serialize()
         sessionStorage.setItem(`_signup_msg_${this.props.params.actid}_` , signMsg)
@@ -72,7 +72,7 @@ export default class Signup extends Component {
 
   initFields(signtype) {
     switch (signtype) {
-      case 2:
+      case "2" || 2:
         return [
           {name: "name", label: "真实姓名", type: "text", value: "username"},
           {name: "phone", label: "手机号码", type: "text"},
@@ -83,7 +83,7 @@ export default class Signup extends Component {
           {name: "gender", label: "选手性别", type: "radio", values: ["male@男", "female@女"]},
         ]
         break;
-      case 3:
+      case "3" || 3:
         return [
           {name: "name", label: "真实姓名", type: "text", value: "username"},
           {name: "phone", label: "手机号码", type: "text"},
@@ -136,7 +136,6 @@ export default class Signup extends Component {
               <Cells>
                 {
                   fields.map((item, index)=>{
-                    console.log(profile[item.name]);
                     switch (item.type) {
                       case "text":
                         return (
@@ -225,72 +224,6 @@ export default class Signup extends Component {
           </div>
           : <Toast icon="loading" show={true}>加载中...</Toast>
         }
-        {/*<div className="signForm">
-          <form action="#" id="signup-form">
-            <CellsTitle>填写报名信息</CellsTitle>
-            <Cells>
-              <FormCell>
-                <CellHeader>
-                  <Label htmlFor="name">真实姓名</Label>
-                </CellHeader>
-                <CellBody>
-                  <Input name="name" id="name" defaultValue={profile.username} placeholder="请输入家长真实姓名"></Input>
-                </CellBody>
-              </FormCell>
-              <FormCell>
-                <CellHeader>
-                  <Label htmlFor="phone">手机号码</Label>
-                </CellHeader>
-                <CellBody>
-                  <Input name="phone" id="phone" defaultValue={profile.phone}
-                    placeholder="请输入手机号码"></Input>
-                </CellBody>
-              </FormCell>
-
-                signtype === 2 ?
-                <div>
-                  <FormCell>
-                    <CellHeader>
-                      <Label htmlFor="city">所在城市</Label>
-                    </CellHeader>
-                    <CellBody>
-                      <Input name="city" id="city" defaultValue={profile.city}
-                        placeholder="请输入所在城市"></Input>
-                    </CellBody>
-                  </FormCell>
-                  <FormCell>
-                    <CellHeader>
-                      <Label htmlFor="kids_name">选手姓名</Label>
-                    </CellHeader>
-                    <CellBody>
-                      <Input name="kids_name" id="kids_name" defaultValue={profile.kids_name}
-                        placeholder="请输入选手姓名"></Input>
-                    </CellBody>
-                  </FormCell>
-                  <FormCell>
-                    <CellHeader>
-                      <Label htmlFor="birthdate">选手出生日期</Label>
-                    </CellHeader>
-                    <CellBody>
-                      <Input name="birthdate" id="birthdate" defaultValue={profile.birthdate}></Input>
-                    </CellBody>
-                  </FormCell>
-                </div>
-                : ""
-
-
-              <FormCell>
-                <CellHeader>
-                  <Label htmlFor="phone">手机号码</Label>
-                </CellHeader>
-                <CellBody>
-                  <Input name="phone" id="phone" defaultValue={profile.phone}></Input>
-                </CellBody>
-              </FormCell>
-            </Cells>
-          </form>
-        </div>
-      */}
       </div>
     );
   }

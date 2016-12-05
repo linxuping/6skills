@@ -22,8 +22,10 @@ export default class NonPayments extends React.Component {
     actions.fetchRefunds(this, {page: 1 ,pagesize:100})
   }
 
-  delunPayActivity() {
-
+  delunPayActivity(pid, status) {
+    if (status == 1) {
+      location.href = `#/profile/refunds/${pid}`
+    }
   }
 
   render() {
@@ -49,7 +51,7 @@ export default class NonPayments extends React.Component {
                         </p>
                       </Link>
                       <Button type="default" plain size="small"
-                        onClick={this.delunPayActivity.bind(this, elem.signid)}>
+                        onClick={this.delunPayActivity.bind(this, elem.pid, elem.status)}>
                         {(elem.status==2) ? "等待退款":((elem.status==3) ? "已退款":"申请退款")}
                       </Button>
                     </li>

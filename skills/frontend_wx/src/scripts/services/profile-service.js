@@ -72,6 +72,13 @@ class ProfileService extends service {
     this.fetch('/activities/pay/list', params, scb)
   }
 
+  /**
+   * 退款操作
+   */
+  postRefund(params, scb, fcb) {
+    this.fetch('/activities/pay/refund', params, scb, fcb, "post")
+  }
+
 }
 
 export default new ProfileService();
