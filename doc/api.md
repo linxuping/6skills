@@ -3,7 +3,7 @@
 **GET**
 **URL** /business/class/list
 
-**TIME** 20161208
+**TIME** 20161208 new
 
 **返回**
 ```json
@@ -26,7 +26,7 @@
 **GET**
 **URL** /ticket/get?openid=abc&id=2
 
-**TIME** 20161208
+**TIME** 20161208 new
 
 **返回**
 ```json
@@ -46,7 +46,7 @@
 **GET**
 **URL** /activity/trange/list
 
-**TIME** 20161208
+**TIME** 20161208 new
 
 **返回**
 ```json
@@ -378,7 +378,7 @@
 **GET**
 **URL** /activities/details/{uuid}
 
-**TIME** 20161208
+**TIME** 20161208 modify business_id business_class_num business_attention_num
 
 **返回**
 ```json
@@ -441,7 +441,7 @@
 **POST**
 **URL** /activities/sign
 
-**TIME** 20161208
+**TIME** 20161208 modify time_id
 
 **参数**
 ```json
