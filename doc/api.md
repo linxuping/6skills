@@ -13,7 +13,7 @@
 			"img": "http://xxx.jpg",
 			"title": "xxx",
 		}
-	]
+	],
 	"errcode": 0,
 	"errmsg": ""
 }
