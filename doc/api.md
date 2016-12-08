@@ -356,6 +356,7 @@
 
 **GET**
 **URL** /activities/details/{uuid}
+
 **TIME** 20161208
 
 **返回**
