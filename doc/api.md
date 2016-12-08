@@ -439,7 +439,9 @@
 
 ### 6. 活动报名
 **POST**
-** URL ** /activities/sign
+**URL** /activities/sign
+
+**TIME** 20161208
 
 **参数**
 ```json
@@ -449,7 +451,8 @@
 	"phone": "手机",
 	"age": "儿童年龄",
 	"uuid": "活动id",
-	"location": "报名时所处位置"
+	"location": "报名时所处位置",
+	"time_id": 2
 }
 ```
 **返回**
