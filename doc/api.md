@@ -1,4 +1,25 @@
+### 0.0001 机构课程列表
 
+**GET**
+**URL** /business/class/list
+**TIME** 20161208
+
+**返回**
+```json
+{
+	"classes": [
+		{
+			"id": 2,
+			"img": "http://xxx.jpg",
+			"title": "xxx",
+		}
+	]
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+=====================================================================
 
 ### 0.001 报名信息
 **GET**
@@ -311,6 +332,7 @@
 
 **GET**
 **URL** /activities/details/{uuid}
+**TIME** 20161208
 
 **返回**
 ```json
@@ -328,6 +350,9 @@
 	"remain": "40",
 	"introdution": "详情",
 	"signnum": 12,
+	"business_id": 3,
+	"business_class_num": 3,
+	"business_attention_num": 3,
 	"errcode": 0,
 	"errmsg": ""
 }
