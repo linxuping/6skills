@@ -54,7 +54,7 @@
 	"times": [
 		{
 			"id": 2,
-			"time"：“a - bb desc”，
+			"time": "a - bb desc"
 		}
 	],
 	"errcode": 0,
