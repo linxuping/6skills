@@ -1,7 +1,7 @@
 ### 1、机构课程列表
 
 **GET**
-**URL** /business/class/list
+**URL** /business/class/list?uid=2
 
 **TIME** 20161208 new
 
@@ -21,7 +21,26 @@
 }
 ```
 
-### 2、券详情
+### 2、课程对应结构信息
+
+**GET**
+**URL** /activity/business/get?actid=2
+
+**TIME** 20161208 new
+
+**返回**
+```json
+{
+	"uid": 2,
+	"name": "xxx",
+	"class_num": 2,
+	"attention_num": 3,
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 3、券详情
 
 **GET**
 **URL** /ticket/get?openid=abc&id=2
@@ -41,7 +60,7 @@
 }
 ```
 
-### 3、活动报名时间段
+### 4、活动报名时间段
 
 **GET**
 **URL** /activity/trange/list
