@@ -63,7 +63,7 @@
 ### 4、活动报名时间段
 
 **GET**
-**URL** /activity/trange/list
+**URL** /activity/trange/list?actid=3
 
 **TIME** 20161208 new
 
