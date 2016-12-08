@@ -24,17 +24,18 @@
 ### 2、券详情
 
 **GET**
-**URL** /ticket/get
+**URL** /ticket/get?openid=abc&id=2
 
 **TIME** 20161208
 
 **返回**
 ```json
 {
-	"id": 2,
-	"img": "http://xxx.jpg",
+	"code": "ask214123124",
 	"title": "xxx",
-	"expire": "2016-01-01",
+	"time_from": "2016-01-01",
+	"time_to": "2016-09-01",
+	"status": "未激活",
 	"errcode": 0,
 	"errmsg": ""
 }
