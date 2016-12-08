@@ -1,4 +1,4 @@
-### 0.0001 机构课程列表
+### 1、机构课程列表
 
 **GET**
 **URL** /business/class/list
@@ -16,6 +16,25 @@
 			"expire": "2016-01-01"
 		}
 	],
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 2、券详情
+
+**GET**
+**URL** /ticket/get
+
+**TIME** 20161208
+
+**返回**
+```json
+{
+	"id": 2,
+	"img": "http://xxx.jpg",
+	"title": "xxx",
+	"expire": "2016-01-01",
 	"errcode": 0,
 	"errmsg": ""
 }
