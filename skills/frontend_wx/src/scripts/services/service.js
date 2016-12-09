@@ -5,7 +5,7 @@ import { alert } from '../common/dialog.jsx';
 export default class BaseService {
 
   constructor(){
-    this.openid = utils.getopenid();
+    this.openid = utils && utils.getopenid();
   }
 
   fetch(url, params, scb, fcb, method="get"){

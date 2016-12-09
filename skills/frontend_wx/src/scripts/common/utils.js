@@ -1,4 +1,5 @@
-import service from '../services/service';
+import Service from '../services/service';
+let service = new Service();
 
 class Utils {
 
@@ -23,9 +24,10 @@ class Utils {
     //   // return "oYgYJwcdR1mRcJ_3WLghpeTPJoKw"
     // }
     if (sessionStorage.getItem("6soid") == null){
+      alert("asdf")
   		this.load_6soid();
-  		if (arguments[0] == null)
-  			this.try_jump_pubnum();
+  		// if (arguments[0] == null)
+  		// 	this.try_jump_pubnum();
   	}
   	return sessionStorage.getItem("6soid");
   }
@@ -37,7 +39,7 @@ class Utils {
     if (sessionStorage.getItem("6soid")){
   		return;
   	}
-    if (this.getUrlParam("code")!=null && this.getUrlParam("state")!=null) {
+    // if (this.getUrlParam("code")!=null && this.getUrlParam("state")!=null) {
       service.fetch("/get_6sid", {code: this.getUrlParam("code")}, res=>{
         if (res.openid == null) {
           window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe6d40d1e6b8d010e&redirect_uri="+encodeURI(window.location.href)+"&response_type=code&scope=snsapi_userinfo&state=123&connect_redirect=1#wechat_redirect";
@@ -45,7 +47,7 @@ class Utils {
           sessionStorage.setItem("6soid",res.openid);
         }
       })
-    }
+    // }
   }
 
   jump_pubnum(){

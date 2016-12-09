@@ -8,8 +8,6 @@ mobileUtils.fixScreen(window, document)
 
 require('css/style.less');
 
-
-
 const rootRoute = {
   childRoutes: [{
     path: "/",
