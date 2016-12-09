@@ -460,7 +460,7 @@
 **POST**
 **URL** /activities/sign
 
-**TIME** 20161208 modify time_id
+**TIME** 20161208 modify time_id share_id分享者ID)
 
 **参数**
 ```json
@@ -471,6 +471,7 @@
 	"age": "儿童年龄",
 	"uuid": "活动id",
 	"location": "报名时所处位置",
+	"share_id": 119,
 	"time_id": 2
 }
 ```
