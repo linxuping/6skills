@@ -42,6 +42,9 @@ class Utils {
   load_6soid(that) {
     if (sessionStorage.getItem("6soid")){
       return sessionStorage.getItem("6soid");
+      if (that) {
+        that.setState({loaded: true})
+      }
     }
     if (this.getUrlParam("code")!=null && this.getUrlParam("state")!=null) {
       service.fetch("/get_6sid", {code: this.getUrlParam("code")}, res=>{
