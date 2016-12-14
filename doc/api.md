@@ -77,7 +77,7 @@
 ```json
 {
 	"business_id":3,
-	"openid":'&(^(*',
+	"openid":'aaa',
 }
 ```
 **返回**
