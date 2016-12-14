@@ -8,14 +8,16 @@
 **返回**
 ```json
 {
-	"classes": [
-		{
-			"id": 2,
-			"img": "http://xxx.jpg",
-			"title": "xxx",
-			"expire": "2016-01-01"
-		}
-	],
+	"data":{
+		"classes": [
+			{
+				"id": 2,
+				"img": "http://xxx.jpg",
+				"title": "xxx",
+				"expire": "2016-01-01"
+			}
+		]	
+	},
 	"errcode": 0,
 	"errmsg": ""
 }
@@ -31,36 +33,18 @@
 **返回**
 ```json
 {
-	"uid": 2,
-	"name": "xxx",
-	"class_num": 2,
-	"attention_num": 3,
+	"data":{
+		"uid": 2,
+		"name": "xxx",
+		"class_num": 2,
+		"attention_num": 3
+	},
 	"errcode": 0,
 	"errmsg": ""
 }
 ```
 
-### 3、券详情
-
-**GET**
-**URL** /ticket/get?openid=abc&id=2
-
-**TIME** 20161208 new
-
-**返回**
-```json
-{
-	"code": "ask214123124",
-	"title": "xxx",
-	"time_from": "2016-01-01",
-	"time_to": "2016-09-01",
-	"status": "未激活",
-	"errcode": 0,
-	"errmsg": ""
-}
-```
-
-### 4、活动报名时间段
+### 3、活动报名时间段
 
 **GET**
 **URL** /activity/trange/list?actid=3
@@ -70,12 +54,14 @@
 **返回**
 ```json
 {
-	"times": [
-		{
-			"id": 2,
-			"time": "a - bb desc"
-		}
-	],
+	"data":{
+		"times": [
+			{
+				"id": 2,
+				"time": "a - bb desc"
+			}
+		]	
+	},
 	"errcode": 0,
 	"errmsg": ""
 }
