@@ -69,15 +69,15 @@
 
 ### 4. 关注
 **POST**
-** URL ** /business/attention
+** URL ** /business/payattention
+
+**TIME** 20161214 new
 
 **参数**
 ```json
 {
-	"actid":3,
-	"openid":'',
-	"score": 4,
-	"comment": 2,
+	"business_id":3,
+	"openid":'&(^(*',
 }
 ```
 **返回**
@@ -86,6 +86,51 @@
 	"errcode": 0,
 	"errmsg": ""
 }
+```
+
+### 5. 取消关注
+**POST**
+** URL ** /business/cancelattention
+
+**TIME** 20161214 new
+
+**参数**
+```json
+{
+	"business_id":3,
+	"openid":'&(^(*',
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 6、关注机构列表
+
+**GET**
+**URL** /business/attention/list?openid=123
+
+**TIME** 20161214 new
+
+**返回**
+```json
+{
+	"data":{
+		"businesses": [
+			{
+				"id": 2,
+				"name": "hello"
+			}
+		]	
+	},
+	"errcode": 0,
+	"errmsg": ""
+}
+```
 
 =====================================================================
 
