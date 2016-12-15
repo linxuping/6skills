@@ -512,6 +512,8 @@
 **POST**
 **URL** /activities/sign
 
+**TIME** 20161215 add trange_id
+
 **参数**
 ```json
 {
@@ -521,6 +523,7 @@
 	"age": "儿童年龄",
 	"uuid": "活动id",
 	"location": "报名时所处位置",
+	"trange_id": 1,
 	"time_id": 2
 }
 ```
