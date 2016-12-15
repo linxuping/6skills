@@ -76,8 +76,8 @@
 **参数**
 ```json
 {
-	"business_id":3,
-	"openid":'aaa',
+	"businessid":3,
+	"openid":"abc"
 }
 ```
 **返回**
@@ -97,8 +97,8 @@
 **参数**
 ```json
 {
-	"business_id":3,
-	"openid":'&(^(*',
+	"businessid":3,
+	"openid":"abc"
 }
 ```
 **返回**
