@@ -114,7 +114,7 @@
 **GET**
 **URL** /business/attention/list?openid=123
 
-**TIME** 20161214 new
+**TIME** 20161216 add img
 
 **返回**
 ```json
@@ -123,7 +123,8 @@
 		"businesses": [
 			{
 				"id": 2,
-				"name": "hello"
+				"name": "hello",
+				"img": "img"
 			}
 		]	
 	},
@@ -448,7 +449,7 @@
 **GET**
 **URL** /activities/details/{uuid}
 
-**TIME** 20161208 modify business_id business_class_num business_attention_num
+**TIME** 20161216 modify business_id business_class_num business_attention_num business_img
 
 **返回**
 ```json
@@ -467,6 +468,7 @@
 	"introdution": "详情",
 	"signnum": 12,
 	"business_id": 3,
+	'business_img": "img",
 	"business_name": "name",
 	"business_class_num": 3,
 	"business_attention_num": 3,
