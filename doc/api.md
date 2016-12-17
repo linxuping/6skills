@@ -468,7 +468,7 @@
 	"introdution": "详情",
 	"signnum": 12,
 	"business_id": 3,
-	'business_img": "img",
+	"business_img": "img",
 	"business_name": "name",
 	"business_class_num": 3,
 	"business_attention_num": 3,
