@@ -23,7 +23,7 @@
 }
 ```
 
-### 2、课程对应结构信息
+### 2、课程对应结构信息 - 接口(/activities/details/{uuid})已经提供
 
 **GET**
 **URL** /activity/business/get?actid=2
