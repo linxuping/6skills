@@ -1,7 +1,7 @@
 ### 1、机构课程列表
 
 **GET**
-**URL** /business/class/list?bid=2
+**URL** /business/class/list?bid=2&openid=ab
 
 **TIME** 20161208 new
 
@@ -26,7 +26,7 @@
 ### 2、课程对应结构信息 - 接口(/activities/details/{uuid})已经提供
 
 **GET**
-**URL** /activity/business/get?actid=2
+**URL** /activity/business/get?actid=2&openid=ab
 
 **TIME** 20161208 new
 
@@ -47,7 +47,7 @@
 ### 3、活动报名时间段
 
 **GET**
-**URL** /activity/trange/list?actid=3
+**URL** /activity/trange/list?actid=3&openid=ab
 
 **TIME** 20161208 new
 
