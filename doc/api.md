@@ -1,7 +1,7 @@
 ### 1、机构课程列表
 
 **GET**
-**URL** /business/class/list?uid=2
+**URL** /business/class/list?bid=2
 
 **TIME** 20161208 new
 
