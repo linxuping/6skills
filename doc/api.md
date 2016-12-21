@@ -15,9 +15,9 @@
 				"img": "http://xxx.jpg",
 				"title": "xxx",
 				"expire": "2016-01-01",
-				"address": "abc",
+				"area": "abc",
 				"ages": "1-4",
-				"type": "书画"
+				"tags": "书画"
 			}
 		]	
 	},
