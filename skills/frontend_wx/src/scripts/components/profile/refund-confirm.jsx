@@ -4,7 +4,7 @@ import Reflux from 'Reflux';
 import Back from '../../common/back.jsx';
 import Weui from 'react-weui';
 const {ButtonArea, Button} = Weui;
-const $ = require('jquery');
+const $ = require('jquery/src/jquery');
 import actions from '../../actions/profile-actions';
 import store from '../../stores/profile-store';
 

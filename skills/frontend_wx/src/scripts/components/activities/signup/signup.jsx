@@ -7,7 +7,7 @@ import Weui from 'react-weui';
 const {Toast, ButtonArea, Button, CellsTitle, CellsTips, Cell, CellHeader, CellBody, CellFooter, Form, FormCell, Icon, Input, Label, TextArea, Switch, Radio, Checkbox, Select, VCode, Agreement, Cells} = Weui;
 import actions from '../../../actions/activities-actions';
 import store from '../../../stores/activities-store';
-const $ = require('jquery');
+const $ = require('jquery/src/jquery');
 require('jquery-validation');
 
 export default class Signup extends Component {
