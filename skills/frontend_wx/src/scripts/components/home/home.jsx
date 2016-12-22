@@ -15,10 +15,10 @@ export default class Home extends React.Component {
   render() {
     return (
       <div className="Index">
-				<Carousel />
-				<Navigation />
-				<Activities scrollArea=".Index" />
-			</div>
+        <Carousel />
+        <Navigation />
+        <Activities scrollArea=".Index" />
+      </div>
     );
   }
 }

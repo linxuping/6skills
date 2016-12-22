@@ -6,9 +6,12 @@ import { Link } from 'react-router';
 const {Panel, PanelBody, MediaBox, MediaBoxHeader, MediaBoxBody} = WeUI;
 import actions from '../../actions/activities-actions';
 import store from '../../stores/activities-store';
-const $ = require('jquery');
+import $ from 'jquery/src/jquery';
+
+
 import droploadFn from '../../common/dropload';
 droploadFn($);
+
 
 export default class Activities extends React.Component {
   constructor(props) {
@@ -54,7 +57,6 @@ export default class Activities extends React.Component {
 
 
   updateActivities(){
-    console.log(this.state);
     const params = {
       acttype: this.state.acttype,
       area: this.state.area,

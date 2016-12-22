@@ -28,7 +28,6 @@ const rootRoute = {
   }]
 }
 
-
 render((
     <Router history={hashHistory}
             routes={rootRoute}/>
