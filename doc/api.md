@@ -1,7 +1,7 @@
 ### 1、机构课程列表
 
 **GET**
-**URL** /business/class/list?uid=2
+**URL** /business/class/list?bid=2&openid=ab
 
 **TIME** 20161208 new
 
@@ -14,7 +14,10 @@
 				"id": 2,
 				"img": "http://xxx.jpg",
 				"title": "xxx",
-				"expire": "2016-01-01"
+				"expire": "2016-01-01",
+				"area": "abc",
+				"ages": "1-4",
+				"tags": "书画"
 			}
 		]	
 	},
@@ -23,10 +26,10 @@
 }
 ```
 
-### 2、课程对应结构信息
+### 2、课程对应结构信息 - 接口(/activities/details/{uuid})已经提供
 
 **GET**
-**URL** /activity/business/get?actid=2
+**URL** /activity/business/get?actid=2&openid=ab
 
 **TIME** 20161208 new
 
@@ -47,7 +50,7 @@
 ### 3、活动报名时间段
 
 **GET**
-**URL** /activity/trange/list?actid=3
+**URL** /activity/trange/list?actid=3&openid=ab
 
 **TIME** 20161208 new
 
@@ -67,6 +70,91 @@
 }
 ```
 
+### 4. 关注
+**POST**
+** URL ** /business/payattention
+
+**TIME** 20161214 new
+
+**参数**
+```json
+{
+	"businessid":3,
+	"openid":"abc"
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 5. 取消关注
+**POST**
+** URL ** /business/cancelattention
+
+**TIME** 20161214 new
+
+**参数**
+```json
+{
+	"businessid":3,
+	"openid":"abc"
+}
+```
+**返回**
+```json
+{
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 6、关注机构列表
+
+**GET**
+**URL** /business/attention/list?openid=123
+
+**TIME** 20161216 add img
+
+**返回**
+```json
+{
+	"data":{
+		"businesses": [
+			{
+				"id": 2,
+				"name": "hello",
+				"img": "img"
+			}
+		]	
+	},
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 7、获取机构信息
+
+**GET**
+**URL** /business/details/get?bid=2&openid=abc
+
+**TIME** 20161218 new
+
+**返回**
+```json
+{
+	"data":{
+		"id": 2,
+		"name": "xxx",
+		"img": "aaa.jpg"
+	},
+	"errcode": 0,
+	"errmsg": ""
+}
+```
 
 =====================================================================
 
@@ -384,7 +472,7 @@
 **GET**
 **URL** /activities/details/{uuid}
 
-**TIME** 20161208 modify business_id business_class_num business_attention_num
+**TIME** 20161216 modify business_id business_class_num business_attention_num business_img
 
 **返回**
 ```json
@@ -403,6 +491,8 @@
 	"introdution": "详情",
 	"signnum": 12,
 	"business_id": 3,
+	"business_img": "img",
+	"business_name": "name",
 	"business_class_num": 3,
 	"business_attention_num": 3,
 	"errcode": 0,
@@ -447,7 +537,7 @@
 **POST**
 **URL** /activities/sign
 
-**TIME** 20161208 modify time_id share_id分享者ID)
+**TIME** 20161215 add trange_id
 
 **参数**
 ```json
@@ -458,7 +548,7 @@
 	"age": "儿童年龄",
 	"uuid": "活动id",
 	"location": "报名时所处位置",
-	"share_id": 119,
+	"trange_id": 1,
 	"time_id": 2
 }
 ```
