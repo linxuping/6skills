@@ -16,8 +16,8 @@ class Utils {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
     var search = window.location.search || window.location.hash;
     var r = search.split("?")[1];
+    r = r && r.match(reg);
     if (r) {
-      r = r.match(reg)
       return unescape(r[2]);
     } else {
       return null;

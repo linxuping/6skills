@@ -1,6 +1,5 @@
 /**
  * 活动详情
- * @type
  */
 const detailRoute = {
   path: ':actid',
