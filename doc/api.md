@@ -167,7 +167,7 @@
 ```json
 {
 	"data":{
-		"is_course": 1,
+		"has_options_course": 1,
 		"courses": [
 			{
 				"id":1,
@@ -176,7 +176,7 @@
 				"age":"2-5"
 			}
 		], 
-		"is_activity":0,
+		"has_options_activity":0,
 		"activities":[
 			{
 				"id":1,
