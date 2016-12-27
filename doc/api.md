@@ -156,6 +156,40 @@
 }
 ```
 
+### 8、报名关联信息
+
+**GET**
+**URL** /signup/details/get?actid=2&openid=abc
+
+**TIME** 20161227 new
+
+**返回**
+```json
+{
+	"data":{
+		"is_course": 1,
+		"courses": [
+			{
+				"id":1,
+				"title":"ti",
+				"time":"10:0-12:00",
+				"age":"2-5"
+			}
+		], 
+		"is_activity":0,
+		"activities":[
+			{
+				"id":1,
+				"title":"ti",
+				"price":250"
+			}
+		]
+	},
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
 =====================================================================
 
 ### 1 报名信息
