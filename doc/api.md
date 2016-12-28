@@ -114,7 +114,7 @@
 
 ### 6、关注状态
 **GET**
-**URL** /business/attention/status?openid=1234&bid=2
+**URL** /business/attention/status?openid=1234&bid=2 -详情页不适用
 
 **返回**
 ```json
