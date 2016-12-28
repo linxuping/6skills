@@ -161,7 +161,7 @@
 **GET**
 **URL** /signup/details/get?actid=2&openid=abc
 
-**TIME** 20161227 new
+**TIME** 20161227 new[testdata]
 
 **返回**
 ```json
