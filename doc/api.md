@@ -112,7 +112,22 @@
 }
 ```
 
-### 6、关注机构列表
+### 6、关注状态
+**GET**
+**URL** /business/attention/status?openid=1234&bid=2
+
+**返回**
+```json
+{
+	"data": {
+		"status": 0/1	
+	}
+	"errcode": 0,
+	"errmsg": ""
+}
+```
+
+### 7、关注机构列表
 
 **GET**
 **URL** /business/attention/list?openid=123
@@ -136,7 +151,7 @@
 }
 ```
 
-### 7、获取机构信息
+### 8、获取机构信息
 
 **GET**
 **URL** /business/details/get?bid=2&openid=abc
@@ -156,7 +171,7 @@
 }
 ```
 
-### 8、报名关联信息
+### 9、报名关联信息
 
 **GET**
 **URL** /signup/details/get?actid=2&openid=abc
@@ -506,7 +521,7 @@
 **GET**
 **URL** /activities/details/{uuid}
 
-**TIME** 20161216 modify business_id business_class_num business_attention_num business_img
+**TIME** 20161228 modify business_attention_status
 
 **返回**
 ```json
@@ -529,6 +544,7 @@
 	"business_name": "name",
 	"business_class_num": 3,
 	"business_attention_num": 3,
+	"business_attention_status": 1,
 	"errcode": 0,
 	"errmsg": ""
 }
