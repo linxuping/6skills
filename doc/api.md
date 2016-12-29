@@ -12,7 +12,7 @@
 		"classes": [
 			{
 				"id": 2,
-				"img": "http://xxx.jpg",
+				"img_cover": "http://xxx.jpg",
 				"title": "xxx",
 				"expire": "2016-01-01",
 				"area": "abc",
