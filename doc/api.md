@@ -187,8 +187,7 @@
 			{
 				"id":1,
 				"title":"ti",
-				"time":"10:0-12:00",
-				"age":"2-5"
+				"time":"10:0-12:00"
 			}
 		], 
 		"has_options_activity":0,
@@ -196,7 +195,8 @@
 			{
 				"id":1,
 				"title":"ti",
-				"price":250"
+				"price":250",
+				"quantities":40
 			}
 		]
 	},
