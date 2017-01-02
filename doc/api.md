@@ -11,7 +11,7 @@
 	"data":{
 		"classes": [
 			{
-				"id": 2,
+				"actid": 2,
 				"img_cover": "http://xxx.jpg",
 				"title": "xxx",
 				"expire": "2016-01-01",
