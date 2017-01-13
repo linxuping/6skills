@@ -15,6 +15,7 @@
 				"img_cover": "http://xxx.jpg",
 				"title": "xxx",
 				"expire": "2016-01-01",
+				"remain": 30,
 				"area": "abc",
 				"ages": "1-4",
 				"tags": "书画"
