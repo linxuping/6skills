@@ -1,6 +1,6 @@
 ### 1 获取报名信息
 **GET**
-**URL** /signup/info/get?openid=1&signid=12
+**URL** /signup/info/get?openid=1&actid=12
 
 **返回**
 ```json
