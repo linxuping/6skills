@@ -5,7 +5,7 @@
 **返回**
 ```json
 {
-	'data':{
+	"data":{
 		"sign_type":3,
 		"actid": 2,
 		"username_pa":"",
