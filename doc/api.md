@@ -30,7 +30,8 @@
 		    "title": "meishu",
 		    "time_str": "aa-bb cc",
 		    "price": 2.9,
-		    "quantities":30
+		    "quantities":30,
+		    "quantities_remain":28
 		}
 	},
 	"errcode": 0,
