@@ -3,7 +3,7 @@
 **URL** /signup/info/get?openid=1&actid=12
 
 **返回**
-```json
+```json/sign
 {
 	"data":{
 		"sign_type":3,
@@ -614,7 +614,8 @@
 	"uuid": "活动id",
 	"location": "报名时所处位置",
 	"trange_id": 1,
-	"time_id": 2
+	"time_id": 2,
+	"time_joinin": "参加时间"
 }
 ```
 **返回**
