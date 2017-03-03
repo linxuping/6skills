@@ -959,6 +959,9 @@ coverImage|url|Y|封面图
 	"business": "",
 	"name": "",
 	"phone": "",
+	"business_class_num": 3,
+	"business_attention_num": 3,
+	"business_attention_status": 1,
 	"errcode": 0,
 	"errmsg": ""
 }
